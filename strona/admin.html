@@ -2,318 +2,336 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel | frostyyreps.xyz</title>
-  <link rel="stylesheet" href="css/admin.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>repfinder | Admin Panel</title>
+  <link rel="stylesheet" href="css/style.css" />
   <style>
-    .admin-auth-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(10, 12, 16, 0.76);
-      backdrop-filter: blur(10px);
-    }
-
-    .admin-auth-card {
-      width: min(100%, 460px);
-      padding: 28px;
-      border-radius: 28px;
-      background: rgba(34, 39, 46, 0.98);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
-    }
-
-    .admin-auth-card h1 {
-      margin: 0;
-      font-size: 34px;
-      letter-spacing: -0.05em;
-      color: #f6f8fb;
-    }
-
-    .admin-auth-card p {
-      margin: 10px 0 0;
-      color: #9ba6b2;
-      line-height: 1.6;
-    }
-
-    .admin-auth-form {
+    /* UNIKALNE STYLE DLA PANELU ADMINA (Nie psują głównej strony) */
+    .admin-layout {
       display: grid;
-      gap: 14px;
-      margin-top: 22px;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+      width: min(1200px, calc(100% - 40px));
+      margin: 40px auto;
+      align-items: start;
+    }
+    
+    .admin-sidebar {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow-soft);
+      position: sticky;
+      top: 100px;
     }
 
-    .admin-auth-label {
-      display: block;
-      margin-bottom: 8px;
-      color: #9ba6b2;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .admin-auth-input {
+    .admin-menu-btn {
       width: 100%;
-      min-height: 52px;
-      padding: 0 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(40, 46, 54, 0.98);
-      color: #f6f8fb;
+      text-align: left;
+      padding: 14px 20px;
+      background: transparent;
+      color: var(--text);
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      margin-bottom: 8px;
+    }
+
+    .admin-menu-btn:hover { background: rgba(255,255,255,0.05); }
+    .admin-menu-btn.active { background: var(--primary); color: #000; box-shadow: var(--shadow-button); }
+
+    .admin-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 30px;
+    }
+
+    .admin-card h2 { margin: 0 0 24px; font-size: 28px; color: var(--text-strong); letter-spacing: -0.03em; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 13px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.05em; }
+    
+    .admin-input, .admin-select {
+      height: 52px;
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0 18px;
+      color: var(--text-strong);
+      font-size: 15px;
       outline: none;
+      transition: border-color 0.2s;
     }
+    .admin-input:focus, .admin-select:focus { border-color: var(--primary); }
+    .admin-select { appearance: none; cursor: pointer; }
 
-    .admin-auth-input::placeholder {
-      color: #75808d;
-    }
+    /* Tabela produktów */
+    .table-container { width: 100%; overflow-x: auto; }
+    .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .admin-table th { padding: 16px; border-bottom: 1px solid var(--line); color: var(--text); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 800; }
+    .admin-table td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-strong); font-size: 14px; vertical-align: middle; }
+    .admin-table img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; }
+    
+    .action-btn { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; transition: 0.2s; }
+    .action-btn:hover { background: var(--danger); color: #fff; }
 
-    .admin-auth-input:focus {
-      border-color: rgba(255, 255, 255, 0.16);
-    }
+    .top-actions { display: flex; gap: 12px; margin-bottom: 24px; }
 
-    .admin-auth-error {
-      min-height: 22px;
-      color: #ffb9b9;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .admin-auth-submit {
-      min-height: 52px;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #eceff4, #cfd6df);
-      color: #141920;
-      font-weight: 800;
-      border: 0;
-      cursor: pointer;
-    }
-
-    .admin-auth-note {
-      margin-top: 14px;
-      font-size: 12px;
-      color: #7f8a97;
-    }
-
-    .admin-auth-locked .admin-shell {
-      visibility: hidden;
-      pointer-events: none;
-      user-select: none;
+    @media (max-width: 820px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-sidebar { position: static; display: flex; overflow-x: auto; padding: 16px; border-radius: 20px; }
+      .admin-menu-btn { white-space: nowrap; margin-bottom: 0; margin-right: 8px; }
+      .form-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body class="admin-auth-locked">
-  <div id="adminAuthOverlay" class="admin-auth-overlay">
-    <div class="admin-auth-card">
-      <h1>Admin login</h1>
-      <p>Zaloguj się, aby wejść do panelu zarządzania produktami.</p>
-
-      <form id="adminLoginForm" class="admin-auth-form">
-        <div>
-          <label class="admin-auth-label" for="adminLoginUsername">Login</label>
-          <input
-            id="adminLoginUsername"
-            class="admin-auth-input"
-            type="text"
-            autocomplete="username"
-            placeholder="Podaj login"
-          />
+<body>
+  <div class="site-shell">
+    
+    <header class="site-header">
+      <div class="nav-wrap" style="justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="brand" type="button" style="padding: 0;">repfinder</button>
+          <span style="color: var(--muted); font-weight: 800; font-size: 14px; letter-spacing: 1px;">ADMIN</span>
         </div>
-
-        <div>
-          <label class="admin-auth-label" for="adminLoginPassword">Hasło</label>
-          <input
-            id="adminLoginPassword"
-            class="admin-auth-input"
-            type="password"
-            autocomplete="current-password"
-            placeholder="Podaj hasło"
-          />
-        </div>
-
-        <div id="adminLoginError" class="admin-auth-error"></div>
-
-        <button class="admin-auth-submit" type="submit">Zaloguj</button>
-      </form>
-
-      <div class="admin-auth-note">
-        To jest tylko blokada front-end bez backendu.
-      </div>
-    </div>
-  </div>
-
-  <div class="admin-shell">
-    <header class="admin-header">
-      <div class="admin-header-inner">
-        <a href="index.html" class="admin-brand">frostyyreps.xyz</a>
-
-        <div class="admin-header-actions">
-          <button id="exportJsonBtn" class="admin-header-btn" type="button">Export JSON</button>
-          <label class="admin-header-btn admin-file-btn">
-            Import JSON
-            <input id="importJsonInput" type="file" accept=".json,application/json" hidden />
-          </label>
-          <button id="resetStorageBtn" class="admin-header-btn danger" type="button">Reset</button>
-          <button id="logoutAdminBtn" class="admin-header-btn" type="button">Logout</button>
-          <a href="index.html" class="admin-header-btn ghost">Back to site</a>
-        </div>
+        <a href="index.html" class="converter-secondary-btn" style="display: inline-flex; align-items: center; height: 40px; font-size: 13px;">← Wróć na stronę</a>
       </div>
     </header>
 
-    <main class="admin-main">
-      <section class="admin-topbar">
-        <div class="admin-topbar-card">
-          <span class="admin-topbar-label">Total products</span>
-          <strong id="adminTotalProducts">0</strong>
-        </div>
-
-        <div class="admin-topbar-card">
-          <span class="admin-topbar-label">Filtered</span>
-          <strong id="adminFilteredProducts">0</strong>
-        </div>
-
-        <div class="admin-topbar-card">
-          <span class="admin-topbar-label">Categories</span>
-          <strong id="adminCategoriesCount">0</strong>
-        </div>
-
-        <div class="admin-topbar-card">
-          <span class="admin-topbar-label">Tags</span>
-          <strong id="adminTagsCount">0</strong>
-        </div>
-      </section>
-
-      <section class="admin-layout">
+    <main class="main-content">
+      <div class="admin-layout">
+        
         <aside class="admin-sidebar">
-          <div class="admin-panel">
-            <div class="admin-panel-head">
-              <h2>Products</h2>
-              <p>Search, filter and manage your database.</p>
-            </div>
-
-            <div class="admin-search-wrap">
-              <input
-                id="adminSearchInput"
-                class="admin-input"
-                type="text"
-                placeholder="Search by name, category, tag..."
-              />
-            </div>
-
-            <div class="admin-filter-grid">
-              <div>
-                <label class="admin-label" for="adminCategoryFilter">Category</label>
-                <select id="adminCategoryFilter" class="admin-select">
-                  <option value="all">All</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="admin-label" for="adminTagFilter">Tag</label>
-                <select id="adminTagFilter" class="admin-select">
-                  <option value="all">All</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="admin-list-head">
-              <strong>Product list</strong>
-              <button id="newProductBtn" class="admin-primary-btn" type="button">+ New product</button>
-            </div>
-
-            <div id="adminProductsList" class="admin-products-list"></div>
-          </div>
+          <button class="admin-menu-btn active" id="tabAddBtn">Dodaj Produkt</button>
+          <button class="admin-menu-btn" id="tabManageBtn">Zarządzaj Bazą</button>
         </aside>
 
-        <section class="admin-content">
-          <div class="admin-panel">
-            <div class="admin-panel-head">
-              <h2 id="editorTitle">New product</h2>
-              <p>Fill all important data, save and it will update the site database.</p>
-            </div>
-
-            <form id="productForm" class="admin-form">
-              <input id="productEditingId" type="hidden" />
-
-              <div class="admin-form-grid">
-                <div class="admin-form-col admin-form-col-wide">
-                  <label class="admin-label" for="productName">Nazwa</label>
-                  <input id="productName" class="admin-input" type="text" placeholder="Air Force 1 White" />
+        <div class="admin-content">
+          
+          <div id="sectionAdd" class="admin-card">
+            <h2>Dodaj nowy produkt</h2>
+            <form id="addProductForm">
+              <div class="form-grid">
+                <div class="form-group full">
+                  <label>Nazwa produktu</label>
+                  <input type="text" id="pName" class="admin-input" placeholder="np. Jordan 4 Retro Travis Scott" required>
+                </div>
+                
+                <div class="form-group">
+                  <label>Cena (PLN / CNY)</label>
+                  <input type="text" id="pPrice" class="admin-input" placeholder="np. 250 PLN" required>
                 </div>
 
-                <div class="admin-form-col">
-                  <label class="admin-label" for="productPriceUsd">Cena_USD</label>
-                  <input id="productPriceUsd" class="admin-input" type="text" placeholder="17.80" />
+                <div class="form-group">
+                  <label>Zdjęcie (URL)</label>
+                  <input type="url" id="pImage" class="admin-input" placeholder="https://imgur.com/..." required>
                 </div>
 
-                <div class="admin-form-col">
-                  <label class="admin-label" for="productCategory">Kategoria</label>
-                  <input id="productCategory" class="admin-input" type="text" placeholder="shoes" />
-                </div>
-
-                <div class="admin-form-col">
-                  <label class="admin-label" for="productDisplayCategory">WyswietlanaKategoria</label>
-                  <input id="productDisplayCategory" class="admin-input" type="text" placeholder="SHOES" />
-                </div>
-
-                <div class="admin-form-col">
-                  <label class="admin-label" for="productTag">Tag</label>
-                  <select id="productTag" class="admin-select">
-                    <option value="">Brak</option>
-                    <option value="best">best</option>
-                    <option value="budget">budget</option>
-                    <option value="random">random</option>
+                <div class="form-group">
+                  <label>Kategoria</label>
+                  <select id="pCategory" class="admin-select" required>
+                    <option value="Shoes">Shoes</option>
+                    <option value="Shorts">Shorts</option>
+                    <option value="Pants">Pants</option>
+                    <option value="T-shirts">T-shirts</option>
+                    <option value="Hoodies">Hoodies</option>
+                    <option value="Jackets">Jackets</option>
+                    <option value="Longsleeve">Longsleeve</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Headwear">Headwear</option>
+                    <option value="Bags & Backpacks">Bags & Backpacks</option>
+                    <option value="Belts">Belts</option>
+                    <option value="Accessories">Accessories</option>
                   </select>
                 </div>
 
-                <div class="admin-form-col admin-form-col-full">
-                  <label class="admin-label" for="productImage">Link_Zdjecie</label>
-                  <input id="productImage" class="admin-input" type="text" placeholder="https://..." />
+                <div class="form-group">
+                  <label>Jakość / Tag</label>
+                  <select id="pTag" class="admin-select" required>
+                    <option value="Best Batch">Best Batch</option>
+                    <option value="Budget Batch">Budget Batch</option>
+                    <option value="Random Batch">Random Batch</option>
+                  </select>
                 </div>
 
-                <div class="admin-form-col admin-form-col-full">
-                  <label class="admin-label" for="productKakoBuy">Link_Kakobuy</label>
-                  <input id="productKakoBuy" class="admin-input" type="text" placeholder="https://..." />
+                <div class="form-group full">
+                  <label>Link do Agenta (np. KakoBuy, Weidian)</label>
+                  <input type="url" id="pLink" class="admin-input" placeholder="Wklej link do zakupu..." required>
                 </div>
 
-                <div class="admin-form-col admin-form-col-full">
-                  <label class="admin-label" for="productLitbuy">Link_Litbuy</label>
-                  <input id="productLitbuy" class="admin-input" type="text" placeholder="https://..." />
+                <div class="form-group full" style="margin-top: 10px;">
+                  <button type="submit" class="primary-btn" style="width: 100%;">+ Dodaj do bazy</button>
                 </div>
-              </div>
-
-              <div class="admin-form-actions">
-                <button id="clearFormBtn" class="admin-secondary-btn" type="button">Clear form</button>
-                <button id="duplicateProductBtn" class="admin-secondary-btn" type="button">Duplicate current</button>
-                <button id="deleteProductBtn" class="admin-danger-btn hidden" type="button">Delete</button>
-                <button id="saveProductBtn" class="admin-primary-btn" type="submit">Save product</button>
               </div>
             </form>
           </div>
 
-          <div class="admin-panel">
-            <div class="admin-panel-head">
-              <h2>Live preview</h2>
-              <p>Quick preview of how the card looks.</p>
+          <div id="sectionManage" class="admin-card hidden">
+            <h2>Zarządzaj Bazą</h2>
+            
+            <div class="top-actions">
+              <button id="saveToServerBtn" class="primary-btn" style="height: 44px; font-size: 14px;">Zapisz na serwerze (PHP)</button>
+              <button id="copyJsonBtn" class="converter-secondary-btn" style="height: 44px; font-size: 14px;">Kopiuj kod JSON</button>
             </div>
+            
+            <div id="adminStatus" style="margin-bottom: 20px; font-size: 14px; font-weight: 700; color: var(--success);"></div>
 
-            <div id="adminPreview" class="admin-preview-wrap"></div>
+            <div class="table-container">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Foto</th>
+                    <th>Nazwa</th>
+                    <th>Kategoria</th>
+                    <th>Cena</th>
+                    <th>Akcja</th>
+                  </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                  </tbody>
+              </table>
+            </div>
           </div>
 
-          <div class="admin-panel">
-            <div class="admin-panel-head">
-              <h2>Raw database</h2>
-              <p>JSON preview for export / debugging.</p>
-            </div>
-
-            <textarea id="adminRawOutput" class="admin-raw-output" readonly></textarea>
-          </div>
-        </section>
-      </section>
+        </div>
+      </div>
     </main>
+
   </div>
 
-  <script src="js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // TABS LOGIC
+      const tabAddBtn = document.getElementById('tabAddBtn');
+      const tabManageBtn = document.getElementById('tabManageBtn');
+      const sectionAdd = document.getElementById('sectionAdd');
+      const sectionManage = document.getElementById('sectionManage');
+
+      tabAddBtn.addEventListener('click', () => {
+        tabAddBtn.classList.add('active');
+        tabManageBtn.classList.remove('active');
+        sectionAdd.classList.remove('hidden');
+        sectionManage.classList.add('hidden');
+      });
+
+      tabManageBtn.addEventListener('click', () => {
+        tabManageBtn.classList.add('active');
+        tabAddBtn.classList.remove('active');
+        sectionManage.classList.remove('hidden');
+        sectionAdd.classList.add('hidden');
+        renderTable();
+      });
+
+      // DATABASE LOGIC
+      let db = [];
+
+      // 1. Pobierz obecne produkty z pliku JSON (Jeśli istnieje)
+      fetch('products.json')
+        .then(res => res.json())
+        .then(data => {
+          if(Array.isArray(data)) { db = data; }
+        })
+        .catch(err => console.log('Brak pliku products.json. Tworzymy nową, pustą bazę.'));
+
+      // 2. Dodawanie produktu
+      document.getElementById('addProductForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const newProduct = {
+          id: "prod_" + Date.now(),
+          name: document.getElementById('pName').value,
+          price: document.getElementById('pPrice').value,
+          image: document.getElementById('pImage').value,
+          category: document.getElementById('pCategory').value,
+          tag: document.getElementById('pTag').value,
+          link: document.getElementById('pLink').value
+        };
+
+        db.unshift(newProduct); // Dodaje na początek listy
+        e.target.reset(); // Czyści formularz
+        
+        alert('Produkt dodany do lokalnej bazy! Przejdź do "Zarządzaj Bazą", aby wyeksportować/zapisać.');
+      });
+
+      // 3. Renderowanie tabeli
+      const tbody = document.getElementById('productsTableBody');
+      
+      window.renderTable = function() {
+        tbody.innerHTML = '';
+        if(db.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--muted);">Brak produktów w bazie.</td></tr>';
+          return;
+        }
+
+        db.forEach((prod, index) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><img src="${prod.image}" alt="img"></td>
+            <td style="font-weight: 700;">${prod.name}</td>
+            <td><span class="filter-pill" style="padding: 4px 10px; font-size: 11px;">${prod.category}</span></td>
+            <td>${prod.price}</td>
+            <td><button class="action-btn" onclick="deleteProduct(${index})">Usuń</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 4. Usuwanie produktu
+      window.deleteProduct = function(index) {
+        if(confirm('Na pewno usunąć ten produkt?')) {
+          db.splice(index, 1);
+          renderTable();
+        }
+      }
+
+      // 5. Opcja A: Zapis na serwer (Wymaga PHP)
+      document.getElementById('saveToServerBtn').addEventListener('click', () => {
+        const statusDiv = document.getElementById('adminStatus');
+        statusDiv.style.color = 'var(--text)';
+        statusDiv.innerText = 'Próba zapisu przez API...';
+
+        fetch('products.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(db)
+        })
+        .then(res => {
+          if(res.ok) {
+            statusDiv.style.color = 'var(--success)';
+            statusDiv.innerText = 'Sukces! Produkty zostały zapisane na serwerze.';
+          } else {
+            throw new Error('Błąd serwera');
+          }
+        })
+        .catch(err => {
+          statusDiv.style.color = 'var(--danger)';
+          statusDiv.innerText = 'Błąd zapisu! Upewnij się, że plik products.php na serwerze ma uprawnienia do zapisu. Użyj przycisku "Kopiuj kod JSON".';
+        });
+      });
+
+      // 6. Opcja B: Kopiowanie gotowego kodu (Kuloodporne)
+      document.getElementById('copyJsonBtn').addEventListener('click', () => {
+        const jsonString = JSON.stringify(db, null, 2);
+        navigator.clipboard.writeText(jsonString).then(() => {
+          const statusDiv = document.getElementById('adminStatus');
+          statusDiv.style.color = 'var(--primary)';
+          statusDiv.innerText = 'Skopiowano! Otwórz plik products.json na swoim serwerze i wklej skopiowany kod.';
+        });
+      });
+
+    });
+  </script>
 </body>
 </html>

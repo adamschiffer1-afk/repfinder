@@ -373,6 +373,12 @@ img {
 }
 
 /* ==================== FILTRY ==================== */
+
+/* TWARDY UKRYWACZ STAREGO PASKA GENEROWANEGO PRZEZ JS */
+.toolbar, #products .toolbar {
+  display: none !important;
+}
+
 .filter-bar {
   width: min(1100px, calc(100% - 32px));
   margin: 40px auto 20px;
@@ -447,7 +453,7 @@ img {
   background: rgba(255,255,255,0.1) !important;
 }
 
-/* ==================== MODAL FILTRÓW (SZARAWO-BIAŁY) ==================== */
+/* ==================== MODAL FILTRÓW ==================== */
 .filter-modal {
   position: fixed;
   inset: 0;
@@ -1560,15 +1566,13 @@ img {
     gap: 6px;
     padding: 6px;
     background: rgba(255, 255, 255, 0.05);
-    overflow: visible; /* Naprawia dropdown */
+    overflow: visible; 
   }
   .nav-link {
     padding: 10px 8px;
     font-size: 11.5px;
     text-align: center;
   }
-  
-  /* ROZWIĄZANIE OVERLAPU KART TUTORIALI */
   .tutorials-overview {
     display: flex;
     flex-direction: column;
