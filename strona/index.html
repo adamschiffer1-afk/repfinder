@@ -35,7 +35,6 @@
 
     <main class="main-content">
 
-      <!-- CLEAN PREMIUM HERO -->
       <section id="home" class="page-section active">
         <div class="hero-block">
           <div class="hero-inner">
@@ -51,21 +50,24 @@
         </div>
       </section>
 
-      <!-- PRODUCTS -->
       <section id="products" class="page-section">
         <div class="section-container">
           <div class="section-head">
             <h2>Products</h2>
             <p>Best items picked for clean browsing</p>
           </div>
-          <div class="toolbar">
-            <input id="productSearch" class="section-input" type="text" placeholder="Search products..." />
+
+          <div class="filter-bar">
+            <div class="filter-container" id="filterBar">
+              <input id="productSearch" class="search-input" type="text" placeholder="Search..." />
+              <button id="filtersBtn" class="filter-btn" type="button">Filters</button>
+            </div>
           </div>
+
           <div id="productsGrid" class="products-grid"></div>
         </div>
       </section>
 
-      <!-- TRACKING -->
       <section id="tracking" class="page-section">
         <div class="section-container narrow-section">
           <div class="section-head">
@@ -81,143 +83,114 @@
         </div>
       </section>
 
-      <!-- TUTORIALS -->
       <section id="tutorials" class="page-section">
         <div class="section-container tutorial-section-shell">
+          
           <div id="tutorialsOverview" class="tutorials-overview"></div>
 
           <div id="tutorialPlayer" class="tutorial-player hidden">
-            <button id="tutorialBackToList" class="tutorial-back-link" type="button">← Wróć do tutoriali</button>
-
+            <button id="tutorialBackToList" class="tutorial-back-link">← Wróć do listy</button>
+            
             <div class="tutorial-player-head">
-              <h2 id="tutorialMainTitle">Jak zamawiać na KakoBuy</h2>
-              <p id="tutorialMainSubtitle">Prosty przewodnik krok po kroku, jak zrobić zamówienie przez agentów KakoBuy.</p>
+              <h2 id="tutorialMainTitle"></h2>
+              <p id="tutorialMainSubtitle"></p>
+              <div class="tutorial-progress-track">
+                <div id="tutorialProgressBar" class="tutorial-progress-fill"></div>
+              </div>
+              <div id="tutorialTopSteps" class="tutorial-top-steps"></div>
             </div>
-
-            <div class="tutorial-progress-track">
-              <div id="tutorialProgressBar" class="tutorial-progress-fill"></div>
-            </div>
-
-            <div id="tutorialTopSteps" class="tutorial-top-steps"></div>
 
             <div class="tutorial-layout">
               <div class="tutorial-main-panel">
                 <div class="tutorial-step-header">
-                  <div id="tutorialStepBadge" class="tutorial-step-badge">1</div>
+                  <div id="tutorialStepBadge" class="tutorial-step-badge"></div>
                   <div>
-                    <h3 id="tutorialStepTitle">Załóż konto</h3>
-                    <p id="tutorialStepMeta" class="tutorial-step-meta">Krok 1 z 13</p>
+                    <h3 id="tutorialStepTitle"></h3>
+                    <p id="tutorialStepMeta" class="tutorial-step-meta"></p>
                   </div>
                 </div>
-
                 <p id="tutorialStepDescription" class="tutorial-step-description"></p>
                 <div id="tutorialStepMedia" class="tutorial-step-media"></div>
                 <div id="tutorialStepActions" class="tutorial-step-inline-actions"></div>
+                
+                <div class="tutorial-bottom-nav">
+                  <button id="tutorialRestartBtn" class="tutorial-ghost-btn" type="button">Od nowa</button>
+                  <div class="tutorial-nav-group">
+                    <button id="tutorialPrevBtn" class="tutorial-ghost-btn" type="button">Wstecz</button>
+                    <button id="tutorialNextBtn" class="tutorial-primary-btn" type="button">Dalej</button>
+                  </div>
+                </div>
               </div>
 
               <aside class="tutorial-sidebar">
-                <h4>Kroki tutoriala</h4>
+                <h4>Kroki</h4>
                 <div id="tutorialSideSteps" class="tutorial-side-steps"></div>
               </aside>
             </div>
-
-            <div class="tutorial-bottom-nav">
-              <button id="tutorialRestartBtn" class="tutorial-ghost-btn" type="button">↻ Rozpocznij ponownie</button>
-              <div class="tutorial-nav-group">
-                <button id="tutorialPrevBtn" class="tutorial-ghost-btn" type="button">‹ Wstecz</button>
-                <button id="tutorialNextBtn" class="tutorial-primary-btn" type="button">Dalej ›</button>
-              </div>
-            </div>
           </div>
+
         </div>
       </section>
 
-      <!-- CONVERTER -->
       <section id="converter" class="page-section">
         <div class="section-container converter-shell">
           <div class="converter-hero">
-            <span class="converter-kicker">CONVERTER</span>
-            <h2>Konwerter linków</h2>
-            <p>Wklej link i konwertuj między agentami</p>
+            <span class="converter-kicker">NARZĘDZIA</span>
+            <h2>Link Converter</h2>
+            <p>Wklej link z Weidian, Taobao lub od dowolnego agenta (KakoBuy, AllChinaBuy, itp.), a my błyskawicznie zamienimy go na link Twojego ulubionego agenta.</p>
           </div>
 
           <div class="converter-board">
             <div class="converter-input-row">
-              <div class="converter-field">
-                <label for="converterInput">Link</label>
-                <input id="converterInput" class="converter-input-dark" type="text" placeholder="Wklej link..." />
+              <div class="converter-field" style="grid-column: span 1;">
+                <label for="converterInput">Link źródłowy</label>
+                <input id="converterInput" class="converter-input-dark" type="text" placeholder="Wklej link tutaj (np. Weidian, ACB...)" />
               </div>
-
               <div class="converter-field">
-                <label>Źródło</label>
-                <div class="converter-custom-select is-disabled">
-                  <button class="converter-select-button" type="button">
-                    <span id="converterSourceLabel">Auto detect</span>
-                    <span class="converter-select-caret">▾</span>
-                  </button>
-                </div>
-              </div>
-
-              <div class="converter-field">
-                <label>Target</label>
-                <div class="converter-custom-select" id="converterTargetSelect">
+                <label>Konwertuj na</label>
+                <div id="converterTargetSelect" class="converter-custom-select">
                   <button id="converterTargetButton" class="converter-select-button" type="button">
                     <span id="converterTargetLabel">KakoBuy</span>
-                    <span class="converter-select-caret">▾</span>
+                    <span class="converter-select-caret">▼</span>
                   </button>
                   <div id="converterTargetMenu" class="converter-select-menu"></div>
                 </div>
               </div>
+              <div class="converter-field">
+                <label>&nbsp;</label>
+                <button id="convertBtn" class="converter-primary-btn" style="width: 100%;" type="button">Konwertuj</button>
+              </div>
             </div>
+            <span id="converterSourceLabel" class="hidden"></span>
+            <div id="converterStatus" style="margin-top: 16px; font-size: 14px; font-weight: 600; color: var(--primary);"></div>
+          </div>
 
-            <div class="converter-actions-top">
-              <button id="convertBtn" class="converter-primary-btn" type="button">Convert</button>
-              <button id="copyConvertedTop" class="converter-secondary-btn" type="button">Copy</button>
-            </div>
-
-            <div id="converter-result" class="hidden">
-              <div class="converter-divider"></div>
-              <div class="converter-results-head">
+          <div id="converter-result" class="hidden">
+            <div class="converter-divider"></div>
+            <div class="converter-results-head" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
                 <h3>Wynik konwersji</h3>
-                <p id="converterStatus">Wklej link i kliknij „Convert”.</p>
+                <p>Twój link jest gotowy do użycia.</p>
               </div>
-
-              <div class="converter-results-grid">
-                <div class="converter-result-card">
-                  <span class="converter-card-label">Original</span>
-                  <div id="converterOriginalBadge" class="platform-pill">-</div>
-                  <p id="converterOriginalUrl" class="converter-url-text">-</p>
-                  <div class="converter-card-actions">
-                    <button id="copyOriginal" class="converter-icon-btn" type="button">📋</button>
-                    <button id="openOriginal" class="converter-icon-btn" type="button">↗</button>
-                  </div>
-                </div>
-
-                <div class="converter-result-card">
-                  <span class="converter-card-label">Converted</span>
-                  <div id="converterConvertedBadge" class="platform-pill">-</div>
-                  <p id="converterOutput" class="converter-url-text">-</p>
-                  <div class="converter-card-actions">
-                    <button id="copyConverted" class="converter-icon-btn" type="button">📋</button>
-                    <button id="openConverted" class="converter-icon-btn" type="button">↗</button>
-                  </div>
+              <button id="copyConvertedTop" class="converter-secondary-btn" type="button" style="height: 40px; padding: 0 16px; font-size: 14px;">Skopiuj wynik</button>
+            </div>
+            <div class="converter-results-grid">
+              <div class="converter-result-card">
+                <span class="converter-card-label">Wykryte źródło</span><br>
+                <span id="converterOriginalBadge" class="platform-pill platform-pill-neutral">Auto detect</span>
+                <p id="converterOriginalUrl" class="converter-url-text" style="font-size: 13px; margin-top: 12px; color: var(--text); word-break: break-all;">Brak danych</p>
+                <div class="converter-card-actions">
+                  <button id="copyOriginal" class="converter-icon-btn" type="button" title="Kopiuj oryginalny link">📋</button>
+                  <button id="openOriginal" class="converter-icon-btn" type="button" title="Otwórz oryginalny link">↗️</button>
                 </div>
               </div>
-
-              <div class="converter-feature-grid">
-                <div class="converter-feature-card">
-                  <div class="converter-feature-icon">⚡</div>
-                  <div>
-                    <h4>Fast conversion</h4>
-                    <p>Auto-detect źródła i szybka podmiana na nowy agent link.</p>
-                  </div>
-                </div>
-                <div class="converter-feature-card">
-                  <div class="converter-feature-icon">🛡</div>
-                  <div>
-                    <h4>All in one</h4>
-                    <p>Weidian, Kakobuy, UsFans, LITBUY i AllChinaBuy.</p>
-                  </div>
+              <div class="converter-result-card" style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.15);">
+                <span class="converter-card-label">Gotowy link</span><br>
+                <span id="converterConvertedBadge" class="platform-pill platform-pill-kakobuy">KakoBuy</span>
+                <p id="converterOutput" class="converter-url-text" style="font-size: 14px; font-weight: 600; margin-top: 12px; color: #fff; word-break: break-all;">Brak wyniku</p>
+                <div class="converter-card-actions">
+                  <button id="copyConverted" class="converter-icon-btn" type="button" title="Kopiuj gotowy link">📋</button>
+                  <button id="openConverted" class="converter-icon-btn" type="button" title="Otwórz gotowy link w nowej karcie">↗️</button>
                 </div>
               </div>
             </div>
@@ -233,7 +206,30 @@
     </footer>
   </div>
 
-  <!-- Wszystkie Twoje skrypty -->
+  <div id="filterModal" class="filter-modal">
+    <div class="filter-modal-content">
+      <div class="filter-modal-header">
+        <h2>Filters</h2>
+        <button id="closeModal" class="filter-modal-close" type="button">✕</button>
+      </div>
+
+      <div class="filter-section">
+        <span class="filter-section-label">CATEGORIES</span>
+        <div class="filter-options" id="categoryOptions"></div>
+      </div>
+
+      <div class="filter-section">
+        <span class="filter-section-label">TAGS & QUALITY</span>
+        <div class="filter-tags" id="tagOptions"></div>
+      </div>
+
+      <div class="filter-actions">
+        <button id="clearFilters" class="clear-all-btn">Clear all</button>
+        <button id="applyFilters" class="show-results-btn">Show results</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/config.js"></script>
   <script src="js/products.js"></script>
   <script src="js/tutorials.js"></script>
@@ -241,5 +237,46 @@
   <script src="js/converter.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/app.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('filtersBtn');
+      const modal = document.getElementById('filterModal');
+      const closeBtn = document.getElementById('closeModal');
+
+      btn.addEventListener('click', () => modal.style.display = 'flex');
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === closeBtn || e.target === modal) modal.style.display = 'none';
+      });
+
+      const categories = ["All", "Shoes", "Shorts", "Pants", "T-shirts", "Hoodies", "Jackets", "Longsleeve", "Electronics", "Headwear", "Bags & Backpacks", "Belts", "Accessories"];
+      const tags = ["All Tags", "Best Batch", "Budget Batch", "Random Batch"];
+
+      const catDiv = document.getElementById('categoryOptions');
+      categories.forEach(c => {
+        const b = document.createElement('button');
+        b.textContent = c;
+        b.className = c === 'All' ? 'filter-pill active' : 'filter-pill';
+        b.addEventListener('click', function() {
+          catDiv.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+        });
+        catDiv.appendChild(b);
+      });
+
+      const tagDiv = document.getElementById('tagOptions');
+      tags.forEach(t => {
+        const b = document.createElement('button');
+        b.textContent = t;
+        b.className = t === 'All Tags' ? 'filter-pill active' : 'filter-pill';
+        b.addEventListener('click', function() {
+          tagDiv.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+        });
+        tagDiv.appendChild(b);
+      });
+    });
+  </script>
 </body>
 </html>
