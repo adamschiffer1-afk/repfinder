@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>repfinder</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <div class="nav-wrap">
+        <button class="brand" id="logo" type="button">repfinder</button>
+
+        <nav class="desktop-nav">
+          <button type="button" class="nav-link active" data-section-link="home">Home</button>
+          <button type="button" class="nav-link" data-section-link="products">Products</button>
+          <button type="button" class="nav-link" data-section-link="tutorials">Tutorials</button>
+
+          <div class="dropdown">
+            <button type="button" class="nav-link dropdown-toggle" id="toolsToggle">
+              Tools <span class="caret">▾</span>
+            </button>
+
+            <div class="dropdown-menu" id="toolsMenu">
+              <button type="button" class="dropdown-item" data-section-link="tracking">Tracking</button>
+              <button type="button" class="dropdown-item" data-section-link="converter">Converter</button>
+            </div>
+          </div>
+
+          <a href="admin.html" class="nav-link nav-anchor admin-link">Admin</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main-content">
+
+      <!-- CLEAN PREMIUM HERO -->
+      <section id="home" class="page-section active">
+        <div class="hero-block">
+          <div class="hero-inner">
+            <h1 class="hero-title">repfinder</h1>
+            <p class="hero-subtitle">
+              The best items finder site.<br>
+              Find top tier items and order with confidence.
+            </p>
+            <button class="hero-cta-btn" type="button" data-section-jump="products">
+              Explore Products
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section id="products" class="page-section">
+        <div class="section-container">
+          <div class="section-head">
+            <h2>Products</h2>
+            <p>Best items picked for clean browsing</p>
+          </div>
+          <div class="toolbar">
+            <input id="productSearch" class="section-input" type="text" placeholder="Search products..." />
+          </div>
+          <div id="productsGrid" class="products-grid"></div>
+        </div>
+      </section>
+
+      <!-- TRACKING -->
+      <section id="tracking" class="page-section">
+        <div class="section-container narrow-section">
+          <div class="section-head">
+            <h2>Tracking</h2>
+            <p>Track your package quickly</p>
+          </div>
+          <div class="tool-card">
+            <div class="tool-form">
+              <input id="trackingInput" class="tool-input" type="text" placeholder="Tracking number..." />
+              <button id="trackBtn" class="primary-btn" type="button">Track</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TUTORIALS -->
+      <section id="tutorials" class="page-section">
+        <div class="section-container tutorial-section-shell">
+          <div id="tutorialsOverview" class="tutorials-overview"></div>
+
+          <div id="tutorialPlayer" class="tutorial-player hidden">
+            <button id="tutorialBackToList" class="tutorial-back-link" type="button">← Wróć do tutoriali</button>
+
+            <div class="tutorial-player-head">
+              <h2 id="tutorialMainTitle">Jak zamawiać na KakoBuy</h2>
+              <p id="tutorialMainSubtitle">Prosty przewodnik krok po kroku, jak zrobić zamówienie przez agentów KakoBuy.</p>
+            </div>
+
+            <div class="tutorial-progress-track">
+              <div id="tutorialProgressBar" class="tutorial-progress-fill"></div>
+            </div>
+
+            <div id="tutorialTopSteps" class="tutorial-top-steps"></div>
+
+            <div class="tutorial-layout">
+              <div class="tutorial-main-panel">
+                <div class="tutorial-step-header">
+                  <div id="tutorialStepBadge" class="tutorial-step-badge">1</div>
+                  <div>
+                    <h3 id="tutorialStepTitle">Załóż konto</h3>
+                    <p id="tutorialStepMeta" class="tutorial-step-meta">Krok 1 z 13</p>
+                  </div>
+                </div>
+
+                <p id="tutorialStepDescription" class="tutorial-step-description"></p>
+                <div id="tutorialStepMedia" class="tutorial-step-media"></div>
+                <div id="tutorialStepActions" class="tutorial-step-inline-actions"></div>
+              </div>
+
+              <aside class="tutorial-sidebar">
+                <h4>Kroki tutoriala</h4>
+                <div id="tutorialSideSteps" class="tutorial-side-steps"></div>
+              </aside>
+            </div>
+
+            <div class="tutorial-bottom-nav">
+              <button id="tutorialRestartBtn" class="tutorial-ghost-btn" type="button">↻ Rozpocznij ponownie</button>
+              <div class="tutorial-nav-group">
+                <button id="tutorialPrevBtn" class="tutorial-ghost-btn" type="button">‹ Wstecz</button>
+                <button id="tutorialNextBtn" class="tutorial-primary-btn" type="button">Dalej ›</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONVERTER -->
+      <section id="converter" class="page-section">
+        <div class="section-container converter-shell">
+          <div class="converter-hero">
+            <span class="converter-kicker">CONVERTER</span>
+            <h2>Konwerter linków</h2>
+            <p>Wklej link i konwertuj między agentami</p>
+          </div>
+
+          <div class="converter-board">
+            <div class="converter-input-row">
+              <div class="converter-field">
+                <label for="converterInput">Link</label>
+                <input id="converterInput" class="converter-input-dark" type="text" placeholder="Wklej link..." />
+              </div>
+
+              <div class="converter-field">
+                <label>Źródło</label>
+                <div class="converter-custom-select is-disabled">
+                  <button class="converter-select-button" type="button">
+                    <span id="converterSourceLabel">Auto detect</span>
+                    <span class="converter-select-caret">▾</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="converter-field">
+                <label>Target</label>
+                <div class="converter-custom-select" id="converterTargetSelect">
+                  <button id="converterTargetButton" class="converter-select-button" type="button">
+                    <span id="converterTargetLabel">KakoBuy</span>
+                    <span class="converter-select-caret">▾</span>
+                  </button>
+                  <div id="converterTargetMenu" class="converter-select-menu"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="converter-actions-top">
+              <button id="convertBtn" class="converter-primary-btn" type="button">Convert</button>
+              <button id="copyConvertedTop" class="converter-secondary-btn" type="button">Copy</button>
+            </div>
+
+            <div id="converter-result" class="hidden">
+              <div class="converter-divider"></div>
+              <div class="converter-results-head">
+                <h3>Wynik konwersji</h3>
+                <p id="converterStatus">Wklej link i kliknij „Convert”.</p>
+              </div>
+
+              <div class="converter-results-grid">
+                <div class="converter-result-card">
+                  <span class="converter-card-label">Original</span>
+                  <div id="converterOriginalBadge" class="platform-pill">-</div>
+                  <p id="converterOriginalUrl" class="converter-url-text">-</p>
+                  <div class="converter-card-actions">
+                    <button id="copyOriginal" class="converter-icon-btn" type="button">📋</button>
+                    <button id="openOriginal" class="converter-icon-btn" type="button">↗</button>
+                  </div>
+                </div>
+
+                <div class="converter-result-card">
+                  <span class="converter-card-label">Converted</span>
+                  <div id="converterConvertedBadge" class="platform-pill">-</div>
+                  <p id="converterOutput" class="converter-url-text">-</p>
+                  <div class="converter-card-actions">
+                    <button id="copyConverted" class="converter-icon-btn" type="button">📋</button>
+                    <button id="openConverted" class="converter-icon-btn" type="button">↗</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="converter-feature-grid">
+                <div class="converter-feature-card">
+                  <div class="converter-feature-icon">⚡</div>
+                  <div>
+                    <h4>Fast conversion</h4>
+                    <p>Auto-detect źródła i szybka podmiana na nowy agent link.</p>
+                  </div>
+                </div>
+                <div class="converter-feature-card">
+                  <div class="converter-feature-icon">🛡</div>
+                  <div>
+                    <h4>All in one</h4>
+                    <p>Weidian, Kakobuy, UsFans, LITBUY i AllChinaBuy.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-line"></div>
+      <p>repfinder © 2026</p>
+    </footer>
+  </div>
+
+  <!-- Wszystkie Twoje skrypty -->
+  <script src="js/config.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/tutorials.js"></script>
+  <script src="js/tracking.js"></script>
+  <script src="js/converter.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

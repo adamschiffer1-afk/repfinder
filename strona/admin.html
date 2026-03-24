@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel | frostyyreps.xyz</title>
+  <link rel="stylesheet" href="css/admin.css" />
+  <style>
+    .admin-auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(10, 12, 16, 0.76);
+      backdrop-filter: blur(10px);
+    }
+
+    .admin-auth-card {
+      width: min(100%, 460px);
+      padding: 28px;
+      border-radius: 28px;
+      background: rgba(34, 39, 46, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+    }
+
+    .admin-auth-card h1 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: -0.05em;
+      color: #f6f8fb;
+    }
+
+    .admin-auth-card p {
+      margin: 10px 0 0;
+      color: #9ba6b2;
+      line-height: 1.6;
+    }
+
+    .admin-auth-form {
+      display: grid;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .admin-auth-label {
+      display: block;
+      margin-bottom: 8px;
+      color: #9ba6b2;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .admin-auth-input {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(40, 46, 54, 0.98);
+      color: #f6f8fb;
+      outline: none;
+    }
+
+    .admin-auth-input::placeholder {
+      color: #75808d;
+    }
+
+    .admin-auth-input:focus {
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .admin-auth-error {
+      min-height: 22px;
+      color: #ffb9b9;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .admin-auth-submit {
+      min-height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #eceff4, #cfd6df);
+      color: #141920;
+      font-weight: 800;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .admin-auth-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #7f8a97;
+    }
+
+    .admin-auth-locked .admin-shell {
+      visibility: hidden;
+      pointer-events: none;
+      user-select: none;
+    }
+  </style>
+</head>
+<body class="admin-auth-locked">
+  <div id="adminAuthOverlay" class="admin-auth-overlay">
+    <div class="admin-auth-card">
+      <h1>Admin login</h1>
+      <p>Zaloguj się, aby wejść do panelu zarządzania produktami.</p>
+
+      <form id="adminLoginForm" class="admin-auth-form">
+        <div>
+          <label class="admin-auth-label" for="adminLoginUsername">Login</label>
+          <input
+            id="adminLoginUsername"
+            class="admin-auth-input"
+            type="text"
+            autocomplete="username"
+            placeholder="Podaj login"
+          />
+        </div>
+
+        <div>
+          <label class="admin-auth-label" for="adminLoginPassword">Hasło</label>
+          <input
+            id="adminLoginPassword"
+            class="admin-auth-input"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Podaj hasło"
+          />
+        </div>
+
+        <div id="adminLoginError" class="admin-auth-error"></div>
+
+        <button class="admin-auth-submit" type="submit">Zaloguj</button>
+      </form>
+
+      <div class="admin-auth-note">
+        To jest tylko blokada front-end bez backendu.
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-shell">
+    <header class="admin-header">
+      <div class="admin-header-inner">
+        <a href="index.html" class="admin-brand">frostyyreps.xyz</a>
+
+        <div class="admin-header-actions">
+          <button id="exportJsonBtn" class="admin-header-btn" type="button">Export JSON</button>
+          <label class="admin-header-btn admin-file-btn">
+            Import JSON
+            <input id="importJsonInput" type="file" accept=".json,application/json" hidden />
+          </label>
+          <button id="resetStorageBtn" class="admin-header-btn danger" type="button">Reset</button>
+          <button id="logoutAdminBtn" class="admin-header-btn" type="button">Logout</button>
+          <a href="index.html" class="admin-header-btn ghost">Back to site</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <section class="admin-topbar">
+        <div class="admin-topbar-card">
+          <span class="admin-topbar-label">Total products</span>
+          <strong id="adminTotalProducts">0</strong>
+        </div>
+
+        <div class="admin-topbar-card">
+          <span class="admin-topbar-label">Filtered</span>
+          <strong id="adminFilteredProducts">0</strong>
+        </div>
+
+        <div class="admin-topbar-card">
+          <span class="admin-topbar-label">Categories</span>
+          <strong id="adminCategoriesCount">0</strong>
+        </div>
+
+        <div class="admin-topbar-card">
+          <span class="admin-topbar-label">Tags</span>
+          <strong id="adminTagsCount">0</strong>
+        </div>
+      </section>
+
+      <section class="admin-layout">
+        <aside class="admin-sidebar">
+          <div class="admin-panel">
+            <div class="admin-panel-head">
+              <h2>Products</h2>
+              <p>Search, filter and manage your database.</p>
+            </div>
+
+            <div class="admin-search-wrap">
+              <input
+                id="adminSearchInput"
+                class="admin-input"
+                type="text"
+                placeholder="Search by name, category, tag..."
+              />
+            </div>
+
+            <div class="admin-filter-grid">
+              <div>
+                <label class="admin-label" for="adminCategoryFilter">Category</label>
+                <select id="adminCategoryFilter" class="admin-select">
+                  <option value="all">All</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="admin-label" for="adminTagFilter">Tag</label>
+                <select id="adminTagFilter" class="admin-select">
+                  <option value="all">All</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="admin-list-head">
+              <strong>Product list</strong>
+              <button id="newProductBtn" class="admin-primary-btn" type="button">+ New product</button>
+            </div>
+
+            <div id="adminProductsList" class="admin-products-list"></div>
+          </div>
+        </aside>
+
+        <section class="admin-content">
+          <div class="admin-panel">
+            <div class="admin-panel-head">
+              <h2 id="editorTitle">New product</h2>
+              <p>Fill all important data, save and it will update the site database.</p>
+            </div>
+
+            <form id="productForm" class="admin-form">
+              <input id="productEditingId" type="hidden" />
+
+              <div class="admin-form-grid">
+                <div class="admin-form-col admin-form-col-wide">
+                  <label class="admin-label" for="productName">Nazwa</label>
+                  <input id="productName" class="admin-input" type="text" placeholder="Air Force 1 White" />
+                </div>
+
+                <div class="admin-form-col">
+                  <label class="admin-label" for="productPriceUsd">Cena_USD</label>
+                  <input id="productPriceUsd" class="admin-input" type="text" placeholder="17.80" />
+                </div>
+
+                <div class="admin-form-col">
+                  <label class="admin-label" for="productCategory">Kategoria</label>
+                  <input id="productCategory" class="admin-input" type="text" placeholder="shoes" />
+                </div>
+
+                <div class="admin-form-col">
+                  <label class="admin-label" for="productDisplayCategory">WyswietlanaKategoria</label>
+                  <input id="productDisplayCategory" class="admin-input" type="text" placeholder="SHOES" />
+                </div>
+
+                <div class="admin-form-col">
+                  <label class="admin-label" for="productTag">Tag</label>
+                  <select id="productTag" class="admin-select">
+                    <option value="">Brak</option>
+                    <option value="best">best</option>
+                    <option value="budget">budget</option>
+                    <option value="random">random</option>
+                  </select>
+                </div>
+
+                <div class="admin-form-col admin-form-col-full">
+                  <label class="admin-label" for="productImage">Link_Zdjecie</label>
+                  <input id="productImage" class="admin-input" type="text" placeholder="https://..." />
+                </div>
+
+                <div class="admin-form-col admin-form-col-full">
+                  <label class="admin-label" for="productKakoBuy">Link_Kakobuy</label>
+                  <input id="productKakoBuy" class="admin-input" type="text" placeholder="https://..." />
+                </div>
+
+                <div class="admin-form-col admin-form-col-full">
+                  <label class="admin-label" for="productLitbuy">Link_Litbuy</label>
+                  <input id="productLitbuy" class="admin-input" type="text" placeholder="https://..." />
+                </div>
+              </div>
+
+              <div class="admin-form-actions">
+                <button id="clearFormBtn" class="admin-secondary-btn" type="button">Clear form</button>
+                <button id="duplicateProductBtn" class="admin-secondary-btn" type="button">Duplicate current</button>
+                <button id="deleteProductBtn" class="admin-danger-btn hidden" type="button">Delete</button>
+                <button id="saveProductBtn" class="admin-primary-btn" type="submit">Save product</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-panel">
+            <div class="admin-panel-head">
+              <h2>Live preview</h2>
+              <p>Quick preview of how the card looks.</p>
+            </div>
+
+            <div id="adminPreview" class="admin-preview-wrap"></div>
+          </div>
+
+          <div class="admin-panel">
+            <div class="admin-panel-head">
+              <h2>Raw database</h2>
+              <p>JSON preview for export / debugging.</p>
+            </div>
+
+            <textarea id="adminRawOutput" class="admin-raw-output" readonly></textarea>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
