@@ -238,42 +238,75 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      
+      // OBSŁUGA DROPDOWNU "TOOLS" (Naprawione dla mobile)
+      const toolsToggle = document.getElementById('toolsToggle');
+      const toolsMenu = document.getElementById('toolsMenu');
+      
+      if (toolsToggle && toolsMenu) {
+        toolsToggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toolsMenu.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', (e) => {
+          if (!toolsMenu.contains(e.target) && e.target !== toolsToggle) {
+            toolsMenu.classList.remove('show');
+          }
+        });
+
+        // Zamykanie menu po kliknięciu w link wewnątrz
+        toolsMenu.querySelectorAll('.dropdown-item').forEach(item => {
+          item.addEventListener('click', () => {
+            toolsMenu.classList.remove('show');
+          });
+        });
+      }
+
+      // OBSŁUGA MODALU FILTRÓW
       const btn = document.getElementById('filtersBtn');
       const modal = document.getElementById('filterModal');
       const closeBtn = document.getElementById('closeModal');
 
-      btn.addEventListener('click', () => modal.classList.add('show'));
+      if (btn && modal) {
+        btn.addEventListener('click', () => modal.classList.add('show'));
+        
+        modal.addEventListener('click', (e) => {
+          if (e.target === closeBtn || e.target === modal) modal.classList.remove('show');
+        });
+      }
 
-      modal.addEventListener('click', (e) => {
-        if (e.target === closeBtn || e.target === modal) modal.classList.remove('show');
-      });
-
+      // RENDEROWANIE PIGUŁEK
       const categories = ["All", "Shoes", "Shorts", "Pants", "T-shirts", "Hoodies", "Jackets", "Longsleeve", "Electronics", "Headwear", "Bags & Backpacks", "Belts", "Accessories"];
       const tags = ["All Tags", "Best Batch", "Budget Batch", "Random Batch"];
 
       const catDiv = document.getElementById('categoryOptions');
-      categories.forEach(c => {
-        const b = document.createElement('button');
-        b.textContent = c;
-        b.className = c === 'All' ? 'filter-pill active' : 'filter-pill';
-        b.addEventListener('click', function() {
-          catDiv.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
-          this.classList.add('active');
+      if (catDiv) {
+        categories.forEach(c => {
+          const b = document.createElement('button');
+          b.textContent = c;
+          b.className = c === 'All' ? 'filter-pill active' : 'filter-pill';
+          b.addEventListener('click', function() {
+            catDiv.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+          });
+          catDiv.appendChild(b);
         });
-        catDiv.appendChild(b);
-      });
+      }
 
       const tagDiv = document.getElementById('tagOptions');
-      tags.forEach(t => {
-        const b = document.createElement('button');
-        b.textContent = t;
-        b.className = t === 'All Tags' ? 'filter-pill active' : 'filter-pill';
-        b.addEventListener('click', function() {
-          tagDiv.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
-          this.classList.add('active');
+      if (tagDiv) {
+        tags.forEach(t => {
+          const b = document.createElement('button');
+          b.textContent = t;
+          b.className = t === 'All Tags' ? 'filter-pill active' : 'filter-pill';
+          b.addEventListener('click', function() {
+            tagDiv.querySelectorAll('.filter-pill').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+          });
+          tagDiv.appendChild(b);
         });
-        tagDiv.appendChild(b);
-      });
+      }
     });
   </script>
 </body>
