@@ -3,128 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard | repfinder</title>
-  <link rel="stylesheet" href="Styles/index.css" />
+  <title>repfinder | Admin Cloud</title>
   <style>
-    :root {
-      --slate-950: #0f1115;
-      --slate-900: #16191e;
-      --slate-800: #1e2329;
-      --slate-700: #2a3139;
-      --border: rgba(255, 255, 255, 0.05);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --primary: #ffffff;
-      --danger: #ff4d4d;
-    }
-
-    body { background: var(--slate-950); color: var(--text); font-family: 'Inter', system-ui, sans-serif; margin: 0; padding: 0; }
-    
-    .dash-wrapper { max-width: 1300px; margin: 0 auto; padding: 40px 20px; }
-
-    /* HEADER */
-    .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-    .dash-header h1 { font-size: 24px; font-weight: 800; letter-spacing: -1px; margin: 0; }
-    .btn-top { background: var(--slate-800); border: 1px solid var(--border); color: var(--text); padding: 10px 18px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; }
-    .btn-top:hover { background: var(--slate-700); }
-
-    /* STATS */
-    .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
-    .stat-box { background: var(--slate-900); border: 1px solid var(--border); padding: 20px; border-radius: 20px; }
-    .stat-label { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-    .stat-num { font-size: 28px; font-weight: 900; margin-top: 5px; }
-
-    /* MAIN */
-    .dash-grid { display: grid; grid-template-columns: 380px 1fr; gap: 30px; align-items: start; }
-
-    .panel { background: var(--slate-900); border: 1px solid var(--border); border-radius: 24px; padding: 25px; }
-    .panel h2 { font-size: 18px; font-weight: 800; margin: 0 0 20px; }
-
-    /* LISTA PRODUKTÓW */
-    .search-box { width: 100%; height: 46px; background: var(--slate-800); border: 1px solid var(--border); border-radius: 14px; padding: 0 15px; color: #fff; margin-bottom: 20px; outline: none; box-sizing: border-box; }
-    .prod-list { max-height: 550px; overflow-y: auto; padding-right: 5px; }
-    .prod-list::-webkit-scrollbar { width: 4px; }
-    .prod-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-
-    .item { display: flex; align-items: center; gap: 15px; padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 10px; background: rgba(255,255,255,0.01); }
-    .item img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; }
-    .item-info { flex: 1; min-width: 0; }
-    .item-name { font-size: 13px; font-weight: 700; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .item-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
-    .btn-del { color: var(--danger); background: transparent; border: none; font-size: 11px; font-weight: 800; cursor: pointer; padding: 5px; }
-
-    /* FORMULARZ */
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .full { grid-column: span 2; }
-    .f-group { display: flex; flex-direction: column; gap: 8px; }
-    .f-group label { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; }
-    
-    .inp { height: 50px; background: var(--slate-800); border: 1px solid var(--border); border-radius: 14px; padding: 0 16px; color: #fff; font-size: 14px; outline: none; transition: 0.2s; }
-    .inp:focus { border-color: var(--muted); }
-    select.inp { appearance: none; cursor: pointer; }
-
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); }
-    .btn-main { background: var(--primary); color: #000; border: none; padding: 12px 28px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; }
-    .btn-main:hover { opacity: 0.9; }
-
-    /* NOTYFIKACJA */
-    #toast { position: fixed; bottom: 30px; right: 30px; padding: 16px 24px; border-radius: 16px; font-weight: 700; font-size: 14px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; }
-
-    @media (max-width: 1000px) { .dash-grid { grid-template-columns: 1fr; } }
+    :root { --bg: #0b0d0f; --card: #14171a; --input: #1c2024; --border: rgba(255,255,255,0.05); --text: #f8fafc; --muted: #94a3b8; --accent: #ffffff; --danger: #ff4d4d; --success: #22c55e; }
+    body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 30px; }
+    .container { max-width: 1300px; margin: 0 auto; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 24px; }
+    .grid { display: grid; grid-template-columns: 400px 1fr; gap: 30px; }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 28px; padding: 30px; }
+    .item { display: flex; align-items: center; gap: 15px; padding: 12px; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 10px; background: rgba(255,255,255,0.01); }
+    .item img { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
+    .inp { width: 100%; height: 50px; background: var(--input); border: 1px solid var(--border); border-radius: 14px; padding: 0 16px; color: #fff; margin-bottom: 20px; box-sizing: border-box; outline: none; }
+    .btn-save { background: var(--accent); color: #000; border: none; padding: 15px 30px; border-radius: 16px; font-weight: 800; cursor: pointer; width: 100%; transition: 0.2s; }
+    #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); padding: 15px 30px; border-radius: 15px; font-weight: 800; display: none; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
   </style>
 </head>
 <body>
 
 <div id="toast"></div>
 
-<div class="dash-wrapper">
-    <header class="dash-header">
-        <h1>repfinder <span style="color: var(--muted)">Admin</span></h1>
-        <div class="header-actions">
-            <button class="btn-top" onclick="exportData()">Export JSON</button>
-            <a href="index.html" class="btn-top">Back to site</a>
-        </div>
+<div class="container">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+        <h1 style="font-weight: 900; letter-spacing: -1px;">repfinder <span style="color:var(--muted); font-weight:400">/ Cloud Admin</span></h1>
+        <a href="index.html" style="color:#fff; text-decoration:none; font-size:13px; font-weight:700; background:var(--card); padding:10px 20px; border-radius:12px; border:1px solid var(--border)">← Back to site</a>
     </header>
 
-    <div class="stats-bar">
-        <div class="stat-box"><div class="stat-label">Total items</div><div class="stat-num" id="statTotal">0</div></div>
-        <div class="stat-box"><div class="stat-label">Unique Categories</div><div class="stat-num" id="statCats">0</div></div>
-        <div class="stat-box"><div class="stat-label">System Status</div><div class="stat-num" style="color: #22c55e; font-size: 16px; margin-top: 15px;">ONLINE</div></div>
+    <div class="stats">
+        <div class="stat-card">Products: <b id="statTotal" style="font-size: 24px;">0</b></div>
+        <div class="stat-card">Platform: <b style="color:var(--success)">VERCEL CLOUD</b></div>
+        <div class="stat-card">Cloud Base: <b style="color:var(--success)">CONNECTED</b></div>
     </div>
 
-    <div class="dash-grid">
+    <div class="grid">
         <div class="panel">
-            <h2>Inventory</h2>
-            <input type="text" class="search-box" id="search" placeholder="Filter items...">
-            <div class="prod-list" id="list">
-                </div>
+            <h2 style="font-size:18px; margin-bottom:20px;">Inventory</h2>
+            <div id="list" style="max-height: 600px; overflow-y: auto;"></div>
         </div>
 
         <div class="panel">
-            <h2 id="formTitle">Add Product</h2>
+            <h2 id="formTitle">Add / Edit Product</h2>
             <form id="prodForm">
                 <input type="hidden" id="eId">
-                <div class="form-grid">
-                    <div class="full f-group">
-                        <label>Product Name</label>
-                        <input type="text" id="fName" class="inp" placeholder="e.g. Jordan 4 Military Black" required>
-                    </div>
-                    <div class="f-group">
-                        <label>Price (USD)</label>
-                        <input type="text" id="fPrice" class="inp" placeholder="25.50" required>
-                    </div>
-                    <div class="f-group">
-                        <label>Tag / Quality</label>
-                        <select id="fTag" class="inp">
-                            <option value="">None</option>
-                            <option value="Best Batch">Best Batch</option>
-                            <option value="Budget Batch">Budget Batch</option>
-                            <option value="Random Batch">Random Batch</option>
-                        </select>
-                    </div>
-                    <div class="f-group">
-                        <label>Category</label>
-                        <select id="fCat" class="inp" required>
+                <label style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Product Name</label>
+                <input type="text" id="fName" class="inp" required placeholder="e.g. Jordan 4 Retro">
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px">
+                    <div><label style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Price (USD)</label><input type="text" id="fPrice" class="inp" required placeholder="20.00"></div>
+                    <div><label style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Category</label>
+                        <select id="fCat" class="inp">
                             <option value="Shoes">Shoes</option>
                             <option value="Shorts">Shorts</option>
                             <option value="Pants">Pants</option>
@@ -134,56 +61,47 @@
                             <option value="Accessories">Accessories</option>
                         </select>
                     </div>
-                    <div class="f-group">
-                        <label>Display Category (uppercase)</label>
-                        <input type="text" id="fDisp" class="inp" placeholder="SHOES">
-                    </div>
-                    <div class="full f-group">
-                        <label>Image URL</label>
-                        <input type="url" id="fImg" class="inp" placeholder="https://i.imgur.com/..." required>
-                    </div>
-                    <div class="full f-group">
-                        <label>KakoBuy Link</label>
-                        <input type="url" id="fLinkK" class="inp" placeholder="https://kakobuy.com/...">
-                    </div>
                 </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-top" onclick="resetForm()">Clear</button>
-                    <button type="submit" class="btn-main">Save Product</button>
-                </div>
+
+                <label style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Image URL</label>
+                <input type="url" id="fImg" class="inp" required placeholder="https://...">
+                
+                <label style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">KakoBuy Link</label>
+                <input type="url" id="fLink" class="inp" placeholder="https://...">
+
+                <button type="submit" class="btn-save">Update Cloud Database</button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
+    const BIN_ID = '69c32a96aa77b81da91778f6';
+    const API_KEY = '$2a$10$D/K16JUBGQOBjODs5N4xg.YKaDxJSCrHReksEeS32GBaHWglrtc9u'; 
+    const URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
     let db = [];
-    const API = 'api/products.php';
 
     async function load() {
         try {
-            const r = await fetch(API);
-            db = await r.json();
+            const r = await fetch(URL + '/latest', { headers: { 'X-Master-Key': API_KEY } });
+            const data = await r.json();
+            db = Array.isArray(data.record) ? data.record : [];
             render();
-        } catch(e) { notify('Błąd ładowania danych!', '#ff4d4d'); }
+        } catch(e) { notify('Błąd połączenia z chmurą!', '#ff4d4d'); }
     }
 
     function render() {
-        const search = document.getElementById('search').value.toLowerCase();
-        const filtered = db.filter(p => p.Nazwa.toLowerCase().includes(search));
-        
         document.getElementById('statTotal').innerText = db.length;
-        document.getElementById('statCats').innerText = [...new Set(db.map(p => p.Kategoria))].length;
-
-        document.getElementById('list').innerHTML = filtered.map((p, i) => `
+        document.getElementById('list').innerHTML = db.map(p => `
             <div class="item">
-                <img src="${p.Link_Zdjecie}" onerror="this.src='https://placehold.co/100'">
-                <div class="item-info">
-                    <span class="item-name">${p.Nazwa}</span>
-                    <span class="item-meta">${p.Kategoria} • $${p.Cena_USD}</span>
+                <img src="${p.Link_Zdjecie}" onerror="this.src='https://placehold.co/50'">
+                <div style="flex:1; min-width:0">
+                    <div style="font-size:13px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.Nazwa}</div>
+                    <div style="font-size:10px; color:var(--muted)">$${p.Cena_USD}</div>
                 </div>
-                <button class="btn-del" onclick="edit('${p.id}')" style="color: #fff; margin-right: 5px;">Edit</button>
-                <button class="btn-del" onclick="del('${p.id}')">Del</button>
+                <button onclick="edit('${p.id}')" style="background:none; border:1px solid var(--border); color:#fff; padding:5px 10px; border-radius:8px; cursor:pointer; font-size:11px; font-weight:700">Edit</button>
+                <button onclick="del('${p.id}')" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:11px; font-weight:700">Del</button>
             </div>
         `).join('');
     }
@@ -192,56 +110,53 @@
         e.preventDefault();
         const id = document.getElementById('eId').value || Date.now().toString();
         const product = {
-            id: id,
+            id,
             Nazwa: document.getElementById('fName').value,
             Cena_USD: document.getElementById('fPrice').value,
-            Tag: document.getElementById('fTag').value,
             Kategoria: document.getElementById('fCat').value,
-            WyswietlanaKategoria: document.getElementById('fDisp').value || document.getElementById('fCat').value.toUpperCase(),
+            WyswietlanaKategoria: document.getElementById('fCat').value.toUpperCase(),
             Link_Zdjecie: document.getElementById('fImg').value,
-            Link_Kakobuy: document.getElementById('fLinkK').value
+            Link_Kakobuy: document.getElementById('fLink').value
         };
 
         const idx = db.findIndex(x => x.id === id);
         if(idx > -1) db[idx] = product; else db.unshift(product);
 
-        save();
-    };
+        notify('Wysyłanie do chmury...', '#444');
+        const r = await fetch(URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+            body: JSON.stringify(db)
+        });
 
-    async function save() {
-        notify('Saving changes...', '#444');
-        try {
-            const r = await fetch(API, {
-                method: 'POST',
-                body: JSON.stringify(db)
-            });
-            const res = await r.json();
-            if(res.status === 'success') {
-                notify('Successfully saved!', '#22c55e');
-                resetForm();
-                render();
-            } else throw new Error();
-        } catch(e) { notify('Błąd zapisu! CHMOD 777?', '#ff4d4d'); }
-    }
+        if(r.ok) {
+            notify('Zapisano pomyślnie!', '#22c55e');
+            resetForm();
+            render();
+        } else { notify('Błąd zapisu!', '#ff4d4d'); }
+    };
 
     function edit(id) {
         const p = db.find(x => x.id === id);
-        if(!p) return;
         document.getElementById('eId').value = p.id;
         document.getElementById('fName').value = p.Nazwa;
         document.getElementById('fPrice').value = p.Cena_USD;
-        document.getElementById('fTag').value = p.Tag;
         document.getElementById('fCat').value = p.Kategoria;
-        document.getElementById('fDisp').value = p.WyswietlanaKategoria;
         document.getElementById('fImg').value = p.Link_Zdjecie;
-        document.getElementById('fLinkK').value = p.Link_Kakobuy;
+        document.getElementById('fLink').value = p.Link_Kakobuy;
         document.getElementById('formTitle').innerText = "Edit Product";
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function del(id) {
-        if(!confirm('Delete item?')) return;
+    async function del(id) {
+        if(!confirm('Usunąć produkt?')) return;
         db = db.filter(x => x.id !== id);
-        save();
+        const r = await fetch(URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+            body: JSON.stringify(db)
+        });
+        if(r.ok) { notify('Usunięto!', '#22c55e'); render(); }
     }
 
     function resetForm() {
@@ -256,14 +171,7 @@
         setTimeout(() => t.style.display = 'none', 3000);
     }
 
-    function exportData() {
-        const blob = new Blob([JSON.stringify(db, null, 2)], {type: 'application/json'});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'products.json'; a.click();
-    }
-
-    document.getElementById('search').oninput = render;
     load();
 </script>
-
 </body>
 </html>
