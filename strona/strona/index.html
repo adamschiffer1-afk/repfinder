@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>repfinder | Premium</title>
+    
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+        /* TRACKER - SZARY */
+        .tracker-wrapper-white { background: #161616; border: 1px solid rgba(255,255,255,0.05); border-radius: 40px; padding: 60px 40px; max-width: 1000px; margin: 40px auto; color: var(--text-strong); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4); }
+        .tracker-header-clean { text-align: center; margin-bottom: 40px; }
+        .tracker-header-clean h2 { font-size: clamp(36px, 6vw, 54px); font-weight: 900; margin: 0; color: #fff; letter-spacing: -0.06em; line-height: 1; }
+        .tracker-header-clean p { font-size: 18px; color: var(--text); opacity: 0.7; margin-top: 10px; }
+        .tracker-field-clean { width: 100%; max-width: 600px; height: 64px; background: #1e1e1e; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 0 25px; font-size: 16px; display: block; margin: 0 auto 50px; text-align: center; color: #fff; outline: none; }
+        .tracker-field-clean:focus { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); }
+        .tracker-grid-clean { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .tracker-card-clean { background: #1e1e1e; border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 35px 20px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .tracker-card-clean:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.15); }
+        .tracker-icon { width: 70px; height: 70px; margin: 0 auto 20px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 24px; }
+        .bg-17 { background: #003399; font-style: italic; padding-right: 5px; } .bg-dhl { background: #ffcc00; color: #d40511; font-style: italic; letter-spacing: -1px; } .bg-after { background: #ff9800; }
+        .tracker-card-clean h3 { margin: 0 0 10px; font-size: 22px; font-weight: 800; color: #fff; }
+        .tracker-card-clean p { font-size: 14px; color: var(--text); opacity: 0.6; margin-bottom: 25px; line-height: 1.4; }
+        .tracker-btn-clean { width: 100%; height: 46px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; font-weight: 700; transition: 0.2s; color: #fff; cursor: pointer; }
+        .tracker-card-clean:hover .tracker-btn-clean { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+
+        /* DESIGN 1:1 PRODUKTY I MODAL */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .product-card-new { background-color: #141414 !important; border-radius: 20px !important; padding: 12px !important; display: flex; flex-direction: column; border: 1px solid #222 !important; transition: 0.3s; }
+        .product-card-new:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15) !important; box-shadow: 0 15px 35px rgba(0,0,0,0.5) !important; }
+        .product-card-new img { width: 100%; aspect-ratio: 4/4.5; object-fit: cover; border-radius: 14px !important; margin-bottom: 16px; background-color: #1a1a1a; }
+        
+        .card-tags { display: flex; gap: 8px; margin-bottom: 12px; padding: 0 4px; }
+        .tag-blue { background: #172554; color: #60a5fa; font-size: 11px; font-weight: 900; padding: 6px 12px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tag-red { background: #450a0a; color: #f87171; font-size: 11px; font-weight: 900; padding: 6px 12px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .card-name { font-size: 20px; font-weight: 900; color: #fff; margin: 0 0 6px 0; padding: 0 4px; letter-spacing: -0.5px;}
+        .card-price { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 20px; padding: 0 4px;}
+        
+        .card-actions { display: flex; gap: 10px; margin-top: auto; padding: 0 4px;}
+        .btn-view-agents { flex: 1; background-color: #222; color: #fff; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 14px; border: 1px solid #333; transition: 0.2s; display: flex; justify-content: center; align-items: center;}
+        .btn-view-agents:hover { background-color: #2e2e2e; border-color: #444; }
+        
+        .btn-icon-square { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: #222; border: 1px solid #333; border-radius: 12px; cursor: pointer; transition: 0.2s; color: #aaa; font-size: 18px;}
+        .btn-icon-square:hover { background-color: #2e2e2e; color: #fff; }
+
+        /* Modal Agentów */
+        .agents-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .agents-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
+        .agents-modal-content { background: #161616; border: 1px solid #2a2a2a; border-radius: 28px; width: 90%; max-width: 440px; padding: 24px; color: #fff; box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
+        
+        .modal-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-header-top h3 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+        .agents-modal-close { background: #222; border: 1px solid #333; color: #888; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.2s; }
+        .agents-modal-close:hover { background: #333; color: #fff; }
+
+        .modal-product-box { background: #1a1a1a; border: 1px solid #222; border-radius: 20px; padding: 16px; display: flex; gap: 16px; align-items: center; margin-bottom: 24px; }
+        .modal-product-box img { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; background: #222; }
+        .am-name { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        .am-price { font-size: 18px; font-weight: 900; color: #60a5fa; } 
+
+        .agent-row { display: flex; gap: 10px; margin-bottom: 12px; }
+        .agent-direct-btn { flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border: 1px solid #222; border-radius: 16px; background: #1a1a1a; text-decoration: none; color: #fff; transition: 0.2s; }
+        .agent-direct-btn:hover { background: #222; border-color: #333; }
+        .agent-info-left { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 16px; }
+        .agent-info-left img { width: 24px; height: 24px; border-radius: 6px; object-fit: contain; background: transparent;}
+        .agent-arrow { color: #666; transition: 0.2s; }
+        .agent-direct-btn:hover .agent-arrow { color: #fff; transform: translateX(2px); }
+
+        .agent-copy-btn { width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; background: #1a1a1a; border: 1px solid #222; border-radius: 16px; cursor: pointer; transition: 0.2s; color: #aaa; font-size: 18px;}
+        .agent-copy-btn:hover { background: #222; color: #fff; border-color: #333; }
+
+        /* Zielony ptaszek */
+        .copied { background-color: #15803d !important; border-color: #22c55e !important; color: #fff !important; }
+        .copied .copy-icon { display: none; }
+        .copied .success-icon { display: block; font-weight: bold; }
+        .copy-icon { display: block; }
+        .success-icon { display: none; }
+
+        .converter-input-row { display: flex !important; gap: 14px; align-items: center; width: 100%; }
+        #converterInput { flex: 1; margin: 0; }
+        #convertBtn { width: 220px; margin: 0; }
+
+        @media (max-width: 768px) {
+            .tracker-wrapper-white { padding: 40px 20px; border-radius: 24px; }
+            .tracker-grid-clean { grid-template-columns: 1fr; } 
+            .products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+            .product-card-new { padding: 10px !important; border-radius: 16px !important; }
+            .product-card-new img { border-radius: 12px !important; margin-bottom: 12px !important; }
+            .card-name { font-size: 15px !important; min-height: 38px; } 
+            .card-price { font-size: 18px !important; margin-bottom: 12px !important; }
+            .card-tags span { font-size: 9px !important; padding: 4px 8px !important; }
+            .btn-view-agents { padding: 10px 0 !important; font-size: 12px !important; }
+            .btn-icon-square { width: 42px !important; height: 42px !important; }
+            .converter-input-row { flex-direction: column; }
+            #convertBtn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="site-shell">
+        <header class="site-header">
+            <div class="nav-wrap">
+                <button class="brand" data-section-link="home">repfinder</button>
+                <nav class="desktop-nav">
+                    <button class="nav-link active" data-section-link="home">Home</button>
+                    <button class="nav-link" data-section-link="products">Products</button>
+                    <button class="nav-link" data-section-link="tutorials">Tutorials</button>
+                    <div class="dropdown">
+                        <button class="nav-link dropdown-toggle" id="toolsToggle">Tools ▾</button>
+                        <div class="dropdown-menu" id="toolsMenu">
+                            <button class="dropdown-item" data-section-link="tracking">Tracking</button>
+                            <button class="dropdown-item" data-section-link="converter">Converter</button>
+                        </div>
+                    </div>
+                    <a href="admin.html" class="nav-link nav-anchor admin-link">Admin</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section id="home" class="page-section active">
+                <div class="hero-block">
+                    <div class="hero-inner">
+                        <h1 class="hero-title">repfinder</h1>
+                        <p class="hero-subtitle">The best items finder site. Find top tier items and order with confidence.</p>
+                        <button class="hero-cta-btn" onclick="window.switchSection('products')">Explore Products</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="products" class="page-section">
+                <div class="section-container">
+                    <div class="section-head">
+                        <h2>Products</h2>
+                        <p>Best items picked for clean browsing</p>
+                    </div>
+                    <div id="productsGrid" class="products-grid">
+                        <p style="color:#888; text-align:center; width:100%;">Ładowanie z bazy...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tracking" class="page-section">
+                <div class="section-container">
+                    <div class="tracker-wrapper-white">
+                        <div class="tracker-header-clean">
+                            <h2>Package Tracking</h2>
+                            <p>Check the status of your packages</p>
+                        </div>
+                        <input type="text" id="trackingInputVal" class="tracker-field-clean" placeholder="Enter tracking number here..." />
+                        <div class="tracker-grid-clean">
+                            <div class="tracker-card-clean" onclick="window.openTracking('17track')">
+                                <div class="tracker-icon bg-17">17</div>
+                                <h3>17TRACK</h3>
+                                <p>Global package tracking platform.</p>
+                                <button class="tracker-btn-clean">Open</button>
+                            </div>
+                            <div class="tracker-card-clean" onclick="window.openTracking('dhl')">
+                                <div class="tracker-icon bg-dhl">DHL</div>
+                                <h3>DHL Express</h3>
+                                <p>Track your DHL Express shipments.</p>
+                                <button class="tracker-btn-clean">Open</button>
+                            </div>
+                            <div class="tracker-card-clean" onclick="window.openTracking('aftership')">
+                                <div class="tracker-icon bg-after">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                </div>
+                                <h3>AfterShip</h3>
+                                <p>All-in-one shipment tracking.</p>
+                                <button class="tracker-btn-clean">Open</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tutorials" class="page-section">
+                <div class="section-container tutorial-section-shell">
+                    <div id="tutorialsOverview" class="tutorials-overview"></div>
+                    <div id="tutorialPlayer" class="tutorial-player hidden">
+                        <button id="tutorialBackToList" class="tutorial-back-link">← Wróć do listy</button>
+                        <div class="tutorial-player-head">
+                            <h2 id="tutorialMainTitle"></h2>
+                            <p id="tutorialMainSubtitle"></p>
+                            <div class="tutorial-progress-track"><div id="tutorialProgressBar" class="tutorial-progress-fill"></div></div>
+                            <div id="tutorialTopSteps" class="tutorial-top-steps"></div>
+                        </div>
+                        <div class="tutorial-layout">
+                            <div class="tutorial-main-panel">
+                                <div class="tutorial-step-header">
+                                    <div id="tutorialStepBadge" class="tutorial-step-badge"></div>
+                                    <div>
+                                        <h3 id="tutorialStepTitle"></h3>
+                                        <p id="tutorialStepMeta" class="tutorial-step-meta"></p>
+                                    </div>
+                                </div>
+                                <p id="tutorialStepDescription" class="tutorial-step-description"></p>
+                                <div id="tutorialStepMedia" class="tutorial-step-media"></div>
+                                <div id="tutorialStepActions" class="tutorial-step-inline-actions"></div>
+                                <div class="tutorial-bottom-nav">
+                                    <button id="tutorialPrevBtn" class="tutorial-ghost-btn">‹ Wstecz</button>
+                                    <div class="tutorial-nav-group">
+                                        <button id="tutorialRestartBtn" class="tutorial-ghost-btn">Od nowa</button>
+                                        <button id="tutorialNextBtn" class="tutorial-primary-btn">Dalej ›</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <aside class="tutorial-sidebar">
+                                <h4>Kroki</h4>
+                                <div id="tutorialSideSteps" class="tutorial-side-steps"></div>
+                            </aside>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="converter" class="page-section">
+                <div class="section-container converter-shell">
+                    <div class="converter-board">
+                        <div class="converter-hero" style="text-align: center;">
+                            <span class="converter-kicker">Narzędzie</span>
+                            <h2>Link Converter</h2>
+                            <p>Wklej link, żeby zmienić go na wersję Twojego agenta.</p>
+                        </div>
+                        <div class="converter-input-row" style="margin-top: 30px;">
+                            <input type="text" id="converterInput" class="converter-input-dark" placeholder="Wklej link z Weidian / Taobao..." />
+                            <button id="convertBtn" class="converter-primary-btn">Convert Link</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-line"></div>
+            <p>repfinder © 2026 | Built for confidence</p>
+        </footer>
+    </div>
+
+    <div id="agentsModal" class="agents-modal">
+        <div class="agents-modal-content">
+            <div class="modal-header-top">
+                <h3>Choose Agent</h3>
+                <button class="agents-modal-close" onclick="window.closeAgentsModal()">✕</button>
+            </div>
+            <div class="modal-product-box">
+                <img id="am-img" src="" alt="Product" onerror="this.src='https://placehold.co/400x400/1a1a1a/444444?text=Brak'">
+                <div>
+                    <div id="am-name" class="am-name"></div>
+                    <div id="am-price" class="am-price"></div>
+                </div>
+            </div>
+            <div id="am-list"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsB1L1BZTmQheWIyt87FUwZP5EB5E9L18",
+            authDomain: "repfinder-f0510.firebaseapp.com",
+            projectId: "repfinder-f0510",
+            storageBucket: "repfinder-f0510.firebasestorage.app",
+            messagingSenderId: "994027023312",
+            appId: "1:994027023312:web:77220fee0211a2b7ea27d5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Agenci i Ikony
+        const AGENTS = [
+          { id: 'kakobuy', name: 'KakoBuy', icon: 'https://www.kakobuy.com/favicon.ico' },
+          { id: 'usfans', name: 'USFans', icon: 'https://usfans.com/favicon.ico' },
+          { id: 'acbuy', name: 'AllChinaBuy', icon: 'https://allchinabuy.com/favicon.ico' },
+          { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' }
+        ];
+
+        // Taki symbol jak na Twoich screenach
+        const iconCopy = `<span class="copy-icon">📋</span>`; 
+        const iconCheck = `<span class="success-icon">✓</span>`;
+        const iconArrow = `<svg class="agent-arrow" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+
+        window.copyText = function(text, btn) {
+            navigator.clipboard.writeText(text);
+            const origHTML = btn.innerHTML;
+            btn.innerHTML = iconCheck; 
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.innerHTML = origHTML;
+                btn.classList.remove('copied');
+            }, 1500);
+        };
+
+        window.switchSection = function(id) {
+            const target = document.getElementById(id);
+            if(!target) return;
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            target.classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const activeNav = document.querySelector(`[data-section-link="${id}"]`);
+            if(activeNav) activeNav.classList.add('active');
+            const toolsMenu = document.getElementById('toolsMenu');
+            if(toolsMenu) toolsMenu.classList.remove('show');
+            window.scrollTo(0,0);
+            
+            if(id === 'tutorials' && !window.tutorialsInited && typeof window.initTutorials === 'function') {
+                window.initTutorials();
+                window.tutorialsInited = true;
+            }
+        };
+
+        window.openTracking = function(provider) {
+            const n = document.getElementById('trackingInputVal').value.trim();
+            let u = "";
+            if(provider === '17track') u = n ? `https://t.17track.net/en#nums=${n}` : "https://www.17track.net/en";
+            if(provider === 'dhl') u = n ? `https://www.dhl.com/en/home/tracking-express.html?submit=1&tracking-id=${n}` : "https://www.dhl.com/en/home/tracking.html";
+            if(provider === 'aftership') u = n ? `https://www.aftership.com/track/${n}` : "https://www.aftership.com/track";
+            window.open(u, '_blank');
+        };
+
+        // POBIERANIE Z FIREBASE
+        async function loadProducts() {
+            const grid = document.getElementById("productsGrid");
+            if (!grid) return;
+            
+            try {
+                const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    grid.innerHTML = "<p style='color:#888; text-align:center; width:100%; grid-column:1/-1;'>Brak produktów. Dodaj je w Panelu Admina.</p>";
+                    return;
+                }
+
+                let html = "";
+                snapshot.forEach(doc => {
+                    const p = doc.data();
+                    const safeName = (p.Nazwa || 'Item').replace(/'/g, "\\'");
+                    html += `
+                    <article class="product-card-new">
+                        <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x500/1a1a1a/444444?text=Brak+Zdjecia'">
+                        <div class="card-tags">
+                            <span class="tag-blue">${p.Kategoria || 'ITEM'}</span>
+                            <span class="tag-red">${p.Tag || 'BEST BATCH'}</span>
+                        </div>
+                        <h3 class="card-name">${p.Nazwa}</h3>
+                        <div class="card-price">${p.Cena_USD}$</div>
+                        <div class="card-actions">
+                            <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')">View agents</button>
+                            <button class="btn-icon-square" onclick="window.copyText('${p.Link_Kakobuy}', this)">${iconCopy}</button>
+                        </div>
+                    </article>`;
+                });
+                grid.innerHTML = html;
+            } catch (error) { 
+                console.error(error);
+                grid.innerHTML = "<p style='color:#ef4444; text-align:center; width:100%; grid-column:1/-1;'>Błąd połączenia z bazą.</p>";
+            }
+        }
+
+        window.openAgentsModal = (name, price, img, link) => {
+            document.getElementById('am-name').innerText = name;
+            document.getElementById('am-price').innerText = price + '$';
+            document.getElementById('am-img').src = img && img !== 'undefined' && img !== '' ? img : 'https://placehold.co/400x400/1a1a1a/444444?text=No+Img';
+            
+            document.getElementById('am-list').innerHTML = AGENTS.map(agent => {
+                let finalLink = link;
+                if(agent.id === 'kakobuy' && finalLink) finalLink += (finalLink.includes('?') ? '&' : '?') + 'ref_id=Repfinder';
+                return `
+                    <div class="agent-row">
+                        <a href="${finalLink}" target="_blank" class="agent-direct-btn">
+                            <span class="agent-info-left"><img src="${agent.icon}" onerror="this.style.display='none'"> ${agent.name}</span>
+                            ${iconArrow}
+                        </a>
+                        <button class="agent-copy-btn" onclick="window.copyText('${finalLink}', this)">${iconCopy}</button>
+                    </div>`;
+            }).join("");
+            document.getElementById('agentsModal').classList.add('show');
+        };
+        window.closeAgentsModal = () => document.getElementById('agentsModal').classList.remove('show');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-section-link]').forEach(b => {
+                b.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.switchSection(b.getAttribute('data-section-link'));
+                });
+            });
+            const tBtn = document.getElementById('toolsToggle'), tMenu = document.getElementById('toolsMenu');
+            if(tBtn && tMenu) {
+                tBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); tMenu.classList.toggle('show'); });
+                document.addEventListener('click', (e) => { if (!tBtn.contains(e.target) && !tMenu.contains(e.target)) tMenu.classList.remove('show'); });
+            }
+            loadProducts();
+        });
+
+        // TUTORIALS
+        window.initTutorials = function () {
+            const overview = document.getElementById("tutorialsOverview");
+            const player = document.getElementById("tutorialPlayer");
+            const backBtn = document.getElementById("tutorialBackToList");
+            const progressBar = document.getElementById("tutorialProgressBar");
+            const topSteps = document.getElementById("tutorialTopSteps");
+            const sideSteps = document.getElementById("tutorialSideSteps");
+            const mainTitle = document.getElementById("tutorialMainTitle");
+            const mainSubtitle = document.getElementById("tutorialMainSubtitle");
+            const stepBadge = document.getElementById("tutorialStepBadge");
+            const stepTitle = document.getElementById("tutorialStepTitle");
+            const stepMeta = document.getElementById("tutorialStepMeta");
+            const stepDescription = document.getElementById("tutorialStepDescription");
+            const stepMedia = document.getElementById("tutorialStepMedia");
+            const stepActions = document.getElementById("tutorialStepActions");
+            const prevBtn = document.getElementById("tutorialPrevBtn");
+            const nextBtn = document.getElementById("tutorialNextBtn");
+            const restartBtn = document.getElementById("tutorialRestartBtn");
+
+            if (!overview || !player) return;
+
+            const tutorial = {
+                title: "Jak zamawiać na KakoBuy",
+                subtitle: "Prosty przewodnik krok po kroku, jak zrobić zamówienie przez agentów KakoBuy.",
+                steps: [
+                    { title: "Załóż konto", description: "Wejdź na stronę KakoBuy, utwórz konto podając e-mail i hasło, a następnie potwierdź rejestrację.", visual: "register", action: { label: "Załóż konto na KakoBuy", href: "https://www.kakobuy.com/" } },
+                    { title: "Znajdź produkty", description: "Szukaj interesujących Cię rzeczy w spreadsheetach albo przejdź do naszych produktów i znajdź link do itemu.", visual: "browse", action: { label: "Przejdź do produktów", type: "section", target: "products" } },
+                    { title: "Dodaj do koszyka", description: "Wybierz odpowiedni kolor, rozmiar i ilość, a następnie dodaj produkt do koszyka na KakoBuy.", visual: "cart" },
+                    { title: "Złóż zamówienie", description: "Sprawdź koszyk, wybierz produkty i opłać koszt towarów oraz krajowej wysyłki w Chinach.", visual: "checkout" },
+                    { title: "Potwierdź i zapłać", description: "Zaznacz „I have read and agree” i kliknij „Buy Now”, aby przejść do płatności.", visual: "confirm" },
+                    { title: "Wybierz płatność", description: "Wybierz preferowaną metodę płatności i kliknij „Pay for Order”, aby sfinalizować zakup.", visual: "payment" },
+                    { title: "Realizacja zamówienia", description: "Po opłaceniu KakoBuy weryfikuje produkty i zamawia je u sprzedawców. Dostawa do magazynu trwa zwykle kilka dni.", visual: "plain1" },
+                    { title: "Kontrola jakości (QC)", description: "Po dotarciu produktów KakoBuy wykonuje kontrolę jakości i przesyła Ci zdjęcia do oceny.", visual: "qc" },
+                    { title: "Zleć wstępne ważenie", description: "Kiedy wszystkie produkty są już w magazynie, zleć wstępne ważenie paczki.", visual: "weigh" },
+                    { title: "Zleć wysyłkę", description: "Po ważeniu możesz zlecić wysyłkę międzynarodową swojej paczki.", visual: "plain2" },
+                    { title: "Wybierz metodę wysyłki", description: "Wybierz sposób dostawy, sprawdź orientacyjny czas i opłać koszty transportu.", visual: "shipping" },
+                    { title: "Odbierz paczkę", description: "Po otrzymaniu przesyłki sprawdź jej zawartość i potwierdź odbiór w panelu użytkownika.", visual: "plain3" },
+                    { title: "Gotowe!", description: "Gratulacje! Udało Ci się przejść cały proces. Dołącz do naszej społeczności na Discordzie, aby być na bieżąco.", visual: "done", action: { label: "Dołącz na Discorda", href: "https://discord.com/" } }
+                ]
+            };
+
+            let currentStepIndex = 0;
+            let pageConfettiOverlay = null;
+
+            renderOverview();
+            renderStep();
+
+            backBtn.addEventListener("click", () => { player.classList.add("hidden"); overview.classList.remove("hidden"); removePageConfetti(); });
+            prevBtn.addEventListener("click", () => { if (currentStepIndex > 0) { currentStepIndex -= 1; renderStep(); } });
+            nextBtn.addEventListener("click", () => {
+                if (currentStepIndex < tutorial.steps.length - 1) { currentStepIndex += 1; renderStep(); } 
+                else { currentStepIndex = 0; renderStep(); player.classList.add("hidden"); overview.classList.remove("hidden"); removePageConfetti(); }
+            });
+            restartBtn.addEventListener("click", () => { currentStepIndex = 0; renderStep(); removePageConfetti(); });
+
+            function renderOverview() {
+                overview.innerHTML = `
+                <article class="tutorial-card-large">
+                    <span class="tutorial-card-kicker">TUTORIAL</span>
+                    <h3>${escapeHtml(tutorial.title)}</h3>
+                    <p>${escapeHtml(tutorial.subtitle)}</p>
+                    <button id="startKakoTutorial" class="tutorial-start-btn" type="button">Uruchom tutorial</button>
+                </article>
+                <article class="tutorial-small-card">
+                    <h4>Dowiesz się jak</h4>
+                    <p>Zamawiać i jak korzystać z naszych narzędzi krok po kroku.</p>
+                </article>`;
+                const startBtn = document.getElementById("startKakoTutorial");
+                if (startBtn) {
+                    startBtn.addEventListener("click", () => { overview.classList.add("hidden"); player.classList.remove("hidden"); currentStepIndex = 0; renderStep(); removePageConfetti(); });
+                }
+            }
+
+            function renderStep() {
+                const step = tutorial.steps[currentStepIndex];
+                const total = tutorial.steps.length;
+                const progress = ((currentStepIndex + 1) / total) * 100;
+
+                mainTitle.textContent = tutorial.title;
+                mainSubtitle.textContent = tutorial.subtitle;
+                stepBadge.textContent = String(currentStepIndex + 1);
+                stepTitle.textContent = step.title;
+                stepMeta.textContent = `Krok ${currentStepIndex + 1} z ${total}`;
+                stepDescription.textContent = step.description;
+                progressBar.style.width = `${progress}%`;
+
+                topSteps.innerHTML = tutorial.steps.map((_, i) => `<button class="tutorial-step-dot ${i === currentStepIndex ? "active" : ""}" type="button" data-step-index="${i}">${i + 1}</button>`).join("");
+                sideSteps.innerHTML = tutorial.steps.map((_, i) => `<button class="tutorial-side-dot ${i === currentStepIndex ? "active" : ""}" type="button" data-side-step-index="${i}">${i + 1}</button>`).join("");
+
+                stepMedia.innerHTML = renderTutorialVisual(step, currentStepIndex + 1);
+                stepActions.innerHTML = renderStepAction(step);
+
+                topSteps.querySelectorAll("[data-step-index]").forEach(b => b.addEventListener("click", () => { currentStepIndex = Number(b.getAttribute("data-step-index")); renderStep(); }));
+                sideSteps.querySelectorAll("[data-side-step-index]").forEach(b => b.addEventListener("click", () => { currentStepIndex = Number(b.getAttribute("data-side-step-index")); renderStep(); }));
+                stepActions.querySelectorAll("[data-action-section]").forEach(b => b.addEventListener("click", () => { window.switchSection(b.getAttribute("data-action-section")); }));
+
+                prevBtn.disabled = currentStepIndex === 0;
+                prevBtn.style.opacity = currentStepIndex === 0 ? "0.45" : "1";
+
+                if (currentStepIndex === total - 1) {
+                    nextBtn.textContent = "Ukończ ✓"; nextBtn.className = "tutorial-success-btn"; launchPageConfetti();
+                } else {
+                    nextBtn.textContent = "Dalej ›"; nextBtn.className = "tutorial-primary-btn"; removePageConfetti();
+                }
+            }
+
+            function launchPageConfetti() {
+                removePageConfetti();
+                pageConfettiOverlay = document.createElement("div");
+                pageConfettiOverlay.className = "page-confetti-overlay";
+                const colors = ["#ff3a2f", "#ffb800", "#22c55e", "#3b82f6", "#a855f7", "#ff6ec7", "#00d4ff"];
+                for (let i = 0; i < 120; i++) {
+                    const piece = document.createElement("span");
+                    piece.className = "confetti-piece";
+                    piece.style.left = `${Math.random() * 100}%`;
+                    piece.style.background = colors[i % colors.length];
+                    piece.style.setProperty("--drift", `${Math.random() * 280 - 140}px`);
+                    piece.style.animationDelay = `${Math.random() * 500}ms`;
+                    piece.style.transform = `translate3d(0,0,0) rotate(${Math.random() * 180}deg)`;
+                    piece.style.width = `${8 + Math.random() * 7}px`;
+                    piece.style.height = `${10 + Math.random() * 10}px`;
+                    pageConfettiOverlay.appendChild(piece);
+                }
+                document.body.appendChild(pageConfettiOverlay);
+                setTimeout(removePageConfetti, 3000);
+            }
+
+            function removePageConfetti() {
+                if (pageConfettiOverlay && pageConfettiOverlay.parentNode) pageConfettiOverlay.parentNode.removeChild(pageConfettiOverlay);
+                pageConfettiOverlay = null;
+            }
+        };
+
+        function renderStepAction(step) {
+            if (!step.action) return "";
+            if (step.action.type === "section") return `<button class="tutorial-inline-btn" type="button" data-action-section="${escapeHtml(step.action.target)}">${escapeHtml(step.action.label)}</button>`;
+            if (step.action.href) return `<a class="tutorial-inline-btn" href="${escapeHtml(step.action.href)}" target="_blank" rel="noreferrer">${escapeHtml(step.action.label)}</a>`;
+            return "";
+        }
+
+        function renderTutorialVisual(step, stepNumber) {
+            const commonHeader = `<div class="tutorial-shot-browser-top"><span></span><span></span><span></span></div>`;
+            switch (step.visual) {
+                case "register": return `<div class="tutorial-shot">${commonHeader}<div class="tutorial-mock-grid"><div class="tutorial-mock-panel"><div class="tutorial-label-chip">Konto / Rejestracja</div><div class="tutorial-mock-title"></div><div class="tutorial-mock-lines"><span style="width:88%"></span><span style="width:72%"></span><span style="width:60%"></span></div><div class="tutorial-mock-image"></div></div><div class="tutorial-mock-side"><div class="tutorial-mock-title" style="width:80%"></div><div class="tutorial-mock-lines"><span style="width:100%"></span><span style="width:100%"></span><span style="width:100%"></span><span style="width:65%"></span></div></div></div></div>`;
+                case "browse": return `<div class="tutorial-shot tutorial-shot-dark">${commonHeader}<div class="tutorial-mock-panel"><div class="tutorial-label-chip">Spreadsheet / Products</div><div class="tutorial-mock-title" style="width:48%"></div><div class="tutorial-mock-lines"><span style="width:82%"></span><span style="width:66%"></span></div><div class="tutorial-mock-image dark"></div></div></div>`;
+                case "cart": return mockArrowShot("Dodawanie do koszyka", "Dodaj wybrany rozmiar i kliknij Add to cart.");
+                case "checkout": return mockArrowShot("Podsumowanie koszyka", "Przejdź dalej z poziomu koszyka.");
+                case "confirm": return mockArrowShot("Potwierdzenie zamówienia", "Zaznacz zgodę i kliknij przycisk.");
+                case "payment": return mockArrowShot("Płatność", "Wybierz metodę płatności.");
+                case "qc": return mockArrowShot("QC / Warehouse", "Sprawdź zdjęcia i jakość produktu.");
+                case "weigh": return mockArrowShot("Ważenie", "Zleć wstępne ważenie paczki.");
+                case "shipping": return mockArrowShot("Shipping line", "Wybierz linię wysyłki.");
+                case "plain1": return `<div class="tutorial-shot-plain"><p>KakoBuy kupuje produkty u sellerów i dostarcza je do swojego magazynu.</p></div>`;
+                case "plain2": return `<div class="tutorial-shot-plain"><p>Po ważeniu przechodzisz do etapu wysyłki międzynarodowej.</p></div>`;
+                case "plain3": return `<div class="tutorial-shot-plain"><p>Gdy paczka dotrze, sprawdź zawartość i potwierdź odbiór.</p></div>`;
+                case "done": return `<div class="tutorial-shot-plain"><p>Udało Ci się przejść cały proces. Gratulacje!</p></div>`;
+                default: return `<div class="tutorial-shot-plain"><p>Krok ${stepNumber}</p></div>`;
+            }
+        }
+
+        function mockArrowShot(label, text) {
+            return `<div class="tutorial-shot"><div class="tutorial-shot-browser-top"><span></span><span></span><span></span></div><div class="tutorial-label-chip">${escapeHtml(label)}</div><div class="tutorial-mock-grid"><div class="tutorial-mock-panel"><div class="tutorial-mock-title" style="width:58%"></div><div class="tutorial-mock-lines"><span style="width:72%"></span><span style="width:64%"></span><span style="width:54%"></span></div><div class="tutorial-mock-image gray"></div></div><div class="tutorial-mock-side"><div class="tutorial-mock-title" style="width:72%"></div><div class="tutorial-mock-lines"><span style="width:100%"></span><span style="width:88%"></span><span style="width:74%"></span><span style="width:62%"></span></div></div></div><div class="tutorial-arrow" style="left: 34%; top: 62%;"></div><div style="margin-top:14px;color:#6d7785;font-weight:700;">${escapeHtml(text)}</div></div>`;
+        }
+
+        function escapeHtml(v) { return String(v ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;"); }
+    </script>
+</body>
+</html>

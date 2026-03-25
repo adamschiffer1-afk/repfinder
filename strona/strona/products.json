@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "Nazwa": "Nike Dunk Low Panda",
+    "Cena_USD": "89",
+    "Kategoria": "Shoes",
+    "WyswietlanaKategoria": "Shoes",
+    "Tag": "Best Batch",
+    "Link_Zdjecie": "https://picsum.photos/id/1015/800/800",
+    "Link_Kakobuy": "https://kakobuy.com/product/123",
+    "Link_Litbuy": ""
+  },
+  {
+    "id": 2,
+    "Nazwa": "Adidas Yeezy Boost 350 V2",
+    "Cena_USD": "220",
+    "Kategoria": "Shoes",
+    "WyswietlanaKategoria": "Shoes",
+    "Tag": "Budget Batch",
+    "Link_Zdjecie": "https://picsum.photos/id/102/800/800",
+    "Link_Kakobuy": "https://kakobuy.com/product/456",
+    "Link_Litbuy": "https://litbuy.com/product/456"
+  },
+  {
+    "id": 3,
+    "Nazwa": "Supreme Box Logo Hoodie",
+    "Cena_USD": "120",
+    "Kategoria": "Hoodies",
+    "WyswietlanaKategoria": "Hoodies",
+    "Tag": "Best Batch",
+    "Link_Zdjecie": "https://picsum.photos/id/201/800/800",
+    "Link_Kakobuy": "https://kakobuy.com/product/789",
+    "Link_Litbuy": ""
+  }
+]

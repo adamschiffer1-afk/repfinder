@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>repfinder | Admin Panel</title>
+    <style>
+        body { background: #161616; color: #fff; font-family: 'Inter', sans-serif; padding: 40px 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #1e1e1e; padding: 40px; border-radius: 24px; border: 1px solid #2a2a2a; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { text-align: center; margin-top: 0; font-weight: 900; font-size: 32px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; color: #aaa; font-size: 14px; }
+        input { width: 100%; padding: 14px; background: #262626; border: 1px solid #444; color: #fff; border-radius: 12px; font-size: 16px; outline: none; box-sizing: border-box;}
+        input:focus { border-color: #3b82f6; }
+        button { background: #fff; color: #000; padding: 16px; width: 100%; border: none; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.2); }
+        
+        .product-list { margin-top: 50px; }
+        .product-item { display: flex; justify-content: space-between; align-items: center; background: #262626; padding: 15px 20px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #333; }
+        .product-info { display: flex; align-items: center; gap: 15px; }
+        .product-info img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; }
+        .delete-btn { background: #ef4444; color: #fff; width: auto; padding: 10px 15px; font-size: 14px; }
+        .delete-btn:hover { background: #dc2626; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3); }
+        #status { text-align: center; margin-bottom: 20px; font-weight: bold; color: #22c55e; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" style="color: #888; text-decoration: none; font-weight: 700;">← Wróć na stronę główną</a>
+    <h1>Panel Administratora</h1>
+    <div id="status">Pomyślnie dodano produkt!</div>
+
+    <form id="addForm">
+        <div class="form-group">
+            <label>Nazwa produktu</label>
+            <input type="text" id="pName" placeholder="np. Ralph Lauren POLO" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label>Kategoria (Niebieski Tag)</label>
+                <input type="text" id="pCat" placeholder="np. T-SHIRTS" required>
+            </div>
+            <div class="form-group">
+                <label>Tag (Czerwony Tag)</label>
+                <input type="text" id="pTag" value="BEST BATCH" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Cena ($)</label>
+            <input type="number" step="0.01" id="pPrice" placeholder="np. 20.95" required>
+        </div>
+        <div class="form-group">
+            <label>Link do zdjęcia (.jpg / .png) - Zostaw puste dla braku</label>
+            <input type="url" id="pImg" placeholder="https://...">
+        </div>
+        <div class="form-group">
+            <label>Link do KakoBuy / Agenta</label>
+            <input type="url" id="pLink" placeholder="https://..." required>
+        </div>
+        <button type="submit" id="submitBtn">Dodaj Produkt</button>
+    </form>
+
+    <div class="product-list">
+        <h2 style="font-size: 24px; border-bottom: 1px solid #333; padding-bottom: 10px;">Obecne produkty w bazie</h2>
+        <div id="adminProductList">Ładowanie produktów z Firebase...</div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDsB1L1BZTmQheWIyt87FUwZP5EB5E9L18",
+        authDomain: "repfinder-f0510.firebaseapp.com",
+        projectId: "repfinder-f0510",
+        storageBucket: "repfinder-f0510.firebasestorage.app",
+        messagingSenderId: "994027023312",
+        appId: "1:994027023312:web:77220fee0211a2b7ea27d5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const productsCol = collection(db, "products");
+
+    async function loadAdminProducts() {
+        const listDiv = document.getElementById('adminProductList');
+        try {
+            const q = query(productsCol, orderBy("createdAt", "desc"));
+            const snapshot = await getDocs(q);
+            if (snapshot.empty) {
+                listDiv.innerHTML = "<p style='color:#888;'>Brak produktów. Dodaj pierwszy powyżej!</p>";
+                return;
+            }
+            let html = "";
+            snapshot.forEach(docSnap => {
+                const p = docSnap.data();
+                html += `
+                <div class="product-item">
+                    <div class="product-info">
+                        <img src="${p.Link_Zdjecie || 'https://placehold.co/50x50/1a1a1a/444444?text=X'}" onerror="this.src='https://placehold.co/50x50/1a1a1a/444444?text=X'">
+                        <div>
+                            <div style="font-weight: 800;">${p.Nazwa}</div>
+                            <div style="color: #888; font-size: 13px;">${p.Cena_USD}$ | ${p.Kategoria}</div>
+                        </div>
+                    </div>
+                    <button class="delete-btn" data-id="${docSnap.id}">Usuń</button>
+                </div>`;
+            });
+            listDiv.innerHTML = html;
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    if(confirm("Na pewno usunąć?")) {
+                        await deleteDoc(doc(db, "products", e.target.dataset.id));
+                        loadAdminProducts();
+                    }
+                });
+            });
+        } catch (e) {
+            console.error(e);
+            listDiv.innerHTML = "<p style='color:#ef4444;'>Błąd bazy danych. Sprawdź czy ustawiłeś reguły Firestore na 'Test mode'.</p>";
+        }
+    }
+
+    document.getElementById('addForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "Zapisywanie...";
+        
+        try {
+            await addDoc(productsCol, {
+                Nazwa: document.getElementById('pName').value,
+                Kategoria: document.getElementById('pCat').value,
+                Tag: document.getElementById('pTag').value,
+                Cena_USD: document.getElementById('pPrice').value,
+                Link_Zdjecie: document.getElementById('pImg').value,
+                Link_Kakobuy: document.getElementById('pLink').value,
+                createdAt: serverTimestamp()
+            });
+            
+            document.getElementById('addForm').reset();
+            loadAdminProducts();
+            
+            const status = document.getElementById('status');
+            status.style.display = 'block';
+            setTimeout(() => status.style.display = 'none', 3000);
+        } catch (error) {
+            console.error(error);
+            alert("Błąd podczas dodawania!");
+        }
+        btn.innerText = "Dodaj Produkt";
+    });
+
+    loadAdminProducts();
+</script>
+</body>
+</html>
