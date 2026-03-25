@@ -1,20 +1,38 @@
 <?php
-// Ustawienie nagłówka, żeby strona wiedziała, że to odpowiedź JSON
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
 
-// Odbiór danych wysłanych z Panelu Admina (z fetch)
-$inputJSON = file_get_contents('php://input');
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 
-// Ścieżka do Twojego pliku z bazą produktów
-$file = 'products.json';
+// Ścieżka do bazy (plik o jeden folder wyżej)
+$file = '../products.json';
 
-// Zapisz dane do pliku
-if (file_put_contents($file, $inputJSON) !== false) {
-    http_response_code(200);
-    echo json_encode(["status" => "success", "message" => "Zapisano pomyślnie"]);
-} else {
-    http_response_code(500);
-    echo json_encode(["status" => "error", "message" => "Błąd zapisu. Sprawdź uprawnienia (CHMOD 777) pliku products.json"]);
+// Pobieranie danych (GET)
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (file_exists($file)) {
+        echo file_get_contents($file);
+    } else {
+        echo json_encode([]);
+    }
+    exit;
+}
+
+// Zapisywanie danych (POST)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $json = file_get_contents('php://input');
+    if (empty($json)) {
+        echo json_encode(["status" => "error", "message" => "Brak danych"]);
+        exit;
+    }
+
+    // Próba zapisu
+    if (file_put_contents($file, $json) !== false) {
+        echo json_encode(["status" => "success"]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["status" => "error", "message" => "Błąd zapisu. Ustaw CHMOD 777 na products.json"]);
+    }
 }
 ?>
