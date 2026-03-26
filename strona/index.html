@@ -8,44 +8,110 @@
     <link rel="stylesheet" href="css/style.css" />
 
     <style>
-        /* TRACKER - SZARY */
-        .tracker-wrapper-white { background: #161616; border: 1px solid rgba(255,255,255,0.05); border-radius: 40px; padding: 60px 40px; max-width: 1000px; margin: 40px auto; color: var(--text-strong); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4); }
+        /* =====================================================================
+           TRACKER - SZARY
+           ===================================================================== */
+        .tracker-wrapper-white { 
+            background: #1e1e1e; border: 1px solid rgba(255,255,255,0.08); border-radius: 40px; 
+            padding: 60px 40px; max-width: 1000px; margin: 40px auto; color: var(--text-strong);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
         .tracker-header-clean { text-align: center; margin-bottom: 40px; }
         .tracker-header-clean h2 { font-size: clamp(36px, 6vw, 54px); font-weight: 900; margin: 0; color: #fff; letter-spacing: -0.06em; line-height: 1; }
         .tracker-header-clean p { font-size: 18px; color: var(--text); opacity: 0.7; margin-top: 10px; }
-        .tracker-field-clean { width: 100%; max-width: 600px; height: 64px; background: #1e1e1e; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 0 25px; font-size: 16px; display: block; margin: 0 auto 50px; text-align: center; color: #fff; outline: none; }
+        
+        .tracker-field-clean {
+            width: 100%; max-width: 600px; height: 64px; background: #262626; border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; padding: 0 25px; font-size: 16px; display: block; margin: 0 auto 50px; text-align: center; color: #fff; outline: none;
+        }
         .tracker-field-clean:focus { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.1); }
+        
         .tracker-grid-clean { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .tracker-card-clean { background: #1e1e1e; border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 35px 20px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .tracker-card-clean:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.15); }
+        .tracker-card-clean {
+            background: #262626; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 35px 20px; text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .tracker-card-clean:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.2); }
+        
         .tracker-icon { width: 70px; height: 70px; margin: 0 auto 20px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 24px; }
-        .bg-17 { background: #003399; font-style: italic; padding-right: 5px; } .bg-dhl { background: #ffcc00; color: #d40511; font-style: italic; letter-spacing: -1px; } .bg-after { background: #ff9800; }
+        .bg-17 { background: #003399; font-style: italic; padding-right: 5px; } 
+        .bg-dhl { background: #ffcc00; color: #d40511; font-style: italic; letter-spacing: -1px; } 
+        .bg-after { background: #ff9800; }
+        
         .tracker-card-clean h3 { margin: 0 0 10px; font-size: 22px; font-weight: 800; color: #fff; }
         .tracker-card-clean p { font-size: 14px; color: var(--text); opacity: 0.6; margin-bottom: 25px; line-height: 1.4; }
-        .tracker-btn-clean { width: 100%; height: 46px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; font-weight: 700; transition: 0.2s; color: #fff; cursor: pointer; }
+        .tracker-btn-clean { width: 100%; height: 46px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; font-weight: 700; transition: 0.2s; color: #fff; cursor: pointer; }
         .tracker-card-clean:hover .tracker-btn-clean { background: #3b82f6; color: #fff; border-color: #3b82f6; }
 
-        /* DESIGN 1:1 PRODUKTY I MODAL */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .product-card-new { background-color: #141414 !important; border-radius: 20px !important; padding: 12px !important; display: flex; flex-direction: column; border: 1px solid #222 !important; transition: 0.3s; }
+        @media (max-width: 820px) { 
+            .tracker-wrapper-white { padding: 40px 20px; border-radius: 20px; }
+            .tracker-header-clean h2 { font-size: clamp(32px, 8vw, 42px); }
+            .tracker-field-clean { height: 56px; margin-bottom: 30px; }
+            .tracker-grid-clean { grid-template-columns: 1fr; } 
+        }
+
+        /* =====================================================================
+           DODANO: WYSZUKIWARKA I FILTR (image_15c401.jpg)
+           ===================================================================== */
+        .search-filter-row { display: flex; gap: 15px; margin-bottom: 30px; }
+        .search-box-wrap { flex: 1; position: relative; display: flex; align-items: center; }
+        .search-icon { position: absolute; left: 16px; color: #888; }
+        .search-box-wrap input { width: 100%; background: #161616; border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 18px 20px 18px 45px; border-radius: 16px; font-size: 15px; outline: none; transition: 0.2s; }
+        .search-box-wrap input:focus { border-color: #3b82f6; }
+        .btn-filters-open { background: #161616; border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 0 30px; border-radius: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; font-size: 15px;}
+        .btn-filters-open:hover { background: #262626; }
+
+        /* =====================================================================
+           PRODUKTY - GĘSTY UKŁAD (MNIEJSZE KARTY - WZÓR ZE SCREENA)
+           ===================================================================== */
+        .products-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            gap: 15px; 
+        }
+        
+        .product-card-new {
+            background-color: #141414 !important; 
+            border-radius: 16px !important; 
+            padding: 10px !important; 
+            display: flex; flex-direction: column;
+            border: 1px solid #222 !important; transition: 0.3s;
+            overflow: hidden;
+        }
         .product-card-new:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15) !important; box-shadow: 0 15px 35px rgba(0,0,0,0.5) !important; }
-        .product-card-new img { width: 100%; aspect-ratio: 4/4.5; object-fit: cover; border-radius: 14px !important; margin-bottom: 16px; background-color: #1a1a1a; }
         
-        .card-tags { display: flex; gap: 8px; margin-bottom: 12px; padding: 0 4px; }
-        .tag-blue { background: #172554; color: #60a5fa; font-size: 11px; font-weight: 900; padding: 6px 12px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .tag-red { background: #450a0a; color: #f87171; font-size: 11px; font-weight: 900; padding: 6px 12px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .product-card-new img { 
+            width: 100%; 
+            aspect-ratio: 4/4.5; 
+            object-fit: cover; 
+            border-radius: 12px !important; 
+            margin-bottom: 12px; 
+            background-color: #1a1a1a; 
+        }
         
-        .card-name { font-size: 20px; font-weight: 900; color: #fff; margin: 0 0 6px 0; padding: 0 4px; letter-spacing: -0.5px;}
-        .card-price { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 20px; padding: 0 4px;}
+        .card-tags { display: flex; gap: 6px; margin-bottom: 10px; padding: 0 2px; }
+        .tag-blue { background: #172554; color: #60a5fa; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tag-red { background: #450a0a; color: #f87171; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .card-actions { display: flex; gap: 10px; margin-top: auto; padding: 0 4px;}
-        .btn-view-agents { flex: 1; background-color: #222; color: #fff; padding: 14px; border-radius: 12px; font-weight: 800; font-size: 14px; border: 1px solid #333; transition: 0.2s; display: flex; justify-content: center; align-items: center;}
+        .card-name { font-size: 16px; font-weight: 900; color: #fff; margin: 0 0 4px 0; padding: 0 2px; letter-spacing: -0.5px; min-height: 38px;}
+        .card-price { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 15px; padding: 0 2px;}
+        
+        .card-actions { display: flex; gap: 8px; margin-top: auto; padding: 0 2px;}
+        .btn-view-agents { flex: 1; background-color: #222; color: #fff; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 13px; border: 1px solid #333; transition: 0.2s; display: flex; justify-content: center; align-items: center;}
         .btn-view-agents:hover { background-color: #2e2e2e; border-color: #444; }
         
-        .btn-icon-square { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: #222; border: 1px solid #333; border-radius: 12px; cursor: pointer; transition: 0.2s; color: #aaa; font-size: 18px;}
+        .btn-icon-square { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: #222; border: 1px solid #333; border-radius: 10px; cursor: pointer; transition: 0.2s; color: #aaa; font-size: 16px;}
         .btn-icon-square:hover { background-color: #2e2e2e; color: #fff; }
 
-        /* Modal Agentów */
+        /* Zielony ptaszek ✓ po skopiowaniu */
+        .copied { background-color: #15803d !important; border-color: #22c55e !important; color: #fff !important; }
+        .copied .copy-icon { display: none; }
+        .copied .success-icon { display: block; font-weight: bold; }
+        .copy-icon { display: block; }
+        .success-icon { display: none; }
+
+        /* =====================================================================
+           MODAL AGENTÓW (1:1 Design z dark mode kafelkami)
+           ===================================================================== */
         .agents-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .agents-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
         .agents-modal-content { background: #161616; border: 1px solid #2a2a2a; border-radius: 28px; width: 90%; max-width: 440px; padding: 24px; color: #fff; box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
@@ -68,33 +134,52 @@
         .agent-arrow { color: #666; transition: 0.2s; }
         .agent-direct-btn:hover .agent-arrow { color: #fff; transform: translateX(2px); }
 
-        .agent-copy-btn { width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; background: #1a1a1a; border: 1px solid #222; border-radius: 16px; cursor: pointer; transition: 0.2s; color: #aaa; font-size: 18px;}
+        .agent-copy-btn { width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; background: #1a1a1a; border: 1px solid #222; border-radius: 16px; cursor: pointer; transition: 0.2s; color: #aaa;}
         .agent-copy-btn:hover { background: #222; color: #fff; border-color: #333; }
-
-        /* Zielony ptaszek */
-        .copied { background-color: #15803d !important; border-color: #22c55e !important; color: #fff !important; }
-        .copied .copy-icon { display: none; }
-        .copied .success-icon { display: block; font-weight: bold; }
-        .copy-icon { display: block; }
-        .success-icon { display: none; }
 
         .converter-input-row { display: flex !important; gap: 14px; align-items: center; width: 100%; }
         #converterInput { flex: 1; margin: 0; }
         #convertBtn { width: 220px; margin: 0; }
 
+        /* =====================================================================
+           DODANO: MODAL FILTRÓW (BIAŁY - image_d03f24.png)
+           ===================================================================== */
+        .filter-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .filter-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
+        .filter-content { background: #fff; width: 90%; max-width: 420px; border-radius: 32px; padding: 30px; color: #000; box-shadow: 0 25px 60px rgba(0,0,0,0.4); }
+        .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .filter-header h3 { font-size: 24px; font-weight: 900; margin: 0; letter-spacing: -0.5px; }
+        .close-filter-btn { background: #f4f4f5; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; color: #71717a; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+        .close-filter-btn:hover { background: #e4e4e7; }
+        .filter-section-label { font-size: 12px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 0.5px; }
+        .cat-scroll-box { max-height: 200px; overflow-y: auto; margin-bottom: 20px; }
+        .filter-btn-opt { width: 100%; text-align: left; padding: 14px 20px; margin-bottom: 8px; border: 1px solid #e4e4e7; border-radius: 14px; background: #fff; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; color: #27272a; }
+        .filter-btn-opt.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .tags-grid-filter { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .tag-opt { padding: 14px; border: 1px solid #e4e4e7; border-radius: 14px; background: #fff; font-weight: 700; font-size: 14px; cursor: pointer; text-align: center; color: #27272a; transition: 0.2s;}
+        .tag-opt.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .filter-footer-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid #f4f4f5; padding-top: 20px; }
+        .btn-filter-clear { background: #fff; border: 1px solid #e4e4e7; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; transition: 0.2s;}
+        .btn-filter-clear:hover { background: #f4f4f5; }
+        .btn-filter-apply { background: #09090b; color: #fff; border: none; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; transition: 0.2s;}
+        .btn-filter-apply:hover { background: #27272a; }
+
         @media (max-width: 768px) {
             .tracker-wrapper-white { padding: 40px 20px; border-radius: 24px; }
             .tracker-grid-clean { grid-template-columns: 1fr; } 
-            .products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
-            .product-card-new { padding: 10px !important; border-radius: 16px !important; }
-            .product-card-new img { border-radius: 12px !important; margin-bottom: 12px !important; }
-            .card-name { font-size: 15px !important; min-height: 38px; } 
-            .card-price { font-size: 18px !important; margin-bottom: 12px !important; }
-            .card-tags span { font-size: 9px !important; padding: 4px 8px !important; }
-            .btn-view-agents { padding: 10px 0 !important; font-size: 12px !important; }
-            .btn-icon-square { width: 42px !important; height: 42px !important; }
+            
+            .products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            .product-card-new { padding: 8px !important; border-radius: 12px !important; }
+            .product-card-new img { border-radius: 8px !important; margin-bottom: 8px !important; }
+            .card-name { font-size: 13px !important; min-height: 32px; } 
+            .card-price { font-size: 16px !important; margin-bottom: 10px !important; }
+            .card-tags span { font-size: 8px !important; padding: 3px 6px !important; }
+            .btn-view-agents { padding: 8px 0 !important; font-size: 11px !important; }
+            .btn-icon-square { width: 36px !important; height: 36px !important; }
+            
             .converter-input-row { flex-direction: column; }
             #convertBtn { width: 100%; }
+            .search-filter-row { flex-direction: column; }
         }
     </style>
 </head>
@@ -136,6 +221,18 @@
                         <h2>Products</h2>
                         <p>Best items picked for clean browsing</p>
                     </div>
+                    
+                    <div class="search-filter-row">
+                        <div class="search-box-wrap">
+                            <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <input type="text" id="productSearch" placeholder="Search...">
+                        </div>
+                        <button class="btn-filters-open" id="openFiltersBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                            Filters
+                        </button>
+                    </div>
+
                     <div id="productsGrid" class="products-grid">
                         <p style="color:#888; text-align:center; width:100%;">Ładowanie z bazy...</p>
                     </div>
@@ -239,6 +336,36 @@
         </footer>
     </div>
 
+    <div class="filter-modal" id="filterModal">
+        <div class="filter-content">
+            <div class="filter-header">
+                <h3>Filters</h3>
+                <button class="close-filter-btn" id="closeFiltersBtn">✕</button>
+            </div>
+            <span class="filter-section-label">CATEGORIES</span>
+            <div class="cat-scroll-box">
+                <button class="filter-btn-opt active" data-filter-cat="ALL">All</button>
+                <button class="filter-btn-opt" data-filter-cat="SHOES">Shoes</button>
+                <button class="filter-btn-opt" data-filter-cat="SHORTS">Shorts</button>
+                <button class="filter-btn-opt" data-filter-cat="PANTS">Pants</button>
+                <button class="filter-btn-opt" data-filter-cat="T-SHIRTS">T-shirts</button>
+                <button class="filter-btn-opt" data-filter-cat="HOODIES">Hoodies</button>
+                <button class="filter-btn-opt" data-filter-cat="JACKETS">Jackets</button>
+            </div>
+            <span class="filter-section-label">TAGS & QUALITY</span>
+            <div class="tags-grid-filter">
+                <button class="tag-opt active" data-filter-tag="ALL">All Tags</button>
+                <button class="tag-opt" data-filter-tag="BEST BATCH">Best Batch</button>
+                <button class="tag-opt" data-filter-tag="BUDGET BATCH">Budget Batch</button>
+                <button class="tag-opt" data-filter-tag="RANDOM BATCH">Random Batch</button>
+            </div>
+            <div class="filter-footer-btns">
+                <button class="btn-filter-clear" id="clearFiltersBtn">Clear all</button>
+                <button class="btn-filter-apply" id="applyFiltersBtn">Show results</button>
+            </div>
+        </div>
+    </div>
+
     <div id="agentsModal" class="agents-modal">
         <div class="agents-modal-content">
             <div class="modal-header-top">
@@ -272,7 +399,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Agenci i Ikony
         const AGENTS = [
           { id: 'kakobuy', name: 'KakoBuy', icon: 'https://www.kakobuy.com/favicon.ico' },
           { id: 'usfans', name: 'USFans', icon: 'https://usfans.com/favicon.ico' },
@@ -280,9 +406,8 @@
           { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' }
         ];
 
-        // Taki symbol jak na Twoich screenach
-        const iconCopy = `<span class="copy-icon">📋</span>`; 
-        const iconCheck = `<span class="success-icon">✓</span>`;
+        const iconCopy = `<svg class="copy-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+        const iconCheck = `<svg class="success-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
         const iconArrow = `<svg class="agent-arrow" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
 
         window.copyText = function(text, btn) {
@@ -323,7 +448,107 @@
             window.open(u, '_blank');
         };
 
-        // POBIERANIE Z FIREBASE
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-section-link]').forEach(b => {
+                b.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.switchSection(b.getAttribute('data-section-link'));
+                });
+            });
+            const tBtn = document.getElementById('toolsToggle'), tMenu = document.getElementById('toolsMenu');
+            if(tBtn && tMenu) {
+                tBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); e.preventDefault(); tMenu.classList.toggle('show');
+                });
+                document.addEventListener('click', (e) => {
+                    if (!tBtn.contains(e.target) && !tMenu.contains(e.target)) tMenu.classList.remove('show');
+                });
+            }
+            loadProducts();
+        });
+
+        // =====================================================================
+        // DODANO: LOGIKA WYSZUKIWARKI I FILTROWANIA
+        // =====================================================================
+        window.activeCat = 'ALL';
+        window.activeTag = 'ALL';
+        window.allProductsData = [];
+
+        function renderProducts(data) {
+            const grid = document.getElementById("productsGrid");
+            if(data.length === 0) {
+                 grid.innerHTML = "<p style='color:#888; text-align:center; width:100%; grid-column:1/-1;'>Brak produktów dla tych filtrów.</p>";
+                 return;
+            }
+            let html = "";
+            data.forEach(p => {
+                const safeName = (p.Nazwa || 'Item').replace(/'/g, "\\'");
+                // =====================================================================
+                // ZMIENIONO: Szarawo-białe tło i Logo KakoBuy (Zgodnie z poleceniem "w skrypcie")
+                // =====================================================================
+                html += `
+                <article class="product-card-new" style="background-color: #ffffff !important; border: 1px solid #eaeaea !important; border-radius: 20px !important; padding: 16px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.03) !important;">
+                    <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x500/f5f5f5/cccccc?text=Brak+Zdjecia'" style="background-color: #f9f9f9 !important; border: 1px solid #f0f0f0 !important; border-radius: 14px !important; margin-bottom: 12px;">
+                    
+                    <hr style="border: none; border-top: 1px dashed #eaeaea; margin: 4px 0 16px 0;">
+                    
+                    <div class="card-tags" style="margin-bottom: 12px; padding: 0;">
+                        <span class="tag-blue" style="background: #eff6ff !important; color: #3b82f6 !important; font-size: 10px; font-weight: 900; padding: 6px 10px; border-radius: 8px;">${p.Kategoria || 'ITEM'}</span>
+                        <span class="tag-red" style="background: #fef2f2 !important; color: #ef4444 !important; font-size: 10px; font-weight: 900; padding: 6px 10px; border-radius: 8px;">${p.Tag || 'BEST BATCH'}</span>
+                    </div>
+                    
+                    <h3 class="card-name" style="color: #111 !important; font-size: 18px; font-weight: 900; margin: 0 0 6px 0; min-height: 44px; padding: 0; letter-spacing: -0.5px;">${p.Nazwa}</h3>
+                    <div class="card-price" style="color: #000 !important; font-size: 24px; font-weight: 900; margin-bottom: 20px; padding: 0;">${p.Cena_USD}$</div>
+                    
+                    <div class="card-actions" style="display: flex; gap: 10px; padding: 0;">
+                        <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')" style="flex: 1; background: #fff !important; color: #000 !important; border: 1px solid #e5e5e5 !important; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s;">View agents</button>
+                        <button class="btn-icon-square" onclick="window.copyText('${p.Link_Kakobuy}', this)" style="width: 48px; height: 48px; background: #fff !important; border: 1px solid #e5e5e5 !important; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;">
+                            <img src="https://www.kakobuy.com/favicon.ico" style="width: 22px; height: 22px; border-radius: 4px; object-fit: contain;">
+                        </button>
+                    </div>
+                </article>`;
+            });
+            grid.innerHTML = html;
+        }
+
+        window.applyFilters = function() {
+            const searchVal = document.getElementById('productSearch').value.toLowerCase();
+            const filtered = window.allProductsData.filter(p => {
+                const matchSearch = (p.Nazwa || '').toLowerCase().includes(searchVal);
+                const matchCat = window.activeCat === 'ALL' || p.Kategoria === window.activeCat;
+                const matchTag = window.activeTag === 'ALL' || p.Tag === window.activeTag;
+                return matchSearch && matchCat && matchTag;
+            });
+            renderProducts(filtered);
+        };
+
+        document.getElementById('productSearch').addEventListener('input', window.applyFilters);
+
+        document.getElementById('openFiltersBtn').onclick = () => document.getElementById('filterModal').classList.add('show');
+        document.getElementById('closeFiltersBtn').onclick = () => document.getElementById('filterModal').classList.remove('show');
+
+        document.querySelectorAll('.filter-btn-opt').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.filter-btn-opt').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active'); window.activeCat = btn.getAttribute('data-filter-cat');
+            };
+        });
+
+        document.querySelectorAll('.tag-opt').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.tag-opt').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active'); window.activeTag = btn.getAttribute('data-filter-tag');
+            };
+        });
+
+        document.getElementById('applyFiltersBtn').onclick = () => { window.applyFilters(); document.getElementById('filterModal').classList.remove('show'); };
+        document.getElementById('clearFiltersBtn').onclick = () => {
+            window.activeCat = 'ALL'; window.activeTag = 'ALL';
+            document.querySelectorAll('.filter-btn-opt, .tag-opt').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-filter-cat="ALL"]').classList.add('active'); document.querySelector('[data-filter-tag="ALL"]').classList.add('active');
+            window.applyFilters();
+        };
+
         async function loadProducts() {
             const grid = document.getElementById("productsGrid");
             if (!grid) return;
@@ -337,26 +562,9 @@
                     return;
                 }
 
-                let html = "";
-                snapshot.forEach(doc => {
-                    const p = doc.data();
-                    const safeName = (p.Nazwa || 'Item').replace(/'/g, "\\'");
-                    html += `
-                    <article class="product-card-new">
-                        <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x500/1a1a1a/444444?text=Brak+Zdjecia'">
-                        <div class="card-tags">
-                            <span class="tag-blue">${p.Kategoria || 'ITEM'}</span>
-                            <span class="tag-red">${p.Tag || 'BEST BATCH'}</span>
-                        </div>
-                        <h3 class="card-name">${p.Nazwa}</h3>
-                        <div class="card-price">${p.Cena_USD}$</div>
-                        <div class="card-actions">
-                            <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')">View agents</button>
-                            <button class="btn-icon-square" onclick="window.copyText('${p.Link_Kakobuy}', this)">${iconCopy}</button>
-                        </div>
-                    </article>`;
-                });
-                grid.innerHTML = html;
+                window.allProductsData = [];
+                snapshot.forEach(docSnap => window.allProductsData.push(docSnap.data()));
+                renderProducts(window.allProductsData);
             } catch (error) { 
                 console.error(error);
                 grid.innerHTML = "<p style='color:#ef4444; text-align:center; width:100%; grid-column:1/-1;'>Błąd połączenia z bazą.</p>";
@@ -384,22 +592,9 @@
         };
         window.closeAgentsModal = () => document.getElementById('agentsModal').classList.remove('show');
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('[data-section-link]').forEach(b => {
-                b.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.switchSection(b.getAttribute('data-section-link'));
-                });
-            });
-            const tBtn = document.getElementById('toolsToggle'), tMenu = document.getElementById('toolsMenu');
-            if(tBtn && tMenu) {
-                tBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); tMenu.classList.toggle('show'); });
-                document.addEventListener('click', (e) => { if (!tBtn.contains(e.target) && !tMenu.contains(e.target)) tMenu.classList.remove('show'); });
-            }
-            loadProducts();
-        });
-
-        // TUTORIALS
+        // =====================================================================
+        // TWÓJ SKRYPT PORADNIKÓW (NIENARUSZONY)
+        // =====================================================================
         window.initTutorials = function () {
             const overview = document.getElementById("tutorialsOverview");
             const player = document.getElementById("tutorialPlayer");
@@ -486,15 +681,30 @@
                 stepDescription.textContent = step.description;
                 progressBar.style.width = `${progress}%`;
 
-                topSteps.innerHTML = tutorial.steps.map((_, i) => `<button class="tutorial-step-dot ${i === currentStepIndex ? "active" : ""}" type="button" data-step-index="${i}">${i + 1}</button>`).join("");
-                sideSteps.innerHTML = tutorial.steps.map((_, i) => `<button class="tutorial-side-dot ${i === currentStepIndex ? "active" : ""}" type="button" data-side-step-index="${i}">${i + 1}</button>`).join("");
+                topSteps.innerHTML = tutorial.steps.map((_, index) => {
+                    const active = index === currentStepIndex ? "active" : "";
+                    return `<button class="tutorial-step-dot ${active}" type="button" data-step-index="${index}">${index + 1}</button>`;
+                }).join("");
+
+                sideSteps.innerHTML = tutorial.steps.map((_, index) => {
+                    const active = index === currentStepIndex ? "active" : "";
+                    return `<button class="tutorial-side-dot ${active}" type="button" data-side-step-index="${index}">${index + 1}</button>`;
+                }).join("");
 
                 stepMedia.innerHTML = renderTutorialVisual(step, currentStepIndex + 1);
                 stepActions.innerHTML = renderStepAction(step);
 
-                topSteps.querySelectorAll("[data-step-index]").forEach(b => b.addEventListener("click", () => { currentStepIndex = Number(b.getAttribute("data-step-index")); renderStep(); }));
-                sideSteps.querySelectorAll("[data-side-step-index]").forEach(b => b.addEventListener("click", () => { currentStepIndex = Number(b.getAttribute("data-side-step-index")); renderStep(); }));
-                stepActions.querySelectorAll("[data-action-section]").forEach(b => b.addEventListener("click", () => { window.switchSection(b.getAttribute("data-action-section")); }));
+                topSteps.querySelectorAll("[data-step-index]").forEach((button) => {
+                    button.addEventListener("click", () => { currentStepIndex = Number(button.getAttribute("data-step-index")); renderStep(); });
+                });
+
+                sideSteps.querySelectorAll("[data-side-step-index]").forEach((button) => {
+                    button.addEventListener("click", () => { currentStepIndex = Number(button.getAttribute("data-side-step-index")); renderStep(); });
+                });
+
+                stepActions.querySelectorAll("[data-action-section]").forEach((button) => {
+                    button.addEventListener("click", () => { const target = button.getAttribute("data-action-section"); if (typeof window.switchSection === "function") { window.switchSection(target); } });
+                });
 
                 prevBtn.disabled = currentStepIndex === 0;
                 prevBtn.style.opacity = currentStepIndex === 0 ? "0.45" : "1";
@@ -511,11 +721,11 @@
                 pageConfettiOverlay = document.createElement("div");
                 pageConfettiOverlay.className = "page-confetti-overlay";
                 const colors = ["#ff3a2f", "#ffb800", "#22c55e", "#3b82f6", "#a855f7", "#ff6ec7", "#00d4ff"];
-                for (let i = 0; i < 120; i++) {
+                for (let index = 0; index < 120; index += 1) {
                     const piece = document.createElement("span");
                     piece.className = "confetti-piece";
                     piece.style.left = `${Math.random() * 100}%`;
-                    piece.style.background = colors[i % colors.length];
+                    piece.style.background = colors[index % colors.length];
                     piece.style.setProperty("--drift", `${Math.random() * 280 - 140}px`);
                     piece.style.animationDelay = `${Math.random() * 500}ms`;
                     piece.style.transform = `translate3d(0,0,0) rotate(${Math.random() * 180}deg)`;
@@ -524,19 +734,19 @@
                     pageConfettiOverlay.appendChild(piece);
                 }
                 document.body.appendChild(pageConfettiOverlay);
-                setTimeout(removePageConfetti, 3000);
+                setTimeout(() => { removePageConfetti(); }, 3000);
             }
 
             function removePageConfetti() {
-                if (pageConfettiOverlay && pageConfettiOverlay.parentNode) pageConfettiOverlay.parentNode.removeChild(pageConfettiOverlay);
+                if (pageConfettiOverlay && pageConfettiOverlay.parentNode) { pageConfettiOverlay.parentNode.removeChild(pageConfettiOverlay); }
                 pageConfettiOverlay = null;
             }
         };
 
         function renderStepAction(step) {
             if (!step.action) return "";
-            if (step.action.type === "section") return `<button class="tutorial-inline-btn" type="button" data-action-section="${escapeHtml(step.action.target)}">${escapeHtml(step.action.label)}</button>`;
-            if (step.action.href) return `<a class="tutorial-inline-btn" href="${escapeHtml(step.action.href)}" target="_blank" rel="noreferrer">${escapeHtml(step.action.label)}</a>`;
+            if (step.action.type === "section") { return `<button class="tutorial-inline-btn" type="button" data-action-section="${escapeHtml(step.action.target)}">${escapeHtml(step.action.label)}</button>`; }
+            if (step.action.href) { return `<a class="tutorial-inline-btn" href="${escapeHtml(step.action.href)}" target="_blank" rel="noreferrer">${escapeHtml(step.action.label)}</a>`; }
             return "";
         }
 
@@ -545,17 +755,17 @@
             switch (step.visual) {
                 case "register": return `<div class="tutorial-shot">${commonHeader}<div class="tutorial-mock-grid"><div class="tutorial-mock-panel"><div class="tutorial-label-chip">Konto / Rejestracja</div><div class="tutorial-mock-title"></div><div class="tutorial-mock-lines"><span style="width:88%"></span><span style="width:72%"></span><span style="width:60%"></span></div><div class="tutorial-mock-image"></div></div><div class="tutorial-mock-side"><div class="tutorial-mock-title" style="width:80%"></div><div class="tutorial-mock-lines"><span style="width:100%"></span><span style="width:100%"></span><span style="width:100%"></span><span style="width:65%"></span></div></div></div></div>`;
                 case "browse": return `<div class="tutorial-shot tutorial-shot-dark">${commonHeader}<div class="tutorial-mock-panel"><div class="tutorial-label-chip">Spreadsheet / Products</div><div class="tutorial-mock-title" style="width:48%"></div><div class="tutorial-mock-lines"><span style="width:82%"></span><span style="width:66%"></span></div><div class="tutorial-mock-image dark"></div></div></div>`;
-                case "cart": return mockArrowShot("Dodawanie do koszyka", "Dodaj wybrany rozmiar i kliknij Add to cart.");
-                case "checkout": return mockArrowShot("Podsumowanie koszyka", "Przejdź dalej z poziomu koszyka.");
-                case "confirm": return mockArrowShot("Potwierdzenie zamówienia", "Zaznacz zgodę i kliknij przycisk.");
-                case "payment": return mockArrowShot("Płatność", "Wybierz metodę płatności.");
-                case "qc": return mockArrowShot("QC / Warehouse", "Sprawdź zdjęcia i jakość produktu.");
-                case "weigh": return mockArrowShot("Ważenie", "Zleć wstępne ważenie paczki.");
-                case "shipping": return mockArrowShot("Shipping line", "Wybierz linię wysyłki.");
-                case "plain1": return `<div class="tutorial-shot-plain"><p>KakoBuy kupuje produkty u sellerów i dostarcza je do swojego magazynu.</p></div>`;
-                case "plain2": return `<div class="tutorial-shot-plain"><p>Po ważeniu przechodzisz do etapu wysyłki międzynarodowej.</p></div>`;
-                case "plain3": return `<div class="tutorial-shot-plain"><p>Gdy paczka dotrze, sprawdź zawartość i potwierdź odbiór.</p></div>`;
-                case "done": return `<div class="tutorial-shot-plain"><p>Udało Ci się przejść cały proces. Gratulacje!</p></div>`;
+                case "cart": return mockArrowShot("Dodawanie do koszyka", "Dodaj wybrany rozmiar i kliknij Add to cart / Add shopping cart.");
+                case "checkout": return mockArrowShot("Podsumowanie koszyka", "Przejdź dalej z poziomu koszyka i sprawdź kwoty produktu.");
+                case "confirm": return mockArrowShot("Potwierdzenie zamówienia", "Zaznacz zgodę i kliknij przycisk finalizacji.");
+                case "payment": return mockArrowShot("Płatność", "Wybierz metodę i potwierdź opłacenie zamówienia.");
+                case "qc": return mockArrowShot("QC / Warehouse", "Po przyjęciu do magazynu sprawdź zdjęcia i jakość produktu.");
+                case "weigh": return mockArrowShot("Ważenie", "Zleć wstępne ważenie, gdy wszystkie produkty są już na warehouse.");
+                case "shipping": return mockArrowShot("Shipping line", "Wybierz linię wysyłki i potwierdź submit.");
+                case "plain1": return `<div class="tutorial-shot-plain"><p>KakoBuy kupuje produkty u sellerów i dostarcza je do swojego magazynu. Ten etap trwa zwykle kilka dni i nie wymaga od Ciebie żadnej akcji.</p></div>`;
+                case "plain2": return `<div class="tutorial-shot-plain"><p>Po ważeniu przechodzisz do etapu wysyłki międzynarodowej. Tutaj decydujesz, kiedy paczka ma zostać wysłana do Ciebie.</p></div>`;
+                case "plain3": return `<div class="tutorial-shot-plain"><p>Gdy paczka dotrze, sprawdź stan rzeczy, zachowaj zdjęcia i potwierdź, że wszystko jest okej. Potem możesz wracać po kolejne finds.</p></div>`;
+                case "done": return `<div class="tutorial-shot-plain"><p>Masz to. Cały flow od rejestracji do odbioru paczki jest ukończony. Na końcu odpalamy celebrację na całą stronę.</p></div>`;
                 default: return `<div class="tutorial-shot-plain"><p>Krok ${stepNumber}</p></div>`;
             }
         }
@@ -564,7 +774,7 @@
             return `<div class="tutorial-shot"><div class="tutorial-shot-browser-top"><span></span><span></span><span></span></div><div class="tutorial-label-chip">${escapeHtml(label)}</div><div class="tutorial-mock-grid"><div class="tutorial-mock-panel"><div class="tutorial-mock-title" style="width:58%"></div><div class="tutorial-mock-lines"><span style="width:72%"></span><span style="width:64%"></span><span style="width:54%"></span></div><div class="tutorial-mock-image gray"></div></div><div class="tutorial-mock-side"><div class="tutorial-mock-title" style="width:72%"></div><div class="tutorial-mock-lines"><span style="width:100%"></span><span style="width:88%"></span><span style="width:74%"></span><span style="width:62%"></span></div></div></div><div class="tutorial-arrow" style="left: 34%; top: 62%;"></div><div style="margin-top:14px;color:#6d7785;font-weight:700;">${escapeHtml(text)}</div></div>`;
         }
 
-        function escapeHtml(v) { return String(v ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;"); }
+        function escapeHtml(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;"); }
     </script>
 </body>
 </html>
