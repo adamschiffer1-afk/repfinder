@@ -11,14 +11,17 @@
         /* =====================================================================
            TRACKER - SZARY
            ===================================================================== */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #0d0d0d; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+
         .tracker-wrapper-white { 
             background: #1e1e1e; border: 1px solid rgba(255,255,255,0.08); border-radius: 40px; 
-            padding: 60px 40px; max-width: 1000px; margin: 40px auto; color: var(--text-strong);
+            padding: 60px 40px; max-width: 1000px; margin: 40px auto; color: #fff;
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
         }
         .tracker-header-clean { text-align: center; margin-bottom: 40px; }
         .tracker-header-clean h2 { font-size: clamp(36px, 6vw, 54px); font-weight: 900; margin: 0; color: #fff; letter-spacing: -0.06em; line-height: 1; }
-        .tracker-header-clean p { font-size: 18px; color: var(--text); opacity: 0.7; margin-top: 10px; }
+        .tracker-header-clean p { font-size: 18px; color: #888; margin-top: 10px; }
         
         .tracker-field-clean {
             width: 100%; max-width: 600px; height: 64px; background: #262626; border: 1px solid rgba(255,255,255,0.08);
@@ -38,7 +41,7 @@
         .bg-after { background: #ff9800; }
         
         .tracker-card-clean h3 { margin: 0 0 10px; font-size: 22px; font-weight: 800; color: #fff; }
-        .tracker-card-clean p { font-size: 14px; color: var(--text); opacity: 0.6; margin-bottom: 25px; line-height: 1.4; }
+        .tracker-card-clean p { font-size: 14px; color: #888; margin-bottom: 25px; line-height: 1.4; }
         .tracker-btn-clean { width: 100%; height: 46px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; font-weight: 700; transition: 0.2s; color: #fff; cursor: pointer; }
         .tracker-card-clean:hover .tracker-btn-clean { background: #3b82f6; color: #fff; border-color: #3b82f6; }
 
@@ -50,7 +53,7 @@
         }
 
         /* =====================================================================
-           DODANO: WYSZUKIWARKA I FILTR (image_15c401.jpg)
+           WYSZUKIWARKA I FILTR
            ===================================================================== */
         .search-filter-row { display: flex; gap: 15px; margin-bottom: 30px; }
         .search-box-wrap { flex: 1; position: relative; display: flex; align-items: center; }
@@ -61,7 +64,7 @@
         .btn-filters-open:hover { background: #262626; }
 
         /* =====================================================================
-           PRODUKTY - GĘSTY UKŁAD (MNIEJSZE KARTY - WZÓR ZE SCREENA)
+           PRODUKTY - GĘSTY UKŁAD 
            ===================================================================== */
         .products-grid { 
             display: grid; 
@@ -87,7 +90,7 @@
             margin-bottom: 12px; 
             background-color: #1a1a1a; 
         }
-        
+
         .card-tags { display: flex; gap: 6px; margin-bottom: 10px; padding: 0 2px; }
         .tag-blue { background: #172554; color: #60a5fa; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         .tag-red { background: #450a0a; color: #f87171; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -102,7 +105,6 @@
         .btn-icon-square { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: #222; border: 1px solid #333; border-radius: 10px; cursor: pointer; transition: 0.2s; color: #aaa; font-size: 16px;}
         .btn-icon-square:hover { background-color: #2e2e2e; color: #fff; }
 
-        /* Zielony ptaszek ✓ po skopiowaniu */
         .copied { background-color: #15803d !important; border-color: #22c55e !important; color: #fff !important; }
         .copied .copy-icon { display: none; }
         .copied .success-icon { display: block; font-weight: bold; }
@@ -110,7 +112,7 @@
         .success-icon { display: none; }
 
         /* =====================================================================
-           MODAL AGENTÓW (1:1 Design z dark mode kafelkami)
+           MODAL AGENTÓW
            ===================================================================== */
         .agents-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
         .agents-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
@@ -142,27 +144,42 @@
         #convertBtn { width: 220px; margin: 0; }
 
         /* =====================================================================
-           DODANO: MODAL FILTRÓW (BIAŁY - image_d03f24.png)
+           MODAL FILTRÓW (MROCZNE TŁO + BIAŁE AKTYWNE FILTRY + CIEMNY SCROLL)
            ===================================================================== */
-        .filter-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .filter-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .filter-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
-        .filter-content { background: #fff; width: 90%; max-width: 420px; border-radius: 32px; padding: 30px; color: #000; box-shadow: 0 25px 60px rgba(0,0,0,0.4); }
+        
+        .filter-content { background: #161616; width: 90%; max-width: 420px; border-radius: 32px; padding: 30px; color: #fff; box-shadow: 0 25px 60px rgba(0,0,0,0.8); border: 1px solid #2a2a2a; }
+        
         .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .filter-header h3 { font-size: 24px; font-weight: 900; margin: 0; letter-spacing: -0.5px; }
-        .close-filter-btn { background: #f4f4f5; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; color: #71717a; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
-        .close-filter-btn:hover { background: #e4e4e7; }
-        .filter-section-label { font-size: 12px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 0.5px; }
-        .cat-scroll-box { max-height: 200px; overflow-y: auto; margin-bottom: 20px; }
-        .filter-btn-opt { width: 100%; text-align: left; padding: 14px 20px; margin-bottom: 8px; border: 1px solid #e4e4e7; border-radius: 14px; background: #fff; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; color: #27272a; }
-        .filter-btn-opt.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+        .filter-header h3 { font-size: 24px; font-weight: 900; margin: 0; letter-spacing: -0.5px; color: #fff; }
+        
+        .close-filter-btn { background: #222; border: 1px solid #333; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; color: #888; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+        .close-filter-btn:hover { background: #333; color: #fff; }
+        
+        .filter-section-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 0.5px; }
+        
+        /* POPRAWIONY CIEMNY SCROLLBAR */
+        .cat-scroll-box { max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding-right: 8px; scrollbar-width: thin; scrollbar-color: #444 #161616; }
+        .cat-scroll-box::-webkit-scrollbar { width: 6px; }
+        .cat-scroll-box::-webkit-scrollbar-track { background: #161616; border-radius: 10px; }
+        .cat-scroll-box::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+        .cat-scroll-box::-webkit-scrollbar-thumb:hover { background: #555; }
+        
+        .filter-btn-opt { width: 100%; text-align: left; padding: 14px 20px; margin-bottom: 8px; border: 1px solid #222; border-radius: 14px; background: #1a1a1a; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; color: #ccc; }
+        .filter-btn-opt:hover { background: #262626; color: #fff; }
+        .filter-btn-opt.active { background: #fff; color: #000; border-color: #fff; }
+        
         .tags-grid-filter { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
-        .tag-opt { padding: 14px; border: 1px solid #e4e4e7; border-radius: 14px; background: #fff; font-weight: 700; font-size: 14px; cursor: pointer; text-align: center; color: #27272a; transition: 0.2s;}
-        .tag-opt.active { background: #2563eb; color: #fff; border-color: #2563eb; }
-        .filter-footer-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid #f4f4f5; padding-top: 20px; }
-        .btn-filter-clear { background: #fff; border: 1px solid #e4e4e7; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; transition: 0.2s;}
-        .btn-filter-clear:hover { background: #f4f4f5; }
-        .btn-filter-apply { background: #09090b; color: #fff; border: none; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; transition: 0.2s;}
-        .btn-filter-apply:hover { background: #27272a; }
+        .tag-opt { padding: 14px; border: 1px solid #222; border-radius: 14px; background: #1a1a1a; font-weight: 700; font-size: 14px; cursor: pointer; text-align: center; color: #ccc; transition: 0.2s;}
+        .tag-opt:hover { background: #262626; color: #fff; }
+        .tag-opt.active { background: #fff; color: #000; border-color: #fff; }
+        
+        .filter-footer-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid #222; padding-top: 20px; }
+        .btn-filter-clear { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 16px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 14px; transition: 0.2s;}
+        .btn-filter-clear:hover { background: #222; }
+        .btn-filter-apply { background: #fff; color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 14px; transition: 0.2s;}
+        .btn-filter-apply:hover { background: #e5e5e5; }
 
         @media (max-width: 768px) {
             .tracker-wrapper-white { padding: 40px 20px; border-radius: 24px; }
@@ -467,9 +484,6 @@
             loadProducts();
         });
 
-        // =====================================================================
-        // DODANO: LOGIKA WYSZUKIWARKI I FILTROWANIA
-        // =====================================================================
         window.activeCat = 'ALL';
         window.activeTag = 'ALL';
         window.allProductsData = [];
@@ -483,27 +497,23 @@
             let html = "";
             data.forEach(p => {
                 const safeName = (p.Nazwa || 'Item').replace(/'/g, "\\'");
-                // =====================================================================
-                // ZMIENIONO: Szarawo-białe tło i Logo KakoBuy (Zgodnie z poleceniem "w skrypcie")
-                // =====================================================================
                 html += `
-                <article class="product-card-new" style="background-color: #ffffff !important; border: 1px solid #eaeaea !important; border-radius: 20px !important; padding: 16px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.03) !important;">
-                    <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x500/f5f5f5/cccccc?text=Brak+Zdjecia'" style="background-color: #f9f9f9 !important; border: 1px solid #f0f0f0 !important; border-radius: 14px !important; margin-bottom: 12px;">
+                <article class="product-card-new" style="background-color: #141414 !important; border: 1px solid #222 !important; border-radius: 16px !important; padding: 10px !important; display: flex; flex-direction: column; transition: 0.3s; overflow: hidden;">
+                    <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x500/1a1a1a/ffffff?text=Brak'" style="width: 100%; aspect-ratio: 4/4.5; object-fit: cover; border-radius: 12px !important; margin-bottom: 12px; background-color: #1a1a1a;">
                     
-                    <hr style="border: none; border-top: 1px dashed #eaeaea; margin: 4px 0 16px 0;">
-                    
-                    <div class="card-tags" style="margin-bottom: 12px; padding: 0;">
-                        <span class="tag-blue" style="background: #eff6ff !important; color: #3b82f6 !important; font-size: 10px; font-weight: 900; padding: 6px 10px; border-radius: 8px;">${p.Kategoria || 'ITEM'}</span>
-                        <span class="tag-red" style="background: #fef2f2 !important; color: #ef4444 !important; font-size: 10px; font-weight: 900; padding: 6px 10px; border-radius: 8px;">${p.Tag || 'BEST BATCH'}</span>
+                    <div class="card-tags" style="display: flex; gap: 6px; margin-bottom: 10px; padding: 0 2px;">
+                        <span class="tag-blue" style="background: #172554 !important; color: #60a5fa !important; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">${p.Kategoria || 'ITEM'}</span>
+                        <span class="tag-red" style="background: #450a0a !important; color: #f87171 !important; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">${p.Tag || 'BEST BATCH'}</span>
                     </div>
                     
-                    <h3 class="card-name" style="color: #111 !important; font-size: 18px; font-weight: 900; margin: 0 0 6px 0; min-height: 44px; padding: 0; letter-spacing: -0.5px;">${p.Nazwa}</h3>
-                    <div class="card-price" style="color: #000 !important; font-size: 24px; font-weight: 900; margin-bottom: 20px; padding: 0;">${p.Cena_USD}$</div>
+                    <h3 class="card-name" style="font-size: 16px; font-weight: 900; color: #fff !important; margin: 0 0 4px 0; padding: 0 2px; letter-spacing: -0.5px; min-height: 38px;">${p.Nazwa}</h3>
+                    <div class="card-price" style="font-size: 20px; font-weight: 900; color: #fff !important; margin-bottom: 15px; padding: 0 2px;">${p.Cena_USD}$</div>
                     
-                    <div class="card-actions" style="display: flex; gap: 10px; padding: 0;">
-                        <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')" style="flex: 1; background: #fff !important; color: #000 !important; border: 1px solid #e5e5e5 !important; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s;">View agents</button>
-                        <button class="btn-icon-square" onclick="window.copyText('${p.Link_Kakobuy}', this)" style="width: 48px; height: 48px; background: #fff !important; border: 1px solid #e5e5e5 !important; border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;">
-                            <img src="https://www.kakobuy.com/favicon.ico" style="width: 22px; height: 22px; border-radius: 4px; object-fit: contain;">
+                    <div class="card-actions" style="display: flex; gap: 8px; margin-top: auto; padding: 0 2px;">
+                        <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')" style="flex: 1; background-color: #222 !important; color: #fff !important; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 13px; border: 1px solid #333; transition: 0.2s; cursor: pointer;">View agents</button>
+                        <button class="btn-icon-square" onclick="window.copyText('${p.Link_Kakobuy}', this)" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: #222 !important; border: 1px solid #333; border-radius: 10px; cursor: pointer; transition: 0.2s; color: #aaa;">
+                            <img src="https://www.kakobuy.com/favicon.ico" class="copy-icon" style="width:18px;">
+                            <svg class="success-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="3" fill="none" style="display:none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </button>
                     </div>
                 </article>`;
