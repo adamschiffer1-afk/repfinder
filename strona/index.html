@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>repfinder | Premium</title>
     
     <link rel="stylesheet" href="css/style.css" />
@@ -12,17 +12,15 @@
            GLOBAL & BASE STYLES
            ===================================================================== */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        /* Zablokowanie rozszerzania body przez błędne elementy */
         html, body { 
             background-color: #1c1c1c; 
             color: #fff; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             margin: 0; 
             padding: 0; 
+            overflow-x: hidden !important; 
             width: 100vw;
             max-width: 100vw;
-            overflow-x: hidden !important; 
         }
 
         .site-shell { min-height: 100vh; display: flex; flex-direction: column; width: 100%; max-width: 100vw; overflow-x: hidden; }
@@ -33,7 +31,7 @@
         .hidden { display: none !important; }
 
         /* =====================================================================
-           NAV FIX (CENTERED PILL FLOATING)
+           PERFEKCYJNY NAVBAR (3-KOLUMNOWY UKŁAD)
            ===================================================================== */
         .header-container {
             position: fixed; top: 20px; left: 0; right: 0; 
@@ -44,43 +42,48 @@
 
         .floating-nav {
             pointer-events: auto;
-            display: flex; align-items: center;
+            display: grid; 
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
             background: rgba(22, 22, 22, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 100px; padding: 6px 10px; gap: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 100px; 
+            padding: 8px 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            max-width: 95vw; /* Zabezpieczenie przed wylaniem na małych ekranach */
+            width: 95vw;
+            max-width: 1000px;
         }
 
+        .nav-left { display: flex; justify-content: flex-start; align-items: center; }
         .nav-brand-pill {
-            padding: 0 18px; font-weight: 900; font-size: 18px; color: #fff; text-decoration: none; cursor: pointer; letter-spacing: -1.2px;
+            padding: 0 15px; font-weight: 900; font-size: 19px; color: #fff; text-decoration: none; cursor: pointer; letter-spacing: -1px;
+            background: none; border: none;
         }
 
-        .nav-links-container { display: flex; align-items: center; gap: 5px; }
-
+        .nav-center { display: flex; justify-content: center; align-items: center; gap: 5px; }
         .nav-link-pill {
-            background: none; border: none; color: #888; padding: 10px 22px; border-radius: 100px;
-            font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.3s; text-decoration: none; white-space: nowrap;
+            background: none; border: none; color: #888; padding: 12px 24px; border-radius: 100px;
+            font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; text-decoration: none; white-space: nowrap;
         }
         .nav-link-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
         .nav-link-pill.active { background: #fff !important; color: #000 !important; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
 
-        .nav-right-group { display: flex; align-items: center; gap: 5px; margin-left: 10px; }
-
-        .nav-settings-btn-pill {
-            width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%; cursor: pointer; transition: 0.2s; color: #888;
-        }
-        .nav-settings-btn-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); }
+        .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
 
         .nav-admin-pill {
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #888; padding: 10px 18px; border-radius: 100px; font-weight: 800; font-size: 14px;
-            cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 5px;
+            color: #888; padding: 12px 20px; border-radius: 100px; font-weight: 800; font-size: 14px;
+            cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 6px;
         }
         .nav-admin-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
 
-        /* Tools Dropdown */
+        .nav-settings-btn-pill {
+            width: 42px !important; height: 42px !important; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%; cursor: pointer; transition: 0.2s; color: #888; padding: 0 !important;
+        }
+        .nav-settings-btn-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); }
+
         .dropdown { position: relative; }
         .dropdown-menu { display: none; position: absolute; top: 130%; right: 0; background: #161616; border: 1px solid #222; border-radius: 16px; padding: 10px; width: 160px; z-index: 2100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .dropdown-menu.show { display: block; }
@@ -93,7 +96,7 @@
         .hero-inner { text-align:center; padding: 100px 20px; width: 100%; }
         .hero-title { font-size: clamp(48px, 10vw, 110px); font-weight: 900; margin: 0; letter-spacing: -3px; line-height: 1; }
         .hero-subtitle { color: #888; font-size: clamp(16px, 4vw, 20px); margin: 20px auto 40px; max-width: 600px; }
-        .hero-cta-btn { background: #fff; color: #000; padding: 18px 45px; border-radius: 100px; font-weight: 900; border: none; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .hero-cta-btn { background: #fff; color: #000; padding: 18px 45px; border-radius: 100px; font-weight: 900; border: none; cursor: pointer; font-size: 16px; transition: 0.2s; display: inline-block; text-decoration: none;}
         .hero-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
 
         .section-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; width: 100%; }
@@ -101,7 +104,6 @@
         .section-head h2 { font-size: clamp(32px, 6vw, 42px); font-weight: 900; margin: 0; }
         .section-head p { color: #888; }
 
-        /* Wyszukiwarka */
         .search-filter-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; }
         .search-box-wrap { flex: 1; position: relative; display: flex; align-items: center; min-width: 0; }
         .search-icon { position: absolute; left: 16px; color: #888; }
@@ -110,14 +112,8 @@
         .btn-filters-open { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 0 30px; border-radius: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; font-size: 15px; flex-shrink: 0;}
         .btn-filters-open:hover { background: #222; color: #fff; }
 
-        /* Grid Produktów - Zabezpieczony przed rozpychaniem minmax(0, 1fr) */
-        .products-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, minmax(0, 1fr)); 
-            gap: 15px; 
-            width: 100%;
-        }
-        
+        /* Grid Produktów */
+        .products-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; width: 100%; }
         .product-card-new {
             background-color: #1a1a1a !important; border-radius: 16px !important; padding: 14px !important; 
             display: flex; flex-direction: column; border: 1px solid #2a2a2a !important; transition: 0.3s;
@@ -125,45 +121,164 @@
         }
         .product-card-new:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0,0,0,0.5) !important; }
 
-        /* ZIELONY PTASZEK KOPIOWANIA */
+        .card-bottom-row { display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: auto !important; width: 100% !important; flex-wrap: nowrap !important; }
+        .card-price { font-size: 20px !important; font-weight: 900 !important; color: #fff !important; white-space: nowrap !important; flex-shrink: 0 !important; }
+        .card-actions { display: flex !important; gap: 8px !important; align-items: center !important; flex-shrink: 0 !important; }
+        
+        .btn-view-agents { 
+            background: #111 !important; border: 1px solid #333 !important; color: #fff !important; 
+            padding: 10px 14px !important; border-radius: 10px !important; font-weight: 800 !important; 
+            font-size: 12px !important; cursor: pointer !important; transition: 0.2s !important; 
+            white-space: nowrap !important; display: flex !important; align-items: center !important; justify-content: center !important;
+        }
+        .btn-view-agents:hover { background: #222 !important; }
+        
+        .btn-icon-pill-square { 
+            width: 38px !important; height: 38px !important; display: flex !important; align-items: center !important; 
+            justify-content: center !important; background: #111 !important; border: 1px solid #333 !important; 
+            border-radius: 10px !important; cursor: pointer !important; transition: 0.2s !important; padding: 0 !important; flex-shrink: 0 !important; position: relative;
+        }
+        .btn-icon-pill-square:hover { background: #222 !important; }
+
         .copied { background-color: #15803d !important; border-color: #22c55e !important; color: #fff !important; }
-        .copied .copy-icon { display: none; }
-        .copied .success-icon { display: block; font-weight: bold; }
+        .copied .copy-icon { display: none !important; }
+        .copied .success-icon { display: block !important; font-weight: bold; }
         .copy-icon { display: block; }
         .success-icon { display: none; }
 
+        /* Tagi Produktów (bez tła) */
+        .card-tags { display: flex; gap: 8px; margin-bottom: 6px; }
+        .tag-blue { color: #3b82f6; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tag-red { color: #ef4444; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+
         /* =====================================================================
-           POZOSTAŁE SEKCJE (TRACKER, CONVERTER, TUTORIALS)
+           TUTORIALS (NOWY LAYOUT 1:1)
            ===================================================================== */
-        /* Zabezpieczenia na szerokości */
-        .tracker-wrapper-white, .converter-board, .tutorial-main-panel, .tutorial-sidebar { 
-            width: 100%; max-width: 100%; 
+        /* EKRAN POWITALNY - 2 KARTY OBOK SIEBIE */
+        .tut-overview-grid {
+            display: grid; 
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            align-items: stretch;
         }
+        .tut-overview-card {
+            background: #161616; 
+            border-radius: 20px; 
+            padding: 40px; 
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            min-height: 320px;
+        }
+        .tut-overview-circle {
+            position: absolute; 
+            bottom: -50px; 
+            right: -50px; 
+            width: 250px; 
+            height: 250px; 
+            background: #222; 
+            border-radius: 50%; 
+            z-index: 0;
+        }
+        .tut-overview-card > * { position: relative; z-index: 1; }
+
+        /* EKRAN ODTWARZACZA (PLAYER) */
+        .tutorial-player-new { max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        
+        .tut-header-area { text-align: center; margin-bottom: 10px; }
+        .tut-header-area h2 { font-size: 32px; font-weight: 900; margin: 0 0 5px 0; color: #fff; }
+        .tut-header-area p { color: #888; font-size: 15px; margin: 0; }
+        
+        /* PASEK POSTĘPU Z KÓŁKAMI */
+        .tut-progress-container { width: 100%; position: relative; padding: 20px 0; display: flex; align-items: center; justify-content: center;}
+        .tut-progress-line { position: absolute; top: 50%; left: 10%; right: 10%; height: 4px; background: #222; z-index: 0; border-radius: 4px; transform: translateY(-50%);}
+        .tut-progress-line-fill { height: 100%; background: #0ea5e9; border-radius: 4px; transition: 0.3s ease; }
+        .tut-top-steps { display: flex; justify-content: space-between; width: 80%; position: relative; z-index: 1; }
+        
+        .tut-step-dot { 
+            width: 32px; height: 32px; border-radius: 50%; background: #161616; border: 2px solid #333; 
+            color: #fff; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; transition: 0.2s; 
+        }
+        .tut-step-dot.active { background: #0ea5e9; border-color: #0ea5e9; color: #fff; box-shadow: 0 0 15px rgba(14,165,233,0.4); }
+
+        /* GŁÓWNY PANEL I SIDEBAR */
+        .tut-body-grid { display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; }
+        .tut-main-panel { background: #161616; border-radius: 20px; padding: 35px; }
+        .tut-sidebar { background: #161616; border-radius: 20px; padding: 30px; }
+
+        .tut-step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .tut-step-badge { width: 44px; height: 44px; background: rgba(14,165,233,0.15); color: #0ea5e9; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; }
+        .tut-step-title h3 { margin: 0 0 4px 0; font-size: 24px; font-weight: 900; color: #fff;}
+        .tut-step-title p { margin: 0; color: #888; font-size: 13px; font-weight: 700; }
+
+        .tut-desc { color: #aaa; font-size: 16px; line-height: 1.6; margin-bottom: 25px; }
+        .tut-media { background: #1a1a1a; border-radius: 16px; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 400px; margin-bottom: 20px; }
+
+        /* DOLNA NAWIGACJA */
+        .tut-bottom-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px solid #2a2a2a; padding-top: 25px; }
+        .tut-btn-text { background: none; border: none; color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;}
+        .tut-btn-text:hover { color: #0ea5e9; }
+        .tut-btn-blue { background: #0ea5e9; color: #fff; border: none; padding: 12px 28px; border-radius: 10px; font-weight: 900; font-size: 14px; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block;}
+        .tut-btn-blue:hover { background: #0284c7; }
+        
+        .tut-sidebar-title { font-size: 18px; font-weight: 900; text-align: center; margin: 0 0 20px 0; color: #fff;}
+        .tut-sidebar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; justify-items: center; }
+
+
+        /* =====================================================================
+           POZOSTAŁE SEKCJE (TRACKER, CONVERTER)
+           ===================================================================== */
+        .tracker-wrapper-white, .converter-board { width: 100%; max-width: 100%; }
 
         .tracker-wrapper-white { background: #1e1e1e; border: 1px solid rgba(255,255,255,0.08); border-radius: 30px; padding: 50px 30px; margin: 20px auto; }
+        .tracker-header-clean { text-align: center; margin-bottom: 40px; }
+        .tracker-header-clean h2 { font-size: clamp(32px, 6vw, 48px); font-weight: 900; margin: 0; color: #fff; letter-spacing: -1px; }
+        .tracker-header-clean p { font-size: 16px; color: #888; margin-top: 10px; }
         .tracker-field-clean { width: 100%; max-width: 600px; height: 60px; background: #262626; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 0 20px; font-size: 16px; display: block; margin: 0 auto 40px; color: #fff; outline: none; }
         .tracker-grid-clean { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
-        .tracker-card-clean { background: #262626; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 25px 15px; text-align: center; cursor: pointer; }
+        .tracker-card-clean { background: #262626; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 25px 15px; text-align: center; cursor: pointer; transition: 0.3s;}
+        .tracker-card-clean:hover { transform: translateY(-8px); }
+        .tracker-icon { width: 70px; height: 70px; margin: 0 auto 20px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 24px; }
+        .bg-17 { background: #003399; font-style: italic; padding-right: 5px; } 
+        .bg-dhl { background: #ffcc00; color: #d40511; font-style: italic; letter-spacing: -1px; } 
+        .bg-after { background: #ff9800; }
+        .tracker-card-clean h3 { margin: 0 0 10px; font-size: 20px; font-weight: 800; color: #fff; }
+        .tracker-btn-clean { width: 100%; height: 46px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; font-weight: 700; transition: 0.2s; color: #fff; cursor: pointer; }
         
+        /* CONVERTER (IMAGE_E7A8BB.PNG) */
         .converter-board { background: #1c1c1c; padding: 40px 30px; border-radius: 20px; border: 1px solid #2a2a2a; margin: 20px auto; text-align: center; }
-        .converter-input-row { display: flex; gap: 10px; align-items: stretch; width: 100%; }
-        .converter-input-dark { flex: 1; background: #161616; border: 1px solid #333; padding: 0 20px; height: 60px; border-radius: 16px; color: #fff; font-size: 15px; outline: none; width: 100%; min-width: 0;}
-        .converter-primary-btn { background: #fff; color: #000; padding: 0 30px; height: 60px; border-radius: 16px; font-weight: 900; border: none; cursor: pointer; flex-shrink: 0;}
+        .converter-kicker { color: #888; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .converter-hero h2 { font-size: 36px; font-weight: 900; margin: 0 0 5px 0; color: #fff; letter-spacing: -1px; }
+        .converter-hero p { color: #888; font-size: 14px; margin: 0 0 30px 0; }
+
+        .converter-dropdown-wrapper { position: relative; display: inline-block; margin-bottom: 10px; z-index: 100;}
+        .converter-dropdown-btn { background: #fff; color: #000; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 800; cursor: pointer; border: none; display: flex; align-items: center; gap: 5px;}
+        .converter-dropdown-menu { display: none !important; position: absolute !important; top: 110% !important; left: 0 !important; right: auto !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 12px !important; padding: 8px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important; flex-direction: column !important; gap: 4px !important; z-index: 2000 !important; min-width: 150px;}
+        .converter-dropdown-wrapper.open .converter-dropdown-menu { display: flex !important; }
+        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 10px 12px !important; border-radius: 8px !important; font-weight: 700 !important; font-size: 13px !important; cursor: pointer !important; transition: 0.2s !important; display: flex !important; align-items: center !important; gap: 10px !important; margin: 0 !important; }
+        .converter-dropdown-item:hover { background: #222 !important; color: #fff !important; }
+
+        .converter-input-row { display: flex; gap: 10px; align-items: center; max-width: 800px; margin: 0 auto; width: 100%; }
+        .converter-input-dark { flex: 1; background: #111; border: 1px solid #2a2a2a; padding: 0 20px; height: 50px; border-radius: 12px; color: #fff; font-size: 14px; outline: none; width: 100%; min-width: 0;}
+        .converter-primary-btn { background: #fff; color: #000; padding: 0 25px; height: 50px; border-radius: 12px; font-weight: 800; font-size: 14px; border: none; cursor: pointer; flex-shrink: 0; white-space: nowrap;}
         
         .converter-result-section { background: #111; border: 1px solid #222; border-radius: 16px; padding: 25px; margin-top: 30px; display: flex; flex-direction: column; gap: 20px; text-align: left; }
         .converter-output-box { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 15px; font-family: monospace; font-size: 13px; color: #ccc; word-break: break-all; display: flex; align-items: center; }
         .converter-action-btns { display: flex; gap: 10px; }
-        .converter-action-btn { flex: 1; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; }
-
-        #tutorialPlayer { max-width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 25px; align-items: start; }
-        .tutorial-main-panel { background: #111; border: 1px solid #222; border-radius: 24px; padding: 30px; width: 100%; }
-        .tutorial-sidebar { background: #111; border: 1px solid #222; border-radius: 24px; padding: 25px; width: 100%; }
+        .converter-action-btn { flex: 1; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; transition: 0.2s;}
+        .converter-action-btn:hover { background: #222; }
 
         /* =====================================================================
            MODAL USTAWIEŃ I AGENTÓW
            ===================================================================== */
-        .settings-modal, .filter-modal, .agents-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
-        .settings-modal.show, .filter-modal.show, .agents-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
+        .settings-modal, .filter-modal, .agents-modal, #adminLoginModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
+        .settings-modal.show, .filter-modal.show, .agents-modal.show, #adminLoginModal.show { display: flex; animation: fadeIn 0.2s ease-out; }
         .settings-content, .filter-content, .agents-modal-content { width: 100%; max-width: 420px; border-radius: 24px; padding: 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
         
         .settings-content { background: #f9fafb; color: #111; }
@@ -180,81 +295,77 @@
         
         .settings-agent-wrap { position: relative; margin-bottom: 25px; }
         .settings-agent-btn { width: 100%; background: #fff; border: 1px solid #e2e8f0; padding: 14px 16px; border-radius: 12px; font-weight: 700; color: #111; display: flex; justify-content: space-between; cursor: pointer; }
-        .settings-agent-menu { display: none; position: absolute; top: 110%; left: 0; right: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px; z-index: 100; }
-        .settings-agent-wrap.open .settings-agent-menu { display: block; }
-        .settings-agent-item { width: 100%; text-align: left; background: none; border: none; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .settings-agent-btn-left { display: flex; align-items: center; gap: 10px; }
+        
+        .settings-agent-menu { display: none; position: absolute; top: 110%; left: 0; right: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.1); flex-direction: column; gap: 4px; }
+        .settings-agent-wrap.open .settings-agent-menu { display: flex; }
+        .settings-agent-item { width: 100%; text-align: left; background: none; border: none; color: #475569; padding: 10px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s;}
+        .settings-agent-item:hover { background: #f8fafc; color: #111; }
         .settings-agent-item.active { background: #eff6ff; color: #3b82f6; }
-        .settings-save-btn { width: 100%; background: #0f172a; color: #fff; border: none; padding: 15px; border-radius: 14px; font-weight: 800; cursor: pointer; }
+        .settings-save-btn { width: 100%; background: #0f172a; color: #fff; border: none; padding: 15px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: 0.2s;}
+        .settings-save-btn:hover { background: #1e293b; }
+
+        .agent-row { display: flex !important; flex-wrap: nowrap !important; align-items: center !important; gap: 10px !important; margin-bottom: 12px !important; width: 100% !important; }
+        .agent-direct-btn { flex: 1 !important; min-width: 0 !important; display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 14px 20px !important; border: 1px solid #333 !important; border-radius: 16px !important; background: #1a1a1a !important; text-decoration: none !important; color: #fff !important; transition: 0.2s !important; }
+        .agent-direct-btn:hover { background: #222 !important; border-color: #444 !important; }
+        .agent-copy-btn { width: 54px !important; height: 54px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; cursor: pointer !important; color: #aaa !important; transition: 0.2s !important; padding: 0 !important; }
+        .agent-copy-btn:hover { background: #222 !important; color: #fff !important; }
+
+        /* TWARDA BLOKADA WYMIARÓW IKON WSZĘDZIE */
+        .settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { 
+            width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent;
+        }
 
         /* =====================================================================
            ROZWIĄZANIE NA TELEFONY (MOBILE FIRST FIXES)
            ===================================================================== */
         @media (max-width: 768px) {
-            .main-content { padding-top: 150px; } /* Więcej miejsca dla 2-wierszowego nav */
+            html, body, .site-shell { width: 100vw; overflow-x: hidden; }
+            .main-content { padding-top: 150px; } 
             .section-container { padding: 20px 15px; }
             .hero-inner { padding: 60px 15px 40px; }
             .hero-title { font-size: 48px; letter-spacing: -2px; }
-            .section-head h2 { font-size: 32px; }
 
-            /* Mądry, dwuwierszowy Navbar dla Mobile */
             .header-container { padding: 0 12px; top: 12px; }
             .floating-nav { 
-                width: 100%; max-width: 100%; 
-                flex-wrap: wrap; 
-                background: rgba(20, 20, 20, 0.95); 
-                padding: 12px; 
-                border-radius: 20px;
-                justify-content: space-between;
+                grid-template-columns: 1fr; 
+                background: rgba(20, 20, 20, 0.95); padding: 12px; border-radius: 20px; gap: 10px;
             }
             
-            .nav-brand-pill { order: 1; padding: 0 5px; margin: 0; font-size: 18px; }
-            .nav-right-group { order: 2; margin: 0; gap: 8px; }
-            .nav-settings-btn-pill { width: 36px; height: 36px; }
-            .nav-admin-pill { padding: 8px 14px; font-size: 13px; }
-            .nav-admin-pill span { display: none; } /* Na małym ekranie z Admin zostaje ikona jeśli brakuje miejsca, lub napis */
+            .nav-left { justify-content: space-between; width: 100%; display: flex; }
+            .nav-brand-pill { padding: 0; }
+            .nav-right { flex: none; display: flex; gap: 8px; }
+            .nav-admin-pill span { display: none; }
+            .nav-settings-btn-pill { width: 40px !important; height: 40px !important; }
 
-            /* Linki przerzucone do drugiego wiersza i przewijane palcem */
-            .nav-links-container { 
-                order: 3; 
-                width: 100%; 
-                display: flex; 
-                overflow-x: auto; 
-                padding-top: 12px; 
-                margin-top: 10px; 
-                border-top: 1px solid rgba(255,255,255,0.08); 
-                gap: 8px; 
-                -webkit-overflow-scrolling: touch; 
-                scrollbar-width: none; 
+            .nav-center { 
+                width: 100%; display: flex; overflow-x: auto; justify-content: flex-start;
+                padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.08); gap: 5px; 
+                -webkit-overflow-scrolling: touch; scrollbar-width: none; 
             }
-            .nav-links-container::-webkit-scrollbar { display: none; }
-            .nav-link-pill { padding: 8px 16px; font-size: 13px; flex-shrink: 0; }
+            .nav-center::-webkit-scrollbar { display: none; }
+            .nav-link-pill { padding: 8px 16px; font-size: 13px; flex-shrink: 0; background: rgba(255,255,255,0.03); }
 
-            /* Siatki układają się idealnie na telefonie */
             .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
             .product-card-new { padding: 10px !important; border-radius: 14px !important; }
             .card-name { font-size: 13px !important; min-height: 34px; margin-bottom: 8px !important; }
-            .card-price { font-size: 16px !important; margin-bottom: 10px !important; }
+            .card-price { font-size: 16px !important; }
             .btn-view-agents { padding: 8px 0 !important; font-size: 11px !important; }
             .btn-icon-pill-square { width: 34px !important; height: 34px !important; }
-            .card-tags span { font-size: 9px !important; padding: 4px 6px !important; }
+            .btn-icon-pill-square img { width: 18px !important; height: 18px !important; min-width: 18px !important; }
 
-            /* Pozostałe poprawki kontenerów */
             .search-filter-row { flex-direction: column; gap: 10px; }
             .btn-filters-open { width: 100%; justify-content: center; padding: 16px; }
             
             .tracker-grid-clean { grid-template-columns: minmax(0, 1fr); }
             
-            .converter-board { padding: 25px 15px; border-radius: 16px; }
             .converter-input-row { flex-direction: column; }
-            .converter-input-dark { width: 100%; padding: 15px; }
-            .converter-primary-btn { width: 100%; padding: 15px; }
-            .converter-action-btns { flex-direction: column; }
-            .converter-result-section { padding: 15px; }
-
-            #tutorialPlayer { grid-template-columns: minmax(0, 1fr) !important; gap: 20px !important; }
-            .tutorial-main-panel, .tutorial-sidebar { padding: 20px !important; border-radius: 16px !important; }
-            #tutorialMainTitle { font-size: 24px !important; }
-            .tutorial-step-media { min-height: 200px !important; }
+            .converter-input-dark { width: 100%; }
+            .converter-primary-btn { width: 100%; }
+            
+            .tut-overview-grid { grid-template-columns: 1fr !important; }
+            .tut-body-grid { grid-template-columns: 1fr !important; }
+            .tut-progress-container { display: none !important; } /* Ukrywa pasek na malym ekranie by oszczedzic miejsce */
         }
     </style>
 </head>
@@ -263,19 +374,13 @@
         
         <header class="header-container">
             <nav class="floating-nav">
-                <div class="nav-brand-pill" onclick="window.switchSection('home')">repfinder</div>
                 
-                <div class="nav-right-group">
-                    <button class="nav-settings-btn-pill" id="openSettingsBtnNav" title="Settings">
-                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    </button>
-                    <a href="admin.html" class="nav-admin-pill nav-anchor" id="adminEntry">
-                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        <span>Admin</span>
-                    </a>
+                <div class="nav-left">
+                    <button class="nav-brand-pill" onclick="window.switchSection('home')">repfinder</button>
+                    <div class="nav-right" style="display: none;" id="mobileNavRight"></div>
                 </div>
-
-                <div class="nav-links-container">
+                
+                <div class="nav-center">
                     <button class="nav-link-pill active" data-section-link="home">Home</button>
                     <button class="nav-link-pill" data-section-link="products">Products</button>
                     <button class="nav-link-pill" data-section-link="tutorials">Tutorials</button>
@@ -286,6 +391,16 @@
                             <button class="dropdown-item" data-section-link="converter">Converter</button>
                         </div>
                     </div>
+                </div>
+
+                <div class="nav-right" id="desktopNavRight">
+                    <a href="admin.html" class="nav-admin-pill nav-anchor" id="adminEntry">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span>Admin</span>
+                    </a>
+                    <button class="nav-settings-btn-pill" id="openSettingsBtnNav" title="Settings">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
                 </div>
             </nav>
         </header>
@@ -345,7 +460,9 @@
                                 <button class="tracker-btn-clean">Open</button>
                             </div>
                             <div class="tracker-card-clean" onclick="window.openTracking('aftership')">
-                                <div class="tracker-icon bg-after">A</div>
+                                <div class="tracker-icon bg-after">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                </div>
                                 <h3>AfterShip</h3>
                                 <button class="tracker-btn-clean">Open</button>
                             </div>
@@ -355,42 +472,9 @@
             </section>
 
             <section id="tutorials" class="page-section">
-                <div class="section-container tutorial-section-shell">
-                    <div id="tutorialsOverview" class="tutorials-overview" style="display:flex; justify-content:center;"></div>
-                    <div id="tutorialPlayer" class="tutorial-player hidden">
-                        <div class="tutorial-main-panel">
-                            <button id="tutorialBackToList" class="tutorial-back-link" style="background:none; border:none; color:#888; font-weight:800; cursor:pointer; padding:0; display:flex; align-items:center; gap:8px; margin-bottom:20px;">← Wróć do listy</button>
-                            <div class="tutorial-player-head">
-                                <h2 id="tutorialMainTitle" style="font-size: 28px; font-weight: 900; color: #fff; margin: 0 0 5px 0;"></h2>
-                                <p id="tutorialMainSubtitle" style="color: #666; font-size: 14px; margin-bottom: 25px;"></p>
-                                <div class="tutorial-progress-track"><div id="tutorialProgressBar" class="tutorial-progress-fill"></div></div>
-                                <div id="tutorialTopSteps" class="tutorial-top-steps"></div>
-                            </div>
-                            <div class="tutorial-layout">
-                                <div class="tutorial-step-header" style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px;">
-                                    <div id="tutorialStepBadge" class="tutorial-step-badge" style="width: 45px; height: 45px; background: #222; border: 1px solid #333; color: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900;"></div>
-                                    <div>
-                                        <h3 id="tutorialStepTitle" style="font-size: 20px; font-weight: 900; margin: 0 0 4px 0;"></h3>
-                                        <p id="tutorialStepMeta" style="color: #666; font-size: 13px; margin: 0;"></p>
-                                    </div>
-                                </div>
-                                <p id="tutorialStepDescription" style="color: #888; font-size: 15px; line-height: 1.5; margin-bottom: 20px;"></p>
-                                <div id="tutorialStepMedia" class="tutorial-step-media" style="background: #1a1a1a; border: 1px solid #222; border-radius: 12px; min-height: 250px; display: flex; align-items: center; justify-content: center;"></div>
-                                <div id="tutorialStepActions" style="margin-top: 20px;"></div>
-                                <div class="tutorial-bottom-nav" style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px solid #222; padding-top: 20px;">
-                                    <button id="tutorialPrevBtn" class="tutorial-ghost-btn" style="background: #222; border: 1px solid #333; color: #fff; padding: 12px 20px; border-radius: 10px; font-weight: 700; cursor: pointer;">‹ Wstecz</button>
-                                    <div class="tutorial-nav-group" style="display:flex; gap:10px;">
-                                        <button id="tutorialRestartBtn" style="background:none; border:none; color:#666; font-weight:700; cursor:pointer;">Od nowa</button>
-                                        <button id="tutorialNextBtn" style="background: #fff; color: #000; padding: 12px 25px; border-radius: 10px; font-weight: 900; border: none; cursor: pointer;">Dalej ›</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <aside class="tutorial-sidebar">
-                            <h4 style="font-size: 18px; font-weight: 900; margin: 0 0 20px 0; text-align: center;">Kroki</h4>
-                            <div id="tutorialSideSteps" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
-                        </aside>
-                    </div>
+                <div class="section-container">
+                    <div id="tutorialsOverview" class="tutorials-overview"></div>
+                    <div id="tutorialPlayer" class="hidden"></div>
                 </div>
             </section>
 
@@ -404,8 +488,9 @@
                         </div>
                         
                         <div class="converter-dropdown-wrapper" id="converterTargetSelect">
+                            <span style="color:#888; font-size:12px; font-weight:800; margin-right:5px;">Na:</span>
                             <button class="converter-dropdown-btn" id="converterTargetButton">
-                                <span><span style="color:#888;">Na:</span> <strong id="converterTargetLabel" style="margin-left:5px;">KakoBuy</strong></span>
+                                <strong id="converterTargetLabel">KakoBuy</strong>
                                 <span class="arrow">▾</span>
                             </button>
                             <div class="converter-dropdown-menu" id="converterTargetMenu"></div>
@@ -588,6 +673,26 @@
           { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' }
         ];
 
+        // Hack dla mobile layout
+        function checkMobileNav() {
+            const rightGroup = document.getElementById('desktopNavRight');
+            const mobileRight = document.getElementById('mobileNavRight');
+            if(window.innerWidth <= 768) {
+                if(rightGroup && mobileRight && rightGroup.parentNode !== mobileRight) {
+                    mobileRight.appendChild(rightGroup);
+                    mobileRight.style.display = 'flex';
+                }
+            } else {
+                if(rightGroup && rightGroup.parentNode === mobileRight) {
+                    document.querySelector('.nav-left').insertAdjacentElement('afterend', rightGroup);
+                    rightGroup.style.display = 'flex';
+                    rightGroup.className = 'nav-right';
+                    mobileRight.style.display = 'none';
+                }
+            }
+        }
+        window.addEventListener('resize', checkMobileNav);
+        
         // LOGOWANIE ADMINA
         window.initAdminLoginHandlers = function() {
             const modal = document.getElementById('adminLoginModal');
@@ -609,15 +714,16 @@
         };
 
         const iconCheck = `<svg class="success-icon" viewBox="0 0 24 24" width="22" height="22" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-        const iconArrow = `<svg class="agent-arrow" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
 
         window.copyText = function(text, btn) {
             navigator.clipboard.writeText(text);
             const origHTML = btn.innerHTML;
-            btn.innerHTML = iconCheck; 
-            setTimeout(() => {
-                btn.innerHTML = origHTML;
-            }, 1500);
+            if(btn.classList.contains('btn-icon-pill-square')) {
+                btn.innerHTML = `<svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            } else {
+                btn.innerHTML = iconCheck; 
+            }
+            setTimeout(() => { btn.innerHTML = origHTML; }, 1500);
         };
 
         window.switchSection = function(id) {
@@ -628,8 +734,8 @@
             target.classList.add('active');
             
             document.querySelectorAll('.nav-link-pill').forEach(l => l.classList.remove('active'));
-            const activeNav = document.querySelector(`[data-section-link="${id}"]`);
-            if(activeNav) activeNav.classList.add('active');
+            const activeNavs = document.querySelectorAll(`[data-section-link="${id}"]`);
+            activeNavs.forEach(n => n.classList.add('active'));
             
             const toolsMenu = document.getElementById('toolsMenu');
             if(toolsMenu) toolsMenu.classList.remove('show');
@@ -647,21 +753,15 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.nav-link-pill').forEach(b => {
+            checkMobileNav();
+
+            document.querySelectorAll('[data-section-link]').forEach(b => {
                 b.addEventListener('click', (e) => {
                     e.preventDefault();
                     window.switchSection(b.getAttribute('data-section-link'));
                 });
             });
             
-            const brandBtn = document.querySelector('.nav-brand-pill');
-            if(brandBtn) {
-                brandBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.switchSection('home');
-                });
-            }
-
             const tBtn = document.getElementById('toolsToggle'), tMenu = document.getElementById('toolsMenu');
             if(tBtn && tMenu) {
                 tBtn.addEventListener('click', (e) => {
@@ -672,7 +772,6 @@
                 });
             }
 
-            // MODAL USTAWIEŃ LOGIC
             const settingsModal = document.getElementById('settingsModal');
             const openSettingsBtnNav = document.getElementById('openSettingsBtnNav');
             const closeSettingsBtn = document.getElementById('closeSettingsBtn');
@@ -689,12 +788,10 @@
             if (openSettingsBtnNav) {
                 openSettingsBtnNav.addEventListener('click', (e) => {
                     e.preventDefault();
-                    
                     langCards.forEach(c => {
                         c.classList.remove('active');
                         if(c.getAttribute('data-lang') === selectedSettingsLang) c.classList.add('active');
                     });
-                    
                     agentItems.forEach(i => {
                         i.classList.remove('active');
                         if(i.getAttribute('data-agent') === selectedSettingsAgent) {
@@ -703,7 +800,6 @@
                             document.getElementById('settingsAgentLabel').textContent = i.getAttribute('data-name');
                         }
                     });
-
                     settingsModal.classList.add('show');
                 });
             }
@@ -752,7 +848,6 @@
             loadProducts();
         });
 
-        // PRZELICZANIE WALUTY (USD: 3.71, CNY: 6.91)
         function convertCurrency(amountInUSD, toCurrency) {
             const num = parseFloat(amountInUSD);
             if (isNaN(num)) return amountInUSD;
@@ -794,29 +889,25 @@
 
                 html += `
                 <article class="product-card-new">
-                    <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x400/222/fff?text=Brak'" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; margin-bottom: 12px; background-color: #1a1a1a;">
+                    <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x400/222/fff?text=Brak'" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; margin-bottom: 12px; background-color: #1a1a1a;" class="main-img">
                     
-                    <div style="position: absolute; top: 18px; left: 18px; background: #fff; color: #000; font-size: 11px; font-weight: 900; padding: 4px 6px; border-radius: 6px; z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">
-                        41%
-                    </div>
-
-                    <div class="card-tags" style="display: flex; gap: 8px; margin-bottom: 12px;">
-                        <span style="background: #1e3a8a; color: #60a5fa; font-size: 10px; font-weight: 800; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.15);">${p.Kategoria || 'SHOES'}</span>
-                        <span style="background: #450a0a; color: #f87171; font-size: 10px; font-weight: 800; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(255,255,255,0.15);">${p.Tag || 'BEST BATCH'}</span>
+                    <div class="card-tags">
+                        <span class="tag-blue">${p.Kategoria || 'SHOES'}</span>
+                        <span class="tag-red">${p.Tag || 'BEST BATCH'}</span>
                     </div>
                     
-                    <h3 class="card-name" style="font-size: 15px; font-weight: 900; color: #fff; margin: 0 0 16px 0; letter-spacing: -0.5px; line-height: 1.2;">${p.Nazwa}</h3>
+                    <h3 class="card-name">${p.Nazwa}</h3>
                     
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
-                        <div class="card-price" style="font-size: 20px; font-weight: 900; color: #fff;">${displayPrice}</div>
+                    <div class="card-bottom-row">
+                        <div class="card-price">${displayPrice}</div>
                         
-                        <div class="card-actions" style="display: flex; gap: 8px;">
-                            <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')" style="background-color: #000 !important; border: 1px solid rgba(255,255,255,0.08) !important; color: #fff !important; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <div class="card-actions">
+                            <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')">
                                 View agents
                             </button>
                             
-                            <button class="btn-icon-pill-square" onclick="window.copyText('${linkToCopy}', this)" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #000 !important; border: 1px solid rgba(255,255,255,0.08) !important; border-radius: 10px; cursor: pointer;">
-                                <img src="${agentObj.icon}" style="width:20px; border-radius: 4px;" class="copy-icon">
+                            <button class="btn-icon-pill-square" onclick="window.copyText('${linkToCopy}', this)">
+                                <img src="${agentObj.icon}" class="copy-icon">
                             </button>
                         </div>
                     </div>
@@ -913,30 +1004,15 @@
         window.closeAgentsModal = () => document.getElementById('agentsModal').classList.remove('show');
 
         // =====================================================================
-        // SKRYPT PORADNIKÓW
+        // SKRYPT PORADNIKÓW (ZGODNIE ZE ZDJĘCIAMI 1:1)
         // =====================================================================
         window.initTutorials = function () {
             const overview = document.getElementById("tutorialsOverview");
             const player = document.getElementById("tutorialPlayer");
-            const backBtn = document.getElementById("tutorialBackToList");
-            const progressBar = document.getElementById("tutorialProgressBar");
-            const topSteps = document.getElementById("tutorialTopSteps");
-            const sideSteps = document.getElementById("tutorialSideSteps");
-            const mainTitle = document.getElementById("tutorialMainTitle");
-            const mainSubtitle = document.getElementById("tutorialMainSubtitle");
-            const stepBadge = document.getElementById("tutorialStepBadge");
-            const stepTitle = document.getElementById("tutorialStepTitle");
-            const stepMeta = document.getElementById("tutorialStepMeta");
-            const stepDescription = document.getElementById("tutorialStepDescription");
-            const stepMedia = document.getElementById("tutorialStepMedia");
-            const stepActions = document.getElementById("tutorialStepActions");
-            const prevBtn = document.getElementById("tutorialPrevBtn");
-            const nextBtn = document.getElementById("tutorialNextBtn");
-            const restartBtn = document.getElementById("tutorialRestartBtn");
-
+            
             if (!overview || !player) return;
 
-            const tutorial = {
+            const tutorialData = {
                 title: "Jak zamawiać na KakoBuy",
                 subtitle: "Prosty przewodnik krok po kroku, jak zrobić zamówienie przez agentów KakoBuy.",
                 steps: [
@@ -957,142 +1033,146 @@
             };
 
             let currentStepIndex = 0;
-            let pageConfettiOverlay = null;
+            let confettiOverlay = null;
 
             renderOverview();
-            renderStep();
-
-            backBtn.addEventListener("click", () => { player.classList.add("hidden"); overview.classList.remove("hidden"); removePageConfetti(); });
-            prevBtn.addEventListener("click", () => { if (currentStepIndex > 0) { currentStepIndex -= 1; renderStep(); } });
-            nextBtn.addEventListener("click", () => {
-                if (currentStepIndex < tutorial.steps.length - 1) { currentStepIndex += 1; renderStep(); } 
-                else { currentStepIndex = 0; renderStep(); player.classList.add("hidden"); overview.classList.remove("hidden"); removePageConfetti(); }
-            });
-            restartBtn.addEventListener("click", () => { currentStepIndex = 0; renderStep(); removePageConfetti(); });
 
             function renderOverview() {
                 overview.innerHTML = `
-                <article class="tutorial-card-large">
-                    <span class="tutorial-card-kicker">TUTORIAL</span>
-                    <h3>${escapeHtml(tutorial.title)}</h3>
-                    <p>${escapeHtml(tutorial.subtitle)}</p>
-                    <button id="startKakoTutorial" class="tutorial-start-btn" type="button">Uruchom tutorial</button>
-                </article>
-                <article class="tutorial-small-card">
-                    <h4>Dowiesz się jak</h4>
-                    <p>Zamawiać i jak korzystać z naszych narzędzi krok po kroku.</p>
-                </article>`;
-                const startBtn = document.getElementById("startKakoTutorial");
-                if (startBtn) {
-                    startBtn.addEventListener("click", () => { overview.classList.add("hidden"); player.classList.remove("hidden"); currentStepIndex = 0; renderStep(); removePageConfetti(); });
-                }
+                <div class="tut-overview-grid">
+                    <div class="tut-overview-card">
+                        <div class="tut-overview-circle"></div>
+                        <span style="font-size:11px; font-weight:800; letter-spacing:1px; color:#888; margin-bottom:10px; text-transform:uppercase;">Tutorial</span>
+                        <h3 style="font-size: 32px; font-weight: 900; margin: 0 0 10px 0; color: #fff; line-height: 1.1;">${escapeHtml(tutorialData.title)}</h3>
+                        <p style="color: #888; font-size: 14px; margin: 0 0 20px; line-height: 1.5; max-width: 90%;">${escapeHtml(tutorialData.subtitle)}</p>
+                        <button id="startTutorialBtn" class="tut-btn-primary" style="background:#fff; color:#000; padding:12px 25px; border-radius:10px;">Uruchom tutorial</button>
+                    </div>
+                    <div class="tut-overview-card" style="justify-content: flex-start;">
+                        <h4 style="font-size: 18px; font-weight: 800; color: #fff; margin: 0 0 10px 0;">Dowiesz się jak</h4>
+                        <p style="color: #888; font-size: 14px; margin: 0; line-height: 1.6;">Zamawiać i jak korzystać z naszych narzędzi krok po kroku.</p>
+                    </div>
+                </div>`;
+                
+                document.getElementById("startTutorialBtn").addEventListener("click", () => {
+                    overview.classList.add("hidden");
+                    player.classList.remove("hidden");
+                    currentStepIndex = 0;
+                    renderStep();
+                    removeConfetti();
+                });
             }
 
             function renderStep() {
-                const step = tutorial.steps[currentStepIndex];
-                const total = tutorial.steps.length;
+                const step = tutorialData.steps[currentStepIndex];
+                const total = tutorialData.steps.length;
                 const progress = ((currentStepIndex + 1) / total) * 100;
 
-                mainTitle.textContent = tutorial.title;
-                mainSubtitle.textContent = tutorial.subtitle;
-                stepBadge.textContent = String(currentStepIndex + 1);
-                stepTitle.textContent = step.title;
-                stepMeta.textContent = `Krok ${currentStepIndex + 1} z ${total}`;
-                stepDescription.textContent = step.description;
-                progressBar.style.width = `${progress}%`;
+                player.className = "tutorial-player-new";
+                player.innerHTML = `
+                    <div class="tut-header-area">
+                        <button class="tut-back-btn" id="tutBackToList">← Wróć do listy</button>
+                        <h2>${escapeHtml(tutorialData.title)}</h2>
+                        <p>${escapeHtml(tutorialData.subtitle)}</p>
+                    </div>
+                    
+                    <div class="tut-progress-container">
+                        <div class="tut-progress-line"><div class="tut-progress-line-fill" style="width: ${progress}%"></div></div>
+                        <div class="tut-top-steps">
+                            ${tutorialData.steps.map((_, i) => `<button class="tut-step-dot ${i === currentStepIndex ? 'active' : ''}" data-tut-step-idx="${i}">${i + 1}</button>`).join("")}
+                        </div>
+                    </div>
+                    
+                    <div class="tut-body-grid">
+                        <div class="tut-main-panel">
+                            <div class="tut-step-header">
+                                <div class="tut-step-badge">${currentStepIndex + 1}</div>
+                                <div class="tut-step-title">
+                                    <h3>${escapeHtml(step.title)}</h3>
+                                    <p>Krok ${currentStepIndex + 1} z ${total}</p>
+                                </div>
+                            </div>
+                            <div class="tut-desc">${escapeHtml(step.description)}</div>
+                            <div class="tut-media">${renderVisualMock(step, currentStepIndex + 1)}</div>
+                            <div id="tutStepActions" style="margin-bottom:10px;">${renderStepAction(step)}</div>
+                            
+                            <div class="tut-bottom-nav">
+                                <button class="tut-btn-text" id="tutRestartBtn">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                    Rozpocznij ponownie
+                                </button>
+                                <div style="display:flex; gap:15px; align-items:center;">
+                                    <button class="tut-btn-text" id="tutPrevBtn" ${currentStepIndex === 0 ? 'style="opacity:0.3;pointer-events:none;"' : ''}>&lt; Wstecz</button>
+                                    <button class="tut-btn-blue" id="tutNextBtn">${currentStepIndex === total - 1 ? 'Zakończ' : 'Dalej &gt;'}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tut-sidebar">
+                            <h4 class="tut-sidebar-title">Kroki tutoriala</h4>
+                            <div class="tut-sidebar-grid">
+                                ${tutorialData.steps.map((_, i) => `<button class="tut-step-dot ${i === currentStepIndex ? 'active' : ''}" data-tut-step-idx="${i}">${i + 1}</button>`).join("")}
+                            </div>
+                        </div>
+                    </div>
+                `;
 
-                topSteps.innerHTML = tutorial.steps.map((_, index) => {
-                    const active = index === currentStepIndex ? "active" : "";
-                    return `<button class="tutorial-step-dot ${active}" type="button" data-step-index="${index}">${index + 1}</button>`;
-                }).join("");
-
-                sideSteps.innerHTML = tutorial.steps.map((_, index) => {
-                    const active = index === currentStepIndex ? "active" : "";
-                    return `<button class="tutorial-side-dot ${active}" type="button" data-side-step-index="${index}">${index + 1}</button>`;
-                }).join("");
-
-                stepMedia.innerHTML = renderTutorialVisual(step, currentStepIndex + 1);
-                stepActions.innerHTML = renderStepAction(step);
-
-                topSteps.querySelectorAll("[data-step-index]").forEach((button) => {
-                    button.addEventListener("click", () => { currentStepIndex = Number(button.getAttribute("data-step-index")); renderStep(); });
+                player.querySelectorAll("[data-tut-step-idx]").forEach(btn => {
+                    btn.addEventListener("click", () => { currentStepIndex = Number(btn.getAttribute("data-tut-step-idx")); renderStep(); });
                 });
-
-                sideSteps.querySelectorAll("[data-side-step-index]").forEach((button) => {
-                    button.addEventListener("click", () => { currentStepIndex = Number(button.getAttribute("data-side-step-index")); renderStep(); });
+                
+                document.getElementById('tutBackToList').addEventListener("click", () => { resetTutorial(); });
+                document.getElementById('tutPrevBtn').addEventListener("click", () => { if (currentStepIndex > 0) { currentStepIndex -= 1; renderStep(); } });
+                document.getElementById('tutNextBtn').addEventListener("click", () => {
+                    if (currentStepIndex < tutorialData.steps.length - 1) { currentStepIndex += 1; renderStep(); } 
+                    else { resetTutorial(); }
                 });
+                document.getElementById('tutRestartBtn').addEventListener("click", () => { currentStepIndex = 0; renderStep(); removeConfetti(); });
 
-                stepActions.querySelectorAll("[data-action-section]").forEach((button) => {
-                    button.addEventListener("click", () => { const target = button.getAttribute("data-action-section"); if (typeof window.switchSection === "function") { window.switchSection(target); } });
-                });
+                if (currentStepIndex === total - 1) { launchConfetti(); } else { removeConfetti(); }
+            }
 
-                prevBtn.disabled = currentStepIndex === 0;
-                prevBtn.style.opacity = currentStepIndex === 0 ? "0.45" : "1";
+            function resetTutorial() { currentStepIndex = 0; player.classList.add("hidden"); overview.classList.remove("hidden"); removeConfetti(); }
 
-                if (currentStepIndex === total - 1) {
-                    nextBtn.textContent = "Ukończ ✓"; nextBtn.className = "tutorial-success-btn"; launchPageConfetti();
-                } else {
-                    nextBtn.textContent = "Dalej ›"; nextBtn.className = "tutorial-primary-btn"; removePageConfetti();
+            function renderVisualMock(step, num) {
+                const header = `<div style="display:flex; gap:6px; padding:10px 15px; border-bottom:1px solid #333; background:#222;"><span style="width:10px;height:10px;border-radius:50%;background:#ff5f56;"></span><span style="width:10px;height:10px;border-radius:50%;background:#ffbd2e;"></span><span style="width:10px;height:10px;border-radius:50%;background:#27c93f;"></span></div>`;
+                const mockContent = (text) => `<div style="padding:40px; text-align:center; color:#888;">[ Wizualizacja: ${text} ]</div>`;
+                switch (step.visual) {
+                    case "register": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Formularz Rejestracji')}</div>`;
+                    case "browse": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Kopiowanie linku Weidian')}</div>`;
+                    case "cart": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Dodawanie do koszyka')}</div>`;
+                    case "checkout": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Płatność za towary')}</div>`;
+                    case "payment": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Płatność')}</div>`;
+                    case "qc": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Zdjęcia QC z magazynu')}</div>`;
+                    case "shipping": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Wysyłka międzynarodowa')}</div>`;
+                    case "done": return `<div style="padding:30px; text-align:center; color:#0ea5e9; font-weight:800; font-size:24px;">Gotowe! ✔️</div>`;
+                    default: return `<div style="padding:40px; text-align:center; color:#888;">[ Krok ${num} ]</div>`;
                 }
             }
 
-            function launchPageConfetti() {
-                removePageConfetti();
-                pageConfettiOverlay = document.createElement("div");
-                pageConfettiOverlay.className = "page-confetti-overlay";
-                const colors = ["#ff3a2f", "#ffb800", "#22c55e", "#3b82f6", "#a855f7", "#ff6ec7", "#00d4ff"];
-                for (let index = 0; index < 120; index += 1) {
+            function renderStepAction(step) {
+                if (!step.action) return "";
+                if (step.action.type === "section") { return `<button class="tut-btn-blue" data-action-section="${escapeHtml(step.action.target)}">${escapeHtml(step.action.label)}</button>`; }
+                if (step.action.href) { return `<a href="${escapeHtml(step.action.href)}" target="_blank" class="tut-btn-blue">${escapeHtml(step.action.label)}</a>`; }
+                return "";
+            }
+
+            function launchConfetti() {
+                removeConfetti();
+                confettiOverlay = document.createElement("div");
+                confettiOverlay.style = "position:fixed; inset:0; pointer-events:none; z-index:99999;";
+                const colors = ["#ff3a2f", "#ffb800", "#22c55e", "#0ea5e9", "#a855f7", "#ff6ec7"];
+                for (let i = 0; i < 120; i++) {
                     const piece = document.createElement("span");
-                    piece.className = "confetti-piece";
-                    piece.style.left = `${Math.random() * 100}%`;
-                    piece.style.background = colors[index % colors.length];
-                    piece.style.setProperty("--drift", `${Math.random() * 280 - 140}px`);
-                    piece.style.animationDelay = `${Math.random() * 500}ms`;
-                    piece.style.transform = `translate3d(0,0,0) rotate(${Math.random() * 180}deg)`;
-                    piece.style.width = `${8 + Math.random() * 7}px`;
-                    piece.style.height = `${10 + Math.random() * 10}px`;
-                    pageConfettiOverlay.appendChild(piece);
+                    piece.style = `position:absolute; top:-20px; left:${Math.random() * 100}%; width:${8 + Math.random() * 7}px; height:${10 + Math.random() * 10}px; background:${colors[i % colors.length]}; transform: rotate(${Math.random() * 180}deg); opacity: 0.8; transition: top 3s ease-in, transform 3s linear;`;
+                    confettiOverlay.appendChild(piece);
+                    setTimeout(() => { piece.style.top = "120%"; piece.style.transform = `rotate(${Math.random() * 720}deg)`; }, 50);
                 }
-                document.body.appendChild(pageConfettiOverlay);
-                setTimeout(() => { removePageConfetti(); }, 3000);
+                document.body.appendChild(confettiOverlay);
+                setTimeout(removeConfetti, 3000);
             }
 
-            function removePageConfetti() {
-                if (pageConfettiOverlay && pageConfettiOverlay.parentNode) { pageConfettiOverlay.parentNode.removeChild(pageConfettiOverlay); }
-                pageConfettiOverlay = null;
-            }
+            function removeConfetti() { if (confettiOverlay && confettiOverlay.parentNode) { confettiOverlay.parentNode.removeChild(confettiOverlay); } confettiOverlay = null; }
+            function escapeHtml(v) { return String(v ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;"); }
         };
-
-        function renderStepAction(step) {
-            if (!step.action) return "";
-            if (step.action.type === "section") { return `<button class="tutorial-inline-btn" type="button" data-action-section="${escapeHtml(step.action.target)}">${escapeHtml(step.action.label)}</button>`; }
-            if (step.action.href) { return `<a class="tutorial-inline-btn" href="${escapeHtml(step.action.href)}" target="_blank" rel="noreferrer">${escapeHtml(step.action.label)}</a>`; }
-            return "";
-        }
-
-        function renderTutorialVisual(step, stepNumber) {
-            const commonHeader = `<div class="tutorial-shot-browser-top"><span></span><span></span><span></span></div>`;
-            switch (step.visual) {
-                case "register": return `<div class="tutorial-shot">${commonHeader}<div class="tutorial-mock-grid"><div class="tutorial-mock-panel"><div class="tutorial-label-chip">Konto / Rejestracja</div><div class="tutorial-mock-title"></div><div class="tutorial-mock-lines"><span style="width:88%"></span><span style="width:72%"></span><span style="width:60%"></span></div><div class="tutorial-mock-image"></div></div><div class="tutorial-mock-side"><div class="tutorial-mock-title" style="width:80%"></div><div class="tutorial-mock-lines"><span style="width:100%"></span><span style="width:100%"></span><span style="width:100%"></span><span style="width:65%"></span></div></div></div></div>`;
-                case "browse": return `<div class="tutorial-shot tutorial-shot-dark">${commonHeader}<div class="tutorial-mock-panel"><div class="tutorial-label-chip">Spreadsheet / Products</div><div class="tutorial-mock-title" style="width:48%"></div><div class="tutorial-mock-lines"><span style="width:82%"></span><span style="width:66%"></span></div><div class="tutorial-mock-image dark"></div></div></div>`;
-                case "cart": return mockArrowShot("Dodawanie do koszyka", "Dodaj wybrany rozmiar i kliknij Add to cart / Add shopping cart.");
-                case "checkout": return mockArrowShot("Podsumowanie koszyka", "Przejdź dalej z poziomu koszyka i sprawdź kwoty produktu.");
-                case "confirm": return mockArrowShot("Potwierdzenie zamówienia", "Zaznacz zgodę i kliknij przycisk finalizacji.");
-                case "payment": return mockArrowShot("Płatność", "Wybierz metodę i potwierdź opłacenie zamówienia.");
-                case "qc": return mockArrowShot("QC / Warehouse", "Po przyjęciu do magazynu sprawdź zdjęcia i jakość produktu.");
-                case "weigh": return mockArrowShot("Ważenie", "Zleć wstępne ważenie, gdy wszystkie produkty są już na warehouse.");
-                case "shipping": return mockArrowShot("Shipping line", "Wybierz linię wysyłki i potwierdź submit.");
-                case "plain1": return `<div class="tutorial-shot-plain"><p>KakoBuy kupuje produkty u sellerów i dostarcza je do swojego magazynu. Ten etap trwa zwykle kilka dni i nie wymaga od Ciebie żadnej akcji.</p></div>`;
-                case "plain2": return `<div class="tutorial-shot-plain"><p>Po ważeniu przechodzisz do etapu wysyłki międzynarodowej. Tutaj decydujesz, kiedy paczka ma zostać wysłana do Ciebie.</p></div>`;
-                case "plain3": return `<div class="tutorial-shot-plain"><p>Gdy paczka dotrze, sprawdź stan rzeczy, zachowaj zdjęcia i potwierdź, że wszystko jest okej. Potem możesz wracać po kolejne finds.</p></div>`;
-                case "done": return `<div class="tutorial-shot-plain"><p>Masz to. Cały flow od rejestracji do odbioru paczki jest ukończony. Na końcu odpalamy celebrację na całą stronę.</p></div>`;
-                default: return `<div class="tutorial-shot-plain"><p>Krok ${stepNumber}</p></div>`;
-            }
-        }
-
-        function mockArrowShot(label, text) {
-            return `<div class="tutorial-shot"><div class="tutorial-shot-browser-top"><span></span><span></span><span></span></div><div class="tutorial-label-chip">${escapeHtml(label)}</div><div class="tutorial-mock-grid"><div class="tutorial-mock-panel"><div class="tutorial-mock-title" style="width:58%"></div><div class="tutorial-mock-lines"><span style="width:72%"></span><span style="width:64%"></span><span style="width:54%"></span></div><div class="tutorial-mock-image gray"></div></div><div class="tutorial-mock-side"><div class="tutorial-mock-title" style="width:72%"></div><div class="tutorial-mock-lines"><span style="width:100%"></span><span style="width:88%"></span><span style="width:74%"></span><span style="width:62%"></span></div></div></div><div class="tutorial-arrow" style="left: 34%; top: 62%;"></div><div style="margin-top:14px;color:#6d7785;font-weight:700;">${escapeHtml(text)}</div></div>`;
-        }
 
         // =====================================================================
         // ZINTEGROWANY CONVERTER
@@ -1117,7 +1197,7 @@
             const targetLabel = document.getElementById("converterTargetLabel");
 
             if (!input || !convertBtn || !output || !status || !originalBadge || !convertedBadge || !originalUrlBox || !resultSection || !targetSelectWrap || !targetButton || !targetMenu) {
-                console.error("Converter init failed: missing HTML elements");
+                console.error("Converter init failed");
                 return;
             }
 
@@ -1193,7 +1273,7 @@
 
                 if (!converted.url) {
                     setResult({ originalPlatform: analysis.originalPlatform, originalUrl: analysis.originalUrl, convertedPlatform: selectedTarget, convertedUrl: "" });
-                    setStatus(`Nie udało się zbudować poprawnego linku ${formatPlatformLabel(selectedTarget)} dla tego formatu.`);
+                    setStatus(`Nie udało się zbudować poprawnego linku dla tego formatu.`);
                     revealResultSection(resultSection, hasShownResultOnce);
                     hasShownResultOnce = true;
                     return;
