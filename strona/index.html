@@ -140,9 +140,9 @@
         }
         .btn-icon-pill-square:hover { background: #222 !important; }
 
-        .copied { background-color: #15803d !important; border-color: #22c55e !important; color: #fff !important; }
+        .copied { border-color: #22c55e !important; }
         .copied .copy-icon { display: none !important; }
-        .copied .success-icon { display: block !important; font-weight: bold; }
+        .copied .success-icon { display: block !important; }
         .copy-icon { display: block; }
         .success-icon { display: none; }
 
@@ -151,7 +151,7 @@
         .tag-red { color: #ef4444; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* =====================================================================
-           TUTORIALS (NOWY LAYOUT 1:1)
+           TUTORIALS 
            ===================================================================== */
         .tut-overview-grid {
             display: grid; 
@@ -272,7 +272,7 @@
         .converter-dropdown-item.active { background: rgba(255,255,255,0.05) !important; color: #fff !important; }
 
         /* =====================================================================
-           MODAL USTAWIEŃ (ZGODNIE ZE ZDJĘCIEM image_f2304a.png)
+           MODAL USTAWIEŃ
            ===================================================================== */
         .settings-modal, .filter-modal, .agents-modal, #adminLoginModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(8px); padding: 15px; }
         .settings-modal.show, .filter-modal.show, .agents-modal.show, #adminLoginModal.show { display: flex; animation: fadeIn 0.2s ease-out; }
@@ -283,21 +283,28 @@
         .settings-header, .filter-header, .modal-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .settings-header h3 { font-size: 24px; font-weight: 900; margin: 0; color: #fff; }
         
-        .settings-close-btn { background: #222; border: 1px solid #333; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: #888; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
-        .settings-close-btn:hover { background: #333; color: #fff; }
-        .close-filter-btn, .agents-modal-close { background: #222; border: 1px solid #333; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: #888; }
+        .settings-close-btn, .close-filter-btn { background: #222; border: 1px solid #333; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: #888; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+        .settings-close-btn:hover, .close-filter-btn:hover { background: #333; color: #fff; }
+        .agents-modal-close { background: #222; border: 1px solid #333; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: #888; }
         
         .settings-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 0.5px; }
         
         .settings-lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
-        .lang-card { background: #111; border: 1px solid #2a2a2a; border-radius: 16px; padding: 16px 5px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; transition: 0.2s; }
+        .lang-card { 
+            background: #111; border: 1px solid #2a2a2a; border-radius: 16px; 
+            padding: 12px 16px; display: flex; flex-direction: row; 
+            align-items: center; justify-content: flex-start;
+            cursor: pointer; transition: 0.2s; 
+        }
         .lang-card:hover { border-color: #444; }
         .lang-card.active { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
-        .lang-card.active .lang-text { color: #3b82f6; }
-        
-        .lang-icon { width: 32px; height: auto; display: block; margin-bottom: 5px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .lang-text { font-size: 13px; font-weight: 800; color: #888; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px;}
-        .lang-text span.small { font-size: 11px; font-weight: 600; }
+        .lang-card.active .lang-text-main { color: #3b82f6; }
+
+        .lang-icon { width: 28px; height: auto; display: block; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); flex-shrink: 0; }
+        .lang-card-separator { width: 1px; height: 36px; background-color: #333; margin: 0 16px; flex-shrink: 0; }
+        .lang-text-group { display: flex; flex-direction: column; gap: 2px; }
+        .lang-text-main { color: #fff; font-weight: 800; font-size: 14px; transition: 0.2s; }
+        .lang-text-sub { color: #64748b; font-weight: 600; font-size: 12px; }
         
         .settings-agent-wrap { position: relative; margin-bottom: 30px; }
         .settings-agent-btn { width: 100%; background: #111; border: 1px solid #2a2a2a; padding: 16px 20px; border-radius: 16px; font-weight: 800; font-size: 15px; color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
@@ -313,11 +320,39 @@
         .settings-save-btn { width: 100%; background: #fff; color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s;}
         .settings-save-btn:hover { background: #e5e5e5; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.1);}
 
+        /* =====================================================================
+           STYLE MODALU AGENTÓW (Zgodnie z obrazkiem f4eebe.png)
+           ===================================================================== */
         .agent-row { display: flex !important; flex-wrap: nowrap !important; align-items: center !important; gap: 10px !important; margin-bottom: 12px !important; width: 100% !important; }
         .agent-direct-btn { flex: 1 !important; min-width: 0 !important; display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 14px 20px !important; border: 1px solid #333 !important; border-radius: 16px !important; background: #1a1a1a !important; text-decoration: none !important; color: #fff !important; transition: 0.2s !important; }
         .agent-direct-btn:hover { background: #222 !important; border-color: #444 !important; }
         .agent-copy-btn { width: 54px !important; height: 54px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; cursor: pointer !important; color: #aaa !important; transition: 0.2s !important; padding: 0 !important; }
         .agent-copy-btn:hover { background: #222 !important; color: #fff !important; }
+
+        /* =====================================================================
+           FILTRY STYLES (Zgodnie z obrazkiem f5c47e.png)
+           ===================================================================== */
+        .filter-content h3 { color: #fff; font-weight: bold; font-size: 1.25rem; margin: 0;}
+        .filter-section-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 0.5px; }
+        
+        .cat-scroll-box { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px; }
+        .cat-scroll-box::-webkit-scrollbar { width: 4px; }
+        .cat-scroll-box::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        
+        .filter-btn-opt { background: #111; border: 1px solid #222; border-radius: 8px; padding: 12px 16px; color: #fff; font-weight: 700; text-align: left; cursor: pointer; transition: 0.2s; }
+        .filter-btn-opt:hover { background: #222; border-color: #333; }
+        .filter-btn-opt.active { background: rgba(37, 99, 235, 0.1); border-color: #ffffff; color: #ffffff; }
+
+        .tags-grid-filter { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+        .tag-opt { background: #111; border: 1px solid #222; border-radius: 8px; padding: 12px; color: #fff; font-weight: 700; text-align: center; cursor: pointer; transition: 0.2s; }
+        .tag-opt:hover { background: #222; border-color: #333; }
+        .tag-opt.active { background: rgba(37, 99, 235, 0.1); border-color: #ffffff; color: #ffffff; }
+
+        .filter-footer-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border-top: 1px solid #2a2a2a; padding-top: 20px; }
+        .btn-filter-clear { background: #111; color: #fff; border: 1px solid #222; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; transition: 0.2s;}
+        .btn-filter-clear:hover { background: #222; }
+        .btn-filter-apply { background: #fff; color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: 900; cursor: pointer; font-size: 14px; transition: 0.2s;}
+        .btn-filter-apply:hover { background: #e5e5e5; }
 
         /* TWARDA BLOKADA WYMIARÓW IKON WSZĘDZIE */
         .settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { 
@@ -369,6 +404,8 @@
             .tut-top-steps { display: none !important; } 
             .tut-overview-card { min-height: 250px; padding: 25px; }
             .tut-overview-circle { width: 150px; height: 150px; bottom: -30px; right: -30px; }
+
+            .settings-lang-grid { grid-template-columns: 1fr !important; }
         }
     </style>
 </head>
@@ -485,17 +522,20 @@
                 <div class="section-container">
                     <div class="converter-board">
                         <div class="converter-hero">
-                            <span class="converter-kicker">Narzędzie</span>
+                            <span class="pill-tag" style="margin-bottom:15px;">NARZĘDZIE</span>
                             <h2>Link Converter</h2>
                             <p>Wklej link, żeby zmienić go na wersję Twojego agenta.</p>
                         </div>
                         
-                        <div class="converter-dropdown-wrapper" id="converterTargetSelect">
-                            <button class="converter-dropdown-btn" id="converterTargetButton">
-                                <span><span style="color:#888;">Na:</span> <strong id="converterTargetLabel" style="margin-left:5px;">KakoBuy</strong></span>
-                                <span class="arrow">▾</span>
+                        <div class="converter-dropdown-wrapper" id="converterTargetSelect" style="margin-bottom:20px;">
+                            <button class="settings-agent-btn" id="converterTargetButton" style="background:#111; border-color:#333; max-width:250px; margin:0 auto;">
+                                <div class="settings-agent-btn-left">
+                                    <img id="converterTargetIcon" src="https://www.kakobuy.com/favicon.ico">
+                                    <strong id="converterTargetLabel">KakoBuy</strong>
+                                </div>
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                             </button>
-                            <div class="converter-dropdown-menu" id="converterTargetMenu"></div>
+                            <div class="settings-agent-menu" id="converterTargetMenu"></div>
                         </div>
 
                         <div class="converter-input-row">
@@ -546,8 +586,11 @@
         <div class="filter-content">
             <div class="filter-header">
                 <h3>Filters</h3>
-                <button class="close-filter-btn" id="closeFiltersBtn">✕</button>
+                <button class="close-filter-btn" id="closeFiltersBtn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
+            
             <span class="filter-section-label">CATEGORIES</span>
             <div class="cat-scroll-box">
                 <button class="filter-btn-opt active" data-filter-cat="ALL">All</button>
@@ -558,6 +601,7 @@
                 <button class="filter-btn-opt" data-filter-cat="HOODIES">Hoodies</button>
                 <button class="filter-btn-opt" data-filter-cat="JACKETS">Jackets</button>
             </div>
+            
             <span class="filter-section-label">TAGS & QUALITY</span>
             <div class="tags-grid-filter">
                 <button class="tag-opt active" data-filter-tag="ALL">All Tags</button>
@@ -573,17 +617,12 @@
     </div>
 
     <div id="agentsModal" class="agents-modal">
-        <div class="agents-modal-content">
-            <div class="modal-header-top">
-                <h3>Choose Agent</h3>
-                <button class="agents-modal-close" onclick="window.closeAgentsModal()">✕</button>
-            </div>
-            <div class="modal-product-box">
-                <img id="am-img" src="" alt="Product" onerror="this.src='https://placehold.co/400x400/1a1a1a/444444?text=Brak'">
-                <div>
-                    <div id="am-name" class="am-name"></div>
-                    <div id="am-price" class="am-price"></div>
-                </div>
+        <div class="agents-modal-content" style="max-width: 350px;">
+            <div class="modal-header-top" style="margin-bottom: 20px;">
+                <h3 style="font-size: 18px; font-weight: bold;">Choose Agent</h3>
+                <button class="agents-modal-close" onclick="window.closeAgentsModal()">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
             <div id="am-list"></div>
         </div>
@@ -604,22 +643,36 @@
         <div class="settings-content">
             <div class="settings-header">
                 <h3>Settings</h3>
-                <button class="settings-close-btn" id="closeSettingsBtn">✕</button>
+                <button class="settings-close-btn" id="closeSettingsBtn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
             
             <span class="settings-label">LANGUAGE / CURRENCY</span>
             <div class="settings-lang-grid">
                 <div class="lang-card active" data-lang="usd">
                     <img class="lang-icon" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" alt="USA Flag">
-                    <div class="lang-text"><span class="small">US</span>USD ($)</div>
+                    <div class="lang-card-separator"></div>
+                    <div class="lang-text-group">
+                        <div class="lang-text-main">$ USD</div> 
+                        <div class="lang-text-sub">Waty USD</div> 
+                    </div>
                 </div>
                 <div class="lang-card" data-lang="pln">
                     <img class="lang-icon" src="https://upload.wikimedia.org/wikipedia/en/1/12/Flag_of_Poland.svg" alt="Poland Flag">
-                    <div class="lang-text"><span class="small">PL</span>PLN (zł)</div>
+                    <div class="lang-card-separator"></div> 
+                    <div class="lang-text-group">
+                        <div class="lang-text-main">zł PLN</div>
+                        <div class="lang-text-sub">Repfinder</div> 
+                    </div>
                 </div>
                 <div class="lang-card" data-lang="cny">
                     <img class="lang-icon" src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Flag_of_the_People%27s_Republic_of_China.svg" alt="China Flag">
-                    <div class="lang-text"><span class="small">CN</span>CNY (¥)</div>
+                    <div class="lang-card-separator"></div>
+                    <div class="lang-text-group">
+                        <div class="lang-text-main">¥ CNY</div>
+                        <div class="lang-text-sub">Waty CNY</div>
+                    </div>
                 </div>
             </div>
 
@@ -630,7 +683,7 @@
                         <img id="settingsAgentIcon" src="https://www.kakobuy.com/favicon.ico" onerror="this.style.display='none'">
                         <span id="settingsAgentLabel">KakoBuy</span>
                     </div>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </button>
                 <div class="settings-agent-menu" id="settingsAgentMenu">
                     <button class="settings-agent-item active" data-agent="kakobuy" data-name="KakoBuy" data-icon="https://www.kakobuy.com/favicon.ico">
@@ -715,17 +768,12 @@
             };
         };
 
-        const iconCheck = `<svg class="success-icon" viewBox="0 0 24 24" width="22" height="22" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-
+        // NOWY, PŁYNNY SYSTEM KOPIOWANIA (klasa .copied)
         window.copyText = function(text, btn) {
-            navigator.clipboard.writeText(text);
-            const origHTML = btn.innerHTML;
-            if(btn.classList.contains('btn-icon-pill-square')) {
-                btn.innerHTML = `<svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-            } else {
-                btn.innerHTML = iconCheck; 
-            }
-            setTimeout(() => { btn.innerHTML = origHTML; }, 1500);
+            if(!text) return;
+            navigator.clipboard.writeText(text).catch(err => console.error(err));
+            btn.classList.add('copied');
+            setTimeout(() => { btn.classList.remove('copied'); }, 1500);
         };
 
         window.switchSection = function(id) {
@@ -735,7 +783,7 @@
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             target.classList.add('active');
             
-            document.querySelectorAll('.nav-link-pill').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.nav-link-pill, .dropdown-item').forEach(l => l.classList.remove('active'));
             const activeNavs = document.querySelectorAll(`[data-section-link="${id}"]`);
             activeNavs.forEach(n => n.classList.add('active'));
             
@@ -790,10 +838,12 @@
             if (openSettingsBtnNav) {
                 openSettingsBtnNav.addEventListener('click', (e) => {
                     e.preventDefault();
+                    
                     langCards.forEach(c => {
                         c.classList.remove('active');
                         if(c.getAttribute('data-lang') === selectedSettingsLang) c.classList.add('active');
                     });
+                    
                     agentItems.forEach(i => {
                         i.classList.remove('active');
                         if(i.getAttribute('data-agent') === selectedSettingsAgent) {
@@ -802,6 +852,7 @@
                             document.getElementById('settingsAgentLabel').textContent = i.getAttribute('data-name');
                         }
                     });
+
                     settingsModal.classList.add('show');
                 });
             }
@@ -881,13 +932,18 @@
 
             let html = "";
             data.forEach(p => {
-                const safeName = (p.Nazwa || 'Item').replace(/'/g, "\\'");
+                // Bezpieczne zmienne z escaped pojedynczymi i podwojnymi cudzysłowami
+                const safeName = escapeHtml(p.Nazwa || 'Item').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeImg = escapeHtml(p.Link_Zdjecie || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeKb = escapeHtml(p.Link_Kakobuy || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                
                 const displayPrice = prefix + convertCurrency(p.Cena_USD, currency) + suffix;
 
                 let linkToCopy = p.Link_Kakobuy; 
                 if(pinnedAgentId === 'usfans' && p.Link_Usfans) linkToCopy = p.Link_Usfans;
                 if(pinnedAgentId === 'acbuy' && p.Link_Allchinabuy) linkToCopy = p.Link_Allchinabuy;
                 if(pinnedAgentId === 'litbuy' && p.Link_Litbuy) linkToCopy = p.Link_Litbuy;
+                const safeLinkToCopy = escapeHtml(linkToCopy || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
                 html += `
                 <article class="product-card-new">
@@ -904,12 +960,13 @@
                         <div class="card-price">${displayPrice}</div>
                         
                         <div class="card-actions">
-                            <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')">
+                            <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${safeImg}', '${safeKb}')">
                                 View agents
                             </button>
                             
-                            <button class="btn-icon-pill-square" onclick="window.copyText('${linkToCopy}', this)">
+                            <button class="btn-icon-pill-square" onclick="window.copyText('${safeLinkToCopy}', this)">
                                 <img src="${agentObj.icon}" class="copy-icon">
+                                <svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                             </button>
                         </div>
                     </div>
@@ -940,9 +997,9 @@
             };
         });
 
-        document.querySelectorAll('.tags-grid-filter .tag-opt').forEach(btn => {
+        document.querySelectorAll('.tags-grid-filter .tag-opt:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(btn => {
             btn.onclick = () => {
-                document.querySelectorAll('.tags-grid-filter .tag-opt').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tags-grid-filter .tag-opt:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active'); window.activeTag = btn.getAttribute('data-filter-tag');
             };
         });
@@ -950,7 +1007,7 @@
         document.getElementById('applyFiltersBtn').onclick = () => { window.applyFilters(); document.getElementById('filterModal').classList.remove('show'); };
         document.getElementById('clearFiltersBtn').onclick = () => {
             window.activeCat = 'ALL'; window.activeTag = 'ALL';
-            document.querySelectorAll('.filter-modal .filter-btn-opt, .filter-modal .tag-opt').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-modal .filter-btn-opt, .filter-modal .tag-opt:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(b => b.classList.remove('active'));
             document.querySelector('[data-filter-cat="ALL"]').classList.add('active'); document.querySelector('[data-filter-tag="ALL"]').classList.add('active');
             window.applyFilters();
         };
@@ -982,22 +1039,22 @@
             }
         }
 
+        // --- SKRYPT DLA VIEW AGENTS MODAL (ZGODNIE Z f4eebe.png) ---
         window.openAgentsModal = (name, price, img, link) => {
-            document.getElementById('am-name').innerText = name;
-            document.getElementById('am-price').innerText = price + '$';
-            document.getElementById('am-img').src = img && img !== 'undefined' && img !== '' ? img : 'https://placehold.co/400x400/1a1a1a/444444?text=No+Img';
+            const safeLink = escapeHtml(link || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
             
             document.getElementById('am-list').innerHTML = AGENTS.map(agent => {
-                let finalLink = link;
+                let finalLink = safeLink;
                 if(agent.id === 'kakobuy' && finalLink) finalLink += (finalLink.includes('?') ? '&' : '?') + 'ref_id=Repfinder';
                 return `
                     <div class="agent-row">
                         <a href="${finalLink}" target="_blank" class="agent-direct-btn">
                             <span class="agent-info-left"><img src="${agent.icon}" onerror="this.style.display='none'"> ${agent.name}</span>
-                            ${iconArrow}
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                         </a>
                         <button class="agent-copy-btn" onclick="window.copyText('${finalLink}', this)">
-                            <svg class="copy-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="copy-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            <svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </button>
                     </div>`;
             }).join("");
@@ -1056,7 +1113,7 @@
                         </div>
                     </div>
 
-                    <div style="background: #161616; border-radius: 24px; padding: 40px; border: 1px solid #222;">
+                    <div class="tut-overview-card" style="justify-content: flex-start;">
                         <h4 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0 0 15px 0;">Dowiesz się jak</h4>
                         <p style="color: #888; font-size: 15px; margin: 0; line-height: 1.6;">Zamawiać i jak korzystać z naszych narzędzi krok po kroku.</p>
                     </div>
@@ -1152,7 +1209,7 @@
                     case "payment": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Płatność')}</div>`;
                     case "qc": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Zdjęcia QC z magazynu')}</div>`;
                     case "shipping": return `<div style="width:100%; border-radius:10px; overflow:hidden;">${header}${mockContent('Wysyłka międzynarodowa')}</div>`;
-                    case "done": return `<div style="padding:30px; text-align:center; color:#fff; font-weight:800; font-size:24px;">Gotowe! ✔️</div>`;
+                    case "done": return `<div style="padding:30px; text-align:center; color:#0ea5e9; font-weight:800; font-size:24px;">Gotowe! ✔️</div>`;
                     default: return `<div style="padding:40px; text-align:center; color:#888;">[ Krok ${num} ]</div>`;
                 }
             }
@@ -1168,7 +1225,7 @@
                 removeConfetti();
                 confettiOverlay = document.createElement("div");
                 confettiOverlay.style = "position:fixed; inset:0; pointer-events:none; z-index:99999;";
-                const colors = ["#ff3a2f", "#ffb800", "#22c55e", "#fff", "#a855f7", "#ff6ec7", "#888"];
+                const colors = ["#ff3a2f", "#ffb800", "#22c55e", "#0ea5e9", "#a855f7", "#ff6ec7", "#888"];
                 for (let i = 0; i < 120; i++) {
                     const piece = document.createElement("span");
                     piece.style = `position:absolute; top:-20px; left:${Math.random() * 100}%; width:${8 + Math.random() * 7}px; height:${10 + Math.random() * 10}px; background:${colors[i % colors.length]}; transform: rotate(${Math.random() * 180}deg); opacity: 0.8; transition: top 3s ease-in, transform 3s linear;`;
@@ -1184,348 +1241,505 @@
         };
 
         // =====================================================================
-        // ZINTEGROWANY CONVERTER
+        // ZINTEGROWANY CONVERTER PISANY PRZEZ UŻYTKOWNIKA (BEZ ZMIAN LOGIKI)
         // =====================================================================
         window.initConverter = function () {
-            const input = document.getElementById("converterInput");
-            const convertBtn = document.getElementById("convertBtn");
-            const copyConverted = document.getElementById("copyConverted");
-            const openConverted = document.getElementById("openConverted");
-            const copyOriginal = document.getElementById("copyOriginal");
-            const openOriginal = document.getElementById("openOriginal");
-            const output = document.getElementById("converterOutput");
-            const status = document.getElementById("converterStatus");
-            const originalBadge = document.getElementById("converterOriginalBadge");
-            const convertedBadge = document.getElementById("converterConvertedBadge");
-            const originalUrlBox = document.getElementById("converterOriginalUrl");
-            const resultSection = document.getElementById("converter-result");
+          const input = document.getElementById("converterInput");
+          const convertBtn = document.getElementById("convertBtn");
+          const copyConvertedTop = document.getElementById("copyConvertedTop");
+          const copyConverted = document.getElementById("copyConverted");
+          const openConverted = document.getElementById("openConverted");
+          const copyOriginal = document.getElementById("copyOriginal");
+          const openOriginal = document.getElementById("openOriginal");
+          const output = document.getElementById("converterOutput");
+          const status = document.getElementById("converterStatus");
+          const originalBadge = document.getElementById("converterOriginalBadge");
+          const convertedBadge = document.getElementById("converterConvertedBadge");
+          const originalUrlBox = document.getElementById("converterOriginalUrl");
+          const resultSection = document.getElementById("converter-result");
 
-            const targetSelectWrap = document.getElementById("converterTargetSelect");
-            const targetButton = document.getElementById("converterTargetButton");
-            const targetMenu = document.getElementById("converterTargetMenu");
-            const targetLabel = document.getElementById("converterTargetLabel");
+          const sourceLabel = document.getElementById("converterSourceLabel");
+          const targetLabel = document.getElementById("converterTargetLabel");
+          const targetSelectWrap = document.getElementById("converterTargetSelect");
+          const targetButton = document.getElementById("converterTargetButton");
+          const targetMenu = document.getElementById("converterTargetMenu");
 
-            if (!input || !convertBtn || !output || !status || !originalBadge || !convertedBadge || !originalUrlBox || !resultSection || !targetSelectWrap || !targetButton || !targetMenu) {
-                console.error("Converter init failed");
-                return;
+          if (!input || !convertBtn || !output || !status || !originalBadge || !convertedBadge || !originalUrlBox || !resultSection || !targetSelectWrap || !targetButton || !targetMenu) {
+            console.error("Converter init failed");
+            return;
+          }
+
+          let hasShownResultOnce = false;
+          let selectedTarget = "kakobuy";
+
+          const targets = [
+            { value: "kakobuy", label: "KakoBuy", icon: "https://www.kakobuy.com/favicon.ico" },
+            { value: "usfans", label: "UsFans", icon: "https://usfans.com/favicon.ico" },
+            { value: "litbuy", label: "LITBUY", icon: "https://litbuy.com/favicon.ico" },
+            { value: "allchinabuy", label: "AllChinaBuy", icon: "https://allchinabuy.com/favicon.ico" },
+            { value: "weidian", label: "Weidian", icon: "" }
+          ];
+
+          buildTargetMenu();
+          if(sourceLabel) updateSourceLabel("auto");
+          resultSection.classList.add("hidden");
+
+          input.addEventListener("input", () => {
+            const analysis = analyzeInput(input.value.trim());
+            if(sourceLabel) updateSourceLabel(analysis.displaySource);
+          });
+
+          targetButton.addEventListener("click", (event) => {
+            event.stopPropagation();
+            targetSelectWrap.classList.toggle("open");
+          });
+
+          document.addEventListener("click", (event) => {
+            if (!targetSelectWrap.contains(event.target)) {
+              targetSelectWrap.classList.remove("open");
+            }
+          });
+
+          convertBtn.addEventListener("click", () => {
+            const raw = input.value.trim();
+
+            if (!raw) {
+              resultSection.classList.add("hidden");
+              setStatus("Wklej link, żeby rozpocząć konwersję.");
+              return;
             }
 
-            let hasShownResultOnce = false;
-            let selectedTarget = localStorage.getItem('pinnedAgent') || "kakobuy";
+            const analysis = analyzeInput(raw);
+            if(sourceLabel) updateSourceLabel(analysis.displaySource);
 
-            const targets = [
-                { value: "kakobuy", label: "KakoBuy", icon: "https://www.kakobuy.com/favicon.ico" },
-                { value: "usfans", label: "UsFans", icon: "https://usfans.com/favicon.ico" },
-                { value: "litbuy", label: "LITBUY", icon: "https://litbuy.com/favicon.ico" },
-                { value: "allchinabuy", label: "AllChinaBuy", icon: "https://allchinabuy.com/favicon.ico" },
-                { value: "weidian", label: "Weidian", icon: "" }
-            ];
+            if (!analysis.originalUrl) {
+              setResult({
+                originalPlatform: "unknown",
+                originalUrl: raw,
+                convertedPlatform: selectedTarget,
+                convertedUrl: ""
+              });
 
-            function buildTargetMenu() {
-                targetMenu.innerHTML = targets.map((target) => {
-                    const active = target.value === selectedTarget ? "active" : "";
-                    const imgTag = target.icon ? `<img src="${target.icon}" onerror="this.style.display='none'">` : '';
-                    return `
-                        <button type="button" class="converter-dropdown-item ${active}" data-target-value="${escapeHtml(target.value)}">
-                            ${imgTag} ${escapeHtml(target.label)}
-                        </button>
-                    `;
-                }).join("");
-
-                const selectedObj = targets.find(t => t.value === selectedTarget);
-                if(selectedObj) targetLabel.textContent = selectedObj.label;
-
-                targetMenu.querySelectorAll("[data-target-value]").forEach((button) => {
-                    button.addEventListener("click", (e) => {
-                        e.stopPropagation();
-                        selectedTarget = button.getAttribute("data-target-value");
-                        buildTargetMenu();
-                        targetSelectWrap.classList.remove("open");
-                    });
-                });
+              setStatus("Nie udało się odczytać poprawnego linku źródłowego.");
+              revealResultSection(resultSection, hasShownResultOnce);
+              hasShownResultOnce = true;
+              return;
             }
 
-            buildTargetMenu();
-            resultSection.classList.add("hidden");
+            const converted = buildConvertedResult(analysis, selectedTarget);
 
-            targetButton.addEventListener("click", (event) => {
-                event.stopPropagation();
-                targetSelectWrap.classList.toggle("open");
+            if (!converted.url) {
+              setResult({
+                originalPlatform: analysis.originalPlatform,
+                originalUrl: analysis.originalUrl,
+                convertedPlatform: selectedTarget,
+                convertedUrl: ""
+              });
+
+              setStatus(`Nie udało się zbudować poprawnego linku ${formatPlatformLabel(selectedTarget)} dla tego formatu.`);
+              revealResultSection(resultSection, hasShownResultOnce);
+              hasShownResultOnce = true;
+              return;
+            }
+
+            setResult({
+              originalPlatform: analysis.originalPlatform,
+              originalUrl: analysis.originalUrl,
+              convertedPlatform: selectedTarget,
+              convertedUrl: converted.url
             });
 
-            document.addEventListener("click", (event) => {
-                if (!targetSelectWrap.contains(event.target)) {
-                    targetSelectWrap.classList.remove("open");
-                }
+            setStatus(`Gotowe: ${formatPlatformLabel(analysis.originalPlatform)} → ${formatPlatformLabel(selectedTarget)}`);
+            revealResultSection(resultSection, hasShownResultOnce);
+            hasShownResultOnce = true;
+          });
+
+          if (copyConvertedTop) copyConvertedTop.addEventListener("click", (e) => window.copyText(output.textContent, e.target));
+          if (copyConverted) copyConverted.addEventListener("click", (e) => window.copyText(output.textContent, e.target));
+          if (openConverted) openConverted.addEventListener("click", () => openLink(output.textContent));
+          if (copyOriginal) copyOriginal.addEventListener("click", (e) => window.copyText(originalUrlBox.textContent, e.target));
+          if (openOriginal) openOriginal.addEventListener("click", () => openLink(originalUrlBox.textContent));
+
+          function buildTargetMenu() {
+            targetMenu.innerHTML = targets
+              .map((target) => {
+                const active = target.value === selectedTarget ? "active" : "";
+                const imgTag = target.icon ? `<img src="${target.icon}" onerror="this.style.display='none'">` : '';
+                return `
+                  <button
+                    type="button"
+                    class="converter-dropdown-item ${active}"
+                    data-target-value="${escapeHtml(target.value)}"
+                  >
+                    ${imgTag} ${escapeHtml(target.label)}
+                  </button>
+                `;
+              })
+              .join("");
+
+            if(targetLabel) targetLabel.textContent = formatPlatformLabel(selectedTarget);
+
+            targetMenu.querySelectorAll("[data-target-value]").forEach((button) => {
+              button.addEventListener("click", () => {
+                selectedTarget = button.getAttribute("data-target-value");
+                if(targetLabel) targetLabel.textContent = formatPlatformLabel(selectedTarget);
+                buildTargetMenu();
+                targetSelectWrap.classList.remove("open");
+              });
             });
+          }
 
-            convertBtn.addEventListener("click", () => {
-                const raw = input.value.trim();
-
-                if (!raw) {
-                    resultSection.classList.add("hidden");
-                    setStatus("Wklej link, żeby rozpocząć konwersję.");
-                    return;
-                }
-
-                const analysis = analyzeInput(raw);
-
-                if (!analysis.originalUrl) {
-                    setResult({ originalPlatform: "unknown", originalUrl: raw, convertedPlatform: selectedTarget, convertedUrl: "" });
-                    setStatus("Nie udało się odczytać poprawnego linku źródłowego.");
-                    revealResultSection(resultSection, hasShownResultOnce);
-                    hasShownResultOnce = true;
-                    return;
-                }
-
-                const converted = buildConvertedResult(analysis, selectedTarget);
-
-                if (!converted.url) {
-                    setResult({ originalPlatform: analysis.originalPlatform, originalUrl: analysis.originalUrl, convertedPlatform: selectedTarget, convertedUrl: "" });
-                    setStatus(`Nie udało się zbudować poprawnego linku dla tego formatu.`);
-                    revealResultSection(resultSection, hasShownResultOnce);
-                    hasShownResultOnce = true;
-                    return;
-                }
-
-                setResult({ originalPlatform: analysis.originalPlatform, originalUrl: analysis.originalUrl, convertedPlatform: selectedTarget, convertedUrl: converted.url });
-                setStatus(``);
-                revealResultSection(resultSection, hasShownResultOnce);
-                hasShownResultOnce = true;
-            });
-
-            if (copyConverted) copyConverted.addEventListener("click", () => copyTextLocal(output.textContent));
-            if (openConverted) openConverted.addEventListener("click", () => openLink(output.textContent));
-            if (copyOriginal) copyOriginal.addEventListener("click", () => copyTextLocal(originalUrlBox.textContent));
-            if (openOriginal) openOriginal.addEventListener("click", () => openLink(originalUrlBox.textContent));
+            function updateSourceLabel(source) {
+              if (!sourceLabel) return;
+              sourceLabel.textContent = source === "auto" ? "Auto detect" : formatPlatformLabel(source);
+            }
 
             function analyzeInput(rawUrl) {
-                const cleaned = normalizeUrl(rawUrl);
-                if (!cleaned) return { displaySource: "auto", originalPlatform: "unknown", originalUrl: "", itemId: "", sourceCode: "" };
+              const cleaned = normalizeUrl(rawUrl);
 
-                const platform = detectPlatform(cleaned);
+              if (!cleaned) {
+                return {
+                  displaySource: "auto",
+                  originalPlatform: "unknown",
+                  originalUrl: "",
+                  itemId: "",
+                  sourceCode: ""
+                };
+              }
 
-                if (platform === "weidian") {
-                    const itemId = extractWeidianItemId(cleaned);
-                    return { displaySource: "weidian", originalPlatform: "weidian", originalUrl: itemId ? buildWeidianUrl(itemId) : cleaned, itemId, sourceCode: "WD" };
-                }
-                if (platform === "kakobuy") {
-                    const embeddedOriginal = extractOriginalUrlFromAnyAgent(cleaned);
-                    const itemId = extractAnyKnownItemId(cleaned, embeddedOriginal);
-                    const originalUrl = itemId ? buildWeidianUrl(itemId) : embeddedOriginal;
-                    return { displaySource: "kakobuy", originalPlatform: itemId ? "weidian" : detectPlatform(originalUrl), originalUrl: originalUrl || "", itemId, sourceCode: itemId ? "WD" : "" };
-                }
-                if (platform === "usfans") {
-                    const itemId = extractUsFansItemId(cleaned);
-                    return { displaySource: "usfans", originalPlatform: itemId ? "weidian" : "unknown", originalUrl: itemId ? buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId ? "WD" : "" };
-                }
-                if (platform === "allchinabuy") {
-                    const itemId = extractAllChinaBuyItemId(cleaned);
-                    const sourceCode = extractSourceCode(cleaned) || (itemId ? "WD" : "");
-                    return { displaySource: "allchinabuy", originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown", originalUrl: itemId && sourceCode === "WD" ? buildWeidianUrl(itemId) : "", itemId, sourceCode };
-                }
-                if (platform === "litbuy") {
-                    const itemId = extractLitBuyItemId(cleaned);
-                    const sourcePlatform = extractLitBuySource(cleaned);
-                    return { displaySource: "litbuy", originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform, originalUrl: itemId && sourcePlatform === "weidian" ? buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : "" };
-                }
+              const platform = detectPlatform(cleaned);
 
-                return { displaySource: platform, originalPlatform: platform, originalUrl: cleaned, itemId: extractWeidianItemId(cleaned), sourceCode: platform === "weidian" ? "WD" : "" };
+              if (platform === "weidian") {
+                const itemId = extractWeidianItemId(cleaned);
+                return {
+                  displaySource: "weidian",
+                  originalPlatform: "weidian",
+                  originalUrl: itemId ? buildWeidianUrl(itemId) : cleaned,
+                  itemId,
+                  sourceCode: "WD"
+                };
+              }
+
+              if (platform === "kakobuy") {
+                const embeddedOriginal = extractOriginalUrlFromAnyAgent(cleaned);
+                const itemId = extractAnyKnownItemId(cleaned, embeddedOriginal);
+                const originalUrl = itemId ? buildWeidianUrl(itemId) : embeddedOriginal;
+
+                return {
+                  displaySource: "kakobuy",
+                  originalPlatform: itemId ? "weidian" : detectPlatform(originalUrl),
+                  originalUrl: originalUrl || "",
+                  itemId,
+                  sourceCode: itemId ? "WD" : ""
+                };
+              }
+
+              if (platform === "usfans") {
+                const itemId = extractUsFansItemId(cleaned);
+                return {
+                  displaySource: "usfans",
+                  originalPlatform: itemId ? "weidian" : "unknown",
+                  originalUrl: itemId ? buildWeidianUrl(itemId) : "",
+                  itemId,
+                  sourceCode: itemId ? "WD" : ""
+                };
+              }
+
+              if (platform === "allchinabuy") {
+                const itemId = extractAllChinaBuyItemId(cleaned);
+                const sourceCode = extractSourceCode(cleaned) || (itemId ? "WD" : "");
+                return {
+                  displaySource: "allchinabuy",
+                  originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown",
+                  originalUrl: itemId && sourceCode === "WD" ? buildWeidianUrl(itemId) : "",
+                  itemId,
+                  sourceCode
+                };
+              }
+
+              if (platform === "litbuy") {
+                const itemId = extractLitBuyItemId(cleaned);
+                const sourcePlatform = extractLitBuySource(cleaned);
+                return {
+                  displaySource: "litbuy",
+                  originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform,
+                  originalUrl: itemId && sourcePlatform === "weidian" ? buildWeidianUrl(itemId) : "",
+                  itemId,
+                  sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : ""
+                };
+              }
+
+              return {
+                displaySource: platform,
+                originalPlatform: platform,
+                originalUrl: cleaned,
+                itemId: extractWeidianItemId(cleaned),
+                sourceCode: platform === "weidian" ? "WD" : ""
+              };
             }
 
             function buildConvertedResult(analysis, target) {
-                const itemId = analysis.itemId;
-                const sourcePlatform = analysis.originalPlatform;
+              const itemId = analysis.itemId;
+              const sourcePlatform = analysis.originalPlatform;
 
-                if (!analysis.originalUrl) return { url: "" };
+              if (!analysis.originalUrl) {
+                return { url: "" };
+              }
 
-                if (target === "weidian") {
-                    if (itemId) return { url: buildWeidianUrl(itemId) };
-                    if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
-                    return { url: "" };
+              if (target === "weidian") {
+                if (itemId) return { url: buildWeidianUrl(itemId) };
+                if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
+                return { url: "" };
+              }
+
+              if (!itemId || sourcePlatform !== "weidian") {
+                if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
+                  return {
+                    url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}`
+                  };
                 }
+                return { url: "" };
+              }
 
-                if (!itemId || sourcePlatform !== "weidian") {
-                    if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
-                        return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}` };
-                    }
-                    return { url: "" };
-                }
-
-                switch (target) {
-                    case "kakobuy": return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}` };
-                    case "usfans": return { url: `https://www.usfans.com/product/3/${itemId}` };
-                    case "allchinabuy": return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
-                    case "litbuy": return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?` };
-                    default: return { url: "" };
-                }
+              switch (target) {
+                case "kakobuy":
+                  return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}` };
+                case "usfans":
+                  return { url: `https://www.usfans.com/product/3/${itemId}` };
+                case "allchinabuy":
+                  return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
+                case "litbuy":
+                  return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?` };
+                default:
+                  return { url: "" };
+              }
             }
 
             function detectPlatform(url) {
-                const value = String(url || "").toLowerCase();
-                if (!value) return "auto";
-                if (value.includes("weidian.com")) return "weidian";
-                if (value.includes("kakobuy.com") || value.includes("m.kakobuy.com")) return "kakobuy";
-                if (value.includes("usfans.com")) return "usfans";
-                if (value.includes("acbuy.com") || value.includes("allchinabuy.com")) return "allchinabuy";
-                if (value.includes("litbuy.com")) return "litbuy";
-                return "unknown";
+              const value = String(url || "").toLowerCase();
+
+              if (!value) return "auto";
+              if (value.includes("weidian.com")) return "weidian";
+              if (value.includes("kakobuy.com") || value.includes("m.kakobuy.com")) return "kakobuy";
+              if (value.includes("usfans.com")) return "usfans";
+              if (value.includes("acbuy.com") || value.includes("allchinabuy.com")) return "allchinabuy";
+              if (value.includes("litbuy.com")) return "litbuy";
+              return "unknown";
             }
 
             function normalizeUrl(value) {
-                const raw = String(value || "").trim();
-                if (!raw) return "";
-                if (/^https?:\/\//i.test(raw)) return raw;
-                if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(raw)) return `https://${raw}`;
-                return raw;
+              const raw = String(value || "").trim();
+              if (!raw) return "";
+              if (/^https?:\/\//i.test(raw)) return raw;
+              if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(raw)) return `https://${raw}`;
+              return raw;
             }
 
             function extractOriginalUrlFromAnyAgent(inputUrl) {
-                const normalized = normalizeUrl(inputUrl);
-                const url = safeUrl(normalized);
-                if (!url) return extractWeidianLikeUrlFromText(normalized);
-                const candidateKeys = ["url", "itemUrl", "goodsUrl", "link", "target", "redirect", "redirectUrl", "shopUrl"];
-                for (const key of candidateKeys) {
-                    const value = url.searchParams.get(key);
-                    if (!value) continue;
-                    const deep = deepDecode(value);
-                    const directFound = extractWeidianLikeUrlFromText(deep);
-                    if (directFound) return directFound;
-                    const normalizedValue = normalizeUrl(deep);
-                    if (normalizedValue.startsWith("http")) return normalizedValue;
-                }
+              const normalized = normalizeUrl(inputUrl);
+              const url = safeUrl(normalized);
+
+              if (!url) {
                 return extractWeidianLikeUrlFromText(normalized);
+              }
+
+              const candidateKeys = ["url", "itemUrl", "goodsUrl", "link", "target", "redirect", "redirectUrl", "shopUrl"];
+
+              for (const key of candidateKeys) {
+                const value = url.searchParams.get(key);
+                if (!value) continue;
+
+                const deep = deepDecode(value);
+                const directFound = extractWeidianLikeUrlFromText(deep);
+                if (directFound) return directFound;
+
+                const normalizedValue = normalizeUrl(deep);
+                if (normalizedValue.startsWith("http")) return normalizedValue;
+              }
+
+              return extractWeidianLikeUrlFromText(normalized);
             }
 
             function extractWeidianLikeUrlFromText(value) {
-                const decoded = deepDecode(String(value || ""));
-                const weidianMatch = decoded.match(/https?:\/\/(?:www\.)?weidian\.com\/item\.html\?[^ \n\r"'<>]*/i);
-                if (weidianMatch) return cleanupExtractedUrl(weidianMatch[0]);
-                const genericUrlMatch = decoded.match(/https?:\/\/[^ \n\r"'<>]+/i);
-                if (genericUrlMatch) return cleanupExtractedUrl(genericUrlMatch[0]);
-                return "";
+              const decoded = deepDecode(String(value || ""));
+              const weidianMatch = decoded.match(/https?:\/\/(?:www\.)?weidian\.com\/item\.html\?[^ \n\r"'<>]*/i);
+              if (weidianMatch) return cleanupExtractedUrl(weidianMatch[0]);
+
+              const genericUrlMatch = decoded.match(/https?:\/\/[^ \n\r"'<>]+/i);
+              if (genericUrlMatch) return cleanupExtractedUrl(genericUrlMatch[0]);
+
+              return "";
             }
 
             function cleanupExtractedUrl(url) {
-                let cleaned = String(url || "").trim();
-                cleaned = cleaned.replace(/&affcode=[^&]+/gi, "");
-                cleaned = cleaned.replace(/[),.;]+$/g, "");
-                const itemId = extractWeidianItemId(cleaned);
-                if (itemId) return buildWeidianUrl(itemId);
-                return cleaned;
+              let cleaned = String(url || "").trim();
+              cleaned = cleaned.replace(/&affcode=[^&]+/gi, "");
+              cleaned = cleaned.replace(/[),.;]+$/g, "");
+
+              const itemId = extractWeidianItemId(cleaned);
+              if (itemId) return buildWeidianUrl(itemId);
+
+              return cleaned;
             }
 
             function extractAnyKnownItemId(rawInput, extractedOriginalUrl) {
-                return (extractWeidianItemId(extractedOriginalUrl) || extractWeidianItemId(rawInput) || extractKakoBuyItemId(rawInput) || extractUsFansItemId(rawInput) || extractAllChinaBuyItemId(rawInput) || extractLitBuyItemId(rawInput) || "");
+              return (
+                extractWeidianItemId(extractedOriginalUrl) ||
+                extractWeidianItemId(rawInput) ||
+                extractKakoBuyItemId(rawInput) ||
+                extractUsFansItemId(rawInput) ||
+                extractAllChinaBuyItemId(rawInput) ||
+                extractLitBuyItemId(rawInput) ||
+                ""
+              );
             }
 
             function extractWeidianItemId(url) {
-                const safe = safeUrl(url);
-                if (safe) {
-                    const itemId = safe.searchParams.get("itemID") || safe.searchParams.get("itemId") || safe.searchParams.get("id");
-                    if (itemId && /^\d+$/.test(itemId)) return itemId;
-                }
-                const match = String(url || "").match(/itemID(?:%3D|=)(\d+)/i);
-                return match ? match[1] : "";
+              const safe = safeUrl(url);
+              if (safe) {
+                const itemId =
+                  safe.searchParams.get("itemID") ||
+                  safe.searchParams.get("itemId") ||
+                  safe.searchParams.get("id");
+
+                if (itemId && /^\d+$/.test(itemId)) return itemId;
+              }
+
+              const match = String(url || "").match(/itemID(?:%3D|=)(\d+)/i);
+              return match ? match[1] : "";
             }
 
             function extractKakoBuyItemId(url) {
-                const embedded = extractOriginalUrlFromAnyAgent(url);
-                const embeddedId = extractWeidianItemId(embedded);
-                if (embeddedId) return embeddedId;
-                const match = String(url || "").match(/itemID%3D(\d+)/i);
-                return match ? match[1] : "";
+              const embedded = extractOriginalUrlFromAnyAgent(url);
+              const embeddedId = extractWeidianItemId(embedded);
+              if (embeddedId) return embeddedId;
+
+              const match = String(url || "").match(/itemID%3D(\d+)/i);
+              return match ? match[1] : "";
             }
 
             function extractUsFansItemId(url) {
-                const match = String(url || "").match(/\/product\/\d+\/(\d+)/i);
-                return match ? match[1] : "";
+              const match = String(url || "").match(/\/product\/\d+\/(\d+)/i);
+              return match ? match[1] : "";
             }
 
             function extractAllChinaBuyItemId(url) {
-                const safe = safeUrl(url);
-                if (!safe) return "";
-                const id = safe.searchParams.get("id");
-                if (id && /^\d+$/.test(id)) return id;
-                return "";
+              const safe = safeUrl(url);
+              if (!safe) return "";
+              const id = safe.searchParams.get("id");
+              if (id && /^\d+$/.test(id)) return id;
+              return "";
             }
 
             function extractSourceCode(url) {
-                const safe = safeUrl(url);
-                if (!safe) return "";
-                return String(safe.searchParams.get("source") || "").toUpperCase();
+              const safe = safeUrl(url);
+              if (!safe) return "";
+              return String(safe.searchParams.get("source") || "").toUpperCase();
             }
 
             function extractLitBuyItemId(url) {
-                const match = String(url || "").match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
-                return match ? match[1] : "";
+              const match = String(url || "").match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
+              return match ? match[1] : "";
             }
 
             function extractLitBuySource(url) {
-                const match = String(url || "").match(/\/product\/([a-z0-9_-]+)\//i);
-                if (!match) return "unknown";
-                const source = match[1].toLowerCase();
-                if (source === "weidian") return "weidian";
-                return source;
+              const match = String(url || "").match(/\/product\/([a-z0-9_-]+)\//i);
+              if (!match) return "unknown";
+              const source = match[1].toLowerCase();
+              if (source === "weidian") return "weidian";
+              return source;
             }
 
-            function buildWeidianUrl(itemId) { return `https://weidian.com/item.html?itemID=${itemId}`; }
-            function safeUrl(value) { try { return new URL(value); } catch (error) { return null; } }
+            function buildWeidianUrl(itemId) {
+              return `https://weidian.com/item.html?itemID=${itemId}`;
+            }
+
+            function safeUrl(value) {
+              try {
+                return new URL(value);
+              } catch (error) {
+                return null;
+              }
+            }
 
             function deepDecode(value, rounds = 4) {
-                let result = String(value || "");
-                for (let i = 0; i < rounds; i += 1) {
-                    try {
-                        const decoded = decodeURIComponent(result);
-                        if (decoded === result) break;
-                        result = decoded;
-                    } catch (error) { break; }
+              let result = String(value || "");
+              for (let i = 0; i < rounds; i += 1) {
+                try {
+                  const decoded = decodeURIComponent(result);
+                  if (decoded === result) break;
+                  result = decoded;
+                } catch (error) {
+                  break;
                 }
-                return result;
+              }
+              return result;
             }
 
             function setResult(payload) {
-                if (!output || !originalBadge || !convertedBadge || !originalUrlBox) return;
+              const output = document.getElementById("converterOutput");
+              const originalBadge = document.getElementById("converterOriginalBadge");
+              const convertedBadge = document.getElementById("converterConvertedBadge");
+              const originalUrlBox = document.getElementById("converterOriginalUrl");
 
-                const originalPlatform = payload.originalPlatform || "unknown";
-                const convertedPlatform = payload.convertedPlatform || "unknown";
+              if (!output || !originalBadge || !convertedBadge || !originalUrlBox) return;
 
-                originalUrlBox.textContent = payload.originalUrl || "Brak danych";
-                output.textContent = payload.convertedUrl || "Brak wyniku";
+              const originalPlatform = payload.originalPlatform || "unknown";
+              const convertedPlatform = payload.convertedPlatform || "unknown";
 
-                originalBadge.className = `platform-pill platform-pill-${originalPlatform}`;
-                convertedBadge.className = `platform-pill platform-pill-${convertedPlatform}`;
+              originalUrlBox.textContent = payload.originalUrl || "Brak danych";
+              output.textContent = payload.convertedUrl || "Brak wyniku";
 
-                originalBadge.textContent = formatPlatformLabel(originalPlatform);
-                convertedBadge.textContent = formatPlatformLabel(convertedPlatform);
+              originalBadge.className = `platform-pill platform-pill-${originalPlatform}`;
+              convertedBadge.className = `platform-pill platform-pill-${convertedPlatform}`;
+
+              originalBadge.textContent = formatPlatformLabel(originalPlatform);
+              convertedBadge.textContent = formatPlatformLabel(convertedPlatform);
             }
 
-            function setStatus(message) { if (status) status.textContent = message; }
+            function setStatus(message) {
+              const status = document.getElementById("converterStatus");
+              if (status) status.textContent = message;
+            }
 
             function platformClassName(platform) {
-                const map = { weidian: "platform-pill-weidian", kakobuy: "platform-pill-kakobuy", usfans: "platform-pill-usfans", litbuy: "platform-pill-litbuy", allchinabuy: "platform-pill-allchinabuy" };
-                return map[platform] || "platform-pill-unknown";
+              const map = {
+                weidian: "platform-pill-weidian",
+                kakobuy: "platform-pill-kakobuy",
+                usfans: "platform-pill-usfans",
+                litbuy: "platform-pill-litbuy",
+                allchinabuy: "platform-pill-allchinabuy"
+              };
+              return map[platform] || "platform-pill-neutral";
             }
 
             function formatPlatformLabel(platform) {
-                const map = { auto: "Auto detect", unknown: "Unknown", weidian: "Weidian", kakobuy: "KakoBuy", usfans: "UsFans", litbuy: "LITBUY", allchinabuy: "AllChinaBuy" };
-                return map[platform] || String(platform || "Unknown");
+              const map = {
+                auto: "Auto detect",
+                unknown: "Unknown",
+                weidian: "Weidian",
+                kakobuy: "KakoBuy",
+                usfans: "UsFans",
+                litbuy: "LITBUY",
+                allchinabuy: "AllChinaBuy"
+              };
+              return map[platform] || String(platform || "Unknown");
             }
 
             function copyTextLocal(value) {
-                const text = String(value || "").trim();
-                if (!text || text === "Brak wyniku" || text === "Brak danych") return;
-                navigator.clipboard.writeText(text).catch(() => {});
+              const text = String(value || "").trim();
+              if (!text || text === "Brak wyniku" || text === "Brak danych") return;
+              navigator.clipboard.writeText(text).catch(() => {});
             }
 
             function openLink(value) {
-                const text = String(value || "").trim();
-                if (!text || !text.startsWith("http")) return;
-                window.open(text, "_blank", "noopener,noreferrer");
+              const text = String(value || "").trim();
+              if (!text || !text.startsWith("http")) return;
+              window.open(text, "_blank", "noopener,noreferrer");
             }
 
             function revealResultSection(section, hasShownBefore) {
-                section.classList.remove("hidden");
+              section.classList.remove("hidden");
             }
         };
 
