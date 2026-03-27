@@ -9,7 +9,7 @@
 
     <style>
         /* =====================================================================
-           TRACKER - SZARY
+           GLOBAL & BASE STYLES
            ===================================================================== */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background-color: #0d0d0d; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
@@ -53,7 +53,7 @@
         }
 
         /* =====================================================================
-           WYSZUKIWARKA I FILTR
+           WYSZUKIWARKA I FILTR 
            ===================================================================== */
         .search-filter-row { display: flex; gap: 15px; margin-bottom: 30px; }
         .search-box-wrap { flex: 1; position: relative; display: flex; align-items: center; }
@@ -64,47 +64,30 @@
         .btn-filters-open:hover { background: #262626; }
 
         /* =====================================================================
-           PRODUKTY - GĘSTY UKŁAD 
+           PRODUKTY - GĘSTY UKŁAD NA 4 KOLUMNY 
            ===================================================================== */
         .products-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+            grid-template-columns: repeat(4, 1fr); 
             gap: 15px; 
         }
         
         .product-card-new {
-            background-color: #141414 !important; 
-            border-radius: 16px !important; 
-            padding: 10px !important; 
-            display: flex; flex-direction: column;
-            border: 1px solid #222 !important; transition: 0.3s;
+            background-color: #1a1a1a; 
+            border-radius: 16px; 
+            padding: 14px; 
+            display: flex; 
+            flex-direction: column;
+            border: none;
+            transition: transform 0.2s, box-shadow 0.2s;
             overflow: hidden;
         }
-        .product-card-new:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15) !important; box-shadow: 0 15px 35px rgba(0,0,0,0.5) !important; }
-        
-        .product-card-new img { 
-            width: 100%; 
-            aspect-ratio: 4/4.5; 
-            object-fit: cover; 
-            border-radius: 12px !important; 
-            margin-bottom: 12px; 
-            background-color: #1a1a1a; 
+        .product-card-new:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
         }
-
-        .card-tags { display: flex; gap: 6px; margin-bottom: 10px; padding: 0 2px; }
-        .tag-blue { background: #172554; color: #60a5fa; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .tag-red { background: #450a0a; color: #f87171; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .card-name { font-size: 16px; font-weight: 900; color: #fff; margin: 0 0 4px 0; padding: 0 2px; letter-spacing: -0.5px; min-height: 38px;}
-        .card-price { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 15px; padding: 0 2px;}
-        
-        .card-actions { display: flex; gap: 8px; margin-top: auto; padding: 0 2px;}
-        .btn-view-agents { flex: 1; background-color: #222; color: #fff; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 13px; border: 1px solid #333; transition: 0.2s; display: flex; justify-content: center; align-items: center;}
-        .btn-view-agents:hover { background-color: #2e2e2e; border-color: #444; }
-        
-        .btn-icon-square { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: #222; border: 1px solid #333; border-radius: 10px; cursor: pointer; transition: 0.2s; color: #aaa; font-size: 16px;}
-        .btn-icon-square:hover { background-color: #2e2e2e; color: #fff; }
-
+        /* ZIELONY PTASZEK KOPIOWANIA */
         .copied { background-color: #15803d !important; border-color: #22c55e !important; color: #fff !important; }
         .copied .copy-icon { display: none; }
         .copied .success-icon { display: block; font-weight: bold; }
@@ -139,27 +122,20 @@
         .agent-copy-btn { width: 54px; height: 54px; display: flex; align-items: center; justify-content: center; background: #1a1a1a; border: 1px solid #222; border-radius: 16px; cursor: pointer; transition: 0.2s; color: #aaa;}
         .agent-copy-btn:hover { background: #222; color: #fff; border-color: #333; }
 
-        .converter-input-row { display: flex !important; gap: 14px; align-items: center; width: 100%; }
-        #converterInput { flex: 1; margin: 0; }
-        #convertBtn { width: 220px; margin: 0; }
-
         /* =====================================================================
-           MODAL FILTRÓW (MROCZNE TŁO + BIAŁE AKTYWNE FILTRY + CIEMNY SCROLL)
+           MODAL FILTRÓW
            ===================================================================== */
         .filter-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .filter-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
         
         .filter-content { background: #161616; width: 90%; max-width: 420px; border-radius: 32px; padding: 30px; color: #fff; box-shadow: 0 25px 60px rgba(0,0,0,0.8); border: 1px solid #2a2a2a; }
-        
         .filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .filter-header h3 { font-size: 24px; font-weight: 900; margin: 0; letter-spacing: -0.5px; color: #fff; }
-        
         .close-filter-btn { background: #222; border: 1px solid #333; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; color: #888; display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .close-filter-btn:hover { background: #333; color: #fff; }
         
         .filter-section-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 0.5px; }
         
-        /* POPRAWIONY CIEMNY SCROLLBAR */
         .cat-scroll-box { max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding-right: 8px; scrollbar-width: thin; scrollbar-color: #444 #161616; }
         .cat-scroll-box::-webkit-scrollbar { width: 6px; }
         .cat-scroll-box::-webkit-scrollbar-track { background: #161616; border-radius: 10px; }
@@ -181,22 +157,140 @@
         .btn-filter-apply { background: #fff; color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: 900; cursor: pointer; font-size: 14px; transition: 0.2s;}
         .btn-filter-apply:hover { background: #e5e5e5; }
 
+        /* =====================================================================
+           CONVERTER
+           ===================================================================== */
+        .converter-board { background: #1c1c1c; padding: 50px; border-radius: 20px; border: 1px solid #2a2a2a; max-width: 800px; margin: 40px auto; text-align: center; }
+        .converter-kicker { color: #888; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; display: block; margin-bottom: 8px; }
+        .converter-hero h2 { font-size: clamp(36px, 5vw, 48px); font-weight: 900; margin: 0 0 10px 0; color: #fff; letter-spacing: -2px; }
+        .converter-hero p { color: #888; font-size: 15px; margin: 0 0 35px 0; }
+        
+        .converter-dropdown-wrapper { position: relative; margin: 0 auto 30px; max-width: 320px; z-index: 10; }
+        .converter-dropdown-btn { width: 100%; background: #161616; border: 1px solid #333; color: #fff; padding: 16px 20px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .converter-dropdown-btn:hover { border-color: #444; }
+        .converter-dropdown-menu { display: none; position: absolute; top: 110%; left: 0; right: 0; background: #161616; border: 1px solid #333; border-radius: 12px; padding: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .converter-dropdown-wrapper.open .converter-dropdown-menu { display: block; }
+        .converter-dropdown-item { width: 100%; text-align: left; background: none; border: none; color: #ccc; padding: 12px 15px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .converter-dropdown-item img { width: 18px; height: 18px; border-radius: 4px; }
+        .converter-dropdown-item:hover { background: #222; color: #fff; }
+        .converter-dropdown-item.active { background: #3b82f6; color: #fff; }
+
+        .converter-input-row { display: flex; gap: 12px; align-items: stretch; width: 100%; }
+        .converter-input-dark { flex: 1; background: #161616; border: 1px solid #333; padding: 0 25px; height: 60px; border-radius: 16px; color: #fff; font-size: 15px; outline: none; transition: 0.2s; }
+        .converter-input-dark:focus { border-color: #3b82f6; }
+        .converter-primary-btn { background: #fff; color: #000; padding: 0 35px; height: 60px; border-radius: 16px; font-weight: 900; border: none; cursor: pointer; transition: 0.2s; font-size: 15px; }
+        .converter-primary-btn:hover { background: #e5e5e5; }
+        
+        .converter-status { color: #888; font-size: 14px; font-weight: 700; margin-top: 20px; }
+
+        .converter-result-section { background: #111; border: 1px solid #222; border-radius: 16px; padding: 30px; margin-top: 30px; display: flex; flex-direction: column; gap: 25px; text-align: left; }
+        .converter-result-section.hidden { display: none; }
+        .converter-result-block { display: flex; flex-direction: column; gap: 12px; }
+        .converter-result-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;}
+        .converter-result-head span { font-size: 12px; font-weight: 800; color: #666; text-transform: uppercase; letter-spacing: 1.5px; }
+        
+        .platform-pill { font-size: 10px; font-weight: 900; padding: 6px 12px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .platform-pill-weidian { background: #450a0a; color: #f87171; }
+        .platform-pill-kakobuy { background: #172554; color: #60a5fa; }
+        .platform-pill-usfans { background: #14532d; color: #4ade80; }
+        .platform-pill-litbuy { background: #4a044e; color: #c084fc; }
+        .platform-pill-allchinabuy { background: #7c2d12; color: #f472b6; }
+        .platform-pill-unknown { background: #333; color: #888; }
+
+        .converter-output-box { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 18px; font-family: monospace; font-size: 14px; color: #ccc; word-break: break-all; min-height: 55px; display: flex; align-items: center; }
+        
+        .converter-action-btns { display: flex; gap: 10px; }
+        .converter-action-btn { flex: 1; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 14px;}
+        .converter-action-btn:hover { background: #222; }
+        .converter-action-btn.primary { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+        .converter-action-btn.primary:hover { background: #2563eb; }
+
+        /* =====================================================================
+           MODAL USTAWIEŃ (JASNY THEME) Z WYBOREM WALUTY I AGENTA
+           ===================================================================== */
+        .settings-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .settings-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
+        .settings-content { background: #ffffff; width: 90%; max-width: 420px; border-radius: 24px; padding: 30px; color: #111; box-shadow: 0 25px 50px rgba(0,0,0,0.3); font-family: -apple-system, sans-serif; }
+        
+        .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .settings-header h3 { font-size: 22px; font-weight: 900; margin: 0; color: #111; letter-spacing: -0.5px; }
+        .settings-close-btn { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; color: #64748b; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .settings-close-btn:hover { background: #e2e8f0; color: #0f172a; }
+        
+        .settings-label { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 0.5px; }
+        
+        .settings-lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
+        .lang-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; }
+        .lang-card:hover { border-color: #cbd5e1; }
+        .lang-card.active { border-color: #3b82f6; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15); }
+        .lang-card.active .lang-text { color: #3b82f6; }
+        .lang-icon { font-size: 24px; line-height: 1; }
+        .lang-text { font-size: 13px; font-weight: 800; color: #64748b; transition: 0.2s; }
+        
+        .settings-agent-wrap { position: relative; margin-bottom: 30px; }
+        .settings-agent-btn { width: 100%; background: #fff; border: 1px solid #e2e8f0; padding: 14px 16px; border-radius: 12px; font-size: 15px; font-weight: 700; color: #111; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .settings-agent-btn:hover { border-color: #cbd5e1; }
+        .settings-agent-btn-left { display: flex; align-items: center; gap: 10px; }
+        .settings-agent-btn-left img { width: 20px; height: 20px; border-radius: 4px; }
+        .settings-agent-menu { display: none; position: absolute; top: 110%; left: 0; right: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 100; }
+        .settings-agent-wrap.open .settings-agent-menu { display: block; }
+        .settings-agent-item { width: 100%; text-align: left; background: none; border: none; color: #475569; padding: 10px 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+        .settings-agent-item img { width: 18px; height: 18px; border-radius: 4px; }
+        .settings-agent-item:hover { background: #f8fafc; color: #111; }
+        .settings-agent-item.active { background: #eff6ff; color: #3b82f6; }
+        
+        .settings-save-btn { width: 100%; background: #0f172a; color: #fff; border: none; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .settings-save-btn:hover { background: #1e293b; }
+
+        /* IKONA ZĘBATKI W MENU (Czysty okrąg) */
+        .settings-gear-btn {
+            background: none;
+            border: 1px solid #333;
+            color: #888;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+        .settings-gear-btn:hover {
+            color: #fff;
+            border-color: #555;
+            background: #222;
+        }
+
+        /* NAWIGACJA PILL */
+        .site-header { background: #000; padding: 25px 0; border-bottom: 1px solid #111; position: sticky; top: 0; z-index: 2000; }
+        .nav-wrap { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .brand { background: none; border: none; color: #fff; font-size: 24px; font-weight: 900; cursor: pointer; letter-spacing: -1.5px; }
+        .desktop-nav { display: flex; gap: 8px; background: #161616; padding: 6px; border-radius: 50px; border: 1px solid #222; position: relative; align-items: center; }
+        .nav-link { background: none; border: none; color: #888; padding: 10px 24px; border-radius: 50px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.3s; text-decoration: none; }
+        .nav-link:hover { color: #fff; }
+        .nav-link.active { background: #fff !important; color: #000 !important; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
+        .dropdown { position: relative; }
+        .dropdown-menu { display: none; position: absolute; top: 130%; right: 0; background: #161616; border: 1px solid #222; border-radius: 16px; padding: 10px; width: 160px; z-index: 2100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item { width: 100%; text-align: left; background: none; border: none; color: #888; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; display: block; text-decoration: none; }
+        .dropdown-item:hover { background: #222; color: #fff; }
+        .page-section { display: none; }
+        .page-section.active { display: block; }
+        .hidden { display: none !important; }
+
         @media (max-width: 768px) {
             .tracker-wrapper-white { padding: 40px 20px; border-radius: 24px; }
             .tracker-grid-clean { grid-template-columns: 1fr; } 
-            
             .products-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
-            .product-card-new { padding: 8px !important; border-radius: 12px !important; }
-            .product-card-new img { border-radius: 8px !important; margin-bottom: 8px !important; }
-            .card-name { font-size: 13px !important; min-height: 32px; } 
-            .card-price { font-size: 16px !important; margin-bottom: 10px !important; }
-            .card-tags span { font-size: 8px !important; padding: 3px 6px !important; }
-            .btn-view-agents { padding: 8px 0 !important; font-size: 11px !important; }
-            .btn-icon-square { width: 36px !important; height: 36px !important; }
-            
+            .converter-board { padding: 30px 20px; }
             .converter-input-row { flex-direction: column; }
-            #convertBtn { width: 100%; }
+            .converter-input-dark { width: 100%; }
+            .converter-primary-btn { width: 100%; }
             .search-filter-row { flex-direction: column; }
+            .converter-action-btns { flex-direction: column; }
         }
     </style>
 </head>
@@ -216,7 +310,15 @@
                             <button class="dropdown-item" data-section-link="converter">Converter</button>
                         </div>
                     </div>
-                    <a href="admin.html" class="nav-link nav-anchor admin-link">Admin</a>
+                    
+                    <button class="settings-gear-btn" id="openSettingsBtnNav" title="Settings">
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </button>
+                    
+                    <a href="admin.html" class="nav-link nav-anchor admin-link" id="adminEntry">Admin</a>
                 </nav>
             </div>
         </header>
@@ -224,19 +326,19 @@
         <main class="main-content">
             <section id="home" class="page-section active">
                 <div class="hero-block">
-                    <div class="hero-inner">
-                        <h1 class="hero-title">repfinder</h1>
-                        <p class="hero-subtitle">The best items finder site. Find top tier items and order with confidence.</p>
-                        <button class="hero-cta-btn" onclick="window.switchSection('products')">Explore Products</button>
+                    <div class="hero-inner" style="text-align:center; padding:150px 20px;">
+                        <h1 class="hero-title" style="font-size:clamp(60px, 12vw, 110px); font-weight:900; margin:0; letter-spacing:-5px; line-height:0.9;">repfinder</h1>
+                        <p class="hero-subtitle" style="color:#888; font-size:20px; margin:25px 0 45px; max-width:600px; margin-left:auto; margin-right:auto;">The best items finder site. Find top tier items and order with confidence.</p>
+                        <button class="hero-cta-btn" onclick="window.switchSection('products')" style="background:#fff; color:#000; padding:20px 55px; border-radius:100px; font-weight:900; border:none; cursor:pointer; font-size:16px;">Explore Products</button>
                     </div>
                 </div>
             </section>
 
             <section id="products" class="page-section">
-                <div class="section-container">
-                    <div class="section-head">
-                        <h2>Products</h2>
-                        <p>Best items picked for clean browsing</p>
+                <div class="section-container" style="max-width:1200px; margin:0 auto; padding:40px 20px;">
+                    <div class="section-head" style="margin-bottom:30px;">
+                        <h2 style="font-size:42px; font-weight:900; margin:0;">Products</h2>
+                        <p style="color:#888;">Best items picked for clean browsing</p>
                     </div>
                     
                     <div class="search-filter-row">
@@ -251,13 +353,13 @@
                     </div>
 
                     <div id="productsGrid" class="products-grid">
-                        <p style="color:#888; text-align:center; width:100%;">Ładowanie z bazy...</p>
+                        <p style="color:#888; text-align:center; width:100%; grid-column:1/-1;">Ładowanie z bazy...</p>
                     </div>
                 </div>
             </section>
 
             <section id="tracking" class="page-section">
-                <div class="section-container">
+                <div class="section-container" style="max-width:1200px; margin:0 auto; padding:40px 20px;">
                     <div class="tracker-wrapper-white">
                         <div class="tracker-header-clean">
                             <h2>Package Tracking</h2>
@@ -291,64 +393,102 @@
             </section>
 
             <section id="tutorials" class="page-section">
-                <div class="section-container tutorial-section-shell">
-                    <div id="tutorialsOverview" class="tutorials-overview"></div>
-                    <div id="tutorialPlayer" class="tutorial-player hidden">
-                        <button id="tutorialBackToList" class="tutorial-back-link">← Wróć do listy</button>
-                        <div class="tutorial-player-head">
-                            <h2 id="tutorialMainTitle"></h2>
-                            <p id="tutorialMainSubtitle"></p>
-                            <div class="tutorial-progress-track"><div id="tutorialProgressBar" class="tutorial-progress-fill"></div></div>
-                            <div id="tutorialTopSteps" class="tutorial-top-steps"></div>
-                        </div>
-                        <div class="tutorial-layout">
-                            <div class="tutorial-main-panel">
-                                <div class="tutorial-step-header">
-                                    <div id="tutorialStepBadge" class="tutorial-step-badge"></div>
+                <div class="section-container tutorial-section-shell" style="max-width:1400px; margin:0 auto; padding:40px 20px;">
+                    <div id="tutorialsOverview" class="tutorials-overview" style="display:flex; justify-content:center;"></div>
+                    <div id="tutorialPlayer" class="tutorial-player hidden" style="max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start;">
+                        <div class="tutorial-main-panel" style="background: #111; border: 1px solid #222; border-radius: 24px; padding: 40px;">
+                            <button id="tutorialBackToList" class="tutorial-back-link" style="background:none; border:none; color:#888; font-weight:800; cursor:pointer; padding:0; display:flex; align-items:center; gap:8px; margin-bottom:20px;">← Wróć do listy</button>
+                            <div class="tutorial-player-head">
+                                <h2 id="tutorialMainTitle" style="font-size: 32px; font-weight: 900; color: #fff; margin: 0 0 5px 0; letter-spacing: -1px;"></h2>
+                                <p id="tutorialMainSubtitle" style="color: #666; font-size: 14px; font-weight: 700; margin-bottom: 30px;"></p>
+                                <div class="tutorial-progress-track"><div id="tutorialProgressBar" class="tutorial-progress-fill"></div></div>
+                                <div id="tutorialTopSteps" class="tutorial-top-steps"></div>
+                            </div>
+                            <div class="tutorial-layout">
+                                <div class="tutorial-step-header" style="display: flex; gap: 15px; align-items: center; margin-bottom: 25px;">
+                                    <div id="tutorialStepBadge" class="tutorial-step-badge" style="width: 54px; height: 54px; background: #222; border: 1px solid #333; color: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900;"></div>
                                     <div>
-                                        <h3 id="tutorialStepTitle"></h3>
-                                        <p id="tutorialStepMeta" class="tutorial-step-meta"></p>
+                                        <h3 id="tutorialStepTitle" style="font-size: 24px; font-weight: 900; color: #fff; margin: 0 0 5px 0;"></h3>
+                                        <p id="tutorialStepMeta" class="tutorial-step-meta" style="color: #666; font-size: 14px; font-weight: 700; margin: 0;"></p>
                                     </div>
                                 </div>
-                                <p id="tutorialStepDescription" class="tutorial-step-description"></p>
-                                <div id="tutorialStepMedia" class="tutorial-step-media"></div>
-                                <div id="tutorialStepActions" class="tutorial-step-inline-actions"></div>
-                                <div class="tutorial-bottom-nav">
-                                    <button id="tutorialPrevBtn" class="tutorial-ghost-btn">‹ Wstecz</button>
-                                    <div class="tutorial-nav-group">
-                                        <button id="tutorialRestartBtn" class="tutorial-ghost-btn">Od nowa</button>
-                                        <button id="tutorialNextBtn" class="tutorial-primary-btn">Dalej ›</button>
+                                <p id="tutorialStepDescription" class="tutorial-step-description" style="color: #888; font-size: 17px; line-height: 1.6; margin-bottom: 30px;"></p>
+                                <div id="tutorialStepMedia" class="tutorial-step-media" style="background: #1a1a1a; border: 1px solid #222; border-radius: 16px; min-height: 400px; overflow: hidden; display: flex; align-items: center; justify-content: center;"></div>
+                                <div id="tutorialStepActions" class="tutorial-step-inline-actions" style="margin-top: 20px;"></div>
+                                <div class="tutorial-bottom-nav" style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; border-top: 1px solid #222; padding-top: 30px;">
+                                    <button id="tutorialPrevBtn" class="tutorial-ghost-btn" style="background: #222; border: 1px solid #333; color: #fff; padding: 14px 25px; border-radius: 10px; font-weight: 700; cursor: pointer;">‹ Wstecz</button>
+                                    <div class="tutorial-nav-group" style="display:flex; gap:10px;">
+                                        <button id="tutorialRestartBtn" class="tutorial-ghost-btn" style="background:none; border:none; color:#666; font-weight:700; cursor:pointer;">Od nowa</button>
+                                        <button id="tutorialNextBtn" class="tutorial-primary-btn" style="background: #fff; color: #000; padding: 14px 35px; border-radius: 10px; font-weight: 900; border: none; cursor: pointer; transition: 0.2s;">Dalej ›</button>
                                     </div>
                                 </div>
                             </div>
-                            <aside class="tutorial-sidebar">
-                                <h4>Kroki</h4>
-                                <div id="tutorialSideSteps" class="tutorial-side-steps"></div>
-                            </aside>
                         </div>
+                        <aside class="tutorial-sidebar" style="background: #111; border: 1px solid #222; border-radius: 24px; padding: 30px;">
+                            <h4 style="font-size: 20px; font-weight: 900; color: #fff; margin: 0 0 25px 0; text-align: center;">Kroki</h4>
+                            <div id="tutorialSideSteps" class="tutorial-side-steps" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;"></div>
+                        </aside>
                     </div>
                 </div>
             </section>
 
             <section id="converter" class="page-section">
-                <div class="section-container converter-shell">
+                <div class="section-container converter-shell" style="max-width:1200px; margin:0 auto; padding:40px 20px;">
                     <div class="converter-board">
-                        <div class="converter-hero" style="text-align: center;">
+                        <div class="converter-hero">
                             <span class="converter-kicker">Narzędzie</span>
                             <h2>Link Converter</h2>
                             <p>Wklej link, żeby zmienić go na wersję Twojego agenta.</p>
                         </div>
-                        <div class="converter-input-row" style="margin-top: 30px;">
+                        
+                        <div class="converter-dropdown-wrapper" id="converterTargetSelect">
+                            <button class="converter-dropdown-btn" id="converterTargetButton">
+                                <span><span style="color:#888;">Na:</span> <strong id="converterTargetLabel" style="margin-left:5px;">KakoBuy</strong></span>
+                                <span class="arrow">▾</span>
+                            </button>
+                            <div class="converter-dropdown-menu" id="converterTargetMenu"></div>
+                        </div>
+
+                        <div class="converter-input-row">
                             <input type="text" id="converterInput" class="converter-input-dark" placeholder="Wklej link z Weidian / Taobao..." />
                             <button id="convertBtn" class="converter-primary-btn">Convert Link</button>
+                        </div>
+
+                        <div id="converterStatus" class="converter-status"></div>
+
+                        <div id="converter-result" class="converter-result-section hidden">
+                            <div class="converter-result-block">
+                                <div class="converter-result-head">
+                                    <span>Twój link</span>
+                                    <div id="converterConvertedBadge" class="platform-pill platform-pill-kakobuy">KAKOBUY</div>
+                                </div>
+                                <div id="converterOutput" class="converter-output-box"></div>
+                                <div class="converter-action-btns">
+                                    <button id="copyConverted" class="converter-action-btn primary">Kopiuj Link</button>
+                                    <button id="openConverted" class="converter-action-btn">Otwórz Link</button>
+                                </div>
+                            </div>
+                            
+                            <hr style="border: 0; border-top: 1px dashed #333; margin: 20px 0;">
+                            
+                            <div class="converter-result-block">
+                                <div class="converter-result-head">
+                                    <span>Wykryty oryginał</span>
+                                    <div id="converterOriginalBadge" class="platform-pill platform-pill-weidian">WEIDIAN</div>
+                                </div>
+                                <div id="converterOriginalUrl" class="converter-output-box" style="color: #888;"></div>
+                                <div class="converter-action-btns">
+                                    <button id="copyOriginal" class="converter-action-btn">Kopiuj Oryginał</button>
+                                    <button id="openOriginal" class="converter-action-btn">Otwórz Oryginał</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
 
-        <footer class="site-footer">
-            <div class="footer-line"></div>
+        <footer class="site-footer" style="text-align:center; padding:40px 0; color:#666; border-top:1px solid #111; margin-top:60px;">
             <p>repfinder © 2026 | Built for confidence</p>
         </footer>
     </div>
@@ -400,6 +540,69 @@
         </div>
     </div>
 
+    <div id="adminLoginModal" class="filter-modal" style="background:rgba(0,0,0,0.95);">
+        <div class="filter-content" style="background:#111; color:#fff; text-align:center; max-width:350px; border-color:#333;">
+            <h3 style="margin-bottom:25px;">Admin Access</h3>
+            <input type="text" id="admLogin" placeholder="Login" style="width:100%; padding:15px; margin-bottom:10px; background:#222; border:1px solid #333; color:#fff; border-radius:12px; outline:none;">
+            <input type="password" id="admPass" placeholder="Hasło" style="width:100%; padding:15px; margin-bottom:25px; background:#222; border:1px solid #333; color:#fff; border-radius:12px; outline:none;">
+            <button id="admSubmit" style="background:#fff; color:#000; width:100%; padding:15px; border:none; border-radius:12px; font-weight:900; cursor:pointer;">Zaloguj</button>
+            <p id="admErr" style="color:#f87171; display:none; margin-top:15px; font-weight:800;">Błędne dane!</p>
+            <button onclick="document.getElementById('adminLoginModal').classList.remove('show')" style="background:none; border:none; color:#666; margin-top:20px; cursor:pointer; text-decoration:underline;">Anuluj</button>
+        </div>
+    </div>
+
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h3>Settings</h3>
+                <button class="settings-close-btn" id="closeSettingsBtn">✕</button>
+            </div>
+            
+            <span class="settings-label">LANGUAGE / CURRENCY</span>
+            <div class="settings-lang-grid">
+                <div class="lang-card active" data-lang="usd">
+                    <div class="lang-icon">🇺🇸</div>
+                    <div class="lang-text">USD ($)</div>
+                </div>
+                <div class="lang-card" data-lang="pln">
+                    <div class="lang-icon">🇵🇱</div>
+                    <div class="lang-text">PLN (zł)</div>
+                </div>
+                <div class="lang-card" data-lang="cny">
+                    <div class="lang-icon">🇨🇳</div>
+                    <div class="lang-text">CNY (¥)</div>
+                </div>
+            </div>
+
+            <span class="settings-label">PINNED AGENT</span>
+            <div class="settings-agent-wrap" id="settingsAgentWrap">
+                <button class="settings-agent-btn" id="settingsAgentBtn">
+                    <div class="settings-agent-btn-left">
+                        <img id="settingsAgentIcon" src="https://www.kakobuy.com/favicon.ico" onerror="this.style.display='none'">
+                        <span id="settingsAgentLabel">KakoBuy</span>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="settings-agent-menu" id="settingsAgentMenu">
+                    <button class="settings-agent-item active" data-agent="kakobuy" data-name="KakoBuy" data-icon="https://www.kakobuy.com/favicon.ico">
+                        <img src="https://www.kakobuy.com/favicon.ico"> KakoBuy
+                    </button>
+                    <button class="settings-agent-item" data-agent="usfans" data-name="USFans" data-icon="https://usfans.com/favicon.ico">
+                        <img src="https://usfans.com/favicon.ico"> USFans
+                    </button>
+                    <button class="settings-agent-item" data-agent="allchinabuy" data-name="AllChinaBuy" data-icon="https://allchinabuy.com/favicon.ico">
+                        <img src="https://allchinabuy.com/favicon.ico"> AllChinaBuy
+                    </button>
+                    <button class="settings-agent-item" data-agent="litbuy" data-name="LitBuy" data-icon="https://litbuy.com/favicon.ico">
+                        <img src="https://litbuy.com/favicon.ico"> LitBuy
+                    </button>
+                </div>
+            </div>
+
+            <button class="settings-save-btn" id="saveSettingsBtn">Save Settings</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -419,22 +622,33 @@
         const AGENTS = [
           { id: 'kakobuy', name: 'KakoBuy', icon: 'https://www.kakobuy.com/favicon.ico' },
           { id: 'usfans', name: 'USFans', icon: 'https://usfans.com/favicon.ico' },
-          { id: 'acbuy', name: 'AllChinaBuy', icon: 'https://allchinabuy.com/favicon.ico' },
+          { id: 'allchinabuy', name: 'AllChinaBuy', icon: 'https://allchinabuy.com/favicon.ico' },
           { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' }
         ];
 
+        // LOGOWANIE ADMINA
+        document.querySelector('.admin-link').addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            document.getElementById('adminLoginModal').classList.add('show'); 
+        });
+        document.getElementById('admSubmit').onclick = () => {
+            if(document.getElementById('admLogin').value === 'admin' && document.getElementById('admPass').value === 'kutas123') {
+                window.location.href = 'admin.html';
+            } else { 
+                document.getElementById('admErr').style.display='block'; 
+            }
+        };
+
         const iconCopy = `<svg class="copy-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
-        const iconCheck = `<svg class="success-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        const iconCheck = `<svg class="success-icon" viewBox="0 0 24 24" width="22" height="22" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
         const iconArrow = `<svg class="agent-arrow" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
 
         window.copyText = function(text, btn) {
             navigator.clipboard.writeText(text);
             const origHTML = btn.innerHTML;
             btn.innerHTML = iconCheck; 
-            btn.classList.add('copied');
             setTimeout(() => {
                 btn.innerHTML = origHTML;
-                btn.classList.remove('copied');
             }, 1500);
         };
 
@@ -443,9 +657,17 @@
             if(!target) return;
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             target.classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => {
+                l.classList.remove('active');
+                if(l.style.background === 'rgb(255, 255, 255)') {
+                    l.style.background = 'none'; l.style.color = '#888'; l.style.boxShadow = 'none';
+                }
+            });
             const activeNav = document.querySelector(`[data-section-link="${id}"]`);
-            if(activeNav) activeNav.classList.add('active');
+            if(activeNav) {
+                activeNav.classList.add('active');
+                activeNav.style.background = '#fff'; activeNav.style.color = '#000'; activeNav.style.boxShadow = '0 4px 15px rgba(255,255,255,0.2)';
+            }
             const toolsMenu = document.getElementById('toolsMenu');
             if(toolsMenu) toolsMenu.classList.remove('show');
             window.scrollTo(0,0);
@@ -453,6 +675,10 @@
             if(id === 'tutorials' && !window.tutorialsInited && typeof window.initTutorials === 'function') {
                 window.initTutorials();
                 window.tutorialsInited = true;
+            }
+            if(id === 'converter' && !window.converterInited && typeof window.initConverter === 'function') {
+                window.initConverter();
+                window.converterInited = true;
             }
         };
 
@@ -481,6 +707,84 @@
                     if (!tBtn.contains(e.target) && !tMenu.contains(e.target)) tMenu.classList.remove('show');
                 });
             }
+
+            // SETTINGS MODAL LOGIC
+            const settingsModal = document.getElementById('settingsModal');
+            const openSettingsBtnNav = document.getElementById('openSettingsBtnNav');
+            const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            
+            const langCards = document.querySelectorAll('.lang-card');
+            const agentWrap = document.getElementById('settingsAgentWrap');
+            const agentBtn = document.getElementById('settingsAgentBtn');
+            const agentItems = document.querySelectorAll('.settings-agent-item');
+            
+            let selectedSettingsAgent = localStorage.getItem('pinnedAgent') || 'kakobuy';
+            let selectedSettingsLang = localStorage.getItem('currency') || 'usd';
+
+            if (openSettingsBtnNav) {
+                openSettingsBtnNav.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    langCards.forEach(c => {
+                        c.classList.remove('active');
+                        if(c.getAttribute('data-lang') === selectedSettingsLang) c.classList.add('active');
+                    });
+                    
+                    agentItems.forEach(i => {
+                        i.classList.remove('active');
+                        if(i.getAttribute('data-agent') === selectedSettingsAgent) {
+                            i.classList.add('active');
+                            document.getElementById('settingsAgentIcon').src = i.getAttribute('data-icon');
+                            document.getElementById('settingsAgentLabel').textContent = i.getAttribute('data-name');
+                        }
+                    });
+
+                    settingsModal.classList.add('show');
+                });
+            }
+            if (closeSettingsBtn) closeSettingsBtn.addEventListener('click', () => settingsModal.classList.remove('show'));
+
+            langCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    langCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    selectedSettingsLang = card.getAttribute('data-lang');
+                });
+            });
+
+            if (agentBtn) {
+                agentBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    agentWrap.classList.toggle('open');
+                });
+            }
+
+            agentItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    agentItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    selectedSettingsAgent = item.getAttribute('data-agent');
+                    document.getElementById('settingsAgentIcon').src = item.getAttribute('data-icon');
+                    document.getElementById('settingsAgentLabel').textContent = item.getAttribute('data-name');
+                    agentWrap.classList.remove('open');
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (agentWrap && !agentWrap.contains(e.target)) agentWrap.classList.remove('open');
+            });
+
+            if (saveSettingsBtn) {
+                saveSettingsBtn.addEventListener('click', () => {
+                    localStorage.setItem('pinnedAgent', selectedSettingsAgent);
+                    localStorage.setItem('currency', selectedSettingsLang);
+                    settingsModal.classList.remove('show');
+                    // Przeładuj produkty żeby nałożyć nowe ceny i ikonki agenta
+                    if(window.allProductsData.length > 0) renderProducts(window.allProductsData);
+                });
+            }
+
             loadProducts();
         });
 
@@ -494,26 +798,49 @@
                  grid.innerHTML = "<p style='color:#888; text-align:center; width:100%; grid-column:1/-1;'>Brak produktów dla tych filtrów.</p>";
                  return;
             }
+            
+            const currency = localStorage.getItem('currency') || 'usd';
+            const pinnedAgentId = localStorage.getItem('pinnedAgent') || 'kakobuy';
+
+            let rate = 1;
+            let suffix = '$';
+            let prefix = '';
+            if(currency === 'pln') { rate = 3.71; suffix = ' zł'; }
+            if(currency === 'cny') { rate = 6.91; prefix = '¥'; suffix = ''; }
+
+            const agentObj = AGENTS.find(a => a.id === pinnedAgentId) || AGENTS[0];
+
             let html = "";
             data.forEach(p => {
                 const safeName = (p.Nazwa || 'Item').replace(/'/g, "\\'");
+                const basePrice = parseFloat(p.Cena_USD) || 0;
+                const convertedPrice = (basePrice * rate).toFixed(2);
+                const displayPrice = prefix + convertedPrice + suffix;
+
+                // Szukamy linku dla przypiętego agenta
+                let linkToCopy = p.Link_Kakobuy; 
+                if(pinnedAgentId === 'usfans' && p.Link_Usfans) linkToCopy = p.Link_Usfans;
+                if(pinnedAgentId === 'allchinabuy' && p.Link_Allchinabuy) linkToCopy = p.Link_Allchinabuy;
+                if(pinnedAgentId === 'litbuy' && p.Link_Litbuy) linkToCopy = p.Link_Litbuy;
+
                 html += `
-                <article class="product-card-new" style="background-color: #141414 !important; border: 1px solid #222 !important; border-radius: 16px !important; padding: 10px !important; display: flex; flex-direction: column; transition: 0.3s; overflow: hidden;">
-                    <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x500/1a1a1a/ffffff?text=Brak'" style="width: 100%; aspect-ratio: 4/4.5; object-fit: cover; border-radius: 12px !important; margin-bottom: 12px; background-color: #1a1a1a;">
+                <article class="product-card-new" style="background-color: #141414; border: 1px solid #222; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; transition: 0.3s; overflow: hidden;">
+                    <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x400/222/fff?text=Brak'" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; margin-bottom: 12px; background-color: #1a1a1a;">
                     
-                    <div class="card-tags" style="display: flex; gap: 6px; margin-bottom: 10px; padding: 0 2px;">
-                        <span class="tag-blue" style="background: #172554 !important; color: #60a5fa !important; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">${p.Kategoria || 'ITEM'}</span>
-                        <span class="tag-red" style="background: #450a0a !important; color: #f87171 !important; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">${p.Tag || 'BEST BATCH'}</span>
+                    <div class="card-tags" style="display: flex; gap: 8px; margin-bottom: 12px;">
+                        <span style="background: #1e3a8a; color: #60a5fa; font-size: 10px; font-weight: 900; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">${p.Kategoria || 'SHOES'}</span>
+                        <span style="background: #450a0a; color: #f87171; font-size: 10px; font-weight: 900; padding: 5px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">${p.Tag || 'BEST BATCH'}</span>
                     </div>
                     
-                    <h3 class="card-name" style="font-size: 16px; font-weight: 900; color: #fff !important; margin: 0 0 4px 0; padding: 0 2px; letter-spacing: -0.5px; min-height: 38px;">${p.Nazwa}</h3>
-                    <div class="card-price" style="font-size: 20px; font-weight: 900; color: #fff !important; margin-bottom: 15px; padding: 0 2px;">${p.Cena_USD}$</div>
+                    <h3 class="card-name" style="font-size: 16px; font-weight: 900; color: #fff; margin: 0 0 8px 0; letter-spacing: -0.5px; line-height: 1.2;">${p.Nazwa}</h3>
                     
-                    <div class="card-actions" style="display: flex; gap: 8px; margin-top: auto; padding: 0 2px;">
-                        <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')" style="flex: 1; background-color: #222 !important; color: #fff !important; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 13px; border: 1px solid #333; transition: 0.2s; cursor: pointer;">View agents</button>
-                        <button class="btn-icon-square" onclick="window.copyText('${p.Link_Kakobuy}', this)" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background: #222 !important; border: 1px solid #333; border-radius: 10px; cursor: pointer; transition: 0.2s; color: #aaa;">
-                            <img src="https://www.kakobuy.com/favicon.ico" class="copy-icon" style="width:18px;">
-                            <svg class="success-icon" viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="3" fill="none" style="display:none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <div class="card-price" style="font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 16px;">${displayPrice}</div>
+                    
+                    <div class="card-actions" style="display: flex; gap: 8px; margin-top: auto;">
+                        <button class="btn-view-agents" onclick="window.openAgentsModal('${safeName}', '${p.Cena_USD}', '${p.Link_Zdjecie}', '${p.Link_Kakobuy}')" style="flex: 1; background-color: #262626; color: #fff; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 13px; border: none; transition: 0.2s; cursor: pointer; display: flex; justify-content: center; align-items: center;">View agents</button>
+                        
+                        <button class="btn-icon-square" onclick="window.copyText('${linkToCopy}', this)" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: #262626; border: none; border-radius: 10px; cursor: pointer; transition: 0.2s;">
+                            <img src="${agentObj.icon}" style="width:20px; border-radius: 4px;" class="copy-icon">
                         </button>
                     </div>
                 </article>`;
@@ -595,7 +922,9 @@
                             <span class="agent-info-left"><img src="${agent.icon}" onerror="this.style.display='none'"> ${agent.name}</span>
                             ${iconArrow}
                         </a>
-                        <button class="agent-copy-btn" onclick="window.copyText('${finalLink}', this)">${iconCopy}</button>
+                        <button class="agent-copy-btn" onclick="window.copyText('${finalLink}', this)">
+                            <svg class="copy-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        </button>
                     </div>`;
             }).join("");
             document.getElementById('agentsModal').classList.add('show');
@@ -603,7 +932,7 @@
         window.closeAgentsModal = () => document.getElementById('agentsModal').classList.remove('show');
 
         // =====================================================================
-        // TWÓJ SKRYPT PORADNIKÓW (NIENARUSZONY)
+        // SKRYPT PORADNIKÓW
         // =====================================================================
         window.initTutorials = function () {
             const overview = document.getElementById("tutorialsOverview");
@@ -783,6 +1112,352 @@
         function mockArrowShot(label, text) {
             return `<div class="tutorial-shot"><div class="tutorial-shot-browser-top"><span></span><span></span><span></span></div><div class="tutorial-label-chip">${escapeHtml(label)}</div><div class="tutorial-mock-grid"><div class="tutorial-mock-panel"><div class="tutorial-mock-title" style="width:58%"></div><div class="tutorial-mock-lines"><span style="width:72%"></span><span style="width:64%"></span><span style="width:54%"></span></div><div class="tutorial-mock-image gray"></div></div><div class="tutorial-mock-side"><div class="tutorial-mock-title" style="width:72%"></div><div class="tutorial-mock-lines"><span style="width:100%"></span><span style="width:88%"></span><span style="width:74%"></span><span style="width:62%"></span></div></div></div><div class="tutorial-arrow" style="left: 34%; top: 62%;"></div><div style="margin-top:14px;color:#6d7785;font-weight:700;">${escapeHtml(text)}</div></div>`;
         }
+
+        // =====================================================================
+        // ZINTEGROWANY CONVERTER
+        // =====================================================================
+        window.initConverter = function () {
+            const input = document.getElementById("converterInput");
+            const convertBtn = document.getElementById("convertBtn");
+            const copyConverted = document.getElementById("copyConverted");
+            const openConverted = document.getElementById("openConverted");
+            const copyOriginal = document.getElementById("copyOriginal");
+            const openOriginal = document.getElementById("openOriginal");
+            const output = document.getElementById("converterOutput");
+            const status = document.getElementById("converterStatus");
+            const originalBadge = document.getElementById("converterOriginalBadge");
+            const convertedBadge = document.getElementById("converterConvertedBadge");
+            const originalUrlBox = document.getElementById("converterOriginalUrl");
+            const resultSection = document.getElementById("converter-result");
+
+            const targetSelectWrap = document.getElementById("converterTargetSelect");
+            const targetButton = document.getElementById("converterTargetButton");
+            const targetMenu = document.getElementById("converterTargetMenu");
+            const targetLabel = document.getElementById("converterTargetLabel");
+
+            if (!input || !convertBtn || !output || !status || !originalBadge || !convertedBadge || !originalUrlBox || !resultSection || !targetSelectWrap || !targetButton || !targetMenu) {
+                console.error("Converter init failed: missing HTML elements");
+                return;
+            }
+
+            let hasShownResultOnce = false;
+            let selectedTarget = localStorage.getItem('pinnedAgent') || "kakobuy";
+
+            const targets = [
+                { value: "kakobuy", label: "KakoBuy", icon: "https://www.kakobuy.com/favicon.ico" },
+                { value: "usfans", label: "UsFans", icon: "https://usfans.com/favicon.ico" },
+                { value: "litbuy", label: "LITBUY", icon: "https://litbuy.com/favicon.ico" },
+                { value: "allchinabuy", label: "AllChinaBuy", icon: "https://allchinabuy.com/favicon.ico" },
+                { value: "weidian", label: "Weidian", icon: "" }
+            ];
+
+            function buildTargetMenu() {
+                targetMenu.innerHTML = targets.map((target) => {
+                    const active = target.value === selectedTarget ? "active" : "";
+                    const imgTag = target.icon ? `<img src="${target.icon}" onerror="this.style.display='none'">` : '';
+                    return `
+                        <button type="button" class="converter-dropdown-item ${active}" data-target-value="${escapeHtml(target.value)}">
+                            ${imgTag} ${escapeHtml(target.label)}
+                        </button>
+                    `;
+                }).join("");
+
+                const selectedObj = targets.find(t => t.value === selectedTarget);
+                if(selectedObj) targetLabel.textContent = selectedObj.label;
+
+                targetMenu.querySelectorAll("[data-target-value]").forEach((button) => {
+                    button.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        selectedTarget = button.getAttribute("data-target-value");
+                        buildTargetMenu();
+                        targetSelectWrap.classList.remove("open");
+                    });
+                });
+            }
+
+            buildTargetMenu();
+            resultSection.classList.add("hidden");
+
+            targetButton.addEventListener("click", (event) => {
+                event.stopPropagation();
+                targetSelectWrap.classList.toggle("open");
+            });
+
+            document.addEventListener("click", (event) => {
+                if (!targetSelectWrap.contains(event.target)) {
+                    targetSelectWrap.classList.remove("open");
+                }
+            });
+
+            convertBtn.addEventListener("click", () => {
+                const raw = input.value.trim();
+
+                if (!raw) {
+                    resultSection.classList.add("hidden");
+                    setStatus("Wklej link, żeby rozpocząć konwersję.");
+                    return;
+                }
+
+                const analysis = analyzeInput(raw);
+
+                if (!analysis.originalUrl) {
+                    setResult({ originalPlatform: "unknown", originalUrl: raw, convertedPlatform: selectedTarget, convertedUrl: "" });
+                    setStatus("Nie udało się odczytać poprawnego linku źródłowego.");
+                    revealResultSection(resultSection, hasShownResultOnce);
+                    hasShownResultOnce = true;
+                    return;
+                }
+
+                const converted = buildConvertedResult(analysis, selectedTarget);
+
+                if (!converted.url) {
+                    setResult({ originalPlatform: analysis.originalPlatform, originalUrl: analysis.originalUrl, convertedPlatform: selectedTarget, convertedUrl: "" });
+                    setStatus(`Nie udało się zbudować poprawnego linku ${formatPlatformLabel(selectedTarget)} dla tego formatu.`);
+                    revealResultSection(resultSection, hasShownResultOnce);
+                    hasShownResultOnce = true;
+                    return;
+                }
+
+                setResult({ originalPlatform: analysis.originalPlatform, originalUrl: analysis.originalUrl, convertedPlatform: selectedTarget, convertedUrl: converted.url });
+                setStatus(``);
+                revealResultSection(resultSection, hasShownResultOnce);
+                hasShownResultOnce = true;
+            });
+
+            if (copyConverted) copyConverted.addEventListener("click", () => copyTextLocal(output.textContent));
+            if (openConverted) openConverted.addEventListener("click", () => openLink(output.textContent));
+            if (copyOriginal) copyOriginal.addEventListener("click", () => copyTextLocal(originalUrlBox.textContent));
+            if (openOriginal) openOriginal.addEventListener("click", () => openLink(originalUrlBox.textContent));
+
+            function analyzeInput(rawUrl) {
+                const cleaned = normalizeUrl(rawUrl);
+                if (!cleaned) return { displaySource: "auto", originalPlatform: "unknown", originalUrl: "", itemId: "", sourceCode: "" };
+
+                const platform = detectPlatform(cleaned);
+
+                if (platform === "weidian") {
+                    const itemId = extractWeidianItemId(cleaned);
+                    return { displaySource: "weidian", originalPlatform: "weidian", originalUrl: itemId ? buildWeidianUrl(itemId) : cleaned, itemId, sourceCode: "WD" };
+                }
+                if (platform === "kakobuy") {
+                    const embeddedOriginal = extractOriginalUrlFromAnyAgent(cleaned);
+                    const itemId = extractAnyKnownItemId(cleaned, embeddedOriginal);
+                    const originalUrl = itemId ? buildWeidianUrl(itemId) : embeddedOriginal;
+                    return { displaySource: "kakobuy", originalPlatform: itemId ? "weidian" : detectPlatform(originalUrl), originalUrl: originalUrl || "", itemId, sourceCode: itemId ? "WD" : "" };
+                }
+                if (platform === "usfans") {
+                    const itemId = extractUsFansItemId(cleaned);
+                    return { displaySource: "usfans", originalPlatform: itemId ? "weidian" : "unknown", originalUrl: itemId ? buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId ? "WD" : "" };
+                }
+                if (platform === "allchinabuy") {
+                    const itemId = extractAllChinaBuyItemId(cleaned);
+                    const sourceCode = extractSourceCode(cleaned) || (itemId ? "WD" : "");
+                    return { displaySource: "allchinabuy", originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown", originalUrl: itemId && sourceCode === "WD" ? buildWeidianUrl(itemId) : "", itemId, sourceCode };
+                }
+                if (platform === "litbuy") {
+                    const itemId = extractLitBuyItemId(cleaned);
+                    const sourcePlatform = extractLitBuySource(cleaned);
+                    return { displaySource: "litbuy", originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform, originalUrl: itemId && sourcePlatform === "weidian" ? buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : "" };
+                }
+
+                return { displaySource: platform, originalPlatform: platform, originalUrl: cleaned, itemId: extractWeidianItemId(cleaned), sourceCode: platform === "weidian" ? "WD" : "" };
+            }
+
+            function buildConvertedResult(analysis, target) {
+                const itemId = analysis.itemId;
+                const sourcePlatform = analysis.originalPlatform;
+
+                if (!analysis.originalUrl) return { url: "" };
+
+                if (target === "weidian") {
+                    if (itemId) return { url: buildWeidianUrl(itemId) };
+                    if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
+                    return { url: "" };
+                }
+
+                if (!itemId || sourcePlatform !== "weidian") {
+                    if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
+                        return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}` };
+                    }
+                    return { url: "" };
+                }
+
+                switch (target) {
+                    case "kakobuy": return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}` };
+                    case "usfans": return { url: `https://www.usfans.com/product/3/${itemId}` };
+                    case "allchinabuy": return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
+                    case "litbuy": return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?` };
+                    default: return { url: "" };
+                }
+            }
+
+            function detectPlatform(url) {
+                const value = String(url || "").toLowerCase();
+                if (!value) return "auto";
+                if (value.includes("weidian.com")) return "weidian";
+                if (value.includes("kakobuy.com") || value.includes("m.kakobuy.com")) return "kakobuy";
+                if (value.includes("usfans.com")) return "usfans";
+                if (value.includes("acbuy.com") || value.includes("allchinabuy.com")) return "allchinabuy";
+                if (value.includes("litbuy.com")) return "litbuy";
+                return "unknown";
+            }
+
+            function normalizeUrl(value) {
+                const raw = String(value || "").trim();
+                if (!raw) return "";
+                if (/^https?:\/\//i.test(raw)) return raw;
+                if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(raw)) return `https://${raw}`;
+                return raw;
+            }
+
+            function extractOriginalUrlFromAnyAgent(inputUrl) {
+                const normalized = normalizeUrl(inputUrl);
+                const url = safeUrl(normalized);
+                if (!url) return extractWeidianLikeUrlFromText(normalized);
+                const candidateKeys = ["url", "itemUrl", "goodsUrl", "link", "target", "redirect", "redirectUrl", "shopUrl"];
+                for (const key of candidateKeys) {
+                    const value = url.searchParams.get(key);
+                    if (!value) continue;
+                    const deep = deepDecode(value);
+                    const directFound = extractWeidianLikeUrlFromText(deep);
+                    if (directFound) return directFound;
+                    const normalizedValue = normalizeUrl(deep);
+                    if (normalizedValue.startsWith("http")) return normalizedValue;
+                }
+                return extractWeidianLikeUrlFromText(normalized);
+            }
+
+            function extractWeidianLikeUrlFromText(value) {
+                const decoded = deepDecode(String(value || ""));
+                const weidianMatch = decoded.match(/https?:\/\/(?:www\.)?weidian\.com\/item\.html\?[^ \n\r"'<>]*/i);
+                if (weidianMatch) return cleanupExtractedUrl(weidianMatch[0]);
+                const genericUrlMatch = decoded.match(/https?:\/\/[^ \n\r"'<>]+/i);
+                if (genericUrlMatch) return cleanupExtractedUrl(genericUrlMatch[0]);
+                return "";
+            }
+
+            function cleanupExtractedUrl(url) {
+                let cleaned = String(url || "").trim();
+                cleaned = cleaned.replace(/&affcode=[^&]+/gi, "");
+                cleaned = cleaned.replace(/[),.;]+$/g, "");
+                const itemId = extractWeidianItemId(cleaned);
+                if (itemId) return buildWeidianUrl(itemId);
+                return cleaned;
+            }
+
+            function extractAnyKnownItemId(rawInput, extractedOriginalUrl) {
+                return (extractWeidianItemId(extractedOriginalUrl) || extractWeidianItemId(rawInput) || extractKakoBuyItemId(rawInput) || extractUsFansItemId(rawInput) || extractAllChinaBuyItemId(rawInput) || extractLitBuyItemId(rawInput) || "");
+            }
+
+            function extractWeidianItemId(url) {
+                const safe = safeUrl(url);
+                if (safe) {
+                    const itemId = safe.searchParams.get("itemID") || safe.searchParams.get("itemId") || safe.searchParams.get("id");
+                    if (itemId && /^\d+$/.test(itemId)) return itemId;
+                }
+                const match = String(url || "").match(/itemID(?:%3D|=)(\d+)/i);
+                return match ? match[1] : "";
+            }
+
+            function extractKakoBuyItemId(url) {
+                const embedded = extractOriginalUrlFromAnyAgent(url);
+                const embeddedId = extractWeidianItemId(embedded);
+                if (embeddedId) return embeddedId;
+                const match = String(url || "").match(/itemID%3D(\d+)/i);
+                return match ? match[1] : "";
+            }
+
+            function extractUsFansItemId(url) {
+                const match = String(url || "").match(/\/product\/\d+\/(\d+)/i);
+                return match ? match[1] : "";
+            }
+
+            function extractAllChinaBuyItemId(url) {
+                const safe = safeUrl(url);
+                if (!safe) return "";
+                const id = safe.searchParams.get("id");
+                if (id && /^\d+$/.test(id)) return id;
+                return "";
+            }
+
+            function extractSourceCode(url) {
+                const safe = safeUrl(url);
+                if (!safe) return "";
+                return String(safe.searchParams.get("source") || "").toUpperCase();
+            }
+
+            function extractLitBuyItemId(url) {
+                const match = String(url || "").match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
+                return match ? match[1] : "";
+            }
+
+            function extractLitBuySource(url) {
+                const match = String(url || "").match(/\/product\/([a-z0-9_-]+)\//i);
+                if (!match) return "unknown";
+                const source = match[1].toLowerCase();
+                if (source === "weidian") return "weidian";
+                return source;
+            }
+
+            function buildWeidianUrl(itemId) { return `https://weidian.com/item.html?itemID=${itemId}`; }
+            function safeUrl(value) { try { return new URL(value); } catch (error) { return null; } }
+
+            function deepDecode(value, rounds = 4) {
+                let result = String(value || "");
+                for (let i = 0; i < rounds; i += 1) {
+                    try {
+                        const decoded = decodeURIComponent(result);
+                        if (decoded === result) break;
+                        result = decoded;
+                    } catch (error) { break; }
+                }
+                return result;
+            }
+
+            function setResult(payload) {
+                if (!output || !originalBadge || !convertedBadge || !originalUrlBox) return;
+
+                const originalPlatform = payload.originalPlatform || "unknown";
+                const convertedPlatform = payload.convertedPlatform || "unknown";
+
+                originalUrlBox.textContent = payload.originalUrl || "Brak danych";
+                output.textContent = payload.convertedUrl || "Brak wyniku";
+
+                originalBadge.className = `platform-pill platform-pill-${originalPlatform}`;
+                convertedBadge.className = `platform-pill platform-pill-${convertedPlatform}`;
+
+                originalBadge.textContent = formatPlatformLabel(originalPlatform);
+                convertedBadge.textContent = formatPlatformLabel(convertedPlatform);
+            }
+
+            function setStatus(message) { if (status) status.textContent = message; }
+
+            function platformClassName(platform) {
+                const map = { weidian: "platform-pill-weidian", kakobuy: "platform-pill-kakobuy", usfans: "platform-pill-usfans", litbuy: "platform-pill-litbuy", allchinabuy: "platform-pill-allchinabuy" };
+                return map[platform] || "platform-pill-unknown";
+            }
+
+            function formatPlatformLabel(platform) {
+                const map = { auto: "Auto detect", unknown: "Unknown", weidian: "Weidian", kakobuy: "KakoBuy", usfans: "UsFans", litbuy: "LITBUY", allchinabuy: "AllChinaBuy" };
+                return map[platform] || String(platform || "Unknown");
+            }
+
+            function copyTextLocal(value) {
+                const text = String(value || "").trim();
+                if (!text || text === "Brak wyniku" || text === "Brak danych") return;
+                navigator.clipboard.writeText(text).catch(() => {});
+            }
+
+            function openLink(value) {
+                const text = String(value || "").trim();
+                if (!text || !text.startsWith("http")) return;
+                window.open(text, "_blank", "noopener,noreferrer");
+            }
+
+            function revealResultSection(section, hasShownBefore) {
+                section.classList.remove("hidden");
+            }
+        };
 
         function escapeHtml(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;"); }
     </script>
