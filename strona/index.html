@@ -96,6 +96,11 @@
           100% { transform: translateX(100%); }
         }
 
+        /* Animacja dla loadera */
+        @keyframes spin {
+          100% { transform: rotate(360deg); }
+        }
+
         button, input, textarea, select, a { font: inherit; }
         button { border: 0; cursor: pointer; outline: none; }
         a { color: inherit; text-decoration: none; }
@@ -176,7 +181,7 @@
         .nav-settings-btn-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); }
 
         .dropdown { position: relative; }
-        .dropdown-menu { display: none; position: absolute; top: 130%; right: 0; background: #161616; border: 1px solid #222; border-radius: 16px; padding: 10px; width: 160px; z-index: 2100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .dropdown-menu { display: none; position: absolute; top: 130%; right: 0; background: #161616; border: 1px solid #222; border-radius: 16px; padding: 10px; width: 160px; z-index: 2100; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
         .dropdown-menu.show { display: block; }
         .dropdown-item { width: 100%; text-align: left; background: none; border: none; color: #888; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; display: block; text-decoration: none; }
         .dropdown-item:hover { background: #222; color: #fff; }
@@ -210,7 +215,7 @@
             display: flex; flex-direction: column; border: 1px solid #2a2a2a !important; transition: 0.3s;
             overflow: hidden; position: relative; width: 100%;
         }
-        .product-card-new:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0,0,0,0.5) !important; }
+        .product-card-new:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important; }
 
         .card-bottom-row { display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: auto !important; width: 100% !important; flex-wrap: nowrap !important; }
         .card-price { font-size: 20px !important; font-weight: 900 !important; color: #fff !important; white-space: nowrap !important; flex-shrink: 0 !important; }
@@ -241,6 +246,12 @@
         .tag-blue { color: #3b82f6; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .tag-red { color: #ef4444; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
 
+        /* Przycisk Load More / Infinite Scroll */
+        .load-more-container { text-align: center; margin-top: 40px; width: 100%; display: none; }
+        .load-more-btn { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 14px 40px; border-radius: 100px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;}
+        .load-more-btn:hover { background: #222; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
+        .load-more-container.active { display: block; animation: fadeIn 0.3s ease-out; }
+
         /* =====================================================================
            TRACKER
            ===================================================================== */
@@ -261,16 +272,16 @@
         .tracker-card-clean:hover .tracker-btn-clean { background: #3b82f6; border-color: #3b82f6;}
 
         /* =====================================================================
-           TUTORIALS (SZEROKI LAYOUT Z PASKIEM POSTĘPU I KROPKAMI)
+           TUTORIALS (IDEALNY SZEROKI LAYOUT)
            ===================================================================== */
         .tut-overview-grid {
             display: grid; 
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.6fr 1fr;
             gap: 20px; 
             max-width: 1000px; 
+            width: 100%; 
             margin: 0 auto; 
             align-items: stretch;
-            justify-items: center;
         }
         .tut-overview-card {
             background: var(--panel-2); 
@@ -283,18 +294,17 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
-            min-height: 400px;
+            min-height: 320px;
             width: 100%;
-            max-width: 450px;
             box-shadow: var(--shadow-soft);
         }
         .tut-overview-circle {
             position: absolute; 
-            top: -20px; 
-            right: -20px; 
-            width: 250px; 
-            height: 250px; 
-            background: var(--line); 
+            bottom: -50px; 
+            right: -50px; 
+            width: 300px; 
+            height: 300px; 
+            background: var(--bg-3); 
             border-radius: 50%; 
             z-index: 0;
         }
@@ -523,6 +533,8 @@
             .tut-overview-grid { grid-template-columns: 1fr !important; }
             .tutorial-layout { grid-template-columns: 1fr !important; }
             .tut-overview-card { min-height: 250px; padding: 25px; }
+            .tut-overview-left-panel { max-width: 100%; }
+            .tut-overview-title { font-size: 36px; }
 
             .settings-lang-grid { grid-template-columns: 1fr !important; }
         }
@@ -595,6 +607,10 @@
 
                     <div id="productsGrid" class="products-grid">
                         <p style="color:#888; text-align:center; width:100%; grid-column:1/-1;">Ładowanie z bazy...</p>
+                    </div>
+
+                    <div id="scrollSentinel" style="width: 100%; text-align: center; padding: 40px 0; color: #888; display: none;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="4.93" x2="19.07" y2="7.76"></line></svg>
                     </div>
                 </div>
             </section>
@@ -700,7 +716,7 @@
                             <div class="converter-result-block">
                                 <div class="converter-result-head" style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
                                     <span style="font-weight:700;">Twój link</span>
-                                    <div id="converterConvertedBadge" class="platform-pill platform-pill-kakobuy" style="margin:0; padding:4px 8px; font-size:11px;">KAKOBUY</div>
+                                    <div id="converterConvertedBadge" class="pill-tag" style="margin:0; padding:4px 8px; font-size:11px; background:rgba(255,255,255,0.05);">KAKOBUY</div>
                                 </div>
                                 <div id="converterOutput" class="converter-output-box"></div>
                                 <div class="converter-action-btns">
@@ -714,7 +730,7 @@
                             <div class="converter-result-block">
                                 <div class="converter-result-head" style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
                                     <span style="font-weight:700;">Wykryty oryginał</span>
-                                    <div id="converterOriginalBadge" class="platform-pill platform-pill-weidian" style="margin:0; padding:4px 8px; font-size:11px;">WEIDIAN</div>
+                                    <div id="converterOriginalBadge" class="pill-tag" style="margin:0; padding:4px 8px; font-size:11px; background:rgba(255,255,255,0.05);">WEIDIAN</div>
                                 </div>
                                 <div id="converterOriginalUrl" class="converter-output-box" style="color: #888;"></div>
                                 <div class="converter-action-btns">
@@ -867,7 +883,7 @@
                 <div class="card-tags" style="margin-bottom:15px;">
                     <span class="tag-blue" id="im-cat">SHOES</span>
                     <span class="tag-red" id="im-tag">BEST BATCH</span>
-                    <span class="platform-pill" id="im-original-badge" style="font-size:11px; padding:6px 10px; margin:0; display:inline-flex; border:1px solid var(--line);">Original</span>
+                    <span class="pill-tag" id="im-original-badge" style="font-size:11px; padding:6px 10px; margin:0; display:inline-flex; border:1px solid var(--line);">Original</span>
                 </div>
                 
                 <div style="display:flex; gap:20px; align-items:flex-start; margin-bottom:25px;">
@@ -876,7 +892,7 @@
                         <span id="im-name" style="font-size:16px; font-weight:800; color:#fff; display:block; margin-bottom:5px; line-height: 1.3;"></span>
                         <div style="display:flex; align-items:center; gap:8px;">
                             <span id="im-final-price" style="font-size:28px; font-weight:900; color:#fff;"></span>
-                            <span id="im-converted-badge" class="platform-pill" style="font-size:11px; padding:6px 10px; margin:0; display:inline-flex; border:1px solid var(--line);">Converted</span>
+                            <span id="im-converted-badge" class="pill-tag" style="font-size:11px; padding:6px 10px; margin:0; display:inline-flex; border:1px solid var(--line);">Converted</span>
                         </div>
                     </div>
                 </div>
@@ -964,7 +980,6 @@
             };
         };
 
-        // Płynny system kopiowania
         window.copyText = function(text, btn) {
             if(!text) return;
             navigator.clipboard.writeText(text).catch(err => console.error(err));
@@ -1101,12 +1116,31 @@
                     localStorage.setItem('pinnedAgent', selectedSettingsAgent);
                     localStorage.setItem('currency', selectedSettingsLang);
                     settingsModal.classList.remove('show');
-                    if(window.allProductsData.length > 0) renderProducts(window.allProductsData);
+                    
+                    window.currentItemsDisplayed = 0; 
+                    if(window.allProductsData.length > 0) window.applyFilters();
                 });
             }
 
             initAdminLoginHandlers();
             loadProducts();
+            
+            // INFINITE SCROLL OBSERVER
+            const sentinel = document.getElementById("scrollSentinel");
+            let isFetchingMore = false;
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && !isFetchingMore) {
+                    if (window.currentItemsDisplayed < currentFilteredData.length) {
+                        isFetchingMore = true;
+                        setTimeout(() => {
+                            renderProducts(currentFilteredData, true);
+                            isFetchingMore = false;
+                        }, 500); // Opóźnienie 0.5s do animacji ładowania
+                    }
+                }
+            }, { rootMargin: "150px" }); 
+
+            if(sentinel) observer.observe(sentinel);
         });
 
         function convertCurrency(amountInUSD, toCurrency) {
@@ -1120,11 +1154,22 @@
         window.activeCat = 'ALL';
         window.activeTag = 'ALL';
         window.allProductsData = [];
+        window.currentItemsDisplayed = 0;
+        const ITEMS_PER_PAGE = 16;
+        let currentFilteredData = [];
 
-        function renderProducts(data) {
+        function renderProducts(data, append = false) {
             const grid = document.getElementById("productsGrid");
+            const sentinel = document.getElementById("scrollSentinel");
+            
+            if (!append) {
+                grid.innerHTML = "";
+                window.currentItemsDisplayed = 0;
+            }
+
             if(data.length === 0) {
                  grid.innerHTML = "<p style='color:#888; text-align:center; width:100%; grid-column:1/-1;'>Brak produktów dla tych filtrów.</p>";
+                 if(sentinel) sentinel.style.display = "none";
                  return;
             }
             
@@ -1138,9 +1183,14 @@
 
             const agentObj = AGENTS.find(a => a.id === pinnedAgentId) || AGENTS[0];
 
+            const itemsToRender = data.slice(window.currentItemsDisplayed, window.currentItemsDisplayed + ITEMS_PER_PAGE);
+
             let html = "";
-            data.forEach(p => {
+            itemsToRender.forEach(p => {
                 const safeName = escapeHtml(p.Nazwa || 'Item').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeImg = escapeHtml(p.Link_Zdjecie || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeKb = escapeHtml(p.Link_Kakobuy || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                
                 const displayPrice = prefix + convertCurrency(p.Cena_USD, currency) + suffix;
 
                 let linkToCopy = p.Link_Kakobuy; 
@@ -1151,7 +1201,7 @@
 
                 html += `
                 <article class="product-card-new">
-                    <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x400/222/fff?text=Brak'" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; margin-bottom: 12px; background-color: #1a1a1a;" class="main-img">
+                    <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/400x400/1a1a1a/444444?text=Brak'" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; margin-bottom: 12px; background-color: #1a1a1a;" class="main-img">
                     
                     <div class="card-tags">
                         <span class="tag-blue">${p.Kategoria || 'SHOES'}</span>
@@ -1176,18 +1226,33 @@
                     </div>
                 </article>`;
             });
-            grid.innerHTML = html;
+            
+            if (append) {
+                grid.insertAdjacentHTML('beforeend', html);
+            } else {
+                grid.innerHTML = html;
+            }
+
+            window.currentItemsDisplayed += itemsToRender.length;
+
+            if (window.currentItemsDisplayed < data.length) {
+                if(sentinel) sentinel.style.display = "block";
+            } else {
+                if(sentinel) sentinel.style.display = "none";
+            }
         }
 
         window.applyFilters = function() {
             const searchVal = document.getElementById('productSearch').value.toLowerCase();
-            const filtered = window.allProductsData.filter(p => {
+            currentFilteredData = window.allProductsData.filter(p => {
                 const matchSearch = (p.Nazwa || '').toLowerCase().includes(searchVal);
                 const matchCat = window.activeCat === 'ALL' || p.Kategoria === window.activeCat;
                 const matchTag = window.activeTag === 'ALL' || p.Tag === window.activeTag;
                 return matchSearch && matchCat && matchTag;
             });
-            renderProducts(filtered);
+            
+            window.currentItemsDisplayed = 0; 
+            renderProducts(currentFilteredData, false);
         };
 
         document.getElementById('productSearch').addEventListener('input', window.applyFilters);
@@ -1201,9 +1266,9 @@
             };
         });
 
-        document.querySelectorAll('.filter-tags .filter-pill:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(btn => {
+        document.querySelectorAll('.tags-grid-filter .tag-opt:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(btn => {
             btn.onclick = () => {
-                document.querySelectorAll('.filter-tags .filter-pill:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tags-grid-filter .tag-opt:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active'); window.activeTag = btn.getAttribute('data-filter-tag');
             };
         });
@@ -1211,7 +1276,7 @@
         document.getElementById('applyFiltersBtn').onclick = () => { window.applyFilters(); document.getElementById('filterModal').classList.remove('show'); };
         document.getElementById('clearFiltersBtn').onclick = () => {
             window.activeCat = 'ALL'; window.activeTag = 'ALL';
-            document.querySelectorAll('.filter-modal .filter-btn-opt, .filter-modal .filter-pill:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-modal .filter-btn-opt, .filter-modal .tag-opt:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(b => b.classList.remove('active'));
             document.querySelector('[data-filter-cat="ALL"]').classList.add('active'); 
             document.querySelector('[data-filter-tag="ALL"]').classList.add('active');
             window.applyFilters();
@@ -1237,7 +1302,9 @@
                     if(data.Cena_USD) data.Cena_USD = parseFloat(data.Cena_USD);
                     window.allProductsData.push(data);
                 });
-                renderProducts(window.allProductsData);
+                
+                currentFilteredData = [...window.allProductsData];
+                renderProducts(currentFilteredData, false);
             } catch (error) { 
                 console.error(error);
                 grid.innerHTML = "<p style='color:#ef4444; text-align:center; width:100%; grid-column:1/-1;'>Błąd połączenia z bazą.</p>";
@@ -1279,7 +1346,6 @@
         };
         window.closeItemModal = () => document.getElementById('itemModal').classList.remove('show');
 
-        // VIEW AGENTS MODAL
         window.openAgentsModal = (link) => {
             const safeLink = escapeHtml(link || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
             
@@ -1322,9 +1388,6 @@
             document.getElementById('agentsModal').classList.add('show');
         };
 
-        // =====================================================================
-        // SKRYPT PORADNIKÓW (ZMODYFIKOWANY ZGODNIE ZE WSKAZÓWKAMI I CSS)
-        // =====================================================================
         window.initTutorials = function () {
             const overview = document.getElementById("tutorialsOverview");
             const player = document.getElementById("tutorialPlayer");
@@ -1335,19 +1398,19 @@
                 title: "Jak zamawiać na KakoBuy",
                 subtitle: "Prosty przewodnik krok po kroku, jak zrobić zamówienie przez agentów KakoBuy.",
                 steps: [
-                    { title: "Załóż konto", subtitle: "Krok 1 z 13", description: "Wejdź na stronę KakoBuy, utwórz konto podając e-mail i hasło, a następnie potwierdź rejestrację.", visual: "register", action: { label: "Załóż konto na KakoBuy", href: "https://www.kakobuy.com/" } },
-                    { title: "Znajdź produkty", subtitle: "Krok 2 z 13", description: "Szukaj interesujących Cię rzeczy w spreadsheetach albo przejdź do naszych produktów i znajdź link do itemu.", visual: "browse", action: { label: "Przejdź do produktów", type: "section", target: "products" } },
-                    { title: "Dodaj do koszyka", subtitle: "Krok 3 z 13", description: "Wybierz odpowiedni kolor, rozmiar i ilość, a następnie dodaj produkt do koszyka na KakoBuy.", visual: "cart" },
-                    { title: "Złóż zamówienie", subtitle: "Krok 4 z 13", description: "Sprawdź koszyk, wybierz produkty i opłać koszt towarów oraz krajowej wysyłki w Chinach.", visual: "checkout" },
-                    { title: "Potwierdź i zapłać", subtitle: "Krok 5 z 13", description: "Zaznacz „I have read and agree” i kliknij „Buy Now”, aby przejść do płatności.", visual: "confirm" },
-                    { title: "Wybierz płatność", subtitle: "Krok 6 z 13", description: "Wybierz preferowaną metodę płatności i kliknij „Pay for Order”, aby sfinalizować zakup.", visual: "payment" },
-                    { title: "Realizacja zamówienia", subtitle: "Krok 7 z 13", description: "Po opłaceniu KakoBuy weryfikuje produkty i zamawia je u sprzedawców. Dostawa do magazynu trwa zwykle kilka dni.", visual: "plain1" },
-                    { title: "Kontrola jakości (QC)", subtitle: "Krok 8 z 13", description: "Po dotarciu produktów KakoBuy wykonuje kontrolę jakości i przesyła Ci zdjęcia do oceny.", visual: "qc" },
-                    { title: "Zleć wstępne ważenie", subtitle: "Krok 9 z 13", description: "Kiedy wszystkie produkty są już w magazynie, zleć wstępne ważenie paczki.", visual: "weigh" },
-                    { title: "Zleć wysyłkę", subtitle: "Krok 10 z 13", description: "Po ważeniu możesz zlecić wysyłkę międzynarodową swojej paczki.", visual: "plain2" },
-                    { title: "Wybierz metodę wysyłki", subtitle: "Krok 11 z 13", description: "Wybierz sposób dostawy, sprawdź orientacyjny czas i opłać koszty transportu.", visual: "shipping" },
-                    { title: "Odbierz paczkę", subtitle: "Krok 12 z 13", description: "Po otrzymaniu przesyłki sprawdź jej zawartość i potwierdź odbiór w panelu użytkownika.", visual: "plain3" },
-                    { title: "Gotowe!", subtitle: "Krok 13 z 13", description: "Gratulacje! Udało Ci się przejść cały proces. Dołącz do naszej społeczności na Discordzie, aby być na bieżąco.", visual: "done", action: { label: "Dołącz na Discorda", href: "https://discord.com/" } }
+                    { title: "Załóż konto", description: "Wejdź na stronę KakoBuy, utwórz konto podając e-mail i hasło, a następnie potwierdź rejestrację.", visual: "register", action: { label: "Załóż konto na KakoBuy", href: "https://www.kakobuy.com/" } },
+                    { title: "Znajdź produkty", description: "Szukaj interesujących Cię rzeczy w spreadsheetach albo przejdź do naszych produktów i znajdź link do itemu.", visual: "browse", action: { label: "Przejdź do produktów", type: "section", target: "products" } },
+                    { title: "Dodaj do koszyka", description: "Wybierz odpowiedni kolor, rozmiar i ilość, a następnie dodaj produkt do koszyka na KakoBuy.", visual: "cart" },
+                    { title: "Złóż zamówienie", description: "Sprawdź koszyk, wybierz produkty i opłać koszt towarów oraz krajowej wysyłki w Chinach.", visual: "checkout" },
+                    { title: "Potwierdź i zapłać", description: "Zaznacz „I have read and agree” i kliknij „Buy Now”, aby przejść do płatności.", visual: "confirm" },
+                    { title: "Wybierz płatność", description: "Wybierz preferowaną metodę płatności i kliknij „Pay for Order”, aby sfinalizować zakup.", visual: "payment" },
+                    { title: "Realizacja zamówienia", description: "Po opłaceniu KakoBuy weryfikuje produkty i zamawia je u sprzedawców. Dostawa do magazynu trwa zwykle kilka dni.", visual: "plain1" },
+                    { title: "Kontrola jakości (QC)", description: "Po dotarciu produktów KakoBuy wykonuje kontrolę jakości i przesyła Ci zdjęcia do oceny.", visual: "qc" },
+                    { title: "Zleć wstępne ważenie", description: "Kiedy wszystkie produkty są już w magazynie, zleć wstępne ważenie paczki.", visual: "weigh" },
+                    { title: "Zleć wysyłkę", description: "Po ważeniu możesz zlecić wysyłkę międzynarodową swojej paczki.", visual: "plain2" },
+                    { title: "Wybierz metodę wysyłki", description: "Wybierz sposób dostawy, sprawdź orientacyjny czas i opłać koszty transportu.", visual: "shipping" },
+                    { title: "Odbierz paczkę", description: "Po otrzymaniu przesyłki sprawdź jej zawartość i potwierdź odbiór w panelu użytkownika.", visual: "plain3" },
+                    { title: "Gotowe!", description: "Gratulacje! Udało Ci się przejść cały proces. Dołącz do naszej społeczności na Discordzie, aby być na bieżąco.", visual: "done", action: { label: "Dołącz na Discorda", href: "https://discord.com/" } }
                 ]
             };
 
@@ -1358,21 +1421,25 @@
 
             function renderOverview() {
                 overview.innerHTML = `
-                <div class="tutorials-overview">
-                    <article class="tutorial-card-large">
-                        <div style="position: relative; z-index: 1;">
-                            <span class="tutorial-card-kicker">TUTORIAL</span>
-                            <h3>${escapeHtml(tutorialData.title)}</h3>
-                            <p>${escapeHtml(tutorialData.subtitle)}</p>
+                <div class="tut-overview-grid">
+                    <div class="tut-overview-card tut-overview-card-main">
+                        <div class="tut-overview-left-panel">
+                            <div>
+                                <span class="pill-tag" style="margin-bottom:15px;">TUTORIAL</span>
+                                <h3 class="tut-overview-title">${escapeHtml(tutorialData.title)}</h3>
+                                <p class="tut-overview-subtitle">${escapeHtml(tutorialData.subtitle)}</p>
+                            </div>
+                            
+                            <button id="startTutorialBtn" style="align-self: flex-start; background: #fff; color: #000; padding: 14px 28px; border-radius: 12px; font-weight: 900; font-size: 15px; border: none; cursor: pointer; transition: 0.2s; margin-top:20px;">Uruchom tutorial</button>
                         </div>
-                        <div style="position: relative; z-index: 1;">
-                            <button id="startTutorialBtn" class="tutorial-start-btn">Uruchom tutorial</button>
-                        </div>
-                    </article>
-                    <article class="tutorial-small-card">
-                        <h4>Dowiesz się jak</h4>
-                        <p>Zamawiać i jak korzystać z naszych narzędzi krok po kroku.</p>
-                    </article>
+                        
+                        <div class="tut-overview-circle"></div>
+                    </div>
+
+                    <div class="tut-overview-card" style="justify-content: flex-start;">
+                        <h4 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0 0 15px 0;">Dowiesz się jak</h4>
+                        <p style="color: #888; font-size: 15px; margin: 0; line-height: 1.6;">Zamawiać i jak korzystać z naszych narzędzi krok po kroku.</p>
+                    </div>
                 </div>`;
                 
                 document.getElementById("startTutorialBtn").addEventListener("click", () => {
@@ -1389,65 +1456,54 @@
                 const total = tutorialData.steps.length;
                 const progress = ((currentStepIndex + 1) / total) * 100;
 
-                player.className = "tutorial-player";
+                player.className = "tutorial-player-new";
                 player.innerHTML = `
-                    <div class="tutorial-player-content">
-                        <button class="tutorial-back-link" id="tutBackToList">
-                            ← Wróć do listy
-                        </button>
-                        
-                        <div class="tutorial-player-head">
-                            <h2>${escapeHtml(tutorialData.title)}</h2>
-                            <p>${escapeHtml(tutorialData.subtitle)}</p>
+                    <div class="tut-header-area">
+                        <button class="tut-back-btn" id="tutBackToList">← Wróć do listy</button>
+                        <h2>${escapeHtml(tutorialData.title)}</h2>
+                        <p>${escapeHtml(tutorialData.subtitle)}</p>
+                    </div>
+                    
+                    <div class="tut-progress-container">
+                        <div class="tut-progress-wrapper">
+                            <div class="tut-progress-line-bg">
+                                <div class="tut-progress-line-fill" style="width: ${progress}%;"></div>
+                            </div>
+                            <div class="tut-top-steps">
+                                ${tutorialData.steps.map((_, i) => `<button class="tut-step-dot ${i === currentStepIndex ? 'active' : ''}" data-tut-step-idx="${i}">${i + 1}</button>`).join("")}
+                            </div>
                         </div>
-                        
-                        <div class="tutorial-progress-track">
-                            <div class="tutorial-progress-fill" style="width: ${progress}%;"></div>
-                        </div>
-                        <div class="tutorial-top-steps">
-                            ${tutorialData.steps.map((_, i) => `
-                                <button class="tutorial-step-dot ${i === currentStepIndex ? 'active' : ''}" data-tut-step-idx="${i}">
-                                    ${i + 1}
-                                </button>
-                            `).join("")}
-                        </div>
-                        
-                        <div class="tutorial-layout">
-                            <div class="tutorial-main-panel">
-                                <div class="tutorial-step-header">
-                                    <div class="tutorial-step-badge">${currentStepIndex + 1}</div>
-                                    <div>
-                                        <h3>${escapeHtml(step.title)}</h3>
-                                        <p class="tutorial-step-meta">Krok ${currentStepIndex + 1} z ${total}</p>
-                                    </div>
-                                </div>
-                                <div class="tutorial-step-description">${escapeHtml(step.description)}</div>
-                                <div class="tutorial-step-media">
-                                    ${renderVisualMock(step, currentStepIndex + 1)}
-                                </div>
-                                <div class="tutorial-step-inline-actions">${renderStepAction(step)}</div>
-                                
-                                <div class="tutorial-bottom-nav">
-                                    <button class="tutorial-ghost-btn" id="tutRestartBtn" style="display:flex; align-items:center; gap:8px;">
-                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-                                        Rozpocznij ponownie
-                                    </button>
-                                    <div class="tutorial-nav-group">
-                                        <button class="tutorial-ghost-btn" id="tutPrevBtn" ${currentStepIndex === 0 ? 'style="opacity:0.3;pointer-events:none;"' : ''}>Wstecz</button>
-                                        <button class="tutorial-primary-btn" id="tutNextBtn">${currentStepIndex === total - 1 ? 'Zakończ' : 'Dalej ›'}</button>
-                                    </div>
+                    </div>
+                    
+                    <div class="tut-body-grid">
+                        <div class="tut-main-panel">
+                            <div class="tut-step-header">
+                                <div class="tut-step-badge">${currentStepIndex + 1}</div>
+                                <div class="tut-step-title">
+                                    <h3>${escapeHtml(step.title)}</h3>
+                                    <p>Krok ${currentStepIndex + 1} z ${total}</p>
                                 </div>
                             </div>
-                            <aside class="tutorial-sidebar">
-                                <h4>Kroki tutoriala</h4>
-                                <div class="tutorial-side-steps">
-                                    ${tutorialData.steps.map((_, i) => `
-                                        <button class="tutorial-side-dot ${i === currentStepIndex ? 'active' : ''}" data-tut-step-idx="${i}">
-                                            ${i + 1}
-                                        </button>
-                                    `).join("")}
+                            <div class="tut-desc">${escapeHtml(step.description)}</div>
+                            <div class="tut-media">${renderVisualMock(step, currentStepIndex + 1)}</div>
+                            <div id="tutStepActions">${renderStepAction(step)}</div>
+                            
+                            <div class="tut-bottom-nav">
+                                <button class="tut-btn-text" id="tutRestartBtn">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                    Rozpocznij ponownie
+                                </button>
+                                <div style="display:flex; gap:15px; align-items:center;">
+                                    <button class="tut-btn-text" id="tutPrevBtn" ${currentStepIndex === 0 ? 'style="opacity:0.3;pointer-events:none;"' : ''}>Wstecz</button>
+                                    <button class="tut-btn-cyan" id="tutNextBtn">${currentStepIndex === total - 1 ? 'Zakończ' : 'Dalej ›'}</button>
                                 </div>
-                            </aside>
+                            </div>
+                        </div>
+                        <div class="tut-sidebar">
+                            <h4 class="tut-sidebar-title">Kroki tutoriala</h4>
+                            <div class="tut-sidebar-grid">
+                                ${tutorialData.steps.map((_, i) => `<button class="tut-step-dot ${i === currentStepIndex ? 'active' : ''}" data-tut-step-idx="${i}">${i + 1}</button>`).join("")}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1470,47 +1526,25 @@
             function resetTutorial() { currentStepIndex = 0; player.classList.add("hidden"); overview.classList.remove("hidden"); removeConfetti(); }
 
             function renderVisualMock(step, num) {
-                const headerHTML = `<div class="tutorial-shot-browser-top"><span style="background:#ff5f56;"></span><span style="background:#ffbd2e;"></span><span style="background:#27c93f;"></span></div>`;
+                const headerHTML = `<div class="tut-media-header"><span style="background:#ff5f56;"></span><span style="background:#ffbd2e;"></span><span style="background:#27c93f;"></span></div>`;
+                const mockContent = (text) => `<div class="tut-media-content">[ Wizualizacja: ${text} ]</div>`;
                 switch (step.visual) {
-                    case "register": return `<div class="tutorial-shot">${headerHTML}<div class="tutorial-shot-content" style="padding-top:0;">
-                        <h4 style="color:#fff; font-size: 24px; font-weight: 800; margin: 0 0 30px 0;">KakoBuy Login / Register</h4>
-                        <div style="background:var(--panel-2); padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align:left; width:100%; max-width:300px;">
-                            <label style="color: var(--text); font-size: 13px; display:block; margin-bottom: 8px;">E-mail</label>
-                            <div style="height:40px; background:var(--bg-3); border-radius: 8px;"></div>
-                        </div>
-                        <div style="background:var(--panel-2); padding: 20px; border-radius: 12px; margin-bottom: 30px; text-align:left; width:100%; max-width:300px;">
-                            <label style="color: var(--text); font-size: 13px; display:block; margin-bottom: 8px;">Hasło</label>
-                            <div style="height:40px; background:var(--bg-3); border-radius: 8px;"></div>
-                        </div>
-                        <button style="background: var(--primary); color: #000; width: 100%; max-width:300px; padding: 14px; border-radius: 12px; font-weight: 900; font-size: 15px; border: none;">Zarejestruj się</button>
-                    </div></div>`;
-                    case "browse": return `<div class="tutorial-shot tutorial-shot-dark">${headerHTML}<div class="tutorial-shot-content" style="justify-content:flex-start;">
-                        <div style="display:flex; gap:10px; align-items: center; margin-bottom: 25px; width:100%;">
-                            <div style="width: 150px; height: 40px; background: var(--bg-3); border-radius: 8px; flex-shrink: 0; display:flex; align-items:center; color:var(--text); padding: 0 15px; font-size:12px;">🔍 KakoBuy search</div>
-                            <div style="flex:1; height:40px; background:var(--panel-2); border-radius: 8px; border: 1px solid var(--line); display:flex; align-items:center; color:#0ea5e9; padding: 0 15px; font-size: 12px;">https://weidian.com/item.html?itemID=...</div>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width:100%;">
-                            ${[1, 2, 3].map(i => `<div style="background:var(--panel-2); padding: 15px; border-radius: 10px;">
-                                <div style="width:100%; aspect-ratio:1/1; background:var(--bg-3); border-radius: 8px; margin-bottom: 10px;"></div>
-                                <div style="width: 80%; height: 12px; background: var(--line); border-radius: 4px; margin-bottom: 6px;"></div>
-                                <div style="width: 50%; height: 16px; background: var(--line-strong); border-radius: 4px;"></div>
-                            </div>`).join("")}
-                        </div>
-                    </div></div>`;
-                    case "cart": return `<div class="tutorial-shot">${headerHTML}<div class="tutorial-shot-content">[ Wizualizacja: Dodawanie do koszyka ]</div></div>`;
-                    case "checkout": return `<div class="tutorial-shot">${headerHTML}<div class="tutorial-shot-content">[ Wizualizacja: Płatność za towary ]</div></div>`;
-                    case "payment": return `<div class="tutorial-shot">${headerHTML}<div class="tutorial-shot-content">[ Wizualizacja: Płatność ]</div></div>`;
-                    case "qc": return `<div class="tutorial-shot">${headerHTML}<div class="tutorial-shot-content">[ Wizualizacja: Zdjęcia QC z magazynu ]</div></div>`;
-                    case "shipping": return `<div class="tutorial-shot">${headerHTML}<div class="tutorial-shot-content">[ Wizualizacja: Wysyłka międzynarodowa ]</div></div>`;
-                    case "done": return `<div class="tutorial-shot">${headerHTML}<div class="tutorial-shot-content" style="color:#0ea5e9; font-weight:800; font-size:24px;">Gotowe! ✔️</div></div>`;
-                    default: return `<div class="tutorial-shot">${headerHTML}<div class="tutorial-shot-content">[ Krok ${num} ]</div></div>`;
+                    case "register": return headerHTML + mockContent('Formularz Rejestracji');
+                    case "browse": return headerHTML + mockContent('Kopiowanie linku Weidian');
+                    case "cart": return headerHTML + mockContent('Dodawanie do koszyka');
+                    case "checkout": return headerHTML + mockContent('Płatność za towary');
+                    case "payment": return headerHTML + mockContent('Płatność');
+                    case "qc": return headerHTML + mockContent('Zdjęcia QC z magazynu');
+                    case "shipping": return headerHTML + mockContent('Wysyłka międzynarodowa');
+                    case "done": return headerHTML + `<div class="tut-media-content" style="color:#0ea5e9; font-weight:800; font-size:24px;">Gotowe! ✔️</div>`;
+                    default: return headerHTML + `<div class="tut-media-content">[ Krok ${num} ]</div>`;
                 }
             }
 
             function renderStepAction(step) {
                 if (!step.action) return "";
-                if (step.action.type === "section") { return `<button class="tutorial-inline-btn" onclick="window.switchSection('${escapeHtml(step.action.target)}')">${escapeHtml(step.action.label)}</button>`; }
-                if (step.action.href) { return `<a href="${escapeHtml(step.action.href)}" target="_blank" class="tutorial-inline-btn">${escapeHtml(step.action.label)}</a>`; }
+                if (step.action.type === "section") { return `<button class="tut-btn-cyan" onclick="window.switchSection('${escapeHtml(step.action.target)}')">${escapeHtml(step.action.label)}</button>`; }
+                if (step.action.href) { return `<a href="${escapeHtml(step.action.href)}" target="_blank" class="tut-btn-cyan" style="text-decoration:none; display:inline-block;">${escapeHtml(step.action.label)}</a>`; }
                 return "";
             }
 
@@ -1538,9 +1572,6 @@
             function removeConfetti() { if (confettiOverlay && confettiOverlay.parentNode) { confettiOverlay.parentNode.removeChild(confettiOverlay); } confettiOverlay = null; }
         };
 
-        // =====================================================================
-        // ZINTEGROWANY CONVERTER PISANY PRZEZ UŻYTKOWNIKA (BEZ ZMIAN LOGIKI)
-        // =====================================================================
         window.initConverter = function () {
           const input = document.getElementById("converterInput");
           const convertBtn = document.getElementById("convertBtn");
@@ -1571,11 +1602,11 @@
           let selectedTarget = "kakobuy";
 
           const targets = [
-            { value: "kakobuy", label: "KakoBuy" },
-            { value: "usfans", label: "UsFans" },
-            { value: "litbuy", label: "LITBUY" },
-            { value: "allchinabuy", label: "AllChinaBuy" },
-            { value: "weidian", label: "Weidian" }
+            { value: "kakobuy", label: "KakoBuy", icon: "https://www.kakobuy.com/favicon.ico" },
+            { value: "usfans", label: "UsFans", icon: "https://usfans.com/favicon.ico" },
+            { value: "litbuy", label: "LITBUY", icon: "https://litbuy.com/favicon.ico" },
+            { value: "allchinabuy", label: "AllChinaBuy", icon: "https://allchinabuy.com/favicon.ico" },
+            { value: "weidian", label: "Weidian", icon: "" }
           ];
 
           buildTargetMenu();
@@ -1652,37 +1683,24 @@
             hasShownResultOnce = true;
           });
 
-          if (copyConvertedTop) {
-            copyConvertedTop.addEventListener("click", (e) => window.copyText(output.textContent, e.target));
-          }
-
-          if (copyConverted) {
-            copyConverted.addEventListener("click", (e) => window.copyText(output.textContent, e.target));
-          }
-
-          if (openConverted) {
-            openConverted.addEventListener("click", () => openLink(output.textContent));
-          }
-
-          if (copyOriginal) {
-            copyOriginal.addEventListener("click", (e) => window.copyText(originalUrlBox.textContent, e.target));
-          }
-
-          if (openOriginal) {
-            openOriginal.addEventListener("click", () => openLink(originalUrlBox.textContent));
-          }
+          if (copyConvertedTop) copyConvertedTop.addEventListener("click", (e) => window.copyText(output.textContent, e.target));
+          if (copyConverted) copyConverted.addEventListener("click", (e) => window.copyText(output.textContent, e.target));
+          if (openConverted) openConverted.addEventListener("click", () => openLink(output.textContent));
+          if (copyOriginal) copyOriginal.addEventListener("click", (e) => window.copyText(originalUrlBox.textContent, e.target));
+          if (openOriginal) openOriginal.addEventListener("click", () => openLink(originalUrlBox.textContent));
 
           function buildTargetMenu() {
             targetMenu.innerHTML = targets
               .map((target) => {
                 const active = target.value === selectedTarget ? "active" : "";
+                const imgTag = target.icon ? `<img src="${target.icon}" onerror="this.style.display='none'">` : '';
                 return `
                   <button
                     type="button"
                     class="converter-dropdown-item ${active}"
                     data-target-value="${escapeHtml(target.value)}"
                   >
-                    ${escapeHtml(target.label)}
+                    ${imgTag} ${escapeHtml(target.label)}
                   </button>
                 `;
               })
@@ -1699,386 +1717,380 @@
               });
             });
           }
-        };
 
-        function updateSourceLabel(source) {
-          const sourceLabel = document.getElementById("converterSourceLabel");
-          if (!sourceLabel) return;
-          sourceLabel.textContent = source === "auto" ? "Auto detect" : formatPlatformLabel(source);
-        }
+            function updateSourceLabel(source) {
+              if (!sourceLabel) return;
+              sourceLabel.textContent = source === "auto" ? "Auto detect" : formatPlatformLabel(source);
+            }
 
-        function analyzeInput(rawUrl) {
-          const cleaned = normalizeUrl(rawUrl);
+            function analyzeInput(rawUrl) {
+              const cleaned = normalizeUrl(rawUrl);
 
-          if (!cleaned) {
-            return {
-              displaySource: "auto",
-              originalPlatform: "unknown",
-              originalUrl: "",
-              itemId: "",
-              sourceCode: ""
-            };
-          }
+              if (!cleaned) {
+                return {
+                  displaySource: "auto",
+                  originalPlatform: "unknown",
+                  originalUrl: "",
+                  itemId: "",
+                  sourceCode: ""
+                };
+              }
 
-          const platform = detectPlatform(cleaned);
+              const platform = detectPlatform(cleaned);
 
-          if (platform === "weidian") {
-            const itemId = extractWeidianItemId(cleaned);
-            return {
-              displaySource: "weidian",
-              originalPlatform: "weidian",
-              originalUrl: itemId ? buildWeidianUrl(itemId) : cleaned,
-              itemId,
-              sourceCode: "WD"
-            };
-          }
+              if (platform === "weidian") {
+                const itemId = extractWeidianItemId(cleaned);
+                return {
+                  displaySource: "weidian",
+                  originalPlatform: "weidian",
+                  originalUrl: itemId ? buildWeidianUrl(itemId) : cleaned,
+                  itemId,
+                  sourceCode: "WD"
+                };
+              }
 
-          if (platform === "kakobuy") {
-            const embeddedOriginal = extractOriginalUrlFromAnyAgent(cleaned);
-            const itemId = extractAnyKnownItemId(cleaned, embeddedOriginal);
-            const originalUrl = itemId ? buildWeidianUrl(itemId) : embeddedOriginal;
+              if (platform === "kakobuy") {
+                const embeddedOriginal = extractOriginalUrlFromAnyAgent(cleaned);
+                const itemId = extractAnyKnownItemId(cleaned, embeddedOriginal);
+                const originalUrl = itemId ? buildWeidianUrl(itemId) : embeddedOriginal;
 
-            return {
-              displaySource: "kakobuy",
-              originalPlatform: itemId ? "weidian" : detectPlatform(originalUrl),
-              originalUrl: originalUrl || "",
-              itemId,
-              sourceCode: itemId ? "WD" : ""
-            };
-          }
+                return {
+                  displaySource: "kakobuy",
+                  originalPlatform: itemId ? "weidian" : detectPlatform(originalUrl),
+                  originalUrl: originalUrl || "",
+                  itemId,
+                  sourceCode: itemId ? "WD" : ""
+                };
+              }
 
-          if (platform === "usfans") {
-            const itemId = extractUsFansItemId(cleaned);
-            return {
-              displaySource: "usfans",
-              originalPlatform: itemId ? "weidian" : "unknown",
-              originalUrl: itemId ? buildWeidianUrl(itemId) : "",
-              itemId,
-              sourceCode: itemId ? "WD" : ""
-            };
-          }
+              if (platform === "usfans") {
+                const itemId = extractUsFansItemId(cleaned);
+                return {
+                  displaySource: "usfans",
+                  originalPlatform: itemId ? "weidian" : "unknown",
+                  originalUrl: itemId ? buildWeidianUrl(itemId) : "",
+                  itemId,
+                  sourceCode: itemId ? "WD" : ""
+                };
+              }
 
-          if (platform === "allchinabuy") {
-            const itemId = extractAllChinaBuyItemId(cleaned);
-            const sourceCode = extractSourceCode(cleaned) || (itemId ? "WD" : "");
-            return {
-              displaySource: "allchinabuy",
-              originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown",
-              originalUrl: itemId && sourceCode === "WD" ? buildWeidianUrl(itemId) : "",
-              itemId,
-              sourceCode
-            };
-          }
+              if (platform === "allchinabuy") {
+                const itemId = extractAllChinaBuyItemId(cleaned);
+                const sourceCode = extractSourceCode(cleaned) || (itemId ? "WD" : "");
+                return {
+                  displaySource: "allchinabuy",
+                  originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown",
+                  originalUrl: itemId && sourceCode === "WD" ? buildWeidianUrl(itemId) : "",
+                  itemId,
+                  sourceCode
+                };
+              }
 
-          if (platform === "litbuy") {
-            const itemId = extractLitBuyItemId(cleaned);
-            const sourcePlatform = extractLitBuySource(cleaned);
-            return {
-              displaySource: "litbuy",
-              originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform,
-              originalUrl: itemId && sourcePlatform === "weidian" ? buildWeidianUrl(itemId) : "",
-              itemId,
-              sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : ""
-            };
-          }
+              if (platform === "litbuy") {
+                const itemId = extractLitBuyItemId(cleaned);
+                const sourcePlatform = extractLitBuySource(cleaned);
+                return {
+                  displaySource: "litbuy",
+                  originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform,
+                  originalUrl: itemId && sourcePlatform === "weidian" ? buildWeidianUrl(itemId) : "",
+                  itemId,
+                  sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : ""
+                };
+              }
 
-          return {
-            displaySource: platform,
-            originalPlatform: platform,
-            originalUrl: cleaned,
-            itemId: extractWeidianItemId(cleaned),
-            sourceCode: platform === "weidian" ? "WD" : ""
-          };
-        }
-
-        function buildConvertedResult(analysis, target) {
-          const itemId = analysis.itemId;
-          const sourcePlatform = analysis.originalPlatform;
-
-          if (!analysis.originalUrl) {
-            return { url: "" };
-          }
-
-          if (target === "weidian") {
-            if (itemId) return { url: buildWeidianUrl(itemId) };
-            if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
-            return { url: "" };
-          }
-
-          if (!itemId || sourcePlatform !== "weidian") {
-            if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
               return {
-                url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}`
+                displaySource: platform,
+                originalPlatform: platform,
+                originalUrl: cleaned,
+                itemId: extractWeidianItemId(cleaned),
+                sourceCode: platform === "weidian" ? "WD" : ""
               };
             }
-            return { url: "" };
-          }
 
-          switch (target) {
-            case "kakobuy":
-              return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}` };
-            case "usfans":
-              return { url: `https://www.usfans.com/product/3/${itemId}` };
-            case "allchinabuy":
-              return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
-            case "litbuy":
-              return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?` };
-            default:
-              return { url: "" };
-          }
-        }
+            function buildConvertedResult(analysis, target) {
+              const itemId = analysis.itemId;
+              const sourcePlatform = analysis.originalPlatform;
 
-        function detectPlatform(url) {
-          const value = String(url || "").toLowerCase();
-
-          if (!value) return "auto";
-          if (value.includes("weidian.com")) return "weidian";
-          if (value.includes("kakobuy.com") || value.includes("m.kakobuy.com")) return "kakobuy";
-          if (value.includes("usfans.com")) return "usfans";
-          if (value.includes("acbuy.com") || value.includes("allchinabuy.com")) return "allchinabuy";
-          if (value.includes("litbuy.com")) return "litbuy";
-          return "unknown";
-        }
-
-        function normalizeUrl(value) {
-          const raw = String(value || "").trim();
-          if (!raw) return "";
-          if (/^https?:\/\//i.test(raw)) return raw;
-          if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(raw)) return `https://${raw}`;
-          return raw;
-        }
-
-        function extractOriginalUrlFromAnyAgent(inputUrl) {
-          const normalized = normalizeUrl(inputUrl);
-          const url = safeUrl(normalized);
-
-          if (!url) {
-            return extractWeidianLikeUrlFromText(normalized);
-          }
-
-          const candidateKeys = ["url", "itemUrl", "goodsUrl", "link", "target", "redirect", "redirectUrl", "shopUrl"];
-
-          for (const key of candidateKeys) {
-            const value = url.searchParams.get(key);
-            if (!value) continue;
-
-            const deep = deepDecode(value);
-            const directFound = extractWeidianLikeUrlFromText(deep);
-            if (directFound) return directFound;
-
-            const normalizedValue = normalizeUrl(deep);
-            if (normalizedValue.startsWith("http")) return normalizedValue;
-          }
-
-          return extractWeidianLikeUrlFromText(normalized);
-        }
-
-        function extractWeidianLikeUrlFromText(value) {
-          const decoded = deepDecode(String(value || ""));
-          const weidianMatch = decoded.match(/https?:\/\/(?:www\.)?weidian\.com\/item\.html\?[^ \n\r"'<>]*/i);
-          if (weidianMatch) return cleanupExtractedUrl(weidianMatch[0]);
-
-          const genericUrlMatch = decoded.match(/https?:\/\/[^ \n\r"'<>]+/i);
-          if (genericUrlMatch) return cleanupExtractedUrl(genericUrlMatch[0]);
-
-          return "";
-        }
-
-        function cleanupExtractedUrl(url) {
-          let cleaned = String(url || "").trim();
-          cleaned = cleaned.replace(/&affcode=[^&]+/gi, "");
-          cleaned = cleaned.replace(/[),.;]+$/g, "");
-
-          const itemId = extractWeidianItemId(cleaned);
-          if (itemId) return buildWeidianUrl(itemId);
-
-          return cleaned;
-        }
-
-        function extractAnyKnownItemId(rawInput, extractedOriginalUrl) {
-          return (
-            extractWeidianItemId(extractedOriginalUrl) ||
-            extractWeidianItemId(rawInput) ||
-            extractKakoBuyItemId(rawInput) ||
-            extractUsFansItemId(rawInput) ||
-            extractAllChinaBuyItemId(rawInput) ||
-            extractLitBuyItemId(rawInput) ||
-            ""
-          );
-        }
-
-        function extractWeidianItemId(url) {
-          const safe = safeUrl(url);
-          if (safe) {
-            const itemId =
-              safe.searchParams.get("itemID") ||
-              safe.searchParams.get("itemId") ||
-              safe.searchParams.get("id");
-
-            if (itemId && /^\d+$/.test(itemId)) return itemId;
-          }
-
-          const match = String(url || "").match(/itemID(?:%3D|=)(\d+)/i);
-          return match ? match[1] : "";
-        }
-
-        function extractKakoBuyItemId(url) {
-          const embedded = extractOriginalUrlFromAnyAgent(url);
-          const embeddedId = extractWeidianItemId(embedded);
-          if (embeddedId) return embeddedId;
-
-          const match = String(url || "").match(/itemID%3D(\d+)/i);
-          return match ? match[1] : "";
-        }
-
-        function extractUsFansItemId(url) {
-          const match = String(url || "").match(/\/product\/\d+\/(\d+)/i);
-          return match ? match[1] : "";
-        }
-
-        function extractAllChinaBuyItemId(url) {
-          const safe = safeUrl(url);
-          if (!safe) return "";
-          const id = safe.searchParams.get("id");
-          if (id && /^\d+$/.test(id)) return id;
-          return "";
-        }
-
-        function extractSourceCode(url) {
-          const safe = safeUrl(url);
-          if (!safe) return "";
-          return String(safe.searchParams.get("source") || "").toUpperCase();
-        }
-
-        function extractLitBuyItemId(url) {
-          const match = String(url || "").match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
-          return match ? match[1] : "";
-        }
-
-        function extractLitBuySource(url) {
-          const match = String(url || "").match(/\/product\/([a-z0-9_-]+)\//i);
-          if (!match) return "unknown";
-          const source = match[1].toLowerCase();
-          if (source === "weidian") return "weidian";
-          return source;
-        }
-
-        function buildWeidianUrl(itemId) {
-          return `https://weidian.com/item.html?itemID=${itemId}`;
-        }
-
-        function safeUrl(value) {
-          try {
-            return new URL(value);
-          } catch (error) {
-            return null;
-          }
-        }
-
-        function deepDecode(value, rounds = 4) {
-          let result = String(value || "");
-          for (let i = 0; i < rounds; i += 1) {
-            try {
-              const decoded = decodeURIComponent(result);
-              if (decoded === result) break;
-              result = decoded;
-            } catch (error) {
-              break;
-            }
-          }
-          return result;
-        }
-
-        function setResult(payload) {
-          const output = document.getElementById("converterOutput");
-          const originalBadge = document.getElementById("converterOriginalBadge");
-          const convertedBadge = document.getElementById("converterConvertedBadge");
-          const originalUrlBox = document.getElementById("converterOriginalUrl");
-
-          if (!output || !originalBadge || !convertedBadge || !originalUrlBox) return;
-
-          const originalPlatform = payload.originalPlatform || "unknown";
-          const convertedPlatform = payload.convertedPlatform || "unknown";
-
-          originalUrlBox.textContent = payload.originalUrl || "Brak danych";
-          output.textContent = payload.convertedUrl || "Brak wyniku";
-
-          originalBadge.className = `platform-pill platform-pill-${originalPlatform}`;
-          convertedBadge.className = `platform-pill platform-pill-${convertedPlatform}`;
-
-          originalBadge.textContent = formatPlatformLabel(originalPlatform);
-          convertedBadge.textContent = formatPlatformLabel(convertedPlatform);
-        }
-
-        function setStatus(message) {
-          const status = document.getElementById("converterStatus");
-          if (status) status.textContent = message;
-        }
-
-        function platformClassName(platform) {
-          const map = {
-            weidian: "platform-pill-weidian",
-            kakobuy: "platform-pill-kakobuy",
-            usfans: "platform-pill-usfans",
-            litbuy: "platform-pill-litbuy",
-            allchinabuy: "platform-pill-allchinabuy"
-          };
-          return map[platform] || "platform-pill-neutral";
-        }
-
-        function formatPlatformLabel(platform) {
-          const map = {
-            auto: "Auto detect",
-            unknown: "Unknown",
-            weidian: "Weidian",
-            kakobuy: "KakoBuy",
-            usfans: "UsFans",
-            litbuy: "LITBUY",
-            allchinabuy: "AllChinaBuy"
-          };
-          return map[platform] || String(platform || "Unknown");
-        }
-
-        function openLink(value) {
-          const text = String(value || "").trim();
-          if (!text || !text.startsWith("http")) return;
-          window.open(text, "_blank", "noopener,noreferrer");
-        }
-
-        function revealResultSection(section, hasShownBefore) {
-          const wasHidden = section.classList.contains("hidden");
-          section.classList.remove("hidden");
-
-          if (wasHidden || !hasShownBefore) {
-            section.animate(
-              [
-                { opacity: 0, transform: "translateY(18px)" },
-                { opacity: 1, transform: "translateY(0)" }
-              ],
-              {
-                duration: 380,
-                easing: "ease-out",
-                fill: "both"
+              if (!analysis.originalUrl) {
+                return { url: "" };
               }
-            );
-          }
 
-          requestAnimationFrame(() => {
-            section.scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
-          });
-        }
-        
-        function escapeHtml(value) {
-          return String(value ?? "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#39;");
-        }
+              if (target === "weidian") {
+                if (itemId) return { url: buildWeidianUrl(itemId) };
+                if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
+                return { url: "" };
+              }
+
+              if (!itemId || sourcePlatform !== "weidian") {
+                if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
+                  return {
+                    url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}`
+                  };
+                }
+                return { url: "" };
+              }
+
+              switch (target) {
+                case "kakobuy":
+                  return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}` };
+                case "usfans":
+                  return { url: `https://www.usfans.com/product/3/${itemId}` };
+                case "allchinabuy":
+                  return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
+                case "litbuy":
+                  return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?` };
+                default:
+                  return { url: "" };
+              }
+            }
+
+            function detectPlatform(url) {
+              const value = String(url || "").toLowerCase();
+
+              if (!value) return "auto";
+              if (value.includes("weidian.com")) return "weidian";
+              if (value.includes("kakobuy.com") || value.includes("m.kakobuy.com")) return "kakobuy";
+              if (value.includes("usfans.com")) return "usfans";
+              if (value.includes("acbuy.com") || value.includes("allchinabuy.com")) return "allchinabuy";
+              if (value.includes("litbuy.com")) return "litbuy";
+              return "unknown";
+            }
+
+            function normalizeUrl(value) {
+              const raw = String(value || "").trim();
+              if (!raw) return "";
+              if (/^https?:\/\//i.test(raw)) return raw;
+              if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(raw)) return `https://${raw}`;
+              return raw;
+            }
+
+            function extractOriginalUrlFromAnyAgent(inputUrl) {
+              const normalized = normalizeUrl(inputUrl);
+              const url = safeUrl(normalized);
+
+              if (!url) {
+                return extractWeidianLikeUrlFromText(normalized);
+              }
+
+              const candidateKeys = ["url", "itemUrl", "goodsUrl", "link", "target", "redirect", "redirectUrl", "shopUrl"];
+
+              for (const key of candidateKeys) {
+                const value = url.searchParams.get(key);
+                if (!value) continue;
+
+                const deep = deepDecode(value);
+                const directFound = extractWeidianLikeUrlFromText(deep);
+                if (directFound) return directFound;
+
+                const normalizedValue = normalizeUrl(deep);
+                if (normalizedValue.startsWith("http")) return normalizedValue;
+              }
+
+              return extractWeidianLikeUrlFromText(normalized);
+            }
+
+            function extractWeidianLikeUrlFromText(value) {
+              const decoded = deepDecode(String(value || ""));
+              const weidianMatch = decoded.match(/https?:\/\/(?:www\.)?weidian\.com\/item\.html\?[^ \n\r"'<>]*/i);
+              if (weidianMatch) return cleanupExtractedUrl(weidianMatch[0]);
+
+              const genericUrlMatch = decoded.match(/https?:\/\/[^ \n\r"'<>]+/i);
+              if (genericUrlMatch) return cleanupExtractedUrl(genericUrlMatch[0]);
+
+              return "";
+            }
+
+            function cleanupExtractedUrl(url) {
+              let cleaned = String(url || "").trim();
+              cleaned = cleaned.replace(/&affcode=[^&]+/gi, "");
+              cleaned = cleaned.replace(/[),.;]+$/g, "");
+
+              const itemId = extractWeidianItemId(cleaned);
+              if (itemId) return buildWeidianUrl(itemId);
+
+              return cleaned;
+            }
+
+            function extractAnyKnownItemId(rawInput, extractedOriginalUrl) {
+              return (
+                extractWeidianItemId(extractedOriginalUrl) ||
+                extractWeidianItemId(rawInput) ||
+                extractKakoBuyItemId(rawInput) ||
+                extractUsFansItemId(rawInput) ||
+                extractAllChinaBuyItemId(rawInput) ||
+                extractLitBuyItemId(rawInput) ||
+                ""
+              );
+            }
+
+            function extractWeidianItemId(url) {
+              const safe = safeUrl(url);
+              if (safe) {
+                const itemId =
+                  safe.searchParams.get("itemID") ||
+                  safe.searchParams.get("itemId") ||
+                  safe.searchParams.get("id");
+
+                if (itemId && /^\d+$/.test(itemId)) return itemId;
+              }
+
+              const match = String(url || "").match(/itemID(?:%3D|=)(\d+)/i);
+              return match ? match[1] : "";
+            }
+
+            function extractKakoBuyItemId(url) {
+              const embedded = extractOriginalUrlFromAnyAgent(url);
+              const embeddedId = extractWeidianItemId(embedded);
+              if (embeddedId) return embeddedId;
+
+              const match = String(url || "").match(/itemID%3D(\d+)/i);
+              return match ? match[1] : "";
+            }
+
+            function extractUsFansItemId(url) {
+              const match = String(url || "").match(/\/product\/\d+\/(\d+)/i);
+              return match ? match[1] : "";
+            }
+
+            function extractAllChinaBuyItemId(url) {
+              const safe = safeUrl(url);
+              if (!safe) return "";
+              const id = safe.searchParams.get("id");
+              if (id && /^\d+$/.test(id)) return id;
+              return "";
+            }
+
+            function extractSourceCode(url) {
+              const safe = safeUrl(url);
+              if (!safe) return "";
+              return String(safe.searchParams.get("source") || "").toUpperCase();
+            }
+
+            function extractLitBuyItemId(url) {
+              const match = String(url || "").match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
+              return match ? match[1] : "";
+            }
+
+            function extractLitBuySource(url) {
+              const match = String(url || "").match(/\/product\/([a-z0-9_-]+)\//i);
+              if (!match) return "unknown";
+              const source = match[1].toLowerCase();
+              if (source === "weidian") return "weidian";
+              return source;
+            }
+
+            function buildWeidianUrl(itemId) {
+              return `https://weidian.com/item.html?itemID=${itemId}`;
+            }
+
+            function safeUrl(value) {
+              try {
+                return new URL(value);
+              } catch (error) {
+                return null;
+              }
+            }
+
+            function deepDecode(value, rounds = 4) {
+              let result = String(value || "");
+              for (let i = 0; i < rounds; i += 1) {
+                try {
+                  const decoded = decodeURIComponent(result);
+                  if (decoded === result) break;
+                  result = decoded;
+                } catch (error) {
+                  break;
+                }
+              }
+              return result;
+            }
+
+            function setResult(payload) {
+              const output = document.getElementById("converterOutput");
+              const originalBadge = document.getElementById("converterOriginalBadge");
+              const convertedBadge = document.getElementById("converterConvertedBadge");
+              const originalUrlBox = document.getElementById("converterOriginalUrl");
+
+              if (!output || !originalBadge || !convertedBadge || !originalUrlBox) return;
+
+              const originalPlatform = payload.originalPlatform || "unknown";
+              const convertedPlatform = payload.convertedPlatform || "unknown";
+
+              originalUrlBox.textContent = payload.originalUrl || "Brak danych";
+              output.textContent = payload.convertedUrl || "Brak wyniku";
+
+              originalBadge.className = `pill-tag`;
+              convertedBadge.className = `pill-tag`;
+
+              originalBadge.textContent = formatPlatformLabel(originalPlatform);
+              convertedBadge.textContent = formatPlatformLabel(convertedPlatform);
+            }
+
+            function setStatus(message) {
+              const status = document.getElementById("converterStatus");
+              if (status) status.textContent = message;
+            }
+
+            function formatPlatformLabel(platform) {
+              const map = {
+                auto: "Auto detect",
+                unknown: "Unknown",
+                weidian: "Weidian",
+                kakobuy: "KakoBuy",
+                usfans: "UsFans",
+                litbuy: "LITBUY",
+                allchinabuy: "AllChinaBuy"
+              };
+              return map[platform] || String(platform || "Unknown");
+            }
+
+            function copyTextLocal(value) {
+              const text = String(value || "").trim();
+              if (!text || text === "Brak wyniku" || text === "Brak danych") return;
+              navigator.clipboard.writeText(text).catch(() => {});
+            }
+
+            function openLink(value) {
+              const text = String(value || "").trim();
+              if (!text || !text.startsWith("http")) return;
+              window.open(text, "_blank", "noopener,noreferrer");
+            }
+
+            function revealResultSection(section, hasShownBefore) {
+              const wasHidden = section.classList.contains("hidden");
+              section.classList.remove("hidden");
+
+              if (wasHidden || !hasShownBefore) {
+                section.animate(
+                  [
+                    { opacity: 0, transform: "translateY(18px)" },
+                    { opacity: 1, transform: "translateY(0)" }
+                  ],
+                  {
+                    duration: 380,
+                    easing: "ease-out",
+                    fill: "both"
+                  }
+                );
+              }
+
+              requestAnimationFrame(() => {
+                section.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start"
+                });
+              });
+            }
+            
+            function escapeHtml(value) {
+              return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+            }
+        };
     </script>
 </body>
 </html>
