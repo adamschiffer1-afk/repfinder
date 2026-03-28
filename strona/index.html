@@ -1018,9 +1018,8 @@
                 const encodedLogin = btoa(loginInput);
                 const encodedPass = btoa(passInput);
 
-                // 'YWRtaW4=' to ukryte słowo 'admin'
-                // 'c3Blcm11c2VrMTIz' to ukryte słowo 'spermusek123'
-                if(encodedLogin === 'YWRtaW4=' && encodedPass === 'c3Blcm11c2VrMTIz') {
+                
+                if(encodedLogin === 'YWRtaW4=' && encodedPass === 'a3V0YXNlazEyMw==') {
                     window.location.href = 'admin.html';
                 } else { 
                     document.getElementById('admErr').style.display='block'; 
