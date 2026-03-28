@@ -130,7 +130,8 @@
            PERFEKCYJNY NAVBAR (3-KOLUMNOWY UKŁAD)
            ===================================================================== */
         .header-container {
-            position: absolute; top: 20px; left: 0; right: 0; 
+            position: absolute; 
+            top: 20px; left: 0; right: 0; 
             display: flex; justify-content: center; z-index: 10000;
             pointer-events: none;
             width: 100%;
@@ -162,7 +163,12 @@
             font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; text-decoration: none; white-space: nowrap;
         }
         .nav-link-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
-        .nav-link-pill.active { background: #fff !important; color: #000 !important; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
+        .nav-link-pill.active { 
+            background: #fff !important; 
+            color: #000 !important; 
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2); 
+            border: 1px solid rgba(255,255,255,0.6);
+        }
 
         .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
 
@@ -272,7 +278,7 @@
         .tracker-card-clean:hover .tracker-btn-clean { background: #3b82f6; border-color: #3b82f6;}
 
         /* =====================================================================
-           TUTORIALS (IDEALNY SZEROKI LAYOUT)
+           TUTORIALS (NOWY, PRZEPROJEKTOWANY LAYOUT Z OBRAZKA 3)
            ===================================================================== */
         .tut-overview-grid {
             display: grid; 
@@ -292,23 +298,19 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
+            justify-content: space-between;
+            align-items: start;
             min-height: 320px;
             width: 100%;
             box-shadow: var(--shadow-soft);
         }
-        .tut-overview-circle {
-            position: absolute; 
-            bottom: -50px; 
-            right: -50px; 
-            width: 300px; 
-            height: 300px; 
-            background: var(--bg-3); 
-            border-radius: 50%; 
-            z-index: 0;
+        
+        .tut-overview-left-panel {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .tut-overview-card > * { position: relative; z-index: 1; }
         
         .pill-tag {
             background: rgba(255,255,255,0.05); color: var(--text); 
@@ -316,6 +318,42 @@
             letter-spacing: 1px; padding: 6px 12px; border-radius: 100px;
             border: 1px solid var(--line); display: inline-block;
         }
+
+        .tut-overview-title {
+            margin: 0;
+            font-size: clamp(36px, 10vw, 48px);
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -2px;
+            line-height: 1.05;
+        }
+
+        .tut-overview-subtitle {
+            margin: 0;
+            color: var(--text);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Nowy przycisk uruchamiania o pełnej szerokości */
+        .btn-tut-main {
+            margin-top: 10px;
+            width: 100%;
+            max-width: 100%;
+            height: 60px;
+            padding: 0 24px;
+            border-radius: 20px;
+            background: #fff;
+            color: #000;
+            font-size: 16px;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3); /* Neonowa biała poświata */
+            transition: transform 0.18s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-tut-main:hover { transform: translateY(-2px); }
 
         .tutorial-player-new { 
             max-width: 1000px; 
@@ -971,8 +1009,18 @@
                     modal.classList.add('show'); 
                 });
             });
+
             document.getElementById('admSubmit').onclick = () => {
-                if(document.getElementById('admLogin').value === 'admin' && document.getElementById('admPass').value === 'kutas123') {
+                const loginInput = document.getElementById('admLogin').value.trim();
+                const passInput = document.getElementById('admPass').value.trim();
+
+                // Używamy funkcji kodującej btoa, by ukryć hasło z plain text
+                const encodedLogin = btoa(loginInput);
+                const encodedPass = btoa(passInput);
+
+                // 'YWRtaW4=' to ukryte słowo 'admin'
+                // 'c3Blcm11c2VrMTIz' to ukryte słowo 'spermusek123'
+                if(encodedLogin === 'YWRtaW4=' && encodedPass === 'c3Blcm11c2VrMTIz') {
                     window.location.href = 'admin.html';
                 } else { 
                     document.getElementById('admErr').style.display='block'; 
@@ -1424,16 +1472,12 @@
                 <div class="tut-overview-grid">
                     <div class="tut-overview-card tut-overview-card-main">
                         <div class="tut-overview-left-panel">
-                            <div>
-                                <span class="pill-tag" style="margin-bottom:15px;">TUTORIAL</span>
-                                <h3 class="tut-overview-title">${escapeHtml(tutorialData.title)}</h3>
-                                <p class="tut-overview-subtitle">${escapeHtml(tutorialData.subtitle)}</p>
-                            </div>
-                            
-                            <button id="startTutorialBtn" style="align-self: flex-start; background: #fff; color: #000; padding: 14px 28px; border-radius: 12px; font-weight: 900; font-size: 15px; border: none; cursor: pointer; transition: 0.2s; margin-top:20px;">Uruchom tutorial</button>
+                            <span class="pill-tag">TUTORIAL</span>
+                            <h3 class="tut-overview-title">${escapeHtml(tutorialData.title)}</h3>
+                            <p class="tut-overview-subtitle">${escapeHtml(tutorialData.subtitle)}</p>
                         </div>
                         
-                        <div class="tut-overview-circle"></div>
+                        <button id="tutorialRunMainBtn" class="btn-tut-main">Uruchom tutorial</button>
                     </div>
 
                     <div class="tut-overview-card" style="justify-content: flex-start;">
@@ -1442,7 +1486,7 @@
                     </div>
                 </div>`;
                 
-                document.getElementById("startTutorialBtn").addEventListener("click", () => {
+                document.getElementById("tutorialRunMainBtn").addEventListener("click", () => {
                     overview.classList.add("hidden");
                     player.classList.remove("hidden");
                     currentStepIndex = 0;
@@ -2083,7 +2127,6 @@
             }
         }; // <-- KONIEC window.initConverter
 
-        // DODANA GLOBALNA FUNKCJA
         function escapeHtml(value) {
             return String(value ?? "")
             .replaceAll("&", "&amp;")
