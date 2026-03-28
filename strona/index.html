@@ -12,30 +12,13 @@
            GLOBAL & BASE STYLES
            ===================================================================== */
         :root {
-          --bg: #161618;
-          --bg-2: #1e1e1e;
-          --bg-3: #262626;
-          --panel: rgba(30, 30, 30, 0.65);
-          --panel-2: rgba(40, 40, 40, 0.8);
-          --line: rgba(255, 255, 255, 0.08);
-          --line-strong: rgba(255, 255, 255, 0.15);
-          --text: #9e9e9e;
-          --text-strong: #ffffff;
-          --muted: #757575;
-          --muted-2: #525252;
-          --shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-          --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.2);
-          --shadow-button: 0 10px 20px rgba(0, 0, 0, 0.25);
-          --radius-xl: 32px;
-          --radius-lg: 24px;
-          --radius-md: 20px;
-          --radius-sm: 16px;
-          --primary: #ffffff;
-          --primary-2: #e0e0e0;
-          --success: #22c55e;
-          --danger: #ef4444;
-          --neon-glow-color: #ffffff;
-          --neon-glow-shadow: rgba(255, 255, 255, 0.7);
+          --bg: #161618; --bg-2: #1e1e1e; --bg-3: #262626;
+          --panel: rgba(30, 30, 30, 0.65); --panel-2: rgba(40, 40, 40, 0.8);
+          --line: rgba(255, 255, 255, 0.08); --line-strong: rgba(255, 255, 255, 0.15);
+          --text: #9e9e9e; --text-strong: #ffffff; --muted: #757575; --muted-2: #525252;
+          --shadow: 0 12px 40px rgba(0, 0, 0, 0.3); --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.2);
+          --radius-xl: 32px; --radius-lg: 24px; --radius-md: 20px; --radius-sm: 16px;
+          --primary: #ffffff; --primary-2: #e0e0e0; --success: #22c55e; --danger: #ef4444;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -70,29 +53,16 @@
 
         .page-section { display: none; width: 100%; }
         .page-section.active { display: block; animation: fadeIn 0.3s ease-out;}
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .section-container { width: min(1120px, calc(100% - 24px)); margin: 0 auto; padding: 40px 0 80px; }
-        .narrow-section { max-width: 860px; }
         .section-head { margin-bottom: 22px; }
         .section-head h2 { margin: 0; font-size: clamp(36px, 5vw, 54px); line-height: 1.02; letter-spacing: -0.055em; color: var(--text-strong); }
         .section-head p { margin: 10px 0 0; color: var(--text); font-size: 17px; line-height: 1.6; }
 
-        /* =====================================================================
-           PERFEKCYJNY NAVBAR (3-KOLUMNOWY UKŁAD)
-           ===================================================================== */
-        .header-container {
-            position: absolute; top: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 10000; pointer-events: none; width: 100%;
-        }
-
-        .floating-nav {
-            pointer-events: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-            background: rgba(22, 22, 22, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 100px; padding: 8px 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); width: 95vw; max-width: 1000px;
-        }
-
+        /* NAVBAR */
+        .header-container { position: absolute; top: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 10000; pointer-events: none; width: 100%; }
+        .floating-nav { pointer-events: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: rgba(22, 22, 22, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 100px; padding: 8px 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); width: 95vw; max-width: 1000px; }
         .nav-left { display: flex; justify-content: flex-start; align-items: center; }
         .nav-brand-pill { padding: 0 15px; font-weight: 900; font-size: 19px; color: #fff; text-decoration: none; cursor: pointer; letter-spacing: -1px; background: none; border: none; }
         .nav-center { display: flex; justify-content: center; align-items: center; gap: 5px; }
@@ -111,9 +81,7 @@
         .dropdown-item { width: 100%; text-align: left; background: none; border: none; color: #888; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 14px; display: block; text-decoration: none; }
         .dropdown-item:hover { background: #222; color: #fff; }
 
-        /* =====================================================================
-           HERO
-           ===================================================================== */
+        /* HERO */
         #home { min-height: calc(100vh - 80px); }
         .hero-block { min-height: calc(100vh - 80px); width: min(1100px, calc(100% - 24px)); margin: 0 auto; display: flex; align-items: center; justify-content: center; padding: 40px 0 80px; }
         .hero-inner { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -123,9 +91,7 @@
         .hero-cta-btn { margin-top: 32px; width: 100%; max-width: 340px; height: 68px; padding: 0 24px; border-radius: 26px; background: var(--primary); color: #000; font-size: 19px; font-weight: 800; box-shadow: 0 10px 25px rgba(255,255,255,0.15); transition: transform 0.18s ease; display: flex; align-items: center; justify-content: center;}
         .hero-cta-btn:hover { transform: translateY(-2px); }
 
-        /* =====================================================================
-           PRODUCTS (FILTRY & GRID)
-           ===================================================================== */
+        /* PRODUCTS */
         .search-filter-row { display: flex; gap: 15px; margin-bottom: 30px; width: 100%; }
         .search-box-wrap { flex: 1; position: relative; display: flex; align-items: center; min-width: 0; }
         .search-icon { position: absolute; left: 16px; color: #888; }
@@ -157,14 +123,7 @@
         .tag-blue { color: #3b82f6; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .tag-red { color: #ef4444; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .load-more-container { text-align: center; margin-top: 40px; width: 100%; display: none; }
-        .load-more-btn { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 14px 40px; border-radius: 100px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;}
-        .load-more-btn:hover { background: #222; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
-        .load-more-container.active { display: block; animation: fadeIn 0.3s ease-out; }
-
-        /* =====================================================================
-           TRACKER
-           ===================================================================== */
+        /* TRACKER */
         .tracker-wrapper-white { background: var(--panel); border: 1px solid var(--line); border-radius: 30px; padding: 50px 30px; margin: 20px auto; max-width: 1000px; box-shadow: var(--shadow-soft); }
         .tracker-header-clean { text-align: center; margin-bottom: 40px; }
         .tracker-header-clean h2 { font-size: clamp(32px, 6vw, 48px); font-weight: 900; margin: 0; color: #fff; letter-spacing: -1px; }
@@ -181,9 +140,7 @@
         .tracker-btn-clean { width: 100%; height: 46px; background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 12px; font-weight: 700; transition: 0.2s; color: #fff; cursor: pointer; }
         .tracker-card-clean:hover .tracker-btn-clean { background: #3b82f6; border-color: #3b82f6;}
 
-        /* =====================================================================
-           TUTORIALS (NOWY, PRZEPROJEKTOWANY LAYOUT)
-           ===================================================================== */
+        /* TUTORIALS */
         .tut-overview-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; max-width: 1000px; width: 100%; margin: 0 auto; align-items: stretch; }
         .tut-overview-card { background: var(--panel-2); border-radius: 24px; padding: 40px; border: 1px solid var(--line); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; align-items: start; min-height: 320px; width: 100%; box-shadow: var(--shadow-soft); }
         .tut-overview-left-panel { width: 100%; display: flex; flex-direction: column; gap: 15px; }
@@ -192,7 +149,6 @@
         .tut-overview-subtitle { margin: 0; color: var(--text); font-size: 16px; line-height: 1.6; }
         .btn-tut-main { margin-top: 10px; width: 100%; max-width: 100%; height: 60px; padding: 0 24px; border-radius: 20px; background: #fff; color: #000; font-size: 16px; font-weight: 800; box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3); transition: transform 0.18s ease; display: flex; align-items: center; justify-content: center; }
         .btn-tut-main:hover { transform: translateY(-2px); }
-
         .tutorial-player-new { max-width: 1000px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 30px; padding: 20px; }
         .tut-header-area { text-align: center; }
         .tut-header-area h2 { font-size: 36px; font-weight: 900; margin: 10px 0; color: #fff; }
@@ -226,9 +182,7 @@
         .tut-sidebar-title { font-size: 18px; font-weight: 900; text-align: center; margin: 0 0 20px 0; color: #fff;}
         .tut-sidebar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; justify-items: center; }
 
-        /* =====================================================================
-           CONVERTER
-           ===================================================================== */
+        /* CONVERTER */
         .converter-board { background: var(--panel-2); padding: 40px 30px; border-radius: 20px; border: 1px solid var(--line); margin: 20px auto; text-align: center; box-shadow: var(--shadow-soft);}
         .converter-input-row { display: flex; gap: 10px; align-items: stretch; width: 100%; max-width: 800px; margin: 0 auto; position: relative;}
         .converter-input-dark { flex: 1; background: var(--bg-3); border: 1px solid var(--line); padding: 0 150px 0 20px; height: 60px; border-radius: 16px; color: #fff; font-size: 15px; outline: none; width: 100%; min-width: 0;}
@@ -248,13 +202,10 @@
         .converter-action-btn { flex: 1; background: var(--bg); border: 1px solid var(--line); color: #fff; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; transition: 0.2s;}
         .converter-action-btn:hover { background: var(--line-strong); }
 
-        /* =====================================================================
-           MODAL USTAWIEŃ, FILTRÓW, AGENTÓW, LOGOWANIA ADMINA
-           ===================================================================== */
+        /* MODALS */
         .settings-modal, .filter-modal, .agents-modal, #adminLoginModal, .item-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
         .settings-modal.show, .filter-modal.show, .agents-modal.show, #adminLoginModal.show, .item-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
         .filter-content, .agents-modal-content, .item-modal-content { width: 100%; max-width: 420px; border-radius: 24px; padding: 25px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); background: #161616; color: #fff; border: 1px solid #2a2a2a; }
-        
         .settings-content { width: 100%; max-width: 460px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 24px; padding: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
         .settings-header, .filter-header, .modal-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .settings-header h3, .filter-header h3 { font-size: 24px; font-weight: 900; margin: 0; color: #fff; }
@@ -262,7 +213,7 @@
         .settings-close-btn:hover, .close-filter-btn:hover { background: #333; color: #fff; }
         .agents-modal-close { background: #222; border: 1px solid #333; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: #888; display: flex; align-items: center; justify-content: center;}
 
-        /* FILTRY */
+        /* FILTERS */
         .filter-section-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 0.5px; }
         .cat-scroll-box { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding-right: 5px; }
         .cat-scroll-box::-webkit-scrollbar { width: 4px; }
@@ -280,7 +231,7 @@
         .btn-filter-apply { background: #fff; color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: 900; cursor: pointer; font-size: 14px; transition: 0.2s;}
         .btn-filter-apply:hover { background: #e5e5e5; }
         
-        /* USTAWIENIA */
+        /* SETTINGS */
         .settings-lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
         .lang-card { background: var(--bg-3); border: 1px solid var(--line); border-radius: 16px; padding: 12px 8px; display: flex; flex-direction: row; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .lang-card:hover { border-color: var(--line-strong); background: var(--panel-2); }
@@ -296,7 +247,6 @@
         .settings-agent-btn { width: 100%; background: #111; border: 1px solid #2a2a2a; padding: 16px 20px; border-radius: 16px; font-weight: 800; font-size: 15px; color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
         .settings-agent-btn:hover { border-color: #444; }
         .settings-agent-btn-left { display: flex; align-items: center; gap: 12px; }
-        
         .settings-agent-menu { display: none; position: absolute; top: 105%; left: 0; right: 0; background: #161616; border: 1px solid #333; border-radius: 16px; padding: 8px; z-index: 100; box-shadow: 0 15px 40px rgba(0,0,0,0.6); flex-direction: column; gap: 4px; }
         .settings-agent-wrap.open .settings-agent-menu { display: flex; }
         .settings-agent-item { width: 100%; text-align: left; background: none; border: none; color: #aaa; padding: 12px 16px; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s;}
@@ -311,30 +261,20 @@
         .agent-direct-btn:hover { background: #222 !important; border-color: #444 !important; }
         .agent-copy-btn { width: 54px !important; height: 54px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; cursor: pointer !important; color: #aaa !important; transition: 0.2s !important; padding: 0 !important; }
         .agent-copy-btn:hover { background: #222 !important; color: #fff !important; }
-
-        /* TWARDA BLOKADA WYMIARÓW IKON WSZĘDZIE */
-        .settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { 
-            width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent;
-        }
+        .settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
 
         /* CONFETTI */
         .page-confetti-overlay { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: 9999; }
         .confetti-piece { position: absolute; top: -24px; border-radius: 3px; opacity: 0.95; animation: confettiFallPage 2300ms linear forwards; }
-        @keyframes confettiFallPage {
-          0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); opacity: 1; }
-          100% { transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(720deg) scale(0.94); opacity: 0; }
-        }
+        @keyframes confettiFallPage { 0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translate3d(var(--drift, 0px), 110vh, 0) rotate(720deg) scale(0.94); opacity: 0; } }
 
-        /* =====================================================================
-           ROZWIĄZANIE NA TELEFONY (MOBILE FIRST FIXES)
-           ===================================================================== */
+        /* PHONES */
         @media (max-width: 768px) {
             html, body, .site-shell { width: 100vw; overflow-x: hidden; }
             .main-content { padding-top: 150px; } 
             .section-container { padding: 20px 15px; }
             .hero-inner { padding: 60px 15px 40px; }
             .hero-title { font-size: 48px; letter-spacing: -2px; }
-
             .header-container { padding: 0 12px; top: 12px; }
             .floating-nav { grid-template-columns: 1fr; background: rgba(20, 20, 20, 0.95); padding: 12px; border-radius: 20px; gap: 10px; }
             .nav-left { justify-content: space-between; width: 100%; display: flex; }
@@ -345,10 +285,8 @@
             .nav-center { width: 100%; display: flex; overflow-x: auto; justify-content: flex-start; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.08); gap: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
             .nav-center::-webkit-scrollbar { display: none; }
             .nav-link-pill { padding: 8px 16px; font-size: 13px; flex-shrink: 0; background: rgba(255,255,255,0.03); }
-
             .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
             .product-card-new { padding: 10px !important; border-radius: 14px !important; }
-            
             .search-filter-row { flex-direction: column; gap: 10px; }
             .btn-filters-open { width: 100%; justify-content: center; padding: 16px; }
             .tracker-grid-clean { grid-template-columns: minmax(0, 1fr); }
@@ -576,11 +514,11 @@
     <div id="adminLoginModal" class="filter-modal" style="background:rgba(0,0,0,0.95);">
         <div class="filter-content" style="background:#111; color:#fff; text-align:center; max-width:350px; border-color:#333;">
             <h3 style="margin-bottom:25px;">Admin Access</h3>
-            <input type="email" id="admLogin" placeholder="E-mail (np. admin@repfinder.xyz)" autocomplete="off" style="width:100%; padding:15px; margin-bottom:10px; background:#222; border:1px solid #333; color:#fff; border-radius:12px; outline:none;">
+            <input type="text" id="admLogin" placeholder="Login" autocomplete="off" style="width:100%; padding:15px; margin-bottom:10px; background:#222; border:1px solid #333; color:#fff; border-radius:12px; outline:none;">
             <input type="password" id="admPass" placeholder="Hasło" autocomplete="new-password" style="width:100%; padding:15px; margin-bottom:25px; background:#222; border:1px solid #333; color:#fff; border-radius:12px; outline:none;">
             
             <button id="admSubmit" style="background:#fff; color:#000; width:100%; padding:15px; border:none; border-radius:12px; font-weight:900; cursor:pointer;">Zaloguj</button>
-            <p id="admErr" style="color:#f87171; display:none; margin-top:15px; font-weight:800;">Błędne dane lub brak dostępu!</p>
+            <p id="admErr" style="color:#f87171; display:none; margin-top:15px; font-weight:800;">Błędne dane!</p>
             <button onclick="document.getElementById('adminLoginModal').classList.remove('show')" style="background:none; border:none; color:#666; margin-top:20px; cursor:pointer; text-decoration:underline;">Anuluj</button>
         </div>
     </div>
@@ -678,8 +616,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
+        
         const firebaseConfig = {
             apiKey: "AIzaSyDsB1L1BZTmQheWIyt87FUwZP5EB5E9L18",
             authDomain: "repfinder-f0510.firebaseapp.com",
@@ -691,7 +628,6 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app);
 
         const AGENTS = [
           { id: 'kakobuy', name: 'KakoBuy', icon: 'https://www.kakobuy.com/favicon.ico' },
@@ -700,9 +636,9 @@
           { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' }
         ];
 
-        // --- ZABEZPIECZONE LOGOWANIE FIREBASE ---
+        // --- ZMIENIONE LOGOWANIE (TWARDE HASŁO) ---
         const loginModal = document.getElementById('adminLoginModal');
-        const adminBtn = document.getElementById('adminEntry'); // Przycisk z navbaru
+        const adminBtn = document.getElementById('adminEntry'); 
 
         if (adminBtn) {
             adminBtn.addEventListener('click', (e) => {
@@ -713,21 +649,18 @@
 
         const submitBtn = document.getElementById('admSubmit');
         if (submitBtn) {
-            submitBtn.onclick = async () => {
-                const email = document.getElementById('admLogin').value.trim();
+            submitBtn.onclick = () => {
+                const login = document.getElementById('admLogin').value.trim();
                 const pass = document.getElementById('admPass').value.trim();
                 const errLabel = document.getElementById('admErr');
                 errLabel.style.display = 'none';
 
-                try {
-                    // Żadne Base64 - strona pyta Google czy dane są poprawne
-                    await signInWithEmailAndPassword(auth, email, pass);
-                    // Google mówi OK - wchodzisz.
+                if (login === 'admin' && pass === 'kutas123') {
+                    // Daje bilet wstępu w przeglądarce
+                    sessionStorage.setItem('repAdminAccess', 'granted');
                     window.location.href = 'admin.html';
-                } catch (error) {
-                    // Google mówi ŹLE - error.
+                } else {
                     errLabel.style.display = 'block';
-                    console.error("Błąd uwierzytelniania:", error.code);
                 }
             };
         }
@@ -862,7 +795,7 @@
                     localStorage.setItem('currency', selectedSettingsLang);
                     settingsModal.classList.remove('show');
                     window.currentItemsDisplayed = 0; 
-                    if(window.allProductsData.length > 0) window.applyFilters();
+                    if(window.allProductsData && window.allProductsData.length > 0) window.applyFilters();
                 });
             }
 
@@ -1100,7 +1033,7 @@
                 if (currentStepIndex === total - 1) { launchConfetti(); } else { removeConfetti(); }
             }
             function resetTutorial() { currentStepIndex = 0; player.classList.add("hidden"); overview.classList.remove("hidden"); removeConfetti(); }
-            function launchConfetti() {} // simplified
+            function launchConfetti() {} 
             function removeConfetti() {}
         };
 
