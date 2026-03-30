@@ -12,43 +12,28 @@
            GLOBAL & BASE STYLES
            ===================================================================== */
         :root {
-          /* CZYSTE, NEUTRALNE SZARE TŁA */
           --bg: #161618;
           --bg-2: #1e1e1e;
           --bg-3: #262626;
-          
-          /* Szklane, ciemne panele */
           --panel: rgba(30, 30, 30, 0.65);
           --panel-2: rgba(40, 40, 40, 0.8);
-          
-          /* Obramowania */
           --line: rgba(255, 255, 255, 0.08);
           --line-strong: rgba(255, 255, 255, 0.15);
-          
-          /* Tekst */
           --text: #9e9e9e;
           --text-strong: #ffffff;
           --muted: #757575;
           --muted-2: #525252;
-          
-          /* Cienie */
           --shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
           --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.2);
           --shadow-button: 0 10px 20px rgba(0, 0, 0, 0.25);
-          
-          /* Zaokrąglenia */
           --radius-xl: 32px;
           --radius-lg: 24px;
           --radius-md: 20px;
           --radius-sm: 16px;
-          
-          /* Przyciski i akcenty */
           --primary: #ffffff;
           --primary-2: #e0e0e0;
           --success: #22c55e;
           --danger: #ef4444;
-
-          /* NEON BIAŁY DLA KART I AGENTÓW */
           --neon-glow-color: #ffffff;
           --neon-glow-shadow: rgba(255, 255, 255, 0.7);
         }
@@ -77,29 +62,13 @@
           inset: 0;
           pointer-events: none;
           z-index: 0;
-          background: linear-gradient(
-            110deg,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0) 34%,
-            rgba(255, 255, 255, 0.02) 43%,
-            rgba(255, 255, 255, 0.04) 50%,
-            rgba(255, 255, 255, 0.02) 57%,
-            rgba(255, 255, 255, 0) 66%,
-            rgba(255, 255, 255, 0) 100%
-          );
+          background: linear-gradient(110deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 34%, rgba(255, 255, 255, 0.02) 43%, rgba(255, 255, 255, 0.04) 50%, rgba(255, 255, 255, 0.02) 57%, rgba(255, 255, 255, 0) 66%, rgba(255, 255, 255, 0) 100%);
           transform: translateX(-100%);
           animation: globalWave 14s linear infinite;
         }
 
-        @keyframes globalWave {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-
-        /* Animacja dla loadera */
-        @keyframes spin {
-          100% { transform: rotate(360deg); }
-        }
+        @keyframes globalWave { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         button, input, textarea, select, a { font: inherit; }
         button { border: 0; cursor: pointer; outline: none; }
@@ -114,10 +83,7 @@
         .page-section { display: none; width: 100%; }
         .page-section.active { display: block; animation: fadeIn 0.3s ease-out;}
 
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .section-container { width: min(1120px, calc(100% - 24px)); margin: 0 auto; padding: 40px 0 80px; }
         .narrow-section { max-width: 860px; }
@@ -127,60 +93,21 @@
         .section-head p { margin: 10px 0 0; color: var(--text); font-size: 17px; line-height: 1.6; }
 
         /* =====================================================================
-           PERFEKCYJNY NAVBAR (3-KOLUMNOWY UKŁAD) - ABSOLUTE (ZOSTAJE NA GÓRZE)
+           NAVBAR
            ===================================================================== */
-        .header-container {
-            position: absolute; 
-            top: 20px; left: 0; right: 0; 
-            display: flex; justify-content: center; z-index: 10000;
-            pointer-events: none;
-            width: 100%;
-        }
-
-        .floating-nav {
-            pointer-events: auto;
-            display: grid; 
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            background: rgba(22, 22, 22, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            border-radius: 100px; 
-            padding: 8px 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            width: 95vw;
-            max-width: 1000px;
-        }
-
+        .header-container { position: absolute; top: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 10000; pointer-events: none; width: 100%; }
+        .floating-nav { pointer-events: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: rgba(22, 22, 22, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 100px; padding: 8px 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); width: 95vw; max-width: 1000px; }
         .nav-left { display: flex; justify-content: flex-start; align-items: center; }
-        .nav-brand-pill {
-            padding: 0 15px; font-weight: 900; font-size: 19px; color: #fff; text-decoration: none; cursor: pointer; letter-spacing: -1px;
-            background: none; border: none;
-        }
-
+        .nav-brand-pill { padding: 0 15px; font-weight: 900; font-size: 19px; color: #fff; text-decoration: none; cursor: pointer; letter-spacing: -1px; background: none; border: none; }
         .nav-center { display: flex; justify-content: center; align-items: center; gap: 5px; }
-        .nav-link-pill {
-            background: none; border: none; color: #888; padding: 12px 24px; border-radius: 100px;
-            font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; text-decoration: none; white-space: nowrap;
-        }
+        .nav-link-pill { background: none; border: none; color: #888; padding: 12px 24px; border-radius: 100px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; text-decoration: none; white-space: nowrap; }
         .nav-link-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
         .nav-link-pill.active { background: #fff !important; color: #000 !important; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
-
         .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
-
-        .nav-admin-pill {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #888; padding: 12px 20px; border-radius: 100px; font-weight: 800; font-size: 14px;
-            cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 6px;
-        }
+        .nav-admin-pill { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #888; padding: 12px 20px; border-radius: 100px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 6px; }
         .nav-admin-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
-
-        .nav-settings-btn-pill {
-            width: 42px !important; height: 42px !important; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%; cursor: pointer; transition: 0.2s; color: #888; padding: 0 !important;
-        }
+        .nav-settings-btn-pill { width: 42px !important; height: 42px !important; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%; cursor: pointer; transition: 0.2s; color: #888; padding: 0 !important; }
         .nav-settings-btn-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); }
-
         .dropdown { position: relative; }
         .dropdown-menu { display: none; position: absolute; top: 130%; right: 0; background: #161616; border: 1px solid #222; border-radius: 16px; padding: 10px; width: 160px; z-index: 2100; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
         .dropdown-menu.show { display: block; }
@@ -211,30 +138,17 @@
         .btn-filters-open:hover { background: #222; color: #fff; }
 
         .products-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; width: 100%; }
-        .product-card-new {
-            background-color: #1a1a1a !important; border-radius: 16px !important; padding: 14px !important; 
-            display: flex; flex-direction: column; border: 1px solid #2a2a2a !important; transition: 0.3s;
-            overflow: hidden; position: relative; width: 100%;
-        }
+        .product-card-new { background-color: #1a1a1a !important; border-radius: 16px !important; padding: 14px !important; display: flex; flex-direction: column; border: 1px solid #2a2a2a !important; transition: 0.3s; overflow: hidden; position: relative; width: 100%; }
         .product-card-new:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important; }
 
         .card-bottom-row { display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: auto !important; width: 100% !important; flex-wrap: nowrap !important; }
         .card-price { font-size: 20px !important; font-weight: 900 !important; color: #fff !important; white-space: nowrap !important; flex-shrink: 0 !important; }
         .card-actions { display: flex !important; gap: 8px !important; align-items: center !important; flex-shrink: 0 !important; }
         
-        .btn-view-agents { 
-            background: #111 !important; border: 1px solid #333 !important; color: #fff !important; 
-            padding: 10px 14px !important; border-radius: 10px !important; font-weight: 800 !important; 
-            font-size: 12px !important; cursor: pointer !important; transition: 0.2s !important; 
-            white-space: nowrap !important; display: flex !important; align-items: center !important; justify-content: center !important;
-        }
+        .btn-view-agents { background: #111 !important; border: 1px solid #333 !important; color: #fff !important; padding: 10px 14px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 12px !important; cursor: pointer !important; transition: 0.2s !important; white-space: nowrap !important; display: flex !important; align-items: center !important; justify-content: center !important; }
         .btn-view-agents:hover { background: #222 !important; }
         
-        .btn-icon-pill-square { 
-            width: 38px !important; height: 38px !important; display: flex !important; align-items: center !important; 
-            justify-content: center !important; background: #111 !important; border: 1px solid #333 !important; 
-            border-radius: 10px !important; cursor: pointer !important; transition: 0.2s !important; padding: 0 !important; flex-shrink: 0 !important; position: relative;
-        }
+        .btn-icon-pill-square { width: 38px !important; height: 38px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #111 !important; border: 1px solid #333 !important; border-radius: 10px !important; cursor: pointer !important; transition: 0.2s !important; padding: 0 !important; flex-shrink: 0 !important; position: relative; }
         .btn-icon-pill-square:hover { background: #222 !important; }
 
         .copied { border-color: #22c55e !important; }
@@ -247,11 +161,9 @@
         .tag-blue { color: #3b82f6; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .tag-red { color: #ef4444; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Przycisk Load More / Infinite Scroll */
         .load-more-container { text-align: center; margin-top: 40px; width: 100%; display: none; }
         .load-more-btn { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 14px 40px; border-radius: 100px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;}
         .load-more-btn:hover { background: #222; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
-        .load-more-container.active { display: block; animation: fadeIn 0.3s ease-out; }
 
         /* =====================================================================
            TRACKER
@@ -275,79 +187,20 @@
         /* =====================================================================
            TUTORIALS
            ===================================================================== */
-        .tut-overview-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; max-width: 1000px; width: 100%; margin: 0 auto; align-items: stretch; }
-        .tut-overview-card { background: var(--panel-2); border-radius: 24px; padding: 40px; border: 1px solid var(--line); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 320px; width: 100%; box-shadow: var(--shadow-soft); }
-        .tut-overview-card-main { padding: 40px; }
+        .tutorials-overview { width: 100%; max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr); gap: 20px; align-items: stretch; justify-content: center; }
+        .tutorial-card-large, .tutorial-small-card { background: var(--panel-2); border: 1px solid var(--line); box-shadow: var(--shadow-soft); }
+        .tutorial-card-large { min-height: 360px; padding: 40px; border-radius: 28px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+        .tutorial-small-card { padding: 40px; border-radius: 28px; display: flex; flex-direction: column; justify-content: flex-start; }
         .tut-overview-circle { position: absolute; bottom: -50px; right: -50px; width: 300px; height: 300px; background: var(--bg-3); border-radius: 50%; z-index: 0; }
-        .tut-overview-card > * { position: relative; z-index: 1; }
-        
-        .pill-tag { background: rgba(255,255,255,0.05); color: var(--text); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 6px 12px; border-radius: 100px; border: 1px solid var(--line); display: inline-block; }
-
-        .tutorial-player-new { max-width: 1000px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 30px; padding: 20px; }
-        .tut-header-area { text-align: center; }
-        .tut-header-area h2 { font-size: 36px; font-weight: 900; margin: 10px 0; color: #fff; }
-        .tut-header-area p { color: var(--text); font-size: 16px; margin: 0; }
-        
-        .tut-back-btn { background: none; border: none; color: var(--text); font-weight: 800; cursor: pointer; padding: 0; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; transition: 0.2s;}
-        .tut-back-btn:hover { color: #fff; }
-        
-        .tut-progress-wrapper { width: 100%; max-width: 800px; margin: 0 auto 30px; }
-        .tut-progress-line-bg { width: 100%; height: 3px; background: var(--line-strong); border-radius: 2px; overflow: hidden;}
-        .tut-progress-line-fill { height: 100%; background: #0ea5e9; transition: 0.3s ease; }
-        
-        .tut-top-steps { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 20px; }
-        .tut-step-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--bg-3); border: 2px solid transparent; color: var(--text); font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .tut-step-dot:hover { background: var(--line-strong); color: #fff; }
-        .tut-step-dot.active { background: #0ea5e9; border-color: rgba(14, 165, 233, 0.4); color: #fff; box-shadow: 0 0 15px rgba(14, 165, 233, 0.3); }
-
-        .tut-body-grid { display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start; }
-        .tut-main-panel { background: var(--panel-2); border: 1px solid var(--line); border-radius: 24px; padding: 35px; box-shadow: var(--shadow-soft); }
-        .tut-sidebar { background: var(--panel-2); border: 1px solid var(--line); border-radius: 24px; padding: 30px; box-shadow: var(--shadow-soft); }
-
-        .tut-step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .tut-step-badge { width: 44px; height: 44px; background: rgba(14,165,233,0.15); color: #0ea5e9; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; }
-        .tut-step-title h3 { margin: 0 0 4px 0; font-size: 24px; font-weight: 900; color: #fff;}
-        .tut-step-title p { margin: 0; color: var(--text); font-size: 13px; font-weight: 700; }
-
-        .tut-desc { color: var(--text); font-size: 16px; line-height: 1.6; margin-bottom: 25px; }
-        
-        .tut-media { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 25px; display: flex; flex-direction: column;}
-        .tut-media-header { display: flex; gap: 6px; padding: 12px 15px; background: var(--bg-3); border-bottom: 1px solid var(--line); }
-        .tut-media-header span { width: 10px; height: 10px; border-radius: 50%; }
-        .tut-media-content { flex: 1; padding: 30px; color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;}
-
-        .tut-bottom-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px solid var(--line); padding-top: 25px; }
-        .tut-btn-text { background: none; border: none; color: var(--text); font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; padding: 10px 0;}
-        .tut-btn-text:hover { color: #fff; }
-        .tut-btn-cyan { background: #0ea5e9; color: #fff; border: none; padding: 14px 30px; border-radius: 12px; font-weight: 900; font-size: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);}
-        .tut-btn-cyan:hover { background: #0284c7; }
-        
-        .tut-sidebar-title { font-size: 18px; font-weight: 900; text-align: center; margin: 0 0 20px 0; color: #fff;}
-        .tut-sidebar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; justify-items: center; }
+        .tutorial-card-large > * { position: relative; z-index: 1; }
 
         /* =====================================================================
            CONVERTER
            ===================================================================== */
-        .converter-board { background: var(--panel-2); padding: 40px 30px; border-radius: 20px; border: 1px solid var(--line); margin: 20px auto; text-align: center; box-shadow: var(--shadow-soft);}
-        .converter-input-row { display: flex; gap: 10px; align-items: stretch; width: 100%; max-width: 800px; margin: 0 auto; position: relative;}
-        .converter-input-dark { flex: 1; background: var(--bg-3); border: 1px solid var(--line); padding: 0 150px 0 20px; height: 60px; border-radius: 16px; color: #fff; font-size: 15px; outline: none; width: 100%; min-width: 0;}
-        .converter-input-dark:focus { border-color: #3b82f6; }
-        .converter-primary-btn { position: absolute; right: 5px; top: 5px; bottom: 5px; background: #fff; color: #1a1a1a; padding: 0 25px; border-radius: 12px; font-weight: 900; border: none; cursor: pointer; font-size: 14px; transition: 0.2s;}
-        .converter-primary-btn:hover { background: #e5e5e5; }
-        
-        .converter-dropdown-wrapper { position: relative; display: inline-block; margin-bottom: 20px; z-index: 100; }
-        .converter-dropdown-btn { background: var(--bg-3); color: #fff; padding: 10px 18px; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; border: 1px solid var(--line); display: flex; align-items: center; gap: 8px;}
-        .converter-dropdown-menu { display: none !important; position: absolute !important; top: 110% !important; left: 50% !important; transform: translateX(-50%); background: var(--panel-2) !important; border: 1px solid var(--line) !important; border-radius: 16px !important; padding: 8px !important; box-shadow: var(--shadow) !important; flex-direction: column !important; gap: 4px !important; z-index: 2000 !important; min-width: 180px; backdrop-filter: blur(12px);}
-        .converter-dropdown-wrapper.open .converter-dropdown-menu { display: flex !important; }
-        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 12px 15px !important; border-radius: 10px !important; font-weight: 700 !important; font-size: 14px !important; cursor: pointer !important; transition: 0.2s !important; display: flex !important; align-items: center !important; gap: 10px !important; margin: 0 !important; }
-        .converter-dropdown-item:hover { background: #1a1a1a(255,255,255,0.05) !important; color: #fff !important; }
-        .converter-dropdown-item.active { background: #1a1a1a(59, 130, 246, 0.15) !important; color: #3b82f6 !important; }
+        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 10px 15px !important; border-radius: 8px !important; font-weight: 700 !important; font-size: 13px !important; cursor: pointer !important; display: flex !important; align-items: center !important; gap: 10px !important; margin-bottom: 4px !important; transition: 0.2s !important;}
+        .converter-dropdown-item:hover { background: #222 !important; color: #fff !important; }
 
-        .converter-result-section { background: var(--bg-3); border: 1px solid var(--line); border-radius: 16px; padding: 25px; margin-top: 30px; display: flex; flex-direction: column; gap: 20px; text-align: left; }
-        .converter-output-box { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 15px; font-family: monospace; font-size: 13px; color: #ccc; word-break: break-all; display: flex; align-items: center; }
-        .converter-action-btns { display: flex; gap: 10px; }
-        .converter-action-btn { flex: 1; background: var(--bg); border: 1px solid var(--line); color: #fff; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 13px; transition: 0.2s;}
-        .converter-action-btn:hover { background: var(--line-strong); }
+        .platform-pill { font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 100px; border: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; background: rgba(255,255,255,0.05); color: var(--text); }
 
         /* =====================================================================
            MODAL USTAWIEŃ I AGENTÓW
@@ -355,7 +208,6 @@
         .settings-modal, .filter-modal, .agents-modal, #adminLoginModal, .item-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85) !important; z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
         .settings-modal.show, .filter-modal.show, .agents-modal.show, #adminLoginModal.show, .item-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
         .filter-content, .agents-modal-content, .item-modal-content { width: 100%; max-width: 440px; border-radius: 24px !important; padding: 30px !important; box-shadow: 0 25px 50px rgba(0,0,0,0.8) !important; background: #161616 !important; color: #fff !important; border: 1px solid #2a2a2a !important; }
-        
         .settings-content { width: 100%; max-width: 460px; background: #161616 !important; border: 1px solid #2a2a2a !important; border-radius: 24px !important; padding: 30px !important; box-shadow: 0 25px 50px rgba(0,0,0,0.8) !important; }
         
         .settings-header, .filter-header, .modal-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
@@ -365,67 +217,19 @@
         .settings-close-btn:hover, .close-filter-btn:hover { background: #333 !important; color: #fff !important; }
         .agents-modal-close { background: #222 !important; border: 1px solid #333 !important; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; color: #888 !important; display: flex; align-items: center; justify-content: center;}
 
-        /* FILTRY - NAPRAWA WYGLĄDU (Zgodnie ze screenem z listą z suwakiem) */
+        /* FILTRY */
         .filter-section-label { font-size: 12px; font-weight: 800; color: #888 !important; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 0.5px; }
-        
-        /* Kategorie - w pionie z suwakiem */
-        .cat-scroll-box { 
-            display: flex !important; 
-            flex-direction: column !important; 
-            gap: 8px !important; 
-            margin-bottom: 25px; 
-            max-height: 200px !important; 
-            overflow-y: auto !important; 
-            padding-right: 8px !important;
-        }
+        .cat-scroll-box { display: flex !important; flex-direction: column !important; gap: 8px !important; margin-bottom: 25px; max-height: 200px !important; overflow-y: auto !important; padding-right: 8px !important; }
         .cat-scroll-box::-webkit-scrollbar { width: 4px; }
         .cat-scroll-box::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        
-        .filter-btn-opt { 
-            background: #111 !important; 
-            border: 1px solid #222 !important; 
-            border-radius: 8px !important; 
-            padding: 12px 16px !important; 
-            color: #fff !important; 
-            font-weight: 700 !important; 
-            text-align: left !important; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            font-size: 14px !important;
-            width: 100% !important;
-        }
+        .filter-btn-opt { background: #111 !important; border: 1px solid #222 !important; border-radius: 8px !important; padding: 12px 16px !important; color: #fff !important; font-weight: 700 !important; text-align: left !important; cursor: pointer; transition: 0.2s; font-size: 14px !important; width: 100% !important;}
         .filter-btn-opt:hover { background: #222 !important; border-color: #333 !important; }
-        .filter-btn-opt.active { 
-            background: rgba(254, 254, 255, 0.445) !important; 
-            border-color: #ffffff !important; 
-            color: #ffffff !important; 
-        }
+        .filter-btn-opt.active { background: rgba(254, 254, 255, 0.445) !important; border-color: #ffffff !important; color: #ffffff !important; }
 
-        /* Tagi - Grid 2-kolumnowy */
-        .tags-grid-filter { 
-            display: grid !important; 
-            grid-template-columns: 1fr 1fr !important; 
-            gap: 8px !important; 
-            margin-bottom: 25px;
-        }
-        .tag-opt { 
-            background: #111 !important; 
-            border: 1px solid #222 !important; 
-            border-radius: 8px !important; 
-            padding: 12px 18px !important; 
-            color: #fff !important; 
-            font-weight: 700 !important; 
-            text-align: center !important; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            font-size: 14px !important;
-        }
+        .tags-grid-filter { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; margin-bottom: 25px;}
+        .tag-opt { background: #111 !important; border: 1px solid #222 !important; border-radius: 8px !important; padding: 12px 18px !important; color: #fff !important; font-weight: 700 !important; text-align: center !important; cursor: pointer; transition: 0.2s; font-size: 14px !important;}
         .tag-opt:hover { background: #222 !important; border-color: #333 !important; }
-        .tag-opt.active { 
-            background: rgba(254, 254, 255, 0.445) !important; 
-            border-color: #ffffff !important; 
-            color: #ffffff !important; 
-        }
+        .tag-opt.active { background: rgba(254, 254, 255, 0.445) !important; border-color: #ffffff !important; color: #ffffff !important; }
 
         .filter-footer-btns { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; border-top: 1px solid #2a2a2a !important; padding-top: 20px !important; margin-top: 0 !important;}
         .btn-filter-clear { background: #111 !important; color: #fff !important; border: 1px solid #222 !important; padding: 14px !important; border-radius: 12px !important; font-weight: 800 !important; cursor: pointer; font-size: 14px !important; transition: 0.2s; height: auto !important;}
@@ -435,16 +239,10 @@
         
         /* USTAWIENIA */
         .settings-lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; }
-        .lang-card { 
-            background: var(--bg-3); border: 1px solid var(--line); border-radius: 16px; 
-            padding: 12px 8px; display: flex; flex-direction: row; 
-            align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s; 
-        }
+        .lang-card { background: var(--bg-3); border: 1px solid var(--line); border-radius: 16px; padding: 12px 8px; display: flex; flex-direction: row; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .lang-card:hover { border-color: var(--line-strong); background: var(--panel-2); }
         .lang-card.active { border-color: #ffffff; background: rgba(59, 130, 246, 0.1); }
         .lang-card.active .lang-text-main { color: #ffffff; }
-
         .lang-icon { width: 24px; height: auto; display: block; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); flex-shrink: 0; }
         .lang-card-separator { width: 1px; height: 32px; background-color: var(--line); margin: 0 10px; flex-shrink: 0; }
         .lang-text-group { display: flex; flex-direction: column; gap: 2px; }
@@ -455,13 +253,11 @@
         .settings-agent-btn { width: 100%; background: #111; border: 1px solid #2a2a2a; padding: 16px 20px; border-radius: 16px; font-weight: 800; font-size: 15px; color: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
         .settings-agent-btn:hover { border-color: #444; }
         .settings-agent-btn-left { display: flex; align-items: center; gap: 12px; }
-        
         .settings-agent-menu { display: none; position: absolute; top: 105%; left: 0; right: 0; background: #161616; border: 1px solid #333; border-radius: 16px; padding: 8px; z-index: 100; box-shadow: 0 15px 40px rgba(0,0,0,0.6); flex-direction: column; gap: 4px; }
         .settings-agent-wrap.open .settings-agent-menu { display: flex; }
         .settings-agent-item { width: 100%; text-align: left; background: none; border: none; color: #aaa; padding: 12px 16px; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s;}
         .settings-agent-item:hover { background: #222; color: #fff; }
         .settings-agent-item.active { background: rgba(59, 130, 246, 0.15); color: #ffffff; }
-        
         .settings-save-btn { width: 100%; background: #fff; color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s;}
         .settings-save-btn:hover { background: #e5e5e5; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.1);}
 
@@ -471,13 +267,9 @@
         .agent-direct-btn:hover { background: #222 !important; border-color: #444 !important; }
         .agent-copy-btn { width: 54px !important; height: 54px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; cursor: pointer !important; color: #aaa !important; transition: 0.2s !important; padding: 0 !important; }
         .agent-copy-btn:hover { background: #222 !important; color: #fff !important; }
+        .settings-agent-btn-left img, .settings-agent-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
 
-        /* TWARDA BLOKADA WYMIARÓW IKON WSZĘDZIE */
-        .settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { 
-            width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent;
-        }
-
-        /* CONFETTI */
+        /* CONFETTI Z PINIATY */
         .page-confetti-overlay { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: 9999; }
         .confetti-piece { position: absolute; top: -24px; border-radius: 3px; opacity: 0.95; animation: confettiFallPage 2300ms linear forwards; }
         @keyframes confettiFallPage {
@@ -496,10 +288,7 @@
             .hero-title { font-size: 48px; letter-spacing: -2px; }
 
             .header-container { padding: 0 12px; top: 12px; }
-            .floating-nav { 
-                grid-template-columns: 1fr; 
-                background: rgba(20, 20, 20, 0.95); padding: 12px; border-radius: 20px; gap: 10px;
-            }
+            .floating-nav { grid-template-columns: 1fr; background: rgba(20, 20, 20, 0.95); padding: 12px; border-radius: 20px; gap: 10px; }
             
             .nav-left { justify-content: space-between; width: 100%; display: flex; }
             .nav-brand-pill { padding: 0; }
@@ -507,11 +296,7 @@
             .nav-admin-pill span { display: none; }
             .nav-settings-btn-pill { width: 40px !important; height: 40px !important; }
 
-            .nav-center { 
-                width: 100%; display: flex; overflow-x: auto; justify-content: flex-start;
-                padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.08); gap: 5px; 
-                -webkit-overflow-scrolling: touch; scrollbar-width: none; 
-            }
+            .nav-center { width: 100%; display: flex; overflow-x: auto; justify-content: flex-start; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.08); gap: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
             .nav-center::-webkit-scrollbar { display: none; }
             .nav-link-pill { padding: 8px 16px; font-size: 13px; flex-shrink: 0; background: rgba(255,255,255,0.03); }
 
@@ -523,17 +308,17 @@
             
             .tracker-grid-clean { grid-template-columns: minmax(0, 1fr); }
             
-            .tut-overview-grid { grid-template-columns: 1fr !important; }
-            .tutorial-layout { grid-template-columns: 1fr !important; }
-            .tut-overview-card { min-height: 250px; padding: 25px; }
-            .tut-overview-left-panel { max-width: 100%; }
-            .tut-overview-title { font-size: 36px; }
+            .tutorials-overview { grid-template-columns: 1fr !important; }
+            .tutorial-card-large { min-height: 250px; padding: 25px; }
+            .tutorial-small-card { padding: 25px; }
 
             .settings-lang-grid { grid-template-columns: 1fr !important; }
         }
     </style>
 </head>
 <body>
+    <div class="page-confetti-overlay" id="confettiOverlay"></div>
+
     <div class="site-shell">
         
         <header class="header-container">
@@ -647,53 +432,56 @@
 
             <section id="converter" class="page-section">
                 <div class="section-container">
-                    <div class="converter-board" style="background:#1a1a1a; padding:60px 40px; border-radius:28px; border:1px solid #fff; margin:20px auto; text-align:center; box-shadow:0 0 20px 2px rgba(255,255,255,0.1); max-width:1000px;">
-                        <div class="converter-hero" style="margin-bottom:40px;">
-                            <span style="color:#888; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;">Narzędzie</span>
-                            <h2 style="font-size:clamp(32px, 6vw, 48px); font-weight:900; margin:0 0 5px 0; color:#fff; letter-spacing:-1px;">Link Converter</h2>
-                            <p style="color:#888; font-size:14px; margin:0;">Wklej link, żeby zmienić go na wersję Twojego agenta.</p>
-                        </div>
+                    <div style="background: #121212; padding: 50px 40px; border-radius: 24px; border: 1px solid #1f1f1f; margin: 20px auto; text-align: center; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                        <span style="color:#888; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:2px; display:block; margin-bottom:10px;">Narzędzie</span>
+                        <h2 style="font-size:clamp(32px, 5vw, 48px); font-weight:900; margin:0 0 10px 0; color:#fff; letter-spacing:-1px;">Link Converter</h2>
+                        <p style="color:#888; font-size:15px; margin:0 0 30px 0;">Wklej link, żeby zmienić go na wersję Twojego agenta.</p>
                         
-                        <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-bottom:12px;">
-                            <span style="color:var(--text); font-size:14px; font-weight:700;">Na:</span>
+                        <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:20px;">
+                            <span style="color:#666; font-size:13px; font-weight:700;">Na:</span>
                             <div class="converter-dropdown-wrapper" id="converterTargetSelect" style="position:relative; display:inline-block; z-index:100; margin-bottom:0;">
-                                <button id="converterTargetButton" style="background:var(--bg-3); border:1px solid var(--line); color:var(--text-strong); padding:8px 16px; border-radius:8px; font-size:14px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:8px;">
-                                    <strong id="converterTargetLabel">KakoBuy</strong>
+                                <button id="converterTargetButton" style="background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:8px; transition: 0.2s;">
+                                    <span id="converterTargetLabel" style="display:flex; align-items:center;"></span>
                                     <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
-                                <div id="converterTargetMenu" style="display:none; position:absolute; top:110%; left:50%; transform:translateX(-50%); background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:6px; box-shadow:var(--shadow); flex-direction:column; gap:2px; min-width:140px; backdrop-filter:blur(12px);"></div>
+                                <div id="converterTargetMenu" class="converter-dropdown-menu"></div>
                             </div>
                         </div>
 
-                        <div style="display:flex; align-items:stretch; width:100%; max-width:800px; margin:0 auto; gap:10px;">
-                            <input type="text" id="converterInput" placeholder="Wklej link z Weidian / Taobao..." style="flex:1; background:var(--bg-3); border:1px solid var(--line); padding:0 20px; height:56px; border-radius:14px; color:#fff; font-size:15px; outline:none; transition:0.2s; min-width:0;"/>
-                            <button id="convertBtn" style="background:#fff; color:#000; padding:0 30px; height:56px; border-radius:14px; font-weight:900; font-size:15px; border:none; cursor:pointer; transition:0.2s; flex-shrink:0;">Convert Link</button>
+                        <div style="display:flex; align-items:stretch; width:100%; max-width:650px; margin:0 auto; gap:12px;">
+                            <input type="text" id="converterInput" placeholder="Wklej link z Weidian / Taobao..." style="flex:1; background:transparent; border:1px solid #333; padding:0 20px; height:50px; border-radius:12px; color:#fff; font-size:14px; outline:none; transition:0.2s; min-width:0;"/>
+                            <button id="convertBtn" style="background:#fff; color:#000; padding:0 24px; height:50px; border-radius:12px; font-weight:900; font-size:14px; border:none; cursor:pointer; transition:0.2s; flex-shrink:0;">Convert Link</button>
                         </div>
 
-                        <div id="converterStatus" style="margin-top:15px; color:#666; font-size:13px; min-height:1.2em;"></div>
+                        <div id="converterSourceLabel" style="display: none;"></div>
+                        <div id="converterStatus" style="margin-top:15px; color:var(--text); font-size:14px; font-weight:600; min-height:1.2em;"></div>
 
-                        <div id="converter-result" class="hidden" style="margin-top:50px; text-align:left; display:flex; flex-direction:column; gap:25px; border-top:1px solid #222; padding-top:40px;">
-                            <div style="background:#161616; border:1px solid #222; border-radius:20px; padding:25px;">
+                        <div id="converter-result" class="hidden" style="margin-top:40px; text-align:left; display:flex; flex-direction:column; gap:20px; border-top:1px solid #222; padding-top:40px; max-width: 650px; margin-left: auto; margin-right: auto;">
+                            <div style="background:#111; border:1px solid #222; border-radius:16px; padding:25px;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                                     <span style="font-size:14px; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:0.5px;">Twój Link (Skonwertowany)</span>
-                                    <span id="converterConvertedBadge" style="font-size:10px; font-weight:900; padding:5px 10px; border-radius:100px; text-transform:uppercase; letter-spacing:0.5px;"></span>
+                                    <span id="converterConvertedBadge" class="platform-pill" style="margin:0;"></span>
                                 </div>
-                                <div id="converterOutput" style="background:#000; border:1px solid #222; border-radius:12px; padding:15px; font-family:'Courier New', monospace; font-size:13px; color:#aaa; word-break:break-all; margin-bottom:15px; min-height:50px; display:flex; align-items:center;"></div>
+                                <div id="converterOutput" style="background:#000; border:1px solid #222; border-radius:12px; padding:15px; font-family:'Courier New', monospace; font-size:14px; color:#ccc; word-break:break-all; margin-bottom:15px; min-height:50px; display:flex; align-items:center;"></div>
                                 <div style="display:flex; gap:10px;">
-                                    <button id="copyConverted" style="flex:1; height:44px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px; background:#fff; color:#000; border:none;">Kopiuj link</button>
-                                    <button id="openConverted" style="flex:1; height:44px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px; background:#1a1a1a; color:#fff; border:1px solid #333;">Otwórz link</button>
+                                    <button id="copyConverted" style="flex:1; height:46px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px; background:#fff; color:#000; border:none;">
+                                        <span class="copy-text">Kopiuj link</span>
+                                    </button>
+                                    <button id="openConverted" style="flex:1; height:46px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px; background:#1a1a1a; color:#fff; border:1px solid #333;">Otwórz link</button>
                                 </div>
                             </div>
                             
-                            <div style="background:#161616; border:1px solid #222; border-radius:20px; padding:25px; opacity:0.7;">
+                            <div style="background:#111; border:1px solid #222; border-radius:16px; padding:25px; opacity:0.8;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                                     <span style="font-size:14px; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:0.5px;">Wykryty Oryginał</span>
-                                    <span id="converterOriginalBadge" style="font-size:10px; font-weight:900; padding:5px 10px; border-radius:100px; text-transform:uppercase; letter-spacing:0.5px;"></span>
+                                    <span id="converterOriginalBadge" class="platform-pill" style="margin:0;"></span>
                                 </div>
-                                <div id="converterOriginalUrl" style="background:#000; border:1px solid #222; border-radius:12px; padding:15px; font-family:'Courier New', monospace; font-size:12px; color:#888; word-break:break-all; margin-bottom:15px; min-height:50px; display:flex; align-items:center;"></div>
+                                <div id="converterOriginalUrl" style="background:#000; border:1px solid #222; border-radius:12px; padding:15px; font-family:'Courier New', monospace; font-size:13px; color:#888; word-break:break-all; margin-bottom:15px; min-height:50px; display:flex; align-items:center;"></div>
                                 <div style="display:flex; gap:10px;">
-                                    <button id="copyOriginal" style="flex:none; padding:0 20px; height:44px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px; background:#1a1a1a; color:#fff; border:1px solid #333;">Kopiuj</button>
-                                    <button id="openOriginal" style="flex:none; padding:0 20px; height:44px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px; background:#1a1a1a; color:#fff; border:1px solid #333;">Otwórz</button>
+                                    <button id="copyOriginal" style="flex:none; padding:0 25px; height:46px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px; background:#1a1a1a; color:#fff; border:1px solid #333;">
+                                        <span class="copy-text">Kopiuj</span>
+                                    </button>
+                                    <button id="openOriginal" style="flex:none; padding:0 25px; height:46px; border-radius:10px; font-size:13px; font-weight:800; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px; background:#1a1a1a; color:#fff; border:1px solid #333;">Otwórz</button>
                                 </div>
                             </div>
                         </div>
@@ -902,11 +690,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const AGENTS = [
+        window.AGENTS = [
           { id: 'kakobuy', name: 'KakoBuy', icon: 'https://www.kakobuy.com/favicon.ico' },
           { id: 'usfans', name: 'USFans', icon: 'https://usfans.com/favicon.ico' },
-          { id: 'acbuy', name: 'AllChinaBuy', icon: 'https://allchinabuy.com/favicon.ico' },
-          { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' }
+          { id: 'allchinabuy', name: 'AllChinaBuy', icon: 'https://allchinabuy.com/favicon.ico' },
+          { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' },
+          { id: 'weidian', name: 'Weidian', icon: 'https://s.weidian.com/assets/favicon.ico' }
         ];
 
         function checkMobileNav() {
@@ -1142,7 +931,8 @@
             if(currency === 'pln') { suffix = ' zł'; }
             if(currency === 'cny') { prefix = '¥'; suffix = ''; }
 
-            const agentObj = AGENTS.find(a => a.id === pinnedAgentId) || AGENTS[0];
+            const AGENTS_LIST = window.AGENTS.filter(a => a.id !== 'weidian');
+            const agentObj = AGENTS_LIST.find(a => a.id === pinnedAgentId) || AGENTS_LIST[0];
             const itemsToRender = data.slice(window.currentItemsDisplayed, window.currentItemsDisplayed + ITEMS_PER_PAGE);
 
             let html = "";
@@ -1151,7 +941,7 @@
 
                 let linkToCopy = p.Link_Kakobuy; 
                 if(pinnedAgentId === 'usfans' && p.Link_Usfans) linkToCopy = p.Link_Usfans;
-                if(pinnedAgentId === 'acbuy' && p.Link_Allchinabuy) linkToCopy = p.Link_Allchinabuy;
+                if(pinnedAgentId === 'allchinabuy' && p.Link_Allchinabuy) linkToCopy = p.Link_Allchinabuy;
                 if(pinnedAgentId === 'litbuy' && p.Link_Litbuy) linkToCopy = p.Link_Litbuy;
                 const safeLinkToCopy = window.escapeHtml(linkToCopy || '');
 
@@ -1198,13 +988,11 @@
             }
         }
 
-        // ===================== LOGIKA FILTRÓW =====================
         window.applyFilters = function() {
             const searchVal = document.getElementById('productSearch').value.toLowerCase();
             currentFilteredData = window.allProductsData.filter(p => {
                 const matchSearch = (p.Nazwa || '').toLowerCase().includes(searchVal);
                 
-                // Ignorowanie wielkości liter
                 const dbCat = (p.Kategoria || '').toUpperCase();
                 const btnCat = window.activeCat.toUpperCase();
                 const matchCat = (btnCat === 'ALL') || (dbCat === btnCat);
@@ -1224,7 +1012,6 @@
         document.getElementById('openFiltersBtn').onclick = () => document.getElementById('filterModal').classList.add('show');
         document.getElementById('closeFiltersBtn').onclick = () => document.getElementById('filterModal').classList.remove('show');
 
-        // Klikanie kategorii (zaktualizowane do nowego układu w HTML)
         document.querySelectorAll('.cat-scroll-box .filter-btn-opt').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('.cat-scroll-box .filter-btn-opt').forEach(b => b.classList.remove('active'));
@@ -1233,7 +1020,6 @@
             };
         });
 
-        // Klikanie tagów
         document.querySelectorAll('.tags-grid-filter .tag-opt:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('.tags-grid-filter .tag-opt:not(#clearFiltersBtn):not(#applyFiltersBtn)').forEach(b => b.classList.remove('active'));
@@ -1293,9 +1079,9 @@
         window.openAgentsModal = (link) => {
             const safeLink = window.escapeHtml(link || '');
             
-            document.getElementById('am-list').innerHTML = AGENTS.map(agent => {
-                let finalLink = safeLink;
-                if(agent.id === 'kakobuy' && finalLink) finalLink += (finalLink.includes('?') ? '&' : '?') + 'ref_id=Repfinder';
+            document.getElementById('am-list').innerHTML = window.AGENTS.filter(a => a.id !== 'weidian').map(agent => {
+                // TUTAJ ZMIANA: Usunęliśmy dodawanie affcode dla Kakobuy, ponieważ w linkach z DB już masz gotowy link!
+                let finalLink = safeLink; 
                 return `
                     <div class="agent-row">
                         <a href="${finalLink}" target="_blank" class="agent-direct-btn">
@@ -1312,10 +1098,705 @@
         };
         
         window.closeAgentsModal = () => document.getElementById('agentsModal').classList.remove('show');
-        
         window.openDetailedAgentsModal = () => { /* Funkcja bez zmian */ };
-        window.initTutorials = function () { /* Funkcja bez zmian */ };
-        window.initConverter = function () { /* Funkcja bez zmian */ };
+        
+        /* =====================================================================
+           MODERN TUTORIAL (Z PRZYCISKAMI AKCJI POD TREŚCIĄ I AUTOMATYCZNYMI ZDJĘCIAMI)
+           ===================================================================== */
+        window.initTutorials = function () {
+            const overview = document.getElementById("tutorialsOverview");
+            const player = document.getElementById("tutorialPlayer");
+
+            if (!overview || !player) return;
+
+            const tutorialData = {
+                title: "Jak zamawiać na KakoBuy",
+                subtitle: "Prosty przewodnik krok po kroku, jak zrobić zamówienie przez agentów KakoBuy.",
+                steps: [
+                    { title: "Załóż konto", desc: "Wejdź na stronę KakoBuy, utwórz konto podając e-mail i hasło, a następnie potwierdź rejestrację.", img: "krok1", action: { text: "Załóż konto na KakoBuy", url: "https://www.kakobuy.com/?affcode=xfrostyy" } },
+                    { title: "Znajdź produkty", desc: "Szukaj interesujących Cię rzeczy w spreadsheetach lub zobacz propozycje na RepzillaReps.", img: "krok2" },
+                    { title: "Dodaj do koszyka", desc: "Wybierz odpowiedni kolor, rozmiar i ilość, a następnie dodaj produkty do koszyka na KakoBuy.", img: "krok3" },
+                    { title: "Złóż zamówienie", desc: "Sprawdź koszyk, wybierz produkty i opłać koszt towarów oraz krajowej wysyłki w Chinach.", img: "krok4" },
+                    { title: "Potwierdź i zapłać", desc: "Zaznacz „I have read and agree” i kliknij „Buy Now”, aby przejść do płatności.", img: "krok5" },
+                    { title: "Wybierz płatność", desc: "Wybierz preferowaną metodę płatności i kliknij „Pay for Order”, aby sfinalizować zakup.", img: "krok6" },
+                    { title: "Realizacja zamówienia", desc: "Po opłaceniu KakoBuy weryfikuje produkty i zamawia je u sprzedawców." }, // Brak zdjęcia
+                    { title: "Kontrola jakości (QC)", desc: "Po dotarciu produktów KakoBuy wykonuje kontrolę jakości i przesyła Ci zdjęcia do oceny.", img: "krok8" },
+                    { title: "Zleć wstępne ważenie", desc: "Kiedy wszystkie produkty są już w magazynie, zleć wstępne ważenie paczki.", img: "krok9" },
+                    { title: "Zleć wysyłkę", desc: "Po ważeniu możesz zlecić wysyłkę międzynarodową swojej paczki." }, // Brak zdjęcia
+                    { title: "Wybierz metodę wysyłki", desc: "Wybierz sposób dostawy (np. DHL, DPD) i opłać koszty transportu.", img: "krok11" },
+                    { title: "Odbierz paczkę", desc: "Po otrzymaniu przesyłki sprawdź jej zawartość i potwierdź odbiór w panelu użytkownika." }, // Brak zdjęcia
+                    { title: "Gotowe!", desc: "Gratulacje! Udało Ci się przejść cały proces. Dołącz do naszej społeczności na Discordzie, aby być na bieżąco!", action: { text: "Dołącz na Discorda", url: "https://discord.com/" } } // Brak zdjęcia, ma przycisk akcji
+                ]
+            };
+
+            let currentStepIndex = 0;
+
+            renderOverview();
+
+            function renderOverview() {
+                overview.innerHTML = `
+                <div class="tut-overview-grid" style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; max-width: 1000px; width: 100%; margin: 0 auto; align-items: stretch;">
+                    
+                    <div style="background: #1c1c1e; border-radius: 24px; padding: 50px; border: 1px solid #2c2c2e; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                        <div style="position: relative; z-index: 2;">
+                            <span style="color: #888; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; display: inline-block;">Tutorial</span>
+                            <h3 style="font-size: clamp(32px, 5vw, 48px); font-weight: 900; color: #fff; margin: 0 0 15px 0; line-height: 1.1; letter-spacing: -1px;">Jak zamawiać na<br>KakoBuy</h3>
+                            <p style="color: #888; font-size: 15px; line-height: 1.6; max-width: 400px; margin: 0 0 30px 0;">Prosty przewodnik krok po kroku, jak zrobić zamówienie przez agentów KakoBuy.</p>
+                            <button id="startTutorialBtn" style="background: #fff; color: #000; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s;">Uruchom tutorial</button>
+                        </div>
+                        <div style="position: absolute; bottom: -50px; right: -50px; width: 300px; height: 300px; background: #242426; border-radius: 50%; z-index: 1;"></div>
+                    </div>
+                    
+                    <div style="background: #121212; border-radius: 24px; padding: 40px; border: 1px solid #1f1f1f; display: flex; flex-direction: column; justify-content: flex-start;">
+                        <h4 style="font-size: 18px; font-weight: 800; color: #fff; margin: 0 0 15px 0;">Dowiesz się jak</h4>
+                        <p style="color: #888; font-size: 15px; line-height: 1.6; margin: 0;">Zamawiać i jak korzystać z naszych narzędzi krok po kroku.</p>
+                    </div>
+
+                </div>`;
+                
+                document.getElementById("startTutorialBtn").addEventListener("click", () => {
+                    overview.classList.add("hidden");
+                    player.classList.remove("hidden");
+                    currentStepIndex = 0;
+                    renderStep();
+                });
+            }
+
+            function renderStep() {
+                const step = tutorialData.steps[currentStepIndex];
+                const total = tutorialData.steps.length;
+                
+                // === CIENKI PASEK POSTĘPU ===
+                let progressPercentage = ((currentStepIndex + 1) / total) * 100;
+                
+                const progressBarHtml = `
+                    <div style="width: 100%; max-width: 800px; margin: 0 auto 20px auto; background: #222; border-radius: 4px; height: 3px; position: relative; overflow: hidden;">
+                        <div style="position: absolute; left: 0; top: 0; bottom: 0; width: ${progressPercentage}%; background: #fff; border-radius: 4px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                    </div>
+                `;
+
+                // Kółka nawigacyjne GÓRNE (pod paskiem)
+                let topDots = '';
+                for(let i=0; i<total; i++) {
+                    const isActive = i === currentStepIndex;
+                    const bg = isActive ? '#fff' : 'transparent';
+                    const color = isActive ? '#000' : '#888';
+                    const border = isActive ? '1px solid #fff' : '1px solid #333';
+                    topDots += `<div data-tut-step-idx="${i}" style="width: 28px; height: 28px; border-radius: 50%; background: ${bg}; border: ${border}; color: ${color}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s;">${i + 1}</div>`;
+                }
+
+                // Kółka boczne (panel po prawej)
+                let sideDots = '';
+                for(let i=0; i<total; i++) {
+                    const isActive = i === currentStepIndex;
+                    const bg = isActive ? '#fff' : 'transparent';
+                    const color = isActive ? '#000' : '#888';
+                    const border = isActive ? '1px solid #fff' : '1px solid #333';
+                    sideDots += `<div data-tut-step-idx="${i}" style="width: 40px; height: 40px; border-radius: 50%; background: ${bg}; border: ${border}; color: ${color}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s;">${i + 1}</div>`;
+                }
+
+                // LOGIKA ZDJĘĆ - Automatyczne wykrywanie .png / .jpg
+                let mediaHtml = '';
+                if(step.img) {
+                    mediaHtml = `
+                        <div style="background: #111; border: 1px solid #222; border-radius: 12px; margin-bottom: ${step.action ? '15px' : '30px'}; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 10px; position: relative; min-height: 100px;">
+                            <img src="${window.escapeHtml(step.img)}.png" alt="Krok ${currentStepIndex + 1}" style="max-width: 100%; height: auto; max-height: 450px; object-fit: contain; border-radius: 8px; z-index: 2; position: relative;" onerror="if(!this.dataset.fallback){ this.dataset.fallback='1'; this.src='${window.escapeHtml(step.img)}.jpg'; } else { this.style.display='none'; this.nextElementSibling.style.display='flex'; }">
+                            <div style="display: none; padding: 30px; color: #888; text-align: center; font-size: 13px; position: absolute; inset: 0; align-items: center; justify-content: center; z-index: 1;">
+                                Błąd: Brak pliku zdjęcia w folderze.<br>Upewnij się, że plik <b>${window.escapeHtml(step.img)}.png</b> (lub .jpg) istnieje!
+                            </div>
+                        </div>
+                    `;
+                } else if(!step.action) {
+                    // Czysta pusta linia / brak marginesu gdy nie ma zdjęcia ani przycisku akcji
+                    mediaHtml = `<div style="height: 10px;"></div>`;
+                }
+
+                // Generowanie przycisku akcji
+                let actionHtml = '';
+                if(step.action) {
+                    actionHtml = `
+                        <a href="${window.escapeHtml(step.action.url)}" target="_blank" style="display: block; text-align: center; background: #fff; color: #000; border-radius: 8px; font-weight: 900; font-size: 14px; padding: 14px 20px; text-decoration: none; margin-bottom: 30px; transition: 0.2s;">
+                            ${window.escapeHtml(step.action.text)}
+                        </a>
+                    `;
+                }
+
+                player.innerHTML = `
+                    <div style="max-width: 1000px; margin: 0 auto; width: 100%;">
+                        
+                        <div style="text-align: center; margin-bottom: 25px; position: relative; padding-top: 10px;">
+                            <button id="tutBackToList" style="position: absolute; left: 0; top: 15px; background: none; border: none; color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                Wróć do tutoriali
+                            </button>
+                            <h2 style="font-size: 28px; font-weight: 900; color: #fff; margin: 0 0 10px 0;">${window.escapeHtml(tutorialData.title)}</h2>
+                            <p style="color: #888; font-size: 13px; margin: 0;">${window.escapeHtml(tutorialData.subtitle)}</p>
+                        </div>
+
+                        ${progressBarHtml}
+
+                        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 35px;">
+                            ${topDots}
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start;">
+                            
+                            <div style="background: #111; border: 1px solid #222; border-radius: 16px; padding: 30px; display: flex; flex-direction: column; min-height: 400px;">
+                                
+                                <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 25px;">
+                                    <div style="background: #222; border: 1px solid #333; color: #fff; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; flex-shrink: 0;">
+                                        ${currentStepIndex + 1}
+                                    </div>
+                                    <div>
+                                        <h3 style="font-size: 20px; font-weight: 900; color: #fff; margin: 0 0 4px 0;">${window.escapeHtml(step.title)}</h3>
+                                        <p style="color: #666; font-size: 12px; font-weight: 700; margin: 0;">Krok ${currentStepIndex + 1} z ${total}</p>
+                                    </div>
+                                </div>
+                                
+                                <p style="color: #aaa; font-size: 14px; line-height: 1.6; margin-bottom: 30px;">${window.escapeHtml(step.desc)}</p>
+                                
+                                ${mediaHtml}
+                                ${actionHtml}
+                                
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 20px; border-top: 1px solid #222;">
+                                    <button id="tutRestartBtn" style="background: none; border: none; color: #666; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                        Rozpocznij ponownie
+                                    </button>
+                                    
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <button id="tutPrevBtn" style="background: none; border: none; color: #888; font-weight: 700; font-size: 14px; cursor: pointer; ${currentStepIndex === 0 ? 'opacity:0; pointer-events:none;' : ''}">
+                                            < Wstecz
+                                        </button>
+                                        <button id="tutNextBtn" style="background: #fff; color: #000; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; padding: 12px 24px;">
+                                            ${currentStepIndex === total - 1 ? 'Zakończ' : 'Dalej >'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="background: #111; border: 1px solid #222; border-radius: 16px; padding: 30px; display: flex; flex-direction: column; align-items: center;">
+                                <h4 style="font-size: 15px; font-weight: 900; color: #fff; margin: 0 0 25px 0;">Kroki tutoriala</h4>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                                    ${sideDots}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+
+                player.querySelectorAll("[data-tut-step-idx]").forEach(btn => {
+                    btn.addEventListener("click", () => { 
+                        currentStepIndex = Number(btn.getAttribute("data-tut-step-idx")); 
+                        renderStep(); 
+                    });
+                });
+                
+                document.getElementById('tutBackToList').addEventListener("click", () => { resetTutorial(); });
+                document.getElementById('tutPrevBtn').addEventListener("click", () => { if (currentStepIndex > 0) { currentStepIndex -= 1; renderStep(); } });
+                
+                document.getElementById('tutNextBtn').addEventListener("click", () => {
+                    if (currentStepIndex < total - 1) { 
+                        currentStepIndex += 1; 
+                        renderStep(); 
+                    } else {
+                        resetTutorial(); 
+                    }
+                });
+                
+                document.getElementById('tutRestartBtn').addEventListener("click", () => { currentStepIndex = 0; renderStep(); });
+
+                // PINIATA
+                if (currentStepIndex === total - 1) {
+                    window.generateConfetti();
+                }
+            }
+
+            function resetTutorial() { 
+                currentStepIndex = 0; 
+                player.classList.add("hidden"); 
+                overview.classList.remove("hidden"); 
+            }
+        };
+
+        // FUNKCJA DLA KONFETTI
+        window.generateConfetti = function () {
+            const overlay = document.getElementById("confettiOverlay") || (() => {
+                const el = document.createElement("div");
+                el.id = "confettiOverlay";
+                el.className = "page-confetti-overlay";
+                document.body.appendChild(el);
+                return el;
+            })();
+
+            overlay.innerHTML = "";
+
+            const COLORS = [
+                '#ff0000', // czerwony
+                '#ff9900', // pomarańczowy
+                '#ffff00', // żółty
+                '#33cc33', // zielony
+                '#9933ff', // fioletowy
+                '#ffcc00', // złoty
+                '#ff6600'  // ciemnopomarańczowy
+            ];
+            const PIECE_COUNT = 150;
+
+            for (let i = 0; i < PIECE_COUNT; i++) {
+                const piece = document.createElement("div");
+                piece.classList.add("confetti-piece");
+                
+                const colorIndex = Math.floor(Math.random() * COLORS.length);
+                piece.style.backgroundColor = COLORS[colorIndex];
+                
+                const width = Math.random() * 8 + 4;
+                piece.style.width = width + "px";
+                piece.style.height = (width * 1.5) + "px"; 
+                
+                const startX = Math.random() * 100;
+                piece.style.left = startX + "%";
+                const drift = Math.random() * 60 - 30; 
+                piece.style.setProperty('--drift', drift + 'px');
+                
+                piece.style.animationDelay = (Math.random() * 1.5) + "s";
+                
+                overlay.appendChild(piece);
+            }
+
+            setTimeout(() => { overlay.innerHTML = ""; }, 4000);
+        };
+
+        /* =====================================================================
+           LOGIKA KONWERTERA (W PEŁNI ZINTEGROWANY SKRYPT UŻYTKOWNIKA)
+           ===================================================================== */
+        window.initConverter = function () {
+            const input = document.getElementById("converterInput");
+            const convertBtn = document.getElementById("convertBtn");
+            const copyConverted = document.getElementById("copyConverted");
+            const openConverted = document.getElementById("openConverted");
+            const copyOriginal = document.getElementById("copyOriginal");
+            const openOriginal = document.getElementById("openOriginal");
+            const output = document.getElementById("converterOutput");
+            const status = document.getElementById("converterStatus");
+            const originalBadge = document.getElementById("converterOriginalBadge");
+            const convertedBadge = document.getElementById("converterConvertedBadge");
+            const originalUrlBox = document.getElementById("converterOriginalUrl");
+            const resultSection = document.getElementById("converter-result");
+
+            const sourceLabel = document.getElementById("converterSourceLabel");
+            const targetLabel = document.getElementById("converterTargetLabel");
+            const targetSelectWrap = document.getElementById("converterTargetSelect");
+            const targetButton = document.getElementById("converterTargetButton");
+            const targetMenu = document.getElementById("converterTargetMenu");
+
+            if (
+                !input || !convertBtn || !output || !status || !originalBadge || 
+                !convertedBadge || !originalUrlBox || !resultSection || 
+                !sourceLabel || !targetLabel || !targetSelectWrap || 
+                !targetButton || !targetMenu
+            ) {
+                console.error("Converter init failed: missing HTML elements");
+                return;
+            }
+
+            let hasShownResultOnce = false;
+            let selectedTarget = "kakobuy";
+
+            const targets = [
+                { value: "kakobuy", label: "KakoBuy" },
+                { value: "usfans", label: "UsFans" },
+                { value: "litbuy", label: "LITBUY" },
+                { value: "allchinabuy", label: "AllChinaBuy" },
+                { value: "weidian", label: "Weidian" }
+            ];
+
+            buildTargetMenu();
+            updateSourceLabel("auto");
+            resultSection.classList.add("hidden");
+
+            input.addEventListener("input", () => {
+                const analysis = analyzeInput(input.value.trim());
+                updateSourceLabel(analysis.displaySource);
+            });
+
+            targetButton.addEventListener("click", (event) => {
+                event.stopPropagation();
+                targetSelectWrap.classList.toggle("open");
+            });
+
+            document.addEventListener("click", (event) => {
+                if (!targetSelectWrap.contains(event.target)) {
+                    targetSelectWrap.classList.remove("open");
+                }
+            });
+
+            convertBtn.addEventListener("click", () => {
+                const raw = input.value.trim();
+
+                if (!raw) {
+                    resultSection.classList.add("hidden");
+                    setStatus("Wklej link, żeby rozpocząć konwersję.");
+                    return;
+                }
+
+                const analysis = analyzeInput(raw);
+                updateSourceLabel(analysis.displaySource);
+
+                if (!analysis.originalUrl) {
+                    setResult({
+                        originalPlatform: "unknown",
+                        originalUrl: raw,
+                        convertedPlatform: selectedTarget,
+                        convertedUrl: ""
+                    });
+
+                    setStatus("Nie udało się odczytać poprawnego linku źródłowego.");
+                    revealResultSection(resultSection, hasShownResultOnce);
+                    hasShownResultOnce = true;
+                    return;
+                }
+
+                const converted = buildConvertedResult(analysis, selectedTarget);
+
+                if (!converted.url) {
+                    setResult({
+                        originalPlatform: analysis.originalPlatform,
+                        originalUrl: analysis.originalUrl,
+                        convertedPlatform: selectedTarget,
+                        convertedUrl: ""
+                    });
+
+                    setStatus(`Nie udało się zbudować poprawnego linku dla tego formatu.`);
+                    revealResultSection(resultSection, hasShownResultOnce);
+                    hasShownResultOnce = true;
+                    return;
+                }
+
+                setResult({
+                    originalPlatform: analysis.originalPlatform,
+                    originalUrl: analysis.originalUrl,
+                    convertedPlatform: selectedTarget,
+                    convertedUrl: converted.url
+                });
+
+                setStatus("");
+                revealResultSection(resultSection, hasShownResultOnce);
+                hasShownResultOnce = true;
+            });
+
+            if (copyConverted) {
+                copyConverted.addEventListener("click", function() { window.copyText(output.textContent, this); });
+            }
+
+            if (openConverted) {
+                openConverted.addEventListener("click", () => openLink(output.textContent));
+            }
+
+            if (copyOriginal) {
+                copyOriginal.addEventListener("click", function() { window.copyText(originalUrlBox.textContent, this); });
+            }
+
+            if (openOriginal) {
+                openOriginal.addEventListener("click", () => openLink(originalUrlBox.textContent));
+            }
+
+            function buildTargetMenu() {
+                targetMenu.innerHTML = targets.map((target) => {
+                    const active = target.value === selectedTarget ? "active" : "";
+                    const agentObj = window.AGENTS.find(a => a.id === target.value) || { icon: 'https://s.weidian.com/assets/favicon.ico' };
+                    return `
+                        <button type="button" class="converter-dropdown-item ${active}" data-target-value="${escapeHtml(target.value)}">
+                            <img src="${agentObj.icon}" style="width:16px; height:16px; border-radius:50%;" onerror="this.style.display='none'">
+                            ${escapeHtml(target.label)}
+                        </button>
+                    `;
+                }).join("");
+
+                const currentAgentObj = window.AGENTS.find(a => a.id === selectedTarget) || {icon: 'https://s.weidian.com/assets/favicon.ico'};
+                targetLabel.innerHTML = `<img src="${currentAgentObj.icon}" style="width:16px; height:16px; border-radius:50%; vertical-align:middle; margin-right:6px;" onerror="this.style.display='none'"> ${formatPlatformLabel(selectedTarget)}`;
+
+                targetMenu.querySelectorAll("[data-target-value]").forEach((button) => {
+                    button.addEventListener("click", () => {
+                        selectedTarget = button.getAttribute("data-target-value");
+                        buildTargetMenu();
+                        targetSelectWrap.classList.remove("open");
+                    });
+                });
+            }
+
+            function updateSourceLabel(source) {
+                if (!sourceLabel) return;
+                sourceLabel.textContent = source === "auto" ? "Auto detect" : formatPlatformLabel(source);
+            }
+
+            function analyzeInput(rawUrl) {
+                const cleaned = normalizeUrl(rawUrl);
+
+                if (!cleaned) {
+                    return { displaySource: "auto", originalPlatform: "unknown", originalUrl: "", itemId: "", sourceCode: "" };
+                }
+
+                const platform = detectPlatform(cleaned);
+
+                if (platform === "weidian") {
+                    const itemId = extractWeidianItemId(cleaned);
+                    return { displaySource: "weidian", originalPlatform: "weidian", originalUrl: itemId ? buildWeidianUrl(itemId) : cleaned, itemId, sourceCode: "WD" };
+                }
+
+                if (platform === "kakobuy") {
+                    const embeddedOriginal = extractOriginalUrlFromAnyAgent(cleaned);
+                    const itemId = extractAnyKnownItemId(cleaned, embeddedOriginal);
+                    const originalUrl = itemId ? buildWeidianUrl(itemId) : embeddedOriginal;
+
+                    return { displaySource: "kakobuy", originalPlatform: itemId ? "weidian" : detectPlatform(originalUrl), originalUrl: originalUrl || "", itemId, sourceCode: itemId ? "WD" : "" };
+                }
+
+                if (platform === "usfans") {
+                    const itemId = extractUsFansItemId(cleaned);
+                    return { displaySource: "usfans", originalPlatform: itemId ? "weidian" : "unknown", originalUrl: itemId ? buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId ? "WD" : "" };
+                }
+
+                if (platform === "allchinabuy") {
+                    const itemId = extractAllChinaBuyItemId(cleaned);
+                    const sourceCode = extractSourceCode(cleaned) || (itemId ? "WD" : "");
+                    return { displaySource: "allchinabuy", originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown", originalUrl: itemId && sourceCode === "WD" ? buildWeidianUrl(itemId) : "", itemId, sourceCode };
+                }
+
+                if (platform === "litbuy") {
+                    const itemId = extractLitBuyItemId(cleaned);
+                    const sourcePlatform = extractLitBuySource(cleaned);
+                    return { displaySource: "litbuy", originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform, originalUrl: itemId && sourcePlatform === "weidian" ? buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : "" };
+                }
+
+                return { displaySource: platform, originalPlatform: platform, originalUrl: cleaned, itemId: extractWeidianItemId(cleaned), sourceCode: platform === "weidian" ? "WD" : "" };
+            }
+
+            function buildConvertedResult(analysis, target) {
+                const itemId = analysis.itemId;
+                const sourcePlatform = analysis.originalPlatform;
+
+                if (!analysis.originalUrl) {
+                    return { url: "" };
+                }
+
+                if (target === "weidian") {
+                    if (itemId) return { url: buildWeidianUrl(itemId) };
+                    if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
+                    return { url: "" };
+                }
+
+                if (!itemId || sourcePlatform !== "weidian") {
+                    if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
+                        return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}&affcode=xfrostyy` };
+                    }
+                    return { url: "" };
+                }
+
+                switch (target) {
+                    case "kakobuy": return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}&affcode=xfrostyy` };
+                    case "usfans": return { url: `https://www.usfans.com/product/3/${itemId}` };
+                    case "allchinabuy": return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
+                    case "litbuy": return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?` };
+                    default: return { url: "" };
+                }
+            }
+
+            function detectPlatform(url) {
+                const value = String(url || "").toLowerCase();
+                if (!value) return "auto";
+                if (value.includes("weidian.com")) return "weidian";
+                if (value.includes("taobao.com")) return "taobao";
+                if (value.includes("1688.com")) return "1688";
+                if (value.includes("tmall.com")) return "tmall";
+                if (value.includes("kakobuy.com") || value.includes("m.kakobuy.com")) return "kakobuy";
+                if (value.includes("usfans.com")) return "usfans";
+                if (value.includes("acbuy.com") || value.includes("allchinabuy.com")) return "allchinabuy";
+                if (value.includes("litbuy.com")) return "litbuy";
+                return "unknown";
+            }
+
+            function normalizeUrl(value) {
+                const raw = String(value || "").trim();
+                if (!raw) return "";
+                if (/^https?:\/\//i.test(raw)) return raw;
+                if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(raw)) return `https://${raw}`;
+                return raw;
+            }
+
+            function extractOriginalUrlFromAnyAgent(inputUrl) {
+                const normalized = normalizeUrl(inputUrl);
+                const url = safeUrl(normalized);
+                if (!url) return extractWeidianLikeUrlFromText(normalized);
+
+                const candidateKeys = ["url", "itemUrl", "goodsUrl", "link", "target", "redirect", "redirectUrl", "shopUrl"];
+                for (const key of candidateKeys) {
+                    const value = url.searchParams.get(key);
+                    if (!value) continue;
+                    const deep = deepDecode(value);
+                    const directFound = extractWeidianLikeUrlFromText(deep);
+                    if (directFound) return directFound;
+                    const normalizedValue = normalizeUrl(deep);
+                    if (normalizedValue.startsWith("http")) return normalizedValue;
+                }
+                return extractWeidianLikeUrlFromText(normalized);
+            }
+
+            function extractWeidianLikeUrlFromText(value) {
+                const decoded = deepDecode(String(value || ""));
+                const weidianMatch = decoded.match(/https?:\/\/(?:www\.)?weidian\.com\/item\.html\?[^ \n\r"'<>]*/i);
+                if (weidianMatch) return cleanupExtractedUrl(weidianMatch[0]);
+
+                const genericUrlMatch = decoded.match(/https?:\/\/[^ \n\r"'<>]+/i);
+                if (genericUrlMatch) return cleanupExtractedUrl(genericUrlMatch[0]);
+                return "";
+            }
+
+            function cleanupExtractedUrl(url) {
+                let cleaned = String(url || "").trim();
+                cleaned = cleaned.replace(/&affcode=[^&]+/gi, "");
+                cleaned = cleaned.replace(/[),.;]+$/g, "");
+                const itemId = extractWeidianItemId(cleaned);
+                if (itemId) return buildWeidianUrl(itemId);
+                return cleaned;
+            }
+
+            function extractAnyKnownItemId(rawInput, extractedOriginalUrl) {
+                return extractWeidianItemId(extractedOriginalUrl) || extractWeidianItemId(rawInput) || extractKakoBuyItemId(rawInput) || extractUsFansItemId(rawInput) || extractAllChinaBuyItemId(rawInput) || extractLitBuyItemId(rawInput) || "";
+            }
+
+            function extractWeidianItemId(url) {
+                const safe = safeUrl(url);
+                if (safe) {
+                    const itemId = safe.searchParams.get("itemID") || safe.searchParams.get("itemId") || safe.searchParams.get("id");
+                    if (itemId && /^\d+$/.test(itemId)) return itemId;
+                }
+                const match = String(url || "").match(/itemID(?:%3D|=)(\d+)/i);
+                return match ? match[1] : "";
+            }
+
+            function extractKakoBuyItemId(url) {
+                const embedded = extractOriginalUrlFromAnyAgent(url);
+                const embeddedId = extractWeidianItemId(embedded);
+                if (embeddedId) return embeddedId;
+                const match = String(url || "").match(/itemID%3D(\d+)/i);
+                return match ? match[1] : "";
+            }
+
+            function extractUsFansItemId(url) {
+                const match = String(url || "").match(/\/product\/\d+\/(\d+)/i);
+                return match ? match[1] : "";
+            }
+
+            function extractAllChinaBuyItemId(url) {
+                const safe = safeUrl(url);
+                if (!safe) return "";
+                const id = safe.searchParams.get("id");
+                if (id && /^\d+$/.test(id)) return id;
+                return "";
+            }
+
+            function extractSourceCode(url) {
+                const safe = safeUrl(url);
+                if (!safe) return "";
+                return String(safe.searchParams.get("source") || "").toUpperCase();
+            }
+
+            function extractLitBuyItemId(url) {
+                const match = String(url || "").match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
+                return match ? match[1] : "";
+            }
+
+            function extractLitBuySource(url) {
+                const match = String(url || "").match(/\/product\/([a-z0-9_-]+)\//i);
+                if (!match) return "unknown";
+                const source = match[1].toLowerCase();
+                if (source === "weidian") return "weidian";
+                return source;
+            }
+
+            function buildWeidianUrl(itemId) {
+                return `https://weidian.com/item.html?itemID=${itemId}`;
+            }
+
+            function safeUrl(value) {
+                try { return new URL(value); } catch (error) { return null; }
+            }
+
+            function deepDecode(value, rounds = 4) {
+                let result = String(value || "");
+                for (let i = 0; i < rounds; i += 1) {
+                    try {
+                        const decoded = decodeURIComponent(result);
+                        if (decoded === result) break;
+                        result = decoded;
+                    } catch (error) { break; }
+                }
+                return result;
+            }
+
+            function setResult(payload) {
+                const originalPlatform = payload.originalPlatform || "unknown";
+                const convertedPlatform = payload.convertedPlatform || "unknown";
+
+                originalUrlBox.textContent = payload.originalUrl || "Brak danych";
+                output.textContent = payload.convertedUrl || "Brak wyniku";
+
+                originalBadge.className = `platform-pill ${platformClassName(originalPlatform)}`;
+                convertedBadge.className = `platform-pill ${platformClassName(convertedPlatform)}`;
+
+                originalBadge.textContent = formatPlatformLabel(originalPlatform);
+                convertedBadge.textContent = formatPlatformLabel(convertedPlatform);
+            }
+
+            function setStatus(message) {
+                if (status) {
+                    status.innerHTML = message ? `<span style="color:#ef4444;">${message}</span>` : '';
+                }
+            }
+
+            function platformClassName(platform) {
+                return "platform-pill-neutral"; 
+            }
+
+            function formatPlatformLabel(platform) {
+                const map = {
+                    auto: "Auto detect",
+                    unknown: "Nieznany Agent",
+                    weidian: "Weidian",
+                    kakobuy: "KakoBuy",
+                    usfans: "UsFans",
+                    litbuy: "LITBUY",
+                    allchinabuy: "AllChinaBuy",
+                    taobao: "Taobao",
+                    tmall: "Tmall",
+                    "1688": "1688"
+                };
+                return map[platform] || String(platform || "Unknown");
+            }
+
+            function openLink(value) {
+                const text = String(value || "").trim();
+                if (!text || !text.startsWith("http")) return;
+                window.open(text, "_blank", "noopener,noreferrer");
+            }
+
+            function revealResultSection(section, hasShownBefore) {
+                const wasHidden = section.classList.contains("hidden");
+                section.classList.remove("hidden");
+
+                if (wasHidden || !hasShownBefore) {
+                    section.animate(
+                        [ { opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "translateY(0)" } ],
+                        { duration: 380, easing: "ease-out", fill: "both" }
+                    );
+                }
+
+                requestAnimationFrame(() => {
+                    section.scrollIntoView({ behavior: "smooth", block: "start" });
+                });
+            }
+        };
     </script>
 </body>
 </html>
