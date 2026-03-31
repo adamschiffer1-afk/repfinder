@@ -197,10 +197,17 @@
         /* =====================================================================
            CONVERTER
            ===================================================================== */
-        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 10px 15px !important; border-radius: 8px !important; font-weight: 700 !important; font-size: 13px !important; cursor: pointer !important; display: flex !important; align-items: center !important; gap: 10px !important; margin-bottom: 4px !important; transition: 0.2s !important;}
+        .converter-dropdown-menu { display: none !important; position: absolute !important; top: 110% !important; left: 50% !important; transform: translateX(-50%); background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; padding: 8px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; flex-direction: column !important; gap: 4px !important; z-index: 2000 !important; min-width: 160px; backdrop-filter: blur(12px);}
+        .converter-dropdown-wrapper.open .converter-dropdown-menu { display: flex !important; }
+        
+        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 12px 16px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 13px !important; cursor: pointer !important; display: flex !important; align-items: center !important; gap: 10px !important; transition: 0.2s !important; }
         .converter-dropdown-item:hover { background: #222 !important; color: #fff !important; }
+        .converter-dropdown-item.active { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
 
-        .platform-pill { font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 100px; border: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; background: rgba(255,255,255,0.05); color: var(--text); }
+        .platform-pill { font-size: 10px; font-weight: 900; padding: 6px 12px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; border: 1px solid #333; }
+        .platform-pill-weidian, .platform-pill-taobao, .platform-pill-1688, .platform-pill-tmall { background: rgba(255,255,255,0.05); color: #fff; }
+        .platform-pill-kakobuy, .platform-pill-usfans, .platform-pill-litbuy, .platform-pill-allchinabuy { background: #fff; color: #000; border-color: #fff; }
+        .platform-pill-neutral { background: transparent; color: #888; border-color: #333; }
 
         /* =====================================================================
            MODAL USTAWIEŃ I AGENTÓW
@@ -267,7 +274,7 @@
         .agent-direct-btn:hover { background: #222 !important; border-color: #444 !important; }
         .agent-copy-btn { width: 54px !important; height: 54px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; cursor: pointer !important; color: #aaa !important; transition: 0.2s !important; padding: 0 !important; }
         .agent-copy-btn:hover { background: #222 !important; color: #fff !important; }
-        .settings-agent-btn-left img, .settings-agent-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
+        .settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
 
         /* CONFETTI Z PINIATY */
         .page-confetti-overlay { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: 9999; }
@@ -342,10 +349,6 @@
                 </div>
 
                 <div class="nav-right" id="desktopNavRight">
-                    <a href="admin.html" class="nav-admin-pill nav-anchor" id="adminEntry">
-                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        <span>Admin</span>
-                    </a>
                     <button class="nav-settings-btn-pill" id="openSettingsBtnNav" title="Settings">
                         <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                     </button>
@@ -432,7 +435,7 @@
 
             <section id="converter" class="page-section">
                 <div class="section-container">
-                    <div style="background: #121212; padding: 50px 40px; border-radius: 24px; border: 1px solid #1f1f1f; margin: 20px auto; text-align: center; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                    <div style="background: #161616; padding: 50px 40px; border-radius: 24px; border: 1px solid #222; margin: 20px auto; text-align: center; max-width: 800px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
                         <span style="color:#888; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:2px; display:block; margin-bottom:10px;">Narzędzie</span>
                         <h2 style="font-size:clamp(32px, 5vw, 48px); font-weight:900; margin:0 0 10px 0; color:#fff; letter-spacing:-1px;">Link Converter</h2>
                         <p style="color:#888; font-size:15px; margin:0 0 30px 0;">Wklej link, żeby zmienić go na wersję Twojego agenta.</p>
@@ -440,7 +443,7 @@
                         <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:20px;">
                             <span style="color:#666; font-size:13px; font-weight:700;">Na:</span>
                             <div class="converter-dropdown-wrapper" id="converterTargetSelect" style="position:relative; display:inline-block; z-index:100; margin-bottom:0;">
-                                <button id="converterTargetButton" style="background:#1a1a1a; border:1px solid #333; color:#fff; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:8px; transition: 0.2s;">
+                                <button id="converterTargetButton" style="background:#111; border:1px solid #333; color:#fff; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:8px; transition: 0.2s;">
                                     <span id="converterTargetLabel" style="display:flex; align-items:center;"></span>
                                     <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </button>
@@ -454,7 +457,7 @@
                         </div>
 
                         <div id="converterSourceLabel" style="display: none;"></div>
-                        <div id="converterStatus" style="margin-top:15px; color:var(--text); font-size:14px; font-weight:600; min-height:1.2em;"></div>
+                        <div id="converterStatus" style="margin-top:15px; color:#ef4444; font-size:14px; font-weight:600; min-height:1.2em;"></div>
 
                         <div id="converter-result" class="hidden" style="margin-top:40px; text-align:left; display:flex; flex-direction:column; gap:20px; border-top:1px solid #222; padding-top:40px; max-width: 650px; margin-left: auto; margin-right: auto;">
                             <div style="background:#111; border:1px solid #222; border-radius:16px; padding:25px;">
@@ -538,17 +541,6 @@
                 </button>
             </div>
             <div id="am-list"></div>
-        </div>
-    </div>
-
-    <div id="adminLoginModal" class="filter-modal" style="background:rgba(0,0,0,0.95);">
-        <div class="filter-content" style="background:#111 !important; color:#fff !important; text-align:center; max-width:350px; border-color:#333 !important;">
-            <h3 style="margin-bottom:25px; color:#fff !important;">Admin Access</h3>
-            <input type="text" id="admLogin" placeholder="Login" style="width:100%; padding:15px; margin-bottom:10px; background:#222; border:1px solid #333; color:#fff; border-radius:12px; outline:none;">
-            <input type="password" id="admPass" placeholder="Hasło" style="width:100%; padding:15px; margin-bottom:25px; background:#222; border:1px solid #333; color:#fff; border-radius:12px; outline:none;">
-            <button id="admSubmit" style="background:#fff; color:#000; width:100%; padding:15px; border:none; border-radius:12px; font-weight:900; cursor:pointer;">Zaloguj</button>
-            <p id="admErr" style="color:#f87171; display:none; margin-top:15px; font-weight:800;">Błędne dane!</p>
-            <button onclick="document.getElementById('adminLoginModal').classList.remove('show')" style="background:none; border:none; color:#666; margin-top:20px; cursor:pointer; text-decoration:underline;">Anuluj</button>
         </div>
     </div>
 
@@ -668,6 +660,14 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // WYMUSZANIE POPRAWNEGO LINKU KAKOBUY
+        function fixKakoLink(link) {
+            if (!link || !link.includes('kakobuy.com')) return link;
+            let clean = link.replace(/([?&])(affcode|ref_id)=[^&]*/gi, '');
+            clean = clean.replace(/[?&]$/, '');
+            return clean + (clean.includes('?') ? '&' : '?') + 'affcode=xfrostyy';
+        }
 
         window.escapeHtml = function(value) {
             return String(value ?? "")
@@ -939,10 +939,16 @@
             itemsToRender.forEach(p => {
                 const displayPrice = prefix + convertCurrency(p.Cena_USD, currency) + suffix;
 
-                let linkToCopy = p.Link_Kakobuy; 
+                let linkToCopy = p.Link_Kakobuy || ''; 
                 if(pinnedAgentId === 'usfans' && p.Link_Usfans) linkToCopy = p.Link_Usfans;
                 if(pinnedAgentId === 'allchinabuy' && p.Link_Allchinabuy) linkToCopy = p.Link_Allchinabuy;
                 if(pinnedAgentId === 'litbuy' && p.Link_Litbuy) linkToCopy = p.Link_Litbuy;
+                
+                // AUTOMATYCZNA PODMIANA AFFCODE DLA KAKOBUY
+                if ((!pinnedAgentId || pinnedAgentId === 'kakobuy') && linkToCopy) {
+                    linkToCopy = fixKakoLink(linkToCopy);
+                }
+
                 const safeLinkToCopy = window.escapeHtml(linkToCopy || '');
 
                 html += `
@@ -1076,12 +1082,22 @@
         window.openDetailedItemModal = (title, name, priceUSD, img, cat, tag, kb, uf, acb, lb) => { /* Funkcja bez zmian */ };
         window.closeItemModal = () => document.getElementById('itemModal').classList.remove('show');
 
+        // PODMIANA AFFCODE Z KARTY 'VIEW AGENTS'
         window.openAgentsModal = (link) => {
-            const safeLink = window.escapeHtml(link || '');
+            let safeLink = link || '';
             
+            // Profilaktycznie czyścimy wejściowy link z cudzych kodów, jeśli to KakoBuy
+            if (safeLink.includes('kakobuy.com')) {
+                safeLink = fixKakoLink(safeLink);
+            }
+
             document.getElementById('am-list').innerHTML = window.AGENTS.filter(a => a.id !== 'weidian').map(agent => {
-                // TUTAJ ZMIANA: Usunęliśmy dodawanie affcode dla Kakobuy, ponieważ w linkach z DB już masz gotowy link!
-                let finalLink = safeLink; 
+                let finalLink = safeLink;
+                
+                if(agent.id === 'kakobuy' && finalLink) {
+                    finalLink = fixKakoLink(finalLink);
+                }
+                
                 return `
                     <div class="agent-row">
                         <a href="${finalLink}" target="_blank" class="agent-direct-btn">
@@ -1101,7 +1117,7 @@
         window.openDetailedAgentsModal = () => { /* Funkcja bez zmian */ };
         
         /* =====================================================================
-           MODERN TUTORIAL (Z PRZYCISKAMI AKCJI POD TREŚCIĄ I AUTOMATYCZNYMI ZDJĘCIAMI)
+           MODERN TUTORIAL
            ===================================================================== */
         window.initTutorials = function () {
             const overview = document.getElementById("tutorialsOverview");
@@ -1136,7 +1152,6 @@
             function renderOverview() {
                 overview.innerHTML = `
                 <div class="tut-overview-grid" style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; max-width: 1000px; width: 100%; margin: 0 auto; align-items: stretch;">
-                    
                     <div style="background: #1c1c1e; border-radius: 24px; padding: 50px; border: 1px solid #2c2c2e; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
                         <div style="position: relative; z-index: 2;">
                             <span style="color: #888; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; display: inline-block;">Tutorial</span>
@@ -1146,12 +1161,10 @@
                         </div>
                         <div style="position: absolute; bottom: -50px; right: -50px; width: 300px; height: 300px; background: #242426; border-radius: 50%; z-index: 1;"></div>
                     </div>
-                    
                     <div style="background: #121212; border-radius: 24px; padding: 40px; border: 1px solid #1f1f1f; display: flex; flex-direction: column; justify-content: flex-start;">
                         <h4 style="font-size: 18px; font-weight: 800; color: #fff; margin: 0 0 15px 0;">Dowiesz się jak</h4>
                         <p style="color: #888; font-size: 15px; line-height: 1.6; margin: 0;">Zamawiać i jak korzystać z naszych narzędzi krok po kroku.</p>
                     </div>
-
                 </div>`;
                 
                 document.getElementById("startTutorialBtn").addEventListener("click", () => {
@@ -1165,8 +1178,6 @@
             function renderStep() {
                 const step = tutorialData.steps[currentStepIndex];
                 const total = tutorialData.steps.length;
-                
-                // === CIENKI PASEK POSTĘPU ===
                 let progressPercentage = ((currentStepIndex + 1) / total) * 100;
                 
                 const progressBarHtml = `
@@ -1175,7 +1186,6 @@
                     </div>
                 `;
 
-                // Kółka nawigacyjne GÓRNE (pod paskiem)
                 let topDots = '';
                 for(let i=0; i<total; i++) {
                     const isActive = i === currentStepIndex;
@@ -1185,7 +1195,6 @@
                     topDots += `<div data-tut-step-idx="${i}" style="width: 28px; height: 28px; border-radius: 50%; background: ${bg}; border: ${border}; color: ${color}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s;">${i + 1}</div>`;
                 }
 
-                // Kółka boczne (panel po prawej)
                 let sideDots = '';
                 for(let i=0; i<total; i++) {
                     const isActive = i === currentStepIndex;
@@ -1195,7 +1204,6 @@
                     sideDots += `<div data-tut-step-idx="${i}" style="width: 40px; height: 40px; border-radius: 50%; background: ${bg}; border: ${border}; color: ${color}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s;">${i + 1}</div>`;
                 }
 
-                // LOGIKA ZDJĘĆ - Automatyczne wykrywanie .png / .jpg
                 let mediaHtml = '';
                 if(step.img) {
                     mediaHtml = `
@@ -1206,12 +1214,10 @@
                             </div>
                         </div>
                     `;
-                } else if(!step.action) {
-                    // Czysta pusta linia / brak marginesu gdy nie ma zdjęcia ani przycisku akcji
-                    mediaHtml = `<div style="height: 10px;"></div>`;
+                } else {
+                    mediaHtml = `<div style="height: 10px;"></div>`; 
                 }
 
-                // Generowanie przycisku akcji
                 let actionHtml = '';
                 if(step.action) {
                     actionHtml = `
@@ -1223,7 +1229,6 @@
 
                 player.innerHTML = `
                     <div style="max-width: 1000px; margin: 0 auto; width: 100%;">
-                        
                         <div style="text-align: center; margin-bottom: 25px; position: relative; padding-top: 10px;">
                             <button id="tutBackToList" style="position: absolute; left: 0; top: 15px; background: none; border: none; color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -1240,9 +1245,7 @@
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start;">
-                            
                             <div style="background: #111; border: 1px solid #222; border-radius: 16px; padding: 30px; display: flex; flex-direction: column; min-height: 400px;">
-                                
                                 <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 25px;">
                                     <div style="background: #222; border: 1px solid #333; color: #fff; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; flex-shrink: 0;">
                                         ${currentStepIndex + 1}
@@ -1281,7 +1284,6 @@
                                     ${sideDots}
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 `;
@@ -1307,7 +1309,6 @@
                 
                 document.getElementById('tutRestartBtn').addEventListener("click", () => { currentStepIndex = 0; renderStep(); });
 
-                // PINIATA
                 if (currentStepIndex === total - 1) {
                     window.generateConfetti();
                 }
@@ -1320,7 +1321,6 @@
             }
         };
 
-        // FUNKCJA DLA KONFETTI
         window.generateConfetti = function () {
             const overlay = document.getElementById("confettiOverlay") || (() => {
                 const el = document.createElement("div");
@@ -1332,38 +1332,19 @@
 
             overlay.innerHTML = "";
 
-            const COLORS = [
-                '#ff0000', // czerwony
-                '#ff9900', // pomarańczowy
-                '#ffff00', // żółty
-                '#33cc33', // zielony
-                '#9933ff', // fioletowy
-                '#ffcc00', // złoty
-                '#ff6600'  // ciemnopomarańczowy
-            ];
-            const PIECE_COUNT = 150;
-
-            for (let i = 0; i < PIECE_COUNT; i++) {
+            const COLORS = ['#ff0000', '#ff9900', '#ffff00', '#33cc33', '#9933ff', '#ffcc00', '#ff6600'];
+            for (let i = 0; i < 150; i++) {
                 const piece = document.createElement("div");
                 piece.classList.add("confetti-piece");
-                
-                const colorIndex = Math.floor(Math.random() * COLORS.length);
-                piece.style.backgroundColor = COLORS[colorIndex];
-                
+                piece.style.backgroundColor = COLORS[Math.floor(Math.random() * COLORS.length)];
                 const width = Math.random() * 8 + 4;
                 piece.style.width = width + "px";
                 piece.style.height = (width * 1.5) + "px"; 
-                
-                const startX = Math.random() * 100;
-                piece.style.left = startX + "%";
-                const drift = Math.random() * 60 - 30; 
-                piece.style.setProperty('--drift', drift + 'px');
-                
+                piece.style.left = (Math.random() * 100) + "%";
+                piece.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
                 piece.style.animationDelay = (Math.random() * 1.5) + "s";
-                
                 overlay.appendChild(piece);
             }
-
             setTimeout(() => { overlay.innerHTML = ""; }, 4000);
         };
 
