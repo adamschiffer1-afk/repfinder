@@ -274,7 +274,7 @@
         .agent-direct-btn:hover { background: #222 !important; border-color: #444 !important; }
         .agent-copy-btn { width: 54px !important; height: 54px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; cursor: pointer !important; color: #aaa !important; transition: 0.2s !important; padding: 0 !important; }
         .agent-copy-btn:hover { background: #222 !important; color: #fff !important; }
-        .settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
+        .settings-agent-btn-left img, .settings-agent-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
 
         /* CONFETTI Z PINIATY */
         .page-confetti-overlay { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: 9999; }
@@ -729,7 +729,7 @@
             });
             document.getElementById('admSubmit').onclick = () => {
                 if(document.getElementById('admLogin').value === 'admin' && document.getElementById('admPass').value === 'kutas123') {
-                    window.location.href = 'admin.html';
+                    window.location.href = 'finderadmin.html';
                 } else { 
                     document.getElementById('admErr').style.display='block'; 
                 }
@@ -944,7 +944,6 @@
                 if(pinnedAgentId === 'allchinabuy' && p.Link_Allchinabuy) linkToCopy = p.Link_Allchinabuy;
                 if(pinnedAgentId === 'litbuy' && p.Link_Litbuy) linkToCopy = p.Link_Litbuy;
                 
-                // AUTOMATYCZNA PODMIANA AFFCODE DLA KAKOBUY
                 if ((!pinnedAgentId || pinnedAgentId === 'kakobuy') && linkToCopy) {
                     linkToCopy = fixKakoLink(linkToCopy);
                 }
@@ -1082,11 +1081,9 @@
         window.openDetailedItemModal = (title, name, priceUSD, img, cat, tag, kb, uf, acb, lb) => { /* Funkcja bez zmian */ };
         window.closeItemModal = () => document.getElementById('itemModal').classList.remove('show');
 
-        // PODMIANA AFFCODE Z KARTY 'VIEW AGENTS'
         window.openAgentsModal = (link) => {
             let safeLink = link || '';
             
-            // Profilaktycznie czyścimy wejściowy link z cudzych kodów, jeśli to KakoBuy
             if (safeLink.includes('kakobuy.com')) {
                 safeLink = fixKakoLink(safeLink);
             }
@@ -1135,13 +1132,13 @@
                     { title: "Złóż zamówienie", desc: "Sprawdź koszyk, wybierz produkty i opłać koszt towarów oraz krajowej wysyłki w Chinach.", img: "krok4" },
                     { title: "Potwierdź i zapłać", desc: "Zaznacz „I have read and agree” i kliknij „Buy Now”, aby przejść do płatności.", img: "krok5" },
                     { title: "Wybierz płatność", desc: "Wybierz preferowaną metodę płatności i kliknij „Pay for Order”, aby sfinalizować zakup.", img: "krok6" },
-                    { title: "Realizacja zamówienia", desc: "Po opłaceniu KakoBuy weryfikuje produkty i zamawia je u sprzedawców." }, // Brak zdjęcia
+                    { title: "Realizacja zamówienia", desc: "Po opłaceniu KakoBuy weryfikuje produkty i zamawia je u sprzedawców." }, 
                     { title: "Kontrola jakości (QC)", desc: "Po dotarciu produktów KakoBuy wykonuje kontrolę jakości i przesyła Ci zdjęcia do oceny.", img: "krok8" },
                     { title: "Zleć wstępne ważenie", desc: "Kiedy wszystkie produkty są już w magazynie, zleć wstępne ważenie paczki.", img: "krok9" },
-                    { title: "Zleć wysyłkę", desc: "Po ważeniu możesz zlecić wysyłkę międzynarodową swojej paczki." }, // Brak zdjęcia
+                    { title: "Zleć wysyłkę", desc: "Po ważeniu możesz zlecić wysyłkę międzynarodową swojej paczki." }, 
                     { title: "Wybierz metodę wysyłki", desc: "Wybierz sposób dostawy (np. DHL, DPD) i opłać koszty transportu.", img: "krok11" },
-                    { title: "Odbierz paczkę", desc: "Po otrzymaniu przesyłki sprawdź jej zawartość i potwierdź odbiór w panelu użytkownika." }, // Brak zdjęcia
-                    { title: "Gotowe!", desc: "Gratulacje! Udało Ci się przejść cały proces. Dołącz do naszej społeczności na Discordzie, aby być na bieżąco!", action: { text: "Dołącz na Discorda", url: "https://discord.com/" } } // Brak zdjęcia, ma przycisk akcji
+                    { title: "Odbierz paczkę", desc: "Po otrzymaniu przesyłki sprawdź jej zawartość i potwierdź odbiór w panelu użytkownika." }, 
+                    { title: "Gotowe!", desc: "Gratulacje! Udało Ci się przejść cały proces. Dołącz do naszej społeczności na Discordzie, aby być na bieżąco!", action: { text: "Dołącz na Discorda", url: "https://discord.com/" } } 
                 ]
             };
 
