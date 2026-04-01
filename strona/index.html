@@ -9,10 +9,10 @@
 
     <style>
         /* =====================================================================
-           GLOBAL & BASE STYLES
+           GLOBAL & BASE STYLES (Z tłem z kropkami)
            ===================================================================== */
         :root {
-          --bg: #161618;
+          --bg: #111111;
           --bg-2: #1e1e1e;
           --bg-3: #262626;
           --panel: rgba(30, 30, 30, 0.65);
@@ -42,33 +42,23 @@
         
         html { scroll-behavior: smooth; }
 
-        html, body { 
+        body { 
             margin: 0; 
             padding: 0; 
             min-height: 100%;
             font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             color: var(--text);
-            background: var(--bg);
-            background-image: radial-gradient(circle at top, var(--bg-3) 0%, var(--bg) 85%);
+            background-color: var(--bg);
+            /* KROPKOWANE TŁO JAK NA SCREENIE */
+            background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1.5px, transparent 1.5px);
+            background-size: 32px 32px;
+            background-position: 0 0;
+            background-attachment: fixed;
             overflow-x: hidden !important; 
             width: 100vw;
             max-width: 100vw;
             -webkit-font-smoothing: antialiased;
         }
-
-        body::before {
-          content: "";
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          z-index: 0;
-          background: linear-gradient(110deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 34%, rgba(255, 255, 255, 0.02) 43%, rgba(255, 255, 255, 0.04) 50%, rgba(255, 255, 255, 0.02) 57%, rgba(255, 255, 255, 0) 66%, rgba(255, 255, 255, 0) 100%);
-          transform: translateX(-100%);
-          animation: globalWave 14s linear infinite;
-        }
-
-        @keyframes globalWave { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         button, input, textarea, select, a { font: inherit; }
         button { border: 0; cursor: pointer; outline: none; }
@@ -93,21 +83,21 @@
         .section-head p { margin: 10px 0 0; color: var(--text); font-size: 17px; line-height: 1.6; }
 
         /* =====================================================================
-           NAVBAR
+           NAVBAR (Desktop)
            ===================================================================== */
         .header-container { position: absolute; top: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 10000; pointer-events: none; width: 100%; }
         .floating-nav { pointer-events: auto; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background: rgba(22, 22, 22, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 100px; padding: 8px 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); width: 95vw; max-width: 1000px; }
-        .nav-left { display: flex; justify-content: flex-start; align-items: center; }
-        .nav-brand-pill { padding: 0 15px; font-weight: 900; font-size: 19px; color: #fff; text-decoration: none; cursor: pointer; letter-spacing: -1px; background: none; border: none; }
+        .nav-left { display: flex; justify-content: flex-start; align-items: center; gap: 10px; }
+        .nav-brand-pill { padding: 0 15px; font-weight: 900; font-size: 19px; color: #fff; text-decoration: none; cursor: pointer; letter-spacing: -1px; background: none; border: none; display: flex; align-items: center; gap: 8px;}
         .nav-center { display: flex; justify-content: center; align-items: center; gap: 5px; }
         .nav-link-pill { background: none; border: none; color: #888; padding: 12px 24px; border-radius: 100px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; text-decoration: none; white-space: nowrap; }
         .nav-link-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
         .nav-link-pill.active { background: #fff !important; color: #000 !important; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
         .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
-        .nav-admin-pill { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #888; padding: 12px 20px; border-radius: 100px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 6px; }
-        .nav-admin-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
         .nav-settings-btn-pill { width: 42px !important; height: 42px !important; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%; cursor: pointer; transition: 0.2s; color: #888; padding: 0 !important; }
         .nav-settings-btn-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); }
+        .mobile-menu-toggle { display: none; }
+        
         .dropdown { position: relative; }
         .dropdown-menu { display: none; position: absolute; top: 130%; right: 0; background: #161616; border: 1px solid #222; border-radius: 16px; padding: 10px; width: 160px; z-index: 2100; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
         .dropdown-menu.show { display: block; }
@@ -120,11 +110,14 @@
         #home { min-height: calc(100vh - 80px); }
         .hero-block { min-height: calc(100vh - 80px); width: min(1100px, calc(100% - 24px)); margin: 0 auto; display: flex; align-items: center; justify-content: center; padding: 40px 0 80px; }
         .hero-inner { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .hero-title { margin: 0; font-size: clamp(48px, 13vw, 92px); line-height: 0.94; letter-spacing: -0.07em; font-weight: 800; color: transparent; background: linear-gradient(110deg, #ffffff 0%, #9e9e9e 50%, #ffffff 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; animation: heroTextSweep 6s linear infinite; }
-        @keyframes heroTextSweep { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
-        .hero-subtitle { margin: 20px 0 0; max-width: 420px; font-size: clamp(15px, 4vw, 20px); color: var(--text); font-weight: 600; line-height: 1.58; }
-        .hero-cta-btn { margin-top: 32px; width: 100%; max-width: 340px; height: 68px; padding: 0 24px; border-radius: 26px; background: var(--primary); color: #000; font-size: 19px; font-weight: 800; box-shadow: 0 10px 25px rgba(255,255,255,0.15); transition: transform 0.18s ease; display: flex; align-items: center; justify-content: center;}
-        .hero-cta-btn:hover { transform: translateY(-2px); }
+        .hero-title { margin: 0; font-size: clamp(48px, 13vw, 92px); line-height: 0.94; letter-spacing: -0.07em; font-weight: 800; color: #ffffff; }
+        .hero-subtitle { margin: 20px 0 0; max-width: 480px; font-size: clamp(15px, 4vw, 18px); color: var(--text); font-weight: 500; line-height: 1.58; }
+        
+        .hero-btn-group { display: flex; gap: 15px; margin-top: 35px; justify-content: center; width: 100%; flex-wrap: wrap; }
+        .hero-cta-btn { width: 160px; height: 52px; border-radius: 14px; background: #ffffff; color: #000000; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: 0.2s; border: none; cursor: pointer; }
+        .hero-cta-btn:hover { background: #e5e5e5; transform: translateY(-2px); }
+        .hero-secondary-btn { width: 160px; height: 52px; border-radius: 14px; background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #ffffff; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: 0.2s; text-decoration: none; cursor: pointer; }
+        .hero-secondary-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); border-color: rgba(255,255,255,0.3); }
 
         /* =====================================================================
            PRODUCTS (FILTRY & GRID)
@@ -144,7 +137,6 @@
 
         .card-name { font-size: 14px; font-weight: 700; color: #fff; margin: 10px 0 6px 0; line-height: 1.3; }
         
-        /* ZAKTUALIZOWANY UKŁAD KARTY NA DESKTOP: Cena, View Agents, Ikonka w jednym rzędzie */
         .card-bottom-row { display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: auto !important; width: 100% !important; flex-wrap: nowrap !important; }
         .card-price { font-size: 19px !important; font-weight: 900 !important; color: #fff !important; white-space: nowrap !important; flex-shrink: 0 !important; margin: 0 !important; }
         .card-actions { display: flex !important; gap: 8px !important; align-items: center !important; flex-shrink: 0 !important; margin-left: 10px; }
@@ -216,8 +208,8 @@
         /* =====================================================================
            MODAL USTAWIEŃ I AGENTÓW
            ===================================================================== */
-        .settings-modal, .filter-modal, .agents-modal, #adminLoginModal, .item-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85) !important; z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
-        .settings-modal.show, .filter-modal.show, .agents-modal.show, #adminLoginModal.show, .item-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
+        .settings-modal, .filter-modal, .agents-modal, .item-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85) !important; z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
+        .settings-modal.show, .filter-modal.show, .agents-modal.show, .item-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
         .filter-content, .agents-modal-content, .item-modal-content { width: 100%; max-width: 440px; border-radius: 24px !important; padding: 30px !important; box-shadow: 0 25px 50px rgba(0,0,0,0.8) !important; background: #161616 !important; color: #fff !important; border: 1px solid #2a2a2a !important; }
         .settings-content { width: 100%; max-width: 460px; background: #161616 !important; border: 1px solid #2a2a2a !important; border-radius: 24px !important; padding: 30px !important; box-shadow: 0 25px 50px rgba(0,0,0,0.8) !important; }
         
@@ -293,35 +285,45 @@
            ===================================================================== */
         @media (max-width: 768px) {
             html, body, .site-shell { width: 100vw; overflow-x: hidden; }
-            .main-content { padding-top: 150px; } 
-            .section-container { padding: 20px 15px; }
-            .hero-inner { padding: 60px 15px 40px; }
-            .hero-title { font-size: 48px; letter-spacing: -2px; }
-
-            .header-container { padding: 0 12px; top: 12px; }
-            .floating-nav { grid-template-columns: 1fr; background: rgba(20, 20, 20, 0.95); padding: 12px; border-radius: 20px; gap: 10px; }
+            .main-content { padding-top: 100px; } 
+            .section-container { padding: 20px 10px; }
             
-            .nav-left { justify-content: space-between; width: 100%; display: flex; }
-            .nav-brand-pill { padding: 0; }
-            .nav-right { flex: none; display: flex; gap: 8px; }
-            .nav-admin-pill span { display: none; }
-            .nav-settings-btn-pill { width: 40px !important; height: 40px !important; }
-
-            .nav-center { width: 100%; display: flex; overflow-x: auto; justify-content: flex-start; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.08); gap: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-            .nav-center::-webkit-scrollbar { display: none; }
-            .nav-link-pill { padding: 8px 16px; font-size: 13px; flex-shrink: 0; background: rgba(255,255,255,0.03); }
-
-            .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
-            .product-card-new { padding: 10px !important; border-radius: 14px !important; }
+            /* NOWY HERO NA TELEFONY (identyczny ze screenem) */
+            .hero-inner { padding: 60px 10px 40px; }
+            .hero-title { font-size: clamp(32px, 9vw, 42px); line-height: 1.15; letter-spacing: -1px; }
+            .hero-subtitle { font-size: 14px; margin-top: 15px; color: #aaa; max-width: 90%; }
             
-            /* Mobilne karty - Większa czcionka, ukrycie ikonki, przycisk View Agents na pełną szerokość */
-            .card-name { font-size: 13px; font-weight: 800; margin-bottom: 2px;}
+            /* NOWY NAVBAR NA TELEFONY (identyczny ze screenem) */
+            .header-container { top: 15px; padding: 0 15px; width: 100%; }
+            .floating-nav { position: relative; grid-template-columns: 1fr auto; padding: 12px 15px; background: #161616; border: 1px solid #2a2a2a; border-radius: 20px; }
+            
+            .nav-left { justify-content: flex-start; }
+            .nav-brand-pill { font-size: 18px; padding: 0; }
+            
+            .nav-right { display: flex; align-items: center; gap: 8px; flex-direction: row !important; }
+            .nav-settings-btn-pill { width: 36px !important; height: 36px !important; border: none; background: transparent; }
+            .mobile-menu-toggle { display: flex; align-items: center; justify-content: center; background: transparent; border: none; color: #fff; padding: 0; cursor: pointer; width: 36px; height: 36px; }
+            
+            /* Ukryte menu rozwijane na telefonie */
+            .nav-center { display: none; position: absolute; top: 70px; left: 0; width: 100%; background: #161616; border: 1px solid #2a2a2a; border-radius: 16px; flex-direction: column; padding: 15px; gap: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); z-index: 9999; }
+            .nav-center.open { display: flex; }
+            .nav-link-pill { width: 100%; text-align: center; padding: 14px; border-radius: 12px; background: #1e1e1e; font-size: 16px; }
+            .dropdown { width: 100%; }
+            .dropdown-menu { position: static; width: 100%; box-shadow: none; border: none; background: transparent; padding: 0 10px; margin-top: 5px; }
+
+            /* Mobilne karty produktów */
+            .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
+            .product-card-new { padding: 10px !important; border-radius: 12px !important; }
+            
+            .card-name { font-size: 13px; font-weight: 800; margin: 8px 0 4px 0; }
             .card-price { font-size: 17px !important; text-align: left; margin: 4px 0 8px 0 !important; }
             
+            /* Zmiana układu przycisków na telefonie - TYLKO VIEW AGENTS na całą szerokość */
             .card-bottom-row { display: block !important; margin-top: auto !important; }
-            .card-actions { display: block !important; margin-left: 0; width: 100%; border-top: 1px solid #2a2a2a; padding-top: 8px;}
+            .card-actions { display: block !important; margin-left: 0; width: 100%; }
+            .card-actions-row { display: block !important; padding-top: 8px; border-top: 1px solid #2a2a2a; }
             
-            .btn-view-agents { font-size: 13px !important; padding: 10px !important; width: 100%; text-align: center; }
+            .btn-view-agents { font-size: 12px !important; padding: 12px 10px !important; width: 100%; text-align: center; border-radius: 10px !important; }
             .btn-icon-pill-square { display: none !important; } /* UKRYWAMY IKONKĘ NA TELEFONIE */
 
             .search-filter-row { flex-direction: column; gap: 10px; }
@@ -345,16 +347,17 @@
         <header class="header-container">
             <nav class="floating-nav">
                 <div class="nav-left">
-                    <button class="nav-brand-pill" data-section-link="home">repfinder</button>
-                    <div class="nav-right" style="display: none;" id="mobileNavRight"></div>
+                    <button class="nav-brand-pill" data-section-link="home">
+                        repfinder
+                    </button>
                 </div>
                 
-                <div class="nav-center">
+                <div class="nav-center" id="mobileNavMenu">
                     <button class="nav-link-pill active" data-section-link="home">Home</button>
                     <button class="nav-link-pill" data-section-link="products">Products</button>
                     <button class="nav-link-pill" data-section-link="tutorials">Tutorials</button>
                     <div class="dropdown">
-                        <button class="nav-link-pill" id="toolsToggle">Tools ▾</button>
+                        <button class="nav-link-pill" id="toolsToggle" style="width: 100%;">Tools ▾</button>
                         <div class="dropdown-menu" id="toolsMenu">
                             <button class="dropdown-item" data-section-link="tracking">Tracking</button>
                             <button class="dropdown-item" data-section-link="converter">Converter</button>
@@ -364,7 +367,10 @@
 
                 <div class="nav-right" id="desktopNavRight">
                     <button class="nav-settings-btn-pill" id="openSettingsBtnNav" title="Settings">
-                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
+                    <button class="mobile-menu-toggle" id="mobileMenuBtn">
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="10" y1="18" x2="20" y2="18"></line></svg>
                     </button>
                 </div>
             </nav>
@@ -374,9 +380,13 @@
             <section id="home" class="page-section active">
                 <div class="hero-block">
                     <div class="hero-inner">
-                        <h1 class="hero-title">repfinder</h1>
-                        <p class="hero-subtitle">The best items finder site. Find top tier items and order with confidence.</p>
-                        <button class="hero-cta-btn" data-section-link="products">Explore Products</button>
+                        <h1 class="hero-title">repfinder<br>najlepsza strona z<br>replikami</h1>
+                        <p class="hero-subtitle">Znajdź najlepsze itemy, konwertuj linki i zamawiaj z pewnością. Wszystko w jednym miejscu.</p>
+                        
+                        <div class="hero-btn-group">
+                            <button class="hero-cta-btn" data-section-link="products">Produkty</button>
+                            <a href="https://discord.gg/twojlink" target="_blank" class="hero-secondary-btn">Discord</a>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -664,25 +674,6 @@
           { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' },
           { id: 'weidian', name: 'Weidian', icon: 'https://s.weidian.com/assets/favicon.ico' }
         ];
-
-        function checkMobileNav() {
-            const rightGroup = document.getElementById('desktopNavRight');
-            const mobileRight = document.getElementById('mobileNavRight');
-            if(window.innerWidth <= 768) {
-                if(rightGroup && mobileRight && rightGroup.parentNode !== mobileRight) {
-                    mobileRight.appendChild(rightGroup);
-                    mobileRight.style.display = 'flex';
-                }
-            } else {
-                if(rightGroup && rightGroup.parentNode === mobileRight) {
-                    document.querySelector('.nav-left').insertAdjacentElement('afterend', rightGroup);
-                    rightGroup.style.display = 'flex';
-                    rightGroup.className = 'nav-right';
-                    mobileRight.style.display = 'none';
-                }
-            }
-        }
-        window.addEventListener('resize', checkMobileNav);
         
         window.copyText = function(text, btn) {
             if(!text) return;
@@ -717,6 +708,10 @@
             const toolsMenu = document.getElementById('toolsMenu');
             if(toolsMenu) toolsMenu.classList.remove('show');
             
+            // Zamykanie menu mobilnego po kliknięciu
+            const mobileNavMenu = document.getElementById('mobileNavMenu');
+            if(mobileNavMenu) mobileNavMenu.classList.remove('open');
+            
             window.scrollTo(0,0);
             
             // Push State zmienia URL na pasku przeglądarki na np. /products
@@ -747,9 +742,23 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            checkMobileNav();
 
-            // Ładowanie odpowiedniej sekcji na podstawie URL przy starcie strony (żeby /products ładowało products)
+            // Obsługa Mobile Menu Toggle (Hamburger)
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileNavMenu = document.getElementById('mobileNavMenu');
+            if (mobileMenuBtn && mobileNavMenu) {
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    mobileNavMenu.classList.toggle('open');
+                });
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenuBtn.contains(e.target) && !mobileNavMenu.contains(e.target)) {
+                        mobileNavMenu.classList.remove('open');
+                    }
+                });
+            }
+
+            // Ładowanie odpowiedniej sekcji na podstawie URL przy starcie strony
             let path = window.location.pathname.replace(/^\/|\/$/g, '');
             if (!path || path === 'index.html') path = 'home';
             
@@ -771,9 +780,6 @@
             if(tBtn && tMenu) {
                 tBtn.addEventListener('click', (e) => {
                     e.stopPropagation(); e.preventDefault(); tMenu.classList.toggle('show');
-                });
-                document.addEventListener('click', (e) => {
-                    if (!tBtn.contains(e.target) && !tMenu.contains(e.target)) tMenu.classList.remove('show');
                 });
             }
 
@@ -937,17 +943,17 @@
                     
                     <h3 class="card-name">${p.Nazwa}</h3>
                     
-                    <div class="card-bottom-row">
-                        <div class="card-price">${displayPrice}</div>
-                        <div class="card-actions">
-                            <button class="btn-view-agents" onclick="window.openAgentsModal('${safeLinkToCopy}')">
-                                View agents
-                            </button>
-                            <button class="btn-icon-pill-square" onclick="window.copyText('${safeLinkToCopy}', this)">
-                                <img src="${agentObj.icon}" class="copy-icon">
-                                <svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            </button>
-                        </div>
+                    <div class="card-price">${displayPrice}</div>
+                    
+                    <div class="card-actions-row">
+                        <button class="btn-view-agents" onclick="window.openAgentsModal('${safeLinkToCopy}')">
+                            View agents
+                        </button>
+                        
+                        <button class="btn-icon-pill-square" onclick="window.copyText('${safeLinkToCopy}', this)">
+                            <img src="${agentObj.icon}" class="copy-icon">
+                            <svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        </button>
                     </div>
                 </article>`;
             });
@@ -1316,7 +1322,7 @@
         };
 
         /* =====================================================================
-           LOGIKA KONWERTERA 
+           LOGIKA KONWERTERA
            ===================================================================== */
         window.initConverter = function () {
             const input = document.getElementById("converterInput");
