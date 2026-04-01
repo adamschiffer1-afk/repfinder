@@ -144,12 +144,12 @@
 
         .card-name { font-size: 14px; font-weight: 700; color: #fff; margin: 10px 0 6px 0; line-height: 1.3; }
         
-        /* ZAKTUALIZOWANY UKŁAD KARTY: Cena, View Agents, Ikonka w jednym rzędzie */
+        /* ZAKTUALIZOWANY UKŁAD KARTY NA DESKTOP: Cena, View Agents, Ikonka w jednym rzędzie */
         .card-bottom-row { display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: auto !important; width: 100% !important; flex-wrap: nowrap !important; }
         .card-price { font-size: 19px !important; font-weight: 900 !important; color: #fff !important; white-space: nowrap !important; flex-shrink: 0 !important; margin: 0 !important; }
         .card-actions { display: flex !important; gap: 8px !important; align-items: center !important; flex-shrink: 0 !important; margin-left: 10px; }
         
-        .btn-view-agents { background: #111 !important; border: 1px solid #333 !important; color: #fff !important; padding: 8px 12px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 12px !important; cursor: pointer !important; transition: 0.2s !important; white-space: nowrap !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+        .btn-view-agents { background: #111 !important; border: 1px solid #333 !important; color: #fff !important; padding: 8px 12px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 12px !important; cursor: pointer !important; transition: 0.2s !important; white-space: nowrap !important; display: flex !important; align-items: center !important; justify-content: center !important; flex: 1; }
         .btn-view-agents:hover { background: #222 !important; }
         
         .btn-icon-pill-square { width: 34px !important; height: 34px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #111 !important; border: 1px solid #333 !important; border-radius: 10px !important; cursor: pointer !important; transition: 0.2s !important; padding: 0 !important; flex-shrink: 0 !important; position: relative; }
@@ -278,7 +278,7 @@
         .agent-direct-btn:hover { background: #222 !important; border-color: #444 !important; }
         .agent-copy-btn { width: 54px !important; height: 54px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; cursor: pointer !important; color: #aaa !important; transition: 0.2s !important; padding: 0 !important; }
         .agent-copy-btn:hover { background: #222 !important; color: #fff !important; }
-        .settings-agent-btn-left img, .settings-agent-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
+        .settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
 
         /* CONFETTI Z PINIATY */
         .page-confetti-overlay { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: 9999; }
@@ -314,8 +314,16 @@
             .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
             .product-card-new { padding: 10px !important; border-radius: 14px !important; }
             
-            .card-name { font-size: 12px; }
+            /* Mobilne karty - Większa czcionka, ukrycie ikonki, przycisk View Agents na pełną szerokość */
+            .card-name { font-size: 13px; font-weight: 800; margin-bottom: 2px;}
+            .card-price { font-size: 17px !important; text-align: left; margin: 4px 0 8px 0 !important; }
             
+            .card-bottom-row { display: block !important; margin-top: auto !important; }
+            .card-actions { display: block !important; margin-left: 0; width: 100%; border-top: 1px solid #2a2a2a; padding-top: 8px;}
+            
+            .btn-view-agents { font-size: 13px !important; padding: 10px !important; width: 100%; text-align: center; }
+            .btn-icon-pill-square { display: none !important; } /* UKRYWAMY IKONKĘ NA TELEFONIE */
+
             .search-filter-row { flex-direction: column; gap: 10px; }
             .btn-filters-open { width: 100%; justify-content: center; padding: 16px; }
             
@@ -620,6 +628,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+        // WYMUSZANIE POPRAWNEGO LINKU KAKOBUY
         function fixKakoLink(link) {
             if (!link || !link.includes('kakobuy.com')) return link;
             let clean = link.replace(/([?&])(affcode|ref_id)=[^&]*/gi, '');
@@ -693,6 +702,7 @@
             }, 1500);
         };
 
+        // Zmiana sekcji + PUSH STATE (Czyste URL)
         window.switchSection = function(id, updateUrl = true) {
             const target = document.getElementById(id);
             if(!target) return;
@@ -709,6 +719,7 @@
             
             window.scrollTo(0,0);
             
+            // Push State zmienia URL na pasku przeglądarki na np. /products
             if(updateUrl) {
                 const newPath = id === 'home' ? '/' : '/' + id;
                 history.pushState({ section: id }, '', newPath);
@@ -724,6 +735,7 @@
             }
         };
 
+        // Obsługa strzałek przeglądarki Wstecz/Dalej
         window.addEventListener('popstate', (e) => {
             if (e.state && e.state.section) {
                 window.switchSection(e.state.section, false);
@@ -737,6 +749,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             checkMobileNav();
 
+            // Ładowanie odpowiedniej sekcji na podstawie URL przy starcie strony (żeby /products ładowało products)
             let path = window.location.pathname.replace(/^\/|\/$/g, '');
             if (!path || path === 'index.html') path = 'home';
             
@@ -1303,7 +1316,7 @@
         };
 
         /* =====================================================================
-           LOGIKA KONWERTERA
+           LOGIKA KONWERTERA 
            ===================================================================== */
         window.initConverter = function () {
             const input = document.getElementById("converterInput");
