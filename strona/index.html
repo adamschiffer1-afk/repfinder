@@ -104,7 +104,8 @@
         .nav-link-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
         .nav-link-pill.active { background: #fff !important; color: #000 !important; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
         .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
-        /* Usunięto styl dla nav-admin-pill */
+        .nav-admin-pill { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #888; padding: 12px 20px; border-radius: 100px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .nav-admin-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
         .nav-settings-btn-pill { width: 42px !important; height: 42px !important; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%; cursor: pointer; transition: 0.2s; color: #888; padding: 0 !important; }
         .nav-settings-btn-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); }
         .dropdown { position: relative; }
@@ -138,7 +139,6 @@
 
         .products-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; width: 100%; }
         
-        /* Zmodyfikowana karta dla nowego układu */
         .product-card-new { background-color: #1a1a1a !important; border-radius: 16px !important; padding: 14px !important; display: flex; flex-direction: column; border: 1px solid #2a2a2a !important; transition: 0.3s; overflow: hidden; position: relative; width: 100%; }
         .product-card-new:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important; }
 
@@ -202,16 +202,20 @@
         .converter-dropdown-menu { display: none !important; position: absolute !important; top: 110% !important; left: 50% !important; transform: translateX(-50%); background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; padding: 8px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; flex-direction: column !important; gap: 4px !important; z-index: 2000 !important; min-width: 160px; backdrop-filter: blur(12px);}
         .converter-dropdown-wrapper.open .converter-dropdown-menu { display: flex !important; }
         
-        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 10px 15px !important; border-radius: 8px !important; font-weight: 700 !important; font-size: 13px !important; cursor: pointer !important; display: flex !important; align-items: center !important; gap: 10px !important; margin-bottom: 4px !important; transition: 0.2s !important;}
+        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 12px 16px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 13px !important; cursor: pointer !important; display: flex !important; align-items: center !important; gap: 10px !important; transition: 0.2s !important; }
         .converter-dropdown-item:hover { background: #222 !important; color: #fff !important; }
+        .converter-dropdown-item.active { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
 
-        .platform-pill { font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 100px; border: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; background: rgba(255,255,255,0.05); color: var(--text); }
+        .platform-pill { font-size: 10px; font-weight: 900; padding: 6px 12px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; border: 1px solid #333; }
+        .platform-pill-weidian, .platform-pill-taobao, .platform-pill-1688, .platform-pill-tmall { background: rgba(255,255,255,0.05); color: #fff; }
+        .platform-pill-kakobuy, .platform-pill-usfans, .platform-pill-litbuy, .platform-pill-allchinabuy { background: #fff; color: #000; border-color: #fff; }
+        .platform-pill-neutral { background: transparent; color: #888; border-color: #333; }
 
         /* =====================================================================
            MODAL USTAWIEŃ I AGENTÓW
            ===================================================================== */
-        .settings-modal, .filter-modal, .agents-modal, .item-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85) !important; z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
-        .settings-modal.show, .filter-modal.show, .agents-modal.show, .item-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
+        .settings-modal, .filter-modal, .agents-modal, #adminLoginModal, .item-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85) !important; z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
+        .settings-modal.show, .filter-modal.show, .agents-modal.show, #adminLoginModal.show, .item-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
         .filter-content, .agents-modal-content, .item-modal-content { width: 100%; max-width: 440px; border-radius: 24px !important; padding: 30px !important; box-shadow: 0 25px 50px rgba(0,0,0,0.8) !important; background: #161616 !important; color: #fff !important; border: 1px solid #2a2a2a !important; }
         .settings-content { width: 100%; max-width: 460px; background: #161616 !important; border: 1px solid #2a2a2a !important; border-radius: 24px !important; padding: 30px !important; box-shadow: 0 25px 50px rgba(0,0,0,0.8) !important; }
         
@@ -298,6 +302,7 @@
             .nav-left { justify-content: space-between; width: 100%; display: flex; }
             .nav-brand-pill { padding: 0; }
             .nav-right { flex: none; display: flex; gap: 8px; }
+            .nav-admin-pill span { display: none; }
             .nav-settings-btn-pill { width: 40px !important; height: 40px !important; }
 
             .nav-center { width: 100%; display: flex; overflow-x: auto; justify-content: flex-start; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.08); gap: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
@@ -307,13 +312,12 @@
             .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
             .product-card-new { padding: 10px !important; border-radius: 14px !important; }
             
-            /* Mobilne karty - Cena na środek, przyciski na całą szerokość */
             .card-name { font-size: 12px; }
             .card-price { font-size: 18px !important; text-align: center; margin-top: 5px !important; }
             .card-actions-row { flex-wrap: wrap; justify-content: center; gap: 6px !important; padding-top: 8px; }
             .btn-view-agents { font-size: 11px !important; padding: 8px 12px !important; width: 100%; text-align: center; }
             .btn-icon-pill-square { width: 34px !important; height: 34px !important; }
-            
+
             .search-filter-row { flex-direction: column; gap: 10px; }
             .btn-filters-open { width: 100%; justify-content: center; padding: 16px; }
             
@@ -335,7 +339,7 @@
         <header class="header-container">
             <nav class="floating-nav">
                 <div class="nav-left">
-                    <button class="nav-brand-pill" onclick="window.switchSection('home')">repfinder</button>
+                    <button class="nav-brand-pill" data-section-link="home">repfinder</button>
                     <div class="nav-right" style="display: none;" id="mobileNavRight"></div>
                 </div>
                 
@@ -366,7 +370,7 @@
                     <div class="hero-inner">
                         <h1 class="hero-title">repfinder</h1>
                         <p class="hero-subtitle">The best items finder site. Find top tier items and order with confidence.</p>
-                        <button class="hero-cta-btn" onclick="window.switchSection('products')">Explore Products</button>
+                        <button class="hero-cta-btn" data-section-link="products">Explore Products</button>
                     </div>
                 </div>
             </section>
@@ -692,7 +696,8 @@
             }, 1500);
         };
 
-        window.switchSection = function(id) {
+        // Zmiana sekcji + PUSH STATE (Czyste URL bez #)
+        window.switchSection = function(id, updateUrl = true) {
             const target = document.getElementById(id);
             if(!target) return;
             
@@ -708,6 +713,12 @@
             
             window.scrollTo(0,0);
             
+            // Push State zmienia URL na pasku przeglądarki
+            if(updateUrl) {
+                const newPath = id === 'home' ? '/' : '/' + id;
+                history.pushState({ section: id }, '', newPath);
+            }
+            
             if(id === 'tutorials' && !window.tutorialsInited && typeof window.initTutorials === 'function') {
                 window.initTutorials();
                 window.tutorialsInited = true;
@@ -718,8 +729,30 @@
             }
         };
 
+        // Obsługa strzałek przeglądarki Wstecz/Dalej
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.section) {
+                window.switchSection(e.state.section, false);
+            } else {
+                let path = window.location.pathname.replace(/^\/|\/$/g, '');
+                if (!path || path === 'index.html') path = 'home';
+                window.switchSection(path, false);
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             checkMobileNav();
+
+            // Ładowanie odpowiedniej sekcji na podstawie URL przy starcie strony
+            let path = window.location.pathname.replace(/^\/|\/$/g, '');
+            if (!path || path === 'index.html') path = 'home';
+            
+            const validSections = ['home', 'products', 'tutorials', 'tracking', 'converter'];
+            if (validSections.includes(path)) {
+                window.switchSection(path, false);
+            } else {
+                window.switchSection('home', false);
+            }
 
             document.querySelectorAll('[data-section-link]').forEach(b => {
                 b.addEventListener('click', (e) => {
