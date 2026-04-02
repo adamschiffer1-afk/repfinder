@@ -49,6 +49,32 @@
         .back-link { color: var(--text-meta); text-decoration: none; font-size: 14px; font-weight: 700; transition: 0.2s; }
         .back-link:hover { color: #fff; }
 
+        /* ZAKŁADKI (TABS) - NOWE */
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            padding: 0 10px;
+            margin-top: -10px;
+        }
+        .tab-btn {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: var(--text-meta);
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn:hover { background: var(--input-bg); color: #fff; }
+        .tab-btn.active { background: #fff; color: #000; border-color: #fff; }
+
+        /* KONTENERY WIDOKÓW */
+        .view-section { display: none; flex-direction: column; gap: 30px; }
+        .view-section.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         /* PANELE STATYSTYK (GÓRNY RZĄD) */
         .stats-grid {
             display: grid;
@@ -80,12 +106,14 @@
             padding: 30px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .panel-title { font-size: 18px; font-weight: 800; margin-bottom: 25px; color: #fff; }
 
         /* LISTA PRODUKTÓW (LEWA) */
         .search-field { margin-bottom: 20px; }
-        .product-list-scroll {
+        .product-list-scroll, .analytics-list-scroll {
             height: 400px; /* Wysokość listy do przewijania */
             overflow-y: auto;
             padding-right: 10px;
@@ -173,11 +201,19 @@
         }
         @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
+        /* TABELE ANALITYKI */
+        .analytics-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .analytics-table th { color: var(--text-meta); padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; text-transform: uppercase; font-weight: 800;}
+        .analytics-table td { padding: 14px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; color: #ccc;}
+        .analytics-table tr:hover td { background: rgba(255,255,255,0.02); color: #fff;}
+        .badge-action { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: rgba(59, 130, 246, 0.15); color: #60a5fa;}
+        .badge-time { font-size: 12px; color: var(--text-meta); font-weight: 600;}
+
         /* Scrolling bar stylization */
-        .product-list-scroll::-webkit-scrollbar { width: 6px; }
-        .product-list-scroll::-webkit-scrollbar-track { background: var(--bg); border-radius: 10px; }
-        .product-list-scroll::-webkit-scrollbar-thumb { background: #26262a; border-radius: 10px; }
-        .product-list-scroll::-webkit-scrollbar-thumb:hover { background: #333; }
+        .product-list-scroll::-webkit-scrollbar, .analytics-list-scroll::-webkit-scrollbar { width: 6px; }
+        .product-list-scroll::-webkit-scrollbar-track, .analytics-list-scroll::-webkit-scrollbar-track { background: var(--bg); border-radius: 10px; }
+        .product-list-scroll::-webkit-scrollbar-thumb, .analytics-list-scroll::-webkit-scrollbar-thumb { background: #26262a; border-radius: 10px; }
+        .product-list-scroll::-webkit-scrollbar-thumb:hover, .analytics-list-scroll::-webkit-scrollbar-thumb:hover { background: #333; }
 
         @media (max-width: 900px) {
             .stats-grid { grid-template-columns: 1fr; gap: 10px; }
@@ -193,78 +229,138 @@
         <a href="index.html" class="back-link">WRÓĆ DO STRONY GŁÓWNEJ</a>
     </div>
 
+    <div class="tabs-container">
+        <button class="tab-btn active" data-target="view-products">Produkty</button>
+        <button class="tab-btn" data-target="view-analytics">Statystyki Live</button>
+    </div>
+
     <div id="statusMsg"></div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="kicker">Całkowita liczba produktów</div>
-            <div class="value" id="statTotal">...</div>
+    <div id="view-products" class="view-section active">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="kicker">Całkowita liczba produktów</div>
+                <div class="value" id="statTotal">...</div>
+            </div>
+            <div class="stat-card">
+                <div class="kicker">Użyte kategorie</div>
+                <div class="value" id="statCategories">...</div>
+            </div>
+            <div class="stat-card">
+                <div class="kicker">Użyte tagi</div>
+                <div class="value" id="statTags">...</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="kicker">Użyte kategorie</div>
-            <div class="value" id="statCategories">...</div>
-        </div>
-        <div class="stat-card">
-            <div class="kicker">Użyte tagi</div>
-            <div class="value" id="statTags">...</div>
+
+        <div class="main-grid">
+            <div class="dashboard-panel">
+                <div class="panel-title">Lista Produktów</div>
+                <div class="field search-field">
+                    <input type="text" id="adminSearchInput" placeholder="Szukaj po nazwie...">
+                </div>
+                <div class="product-list-scroll" id="adminProductList">Ładowanie produktów...</div>
+            </div>
+
+            <div class="dashboard-panel">
+                <div class="panel-title" id="formPanelTitle">Dodaj nowy produkt</div>
+                <form id="addForm">
+                    <div class="field">
+                        <label>Nazwa Przedmiotu</label>
+                        <input type="text" id="pName" placeholder="np. Jordan 4 Military Black" required>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Kategoria (Dropdown)</label>
+                            <select id="pCatDropdown" required></select>
+                        </div>
+                        <div class="field">
+                            <label>Tag (Dropdown)</label>
+                            <select id="pTagDropdown" required></select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Cena w USD ($)</label>
+                        <input type="number" step="0.01" id="pPrice" placeholder="45.00" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Link do zdjęcia (.jpg/.png)</label>
+                        <input type="url" id="pImg" placeholder="https://imgur.com/...">
+                    </div>
+
+                    <div class="field">
+                        <label>Link do Agenta (Kakobuy)</label>
+                        <input type="url" id="pLink" placeholder="https://kakobuy.com/..." required>
+                    </div>
+
+                    <button type="button" id="cancelEditBtn" class="btn-action" style="display:none; width:100%; margin-top:10px; padding:10px;">ANULUJ EDYCJĘ</button>
+
+                    <button type="submit" id="submitBtn" class="btn-submit">DODAJ PRODUKT</button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <div class="main-grid">
-        
-        <div class="dashboard-panel">
-            <div class="panel-title">Produkty</div>
-            <div class="field search-field">
-                <input type="text" id="adminSearchInput" placeholder="Szukaj po nazwie...">
+    <div id="view-analytics" class="view-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="kicker">Odsłony strony</div>
+                <div class="value" id="anaTotalViews">0</div>
             </div>
-            <div class="product-list-scroll" id="adminProductList">Ładowanie produktów...</div>
+            <div class="stat-card">
+                <div class="kicker">Skopiowane Linki</div>
+                <div class="value" id="anaTotalCopies" style="color: #22c55e;">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="kicker">Kliknięcia w Agentów</div>
+                <div class="value" id="anaTotalClicks" style="color: #eab308;">0</div>
+            </div>
         </div>
 
-        <div class="dashboard-panel">
-            <div class="panel-title" id="formPanelTitle">Dodaj nowy produkt</div>
-            <form id="addForm">
-                <div class="field">
-                    <label>Nazwa Przedmiotu</label>
-                    <input type="text" id="pName" placeholder="np. Jordan 4 Military Black" required>
+        <div class="main-grid">
+            <div class="dashboard-panel">
+                <div class="panel-title">Ostatnia aktywność (Live)</div>
+                <div class="analytics-list-scroll">
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Akcja</th>
+                                <th>Szczegóły</th>
+                                <th>Czas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="anaLiveTable">
+                            <tr><td colspan="3" style="text-align: center;">Ładowanie danych...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
-                
-                <div class="grid-2">
-                    <div class="field">
-                        <label>Kategoria (Dropdown)</label>
-                        <select id="pCatDropdown" required></select>
-                    </div>
-                    <div class="field">
-                        <label>Tag (Dropdown)</label>
-                        <select id="pTagDropdown" required></select>
-                    </div>
+            </div>
+
+            <div class="dashboard-panel">
+                <div class="panel-title">Najpopularniejsze produkty</div>
+                <div class="analytics-list-scroll">
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Produkt</th>
+                                <th style="text-align: center;">Interakcje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="anaTopProductsTable">
+                            <tr><td colspan="2" style="text-align: center;">Brak danych do wyświetlenia</td></tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <div class="field">
-                    <label>Cena w USD ($)</label>
-                    <input type="number" step="0.01" id="pPrice" placeholder="45.00" required>
-                </div>
-
-                <div class="field">
-                    <label>Link do zdjęcia (.jpg/.png)</label>
-                    <input type="url" id="pImg" placeholder="https://imgur.com/...">
-                </div>
-
-                <div class="field">
-                    <label>Link do Agenta (Kakobuy)</label>
-                    <input type="url" id="pLink" placeholder="https://kakobuy.com/..." required>
-                </div>
-
-                <button type="button" id="cancelEditBtn" class="btn-action" style="display:none; width:100%; margin-top:10px; padding:10px;">ANULUJ EDYCJĘ</button>
-
-                <button type="submit" id="submitBtn" class="btn-submit">DODAJ PRODUKT</button>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, serverTimestamp, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, serverTimestamp, query, orderBy, limit, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDsB1L1BZTmQheWIyt87FUwZP5EB5E9L18",
@@ -278,17 +374,39 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const productsCol = collection(db, "products");
+    const analyticsCol = collection(db, "analytics");
 
-    // ZMIENNA DLA EDYCJI
+    // =======================================================
+    // LOGIKA ZAKŁADEK (TABS)
+    // =======================================================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Usuń active z przycisków
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            // Dodaj active do klikniętego
+            btn.classList.add('active');
+
+            // Ukryj sekcje
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            // Pokaż wybraną sekcję
+            const targetId = btn.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+
+            // Jeśli to statystyki, załaduj je
+            if(targetId === 'view-analytics') {
+                loadAnalytics();
+            }
+        });
+    });
+
+    // =======================================================
+    // LOGIKA PRODUKTÓW (ORYGINALNA, NIETKNIĘTA)
+    // =======================================================
     let editingProductId = null; 
 
-    // =======================================================
-    // DEFINICJA KATEGORII I TAGÓW (Dla dropdownów)
-    // =======================================================
     const PREDEFINED_CATEGORIES = ['SHOES', 'T-SHIRTS', 'JACKETS', 'PANTS', 'HOODIES', 'SHORTS', 'ACCESSORIES', 'OTHER'];
     const PREDEFINED_TAGS = ['BEST BATCH', 'BUDGET BATCH', 'RETAIL READY', 'RANDOM BATCH', 'NONE'];
 
-    // Funkcja powiadamiania
     function showStatus(msg, isError = false) {
         const s = document.getElementById('statusMsg');
         s.innerText = msg;
@@ -298,19 +416,13 @@
         setTimeout(() => s.style.display = 'none', 3000);
     }
 
-    // Wypełnij dropdowny kategoriami i tagami
     function populateDropdowns() {
         const catSelect = document.getElementById('pCatDropdown');
         const tagSelect = document.getElementById('pTagDropdown');
-        
-        // Dodaj kategorie
         catSelect.innerHTML = PREDEFINED_CATEGORIES.map(cat => `<option value="${cat}">${cat}</option>`).join("");
-        
-        // Dodaj tagi
         tagSelect.innerHTML = PREDEFINED_TAGS.map(tag => `<option value="${tag}">${tag}</option>`).join("");
     }
 
-    // Oblicz i zaktualizuj statystyki
     function updateStats(snapshot) {
         let total = snapshot.size;
         let categories = new Set();
@@ -327,14 +439,12 @@
         document.getElementById('statTags').innerText = tags.size;
     }
 
-    // Pobierz i wyświetl listę produktów na Dashboardzie
     async function loadAdminProducts() {
         const listDiv = document.getElementById('adminProductList');
         try {
             const q = query(productsCol, orderBy("createdAt", "desc"));
             const snapshot = await getDocs(q);
             
-            // Zaktualizuj statystyki
             updateStats(snapshot);
 
             if (snapshot.empty) {
@@ -362,20 +472,18 @@
             });
             listDiv.innerHTML = html;
 
-            // Obsługa Usuwania
             document.querySelectorAll('.btn-del').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = btn.getAttribute('data-id');
                     if(confirm("Usunąć ten produkt? Operacja jest nieodwracalna.")) {
                         await deleteDoc(doc(db, "products", id));
                         showStatus("Pomyślnie usunięto produkt");
-                        if(editingProductId === id) cancelEditing(); // Anuluj edycję jeśli usuwasz edytowany przedmiot
+                        if(editingProductId === id) cancelEditing(); 
                         loadAdminProducts();
                     }
                 });
             });
 
-            // Obsługa Edycji
             document.querySelectorAll('.btn-edit').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = btn.getAttribute('data-id');
@@ -389,7 +497,6 @@
         }
     }
 
-    // ROZPOCZNIJ EDYCJĘ
     async function startEditing(productId) {
         try {
             const productRef = doc(db, "products", productId);
@@ -397,35 +504,30 @@
             
             if (docSnap.exists()) {
                 const p = docSnap.data();
-                editingProductId = productId; // Zapisz ID edytowanego przedmiotu
+                editingProductId = productId;
 
-                // Wypełnij formularz danymi
                 document.getElementById('pName').value = p.Nazwa;
-                document.getElementById('pCatDropdown').value = p.Kategoria; // Ustaw dropdown
-                document.getElementById('pTagDropdown').value = p.Tag; // Ustaw dropdown
+                document.getElementById('pCatDropdown').value = p.Kategoria; 
+                document.getElementById('pTagDropdown').value = p.Tag; 
                 document.getElementById('pPrice').value = p.Cena_USD;
                 document.getElementById('pImg').value = p.Link_Zdjecie || '';
                 document.getElementById('pLink').value = p.Link_Kakobuy;
 
-                // Zmień UI formularza
                 document.getElementById('formPanelTitle').innerText = "Edytuj produkt";
                 document.getElementById('submitBtn').innerText = "ZAPISZ ZMIANY";
                 document.getElementById('submitBtn').style.background = "#fff";
                 document.getElementById('submitBtn').style.color = "#000";
                 document.getElementById('cancelEditBtn').style.display = 'block';
 
-                // Przewiń do góry strony, żeby zobaczyć formularz
                 window.scrollTo(0,0);
             }
         } catch (e) { console.error(e); showStatus("Błąd pobierania danych edycji", true); }
     }
 
-    // ANULUJ EDYCJĘ
     function cancelEditing() {
         editingProductId = null;
         document.getElementById('addForm').reset();
         
-        // Przywróć UI formularza
         document.getElementById('formPanelTitle').innerText = "Dodaj nowy produkt";
         document.getElementById('submitBtn').innerText = "DODAJ PRODUKT";
         document.getElementById('cancelEditBtn').style.display = 'none';
@@ -433,18 +535,16 @@
     document.getElementById('cancelEditBtn').addEventListener('click', cancelEditing);
 
 
-    // DODAWANIE / AKTUALIZACJA PRODUKTU (Logika submit)
     document.getElementById('addForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
         btn.innerText = "TRWA PRZETWARZANIE...";
         btn.disabled = true;
         
-        // Zbierz dane z formularza
         const productData = {
             Nazwa: document.getElementById('pName').value,
-            Kategoria: document.getElementById('pCatDropdown').value, // Bierz z dropdowna
-            Tag: document.getElementById('pTagDropdown').value, // Bierz z dropdowna
+            Kategoria: document.getElementById('pCatDropdown').value, 
+            Tag: document.getElementById('pTagDropdown').value, 
             Cena_USD: document.getElementById('pPrice').value,
             Link_Zdjecie: document.getElementById('pImg').value,
             Link_Kakobuy: document.getElementById('pLink').value,
@@ -452,19 +552,17 @@
 
         try {
             if (editingProductId) {
-                // JEŚLI EDYTUJEMY - AKTUALIZUJ
                 const productRef = doc(db, "products", editingProductId);
                 await updateDoc(productRef, productData);
                 showStatus("Pomyślnie zaktualizowano produkt!");
-                cancelEditing(); // Przywróć form do normalnego stanu
+                cancelEditing(); 
             } else {
-                // JEŚLI DODAJEMY NOWY - DODAJ
-                productData.createdAt = serverTimestamp(); // Dodaj datę tylko dla nowych
+                productData.createdAt = serverTimestamp(); 
                 await addDoc(productsCol, productData);
                 showStatus("Produkt dodany pomyślnie!");
                 document.getElementById('addForm').reset();
             }
-            loadAdminProducts(); // Przeładuj listę i statystyki
+            loadAdminProducts(); 
         } catch (error) {
             console.error(error);
             showStatus("Błąd zapisu bazy Firebase!", true);
@@ -474,7 +572,6 @@
         btn.disabled = false;
     });
 
-    // Obsługa Wyszukiwarki
     document.getElementById('adminSearchInput').addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
         const productItems = document.querySelectorAll('.product-item');
@@ -488,9 +585,109 @@
         });
     });
 
-    // Inicjalizacja
     populateDropdowns();
     loadAdminProducts();
+
+
+    // =======================================================
+    // LOGIKA STATYSTYK (NOWE)
+    // =======================================================
+    function formatTime(timestamp) {
+        if (!timestamp) return "Przed chwilą";
+        const date = timestamp.toDate();
+        return date.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function translateAction(action) {
+        switch(action) {
+            case 'page_view': return '<span class="badge-action" style="color:#a855f7; background:rgba(168,85,247,0.15)">Odsłona</span>';
+            case 'copy_link': return '<span class="badge-action" style="color:#22c55e; background:rgba(34,197,94,0.15)">Kopia Linku</span>';
+            case 'view_agents': return '<span class="badge-action" style="color:#eab308; background:rgba(234,179,8,0.15)">Otwarcie Agenta</span>';
+            case 'click_agent': return '<span class="badge-action" style="color:#f97316; background:rgba(249,115,22,0.15)">Klik w Agenta</span>';
+            default: return `<span class="badge-action">${action}</span>`;
+        }
+    }
+
+    function buildDetails(data) {
+        let text = "";
+        if (data.details?.page) text += `Strona: <b>/${data.details.page}</b>`;
+        if (data.details?.product && data.details?.product !== 'Nieznany') text += `<b>${data.details.product}</b> `;
+        if (data.details?.agent) text += `(${data.details.agent})`;
+        return text || "Brak danych";
+    }
+
+    async function loadAnalytics() {
+        const liveTable = document.getElementById('anaLiveTable');
+        const topTable = document.getElementById('anaTopProductsTable');
+
+        try {
+            // Pobieramy max 300 ostatnich zdarzeń żeby nie nabijać limitów
+            const q = query(analyticsCol, orderBy("timestamp", "desc"), limit(300));
+            const snapshot = await getDocs(q);
+
+            let totalViews = 0;
+            let totalCopies = 0;
+            let totalClicks = 0;
+            
+            let productCount = {};
+            let tableHtml = "";
+
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                
+                // Zliczanie do górnych kart
+                if (data.action === 'page_view') totalViews++;
+                if (data.action === 'copy_link') totalCopies++;
+                if (data.action === 'click_agent' || data.action === 'view_agents') totalClicks++;
+
+                // Zliczanie popularności produktów
+                const pName = data.details?.product;
+                if (pName && pName !== 'Nieznany') {
+                    if(!productCount[pName]) productCount[pName] = 0;
+                    productCount[pName]++;
+                }
+
+                // Generowanie wiersza do tabeli "Live" (limitujemy wyświetlanie w HTML do ostatnich 50)
+                if(tableHtml.split('<tr>').length < 50) {
+                    tableHtml += `
+                        <tr>
+                            <td>${translateAction(data.action)}</td>
+                            <td>${buildDetails(data)}</td>
+                            <td class="badge-time">${formatTime(data.timestamp)}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            // Aktualizacja górnych kart
+            document.getElementById('anaTotalViews').innerText = totalViews;
+            document.getElementById('anaTotalCopies').innerText = totalCopies;
+            document.getElementById('anaTotalClicks').innerText = totalClicks;
+
+            // Render Tabeli Live
+            liveTable.innerHTML = tableHtml || `<tr><td colspan="3" style="text-align: center;">Brak zdarzeń.</td></tr>`;
+
+            // Sortowanie i render Tabeli Top Produktów
+            const sortedProducts = Object.entries(productCount).sort((a, b) => b[1] - a[1]).slice(0, 10); // Top 10
+            
+            let topHtml = "";
+            sortedProducts.forEach(([name, count], index) => {
+                let medal = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : `<span style="opacity:0.4; font-size:12px;">${index+1}.</span> `;
+                topHtml += `
+                    <tr>
+                        <td style="font-weight: 800; color:#fff;">${medal} ${name}</td>
+                        <td style="text-align: center; color: var(--accent); font-weight: 900;">${count}</td>
+                    </tr>
+                `;
+            });
+            topTable.innerHTML = topHtml || `<tr><td colspan="2" style="text-align: center;">Brak kliknięć w produkty.</td></tr>`;
+
+        } catch (error) {
+            console.error("Błąd ładowania statystyk: ", error);
+            liveTable.innerHTML = `<tr><td colspan="3" style="color:var(--danger); text-align:center;">Błąd pobierania statystyk.</td></tr>`;
+        }
+    }
+
 </script>
 </body>
 </html>

@@ -138,6 +138,7 @@
 
         .products-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; width: 100%; }
         
+        /* Zmodyfikowana karta dla nowego układu */
         .product-card-new { background-color: #1a1a1a !important; border-radius: 16px !important; padding: 14px !important; display: flex; flex-direction: column; border: 1px solid #2a2a2a !important; transition: 0.3s; overflow: hidden; position: relative; width: 100%; }
         .product-card-new:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important; }
 
@@ -297,7 +298,6 @@
             .nav-left { justify-content: space-between; width: 100%; display: flex; }
             .nav-brand-pill { padding: 0; }
             .nav-right { flex: none; display: flex; gap: 8px; }
-            .nav-admin-pill span { display: none; }
             .nav-settings-btn-pill { width: 40px !important; height: 40px !important; }
 
             .nav-center { width: 100%; display: flex; overflow-x: auto; justify-content: flex-start; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.08); gap: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
@@ -615,102 +615,11 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // WYMUSZANIE POPRAWNEGO LINKU KAKOBUY
-        function fixKakoLink(link) {
-            if (!link || !link.includes('kakobuy.com')) return link;
-            let clean = link.replace(/([?&])(affcode|ref_id)=[^&]*/gi, '');
-            clean = clean.replace(/[?&]$/, '');
-            return clean + (clean.includes('?') ? '&' : '?') + 'affcode=xfrostyy';
-        }
-
-        window.escapeHtml = function(value) {
-            return String(value ?? "")
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("'", "&#39;");
-        };
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDsB1L1BZTmQheWIyt87FUwZP5EB5E9L18",
-            authDomain: "repfinder-f0510.firebaseapp.com",
-            projectId: "repfinder-f0510",
-            storageBucket: "repfinder-f0510.firebasestorage.app",
-            messagingSenderId: "994027023312",
-            appId: "1:994027023312:web:77220fee0211a2b7ea27d5"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        window.AGENTS = [
-          { id: 'kakobuy', name: 'KakoBuy', icon: 'https://www.kakobuy.com/favicon.ico' },
-          { id: 'usfans', name: 'USFans', icon: 'https://usfans.com/favicon.ico' },
-          { id: 'allchinabuy', name: 'AllChinaBuy', icon: 'https://allchinabuy.com/favicon.ico' },
-          { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' },
-          { id: 'weidian', name: 'Weidian', icon: 'https://s.weidian.com/assets/favicon.ico' }
-        ];
-
-        function checkMobileNav() {
-            const rightGroup = document.getElementById('desktopNavRight');
-            const mobileRight = document.getElementById('mobileNavRight');
-            if(window.innerWidth <= 768) {
-                if(rightGroup && mobileRight && rightGroup.parentNode !== mobileRight) {
-                    mobileRight.appendChild(rightGroup);
-                    mobileRight.style.display = 'flex';
-                }
-            } else {
-                if(rightGroup && rightGroup.parentNode === mobileRight) {
-                    document.querySelector('.nav-left').insertAdjacentElement('afterend', rightGroup);
-                    rightGroup.style.display = 'flex';
-                    rightGroup.className = 'nav-right';
-                    mobileRight.style.display = 'none';
-                }
-            }
-        }
-        window.addEventListener('resize', checkMobileNav);
-        
-        window.copyText = function(text, btn) {
-            if(!text) return;
-            navigator.clipboard.writeText(text).catch(err => console.error(err));
-            btn.classList.add('copied');
-            
-            const textSpan = btn.querySelector('.copy-text');
-            let originalText = "";
-            if(textSpan) {
-                originalText = textSpan.innerText;
-                textSpan.innerText = "Skopiowano!";
-            }
-
-            setTimeout(() => { 
-                btn.classList.remove('copied'); 
-                if(textSpan) textSpan.innerText = originalText;
-            }, 1500);
-        };
-
-        window.switchSection = function(id) {
-            const target = document.getElementById(id);
-            if(!target) return;
-            
-            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-            target.classList.add('active');
-            
-            document.querySelectorAll('.nav-link-pill, .dropdown-item').forEach(l => l.classList.remove('active'));
-            const activeNavs = document.querySelectorAll(`[data-section-link="${id}"]`);
-            activeNavs.forEach(n => n.classList.add('active'));
-            
-            const toolsMenu = document.getElementById('toolsMenu');
-            if(toolsMenu) toolsMenu.classList.remove('show');
-            
-            window.scrollTo(0,0);
-        };
-
-        /* =====================================================================
-           LOGIKA KONWERTERA GLOBANIE DLA KARTY I MODALA AGENTÓW
-           ===================================================================== */
+        // ==========================================
+        //  GLOBALNE FUNKCJE DO KONWERSJI LINKÓW (ZAMIAST W MODULE)
+        // ==========================================
         window.detectPlatform = function(url) {
             const value = String(url || "").toLowerCase();
             if (!value) return "auto";
@@ -772,12 +681,6 @@
             return "";
         };
 
-        window.extractSourceCode = function(url) {
-            const safe = window.safeUrl(url);
-            if (!safe) return "";
-            return String(safe.searchParams.get("source") || "").toUpperCase();
-        };
-
         window.extractLitBuyItemId = function(url) {
             const match = String(url || "").match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
             return match ? match[1] : "";
@@ -789,6 +692,12 @@
             const source = match[1].toLowerCase();
             if (source === "weidian") return "weidian";
             return source;
+        };
+
+        window.extractSourceCode = function(url) {
+            const safe = window.safeUrl(url);
+            if (!safe) return "";
+            return String(safe.searchParams.get("source") || "").toUpperCase();
         };
 
         window.buildWeidianUrl = function(itemId) {
@@ -855,46 +764,55 @@
                 const itemId = window.extractWeidianItemId(cleaned);
                 return { displaySource: "weidian", originalPlatform: "weidian", originalUrl: itemId ? window.buildWeidianUrl(itemId) : cleaned, itemId, sourceCode: "WD" };
             }
+
             if (platform === "kakobuy") {
                 const embeddedOriginal = window.extractOriginalUrlFromAnyAgent(cleaned);
                 const itemId = window.extractAnyKnownItemId(cleaned, embeddedOriginal);
                 const originalUrl = itemId ? window.buildWeidianUrl(itemId) : embeddedOriginal;
                 return { displaySource: "kakobuy", originalPlatform: itemId ? "weidian" : window.detectPlatform(originalUrl), originalUrl: originalUrl || "", itemId, sourceCode: itemId ? "WD" : "" };
             }
+
             if (platform === "usfans") {
                 const itemId = window.extractUsFansItemId(cleaned);
                 return { displaySource: "usfans", originalPlatform: itemId ? "weidian" : "unknown", originalUrl: itemId ? window.buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId ? "WD" : "" };
             }
+
             if (platform === "allchinabuy") {
                 const itemId = window.extractAllChinaBuyItemId(cleaned);
                 const sourceCode = window.extractSourceCode(cleaned) || (itemId ? "WD" : "");
                 return { displaySource: "allchinabuy", originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown", originalUrl: itemId && sourceCode === "WD" ? window.buildWeidianUrl(itemId) : "", itemId, sourceCode };
             }
+
             if (platform === "litbuy") {
                 const itemId = window.extractLitBuyItemId(cleaned);
                 const sourcePlatform = window.extractLitBuySource(cleaned);
                 return { displaySource: "litbuy", originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform, originalUrl: itemId && sourcePlatform === "weidian" ? window.buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : "" };
             }
+
             return { displaySource: platform, originalPlatform: platform, originalUrl: cleaned, itemId: window.extractWeidianItemId(cleaned), sourceCode: platform === "weidian" ? "WD" : "" };
         };
 
         window.buildConvertedResult = function(analysis, target) {
             const itemId = analysis.itemId;
             const sourcePlatform = analysis.originalPlatform;
+
             if (!analysis.originalUrl) {
                 return { url: "" };
             }
+
             if (target === "weidian") {
                 if (itemId) return { url: window.buildWeidianUrl(itemId) };
                 if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
                 return { url: "" };
             }
+
             if (!itemId || sourcePlatform !== "weidian") {
                 if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
                     return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}&affcode=xfrostyy` };
                 }
                 return { url: "" };
             }
+
             switch (target) {
                 case "kakobuy": return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(window.buildWeidianUrl(itemId))}&affcode=xfrostyy` };
                 case "usfans": return { url: `https://www.usfans.com/product/3/${itemId}` };
@@ -903,9 +821,130 @@
                 default: return { url: "" };
             }
         };
+        // ==========================================
+
+        function fixKakoLink(link) {
+            if (!link || !link.includes('kakobuy.com')) return link;
+            let clean = link.replace(/([?&])(affcode|ref_id)=[^&]*/gi, '');
+            clean = clean.replace(/[?&]$/, '');
+            return clean + (clean.includes('?') ? '&' : '?') + 'affcode=xfrostyy';
+        }
+
+        window.escapeHtml = function(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+        };
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsB1L1BZTmQheWIyt87FUwZP5EB5E9L18",
+            authDomain: "repfinder-f0510.firebaseapp.com",
+            projectId: "repfinder-f0510",
+            storageBucket: "repfinder-f0510.firebasestorage.app",
+            messagingSenderId: "994027023312",
+            appId: "1:994027023312:web:77220fee0211a2b7ea27d5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- SYSTEM ANALITYKI (ZBIERANIE DANYCH) ---
+        window.logEvent = async function(action, details) {
+            try {
+                await addDoc(collection(db, "analytics"), {
+                    action: action,
+                    details: details,
+                    timestamp: serverTimestamp()
+                });
+            } catch(e) {
+                console.error("Błąd zapisu analityki:", e);
+            }
+        };
+
+        window.AGENTS = [
+          { id: 'kakobuy', name: 'KakoBuy', icon: 'https://www.kakobuy.com/favicon.ico' },
+          { id: 'usfans', name: 'USFans', icon: 'https://usfans.com/favicon.ico' },
+          { id: 'allchinabuy', name: 'AllChinaBuy', icon: 'https://allchinabuy.com/favicon.ico' },
+          { id: 'litbuy', name: 'LitBuy', icon: 'https://litbuy.com/favicon.ico' },
+          { id: 'weidian', name: 'Weidian', icon: 'https://s.weidian.com/assets/favicon.ico' }
+        ];
+
+        function checkMobileNav() {
+            const rightGroup = document.getElementById('desktopNavRight');
+            const mobileRight = document.getElementById('mobileNavRight');
+            if(window.innerWidth <= 768) {
+                if(rightGroup && mobileRight && rightGroup.parentNode !== mobileRight) {
+                    mobileRight.appendChild(rightGroup);
+                    mobileRight.style.display = 'flex';
+                }
+            } else {
+                if(rightGroup && rightGroup.parentNode === mobileRight) {
+                    document.querySelector('.nav-left').insertAdjacentElement('afterend', rightGroup);
+                    rightGroup.style.display = 'flex';
+                    rightGroup.className = 'nav-right';
+                    mobileRight.style.display = 'none';
+                }
+            }
+        }
+        window.addEventListener('resize', checkMobileNav);
+        
+        window.copyText = function(text, btn, productName = 'Nieznany') {
+            if(!text) return;
+            navigator.clipboard.writeText(text).catch(err => console.error(err));
+            btn.classList.add('copied');
+            
+            window.logEvent('copy_link', { link: text, product: productName });
+            
+            const textSpan = btn.querySelector('.copy-text');
+            let originalText = "";
+            if(textSpan) {
+                originalText = textSpan.innerText;
+                textSpan.innerText = "Skopiowano!";
+            }
+
+            setTimeout(() => { 
+                btn.classList.remove('copied'); 
+                if(textSpan) textSpan.innerText = originalText;
+            }, 1500);
+        };
+
+        window.switchSection = function(id) {
+            const target = document.getElementById(id);
+            if(!target) return;
+            
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            target.classList.add('active');
+            
+            document.querySelectorAll('.nav-link-pill, .dropdown-item').forEach(l => l.classList.remove('active'));
+            const activeNavs = document.querySelectorAll(`[data-section-link="${id}"]`);
+            activeNavs.forEach(n => n.classList.add('active'));
+            
+            const toolsMenu = document.getElementById('toolsMenu');
+            if(toolsMenu) toolsMenu.classList.remove('show');
+            
+            window.scrollTo(0,0);
+            
+            // Logowanie odsłon w analityce
+            window.logEvent('page_view', { page: id });
+
+            if(id === 'tutorials' && !window.tutorialsInited && typeof window.initTutorials === 'function') {
+                window.initTutorials();
+                window.tutorialsInited = true;
+            }
+            if(id === 'converter' && !window.converterInited && typeof window.initConverter === 'function') {
+                window.initConverter();
+                window.converterInited = true;
+            }
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
             checkMobileNav();
+
+            // Wyślij event, gdy strona zostanie załadowana (pierwsze wejście)
+            window.logEvent('page_view', { page: window.location.pathname || 'home' });
 
             document.querySelectorAll('[data-section-link]').forEach(b => {
                 b.addEventListener('click', (e) => {
@@ -999,16 +1038,11 @@
 
             loadProducts();
             
-            // Wymuszenie tutoriala i convertera jeśli sa potrzebne przy starcie strony
-            if(typeof window.initTutorials === 'function') {
+            // Zainicjuj tutoriale na start
+            if (typeof window.initTutorials === 'function') {
                 window.initTutorials();
-                window.tutorialsInited = true;
             }
-            if(typeof window.initConverter === 'function') {
-                window.initConverter();
-                window.converterInited = true;
-            }
-            
+
             const sentinel = document.getElementById("scrollSentinel");
             let isFetchingMore = false;
             const observer = new IntersectionObserver((entries) => {
@@ -1072,7 +1106,7 @@
             itemsToRender.forEach(p => {
                 const displayPrice = prefix + convertCurrency(p.Cena_USD, currency) + suffix;
 
-                // Konwersja linku do przypiętego agenta
+                // Konwersja na przypiętego agenta
                 let rawLink = p.Link_Kakobuy || '';
                 let linkToCopy = rawLink;
 
@@ -1092,6 +1126,8 @@
 
                 const safeLinkToCopy = window.escapeHtml(linkToCopy);
                 const rawKakoLinkForModal = window.escapeHtml(rawLink);
+                // Uciekamy znaki w nazwie, bo pójdzie do analityki w onclick
+                const safeProductName = window.escapeHtml(p.Nazwa).replace(/'/g, "\\'");
 
                 html += `
                 <article class="product-card-new">
@@ -1104,17 +1140,17 @@
                     
                     <h3 class="card-name">${p.Nazwa}</h3>
                     
-                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: auto; padding-bottom: 10px;">
-                        <div class="card-price" style="margin: 0 !important;">${displayPrice}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; width: 100%;">
+                        <div class="card-price" style="margin: 0 !important; white-space: nowrap !important;">${displayPrice}</div>
                         
-                        <button class="btn-icon-pill-square" onclick="window.copyText('${safeLinkToCopy}', this)" style="display: flex !important; align-items: center; justify-content: center; margin: 0 !important; width: 38px !important; height: 38px !important; border-radius: 10px !important; flex-shrink: 0 !important;">
-                            <img src="${agentObj.icon}" class="copy-icon" style="width: 20px; height: 20px; object-fit: contain;">
+                        <button class="btn-icon-pill-square" onclick="window.copyText('${safeLinkToCopy}', this, '${safeProductName}')" style="display: flex; align-items: center; justify-content: center; margin: 0 0 0 10px; width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; padding: 0;">
+                            <img src="${agentObj.icon}" class="copy-icon" style="width: 20px; height: 20px; object-fit: contain; margin: 0; padding: 0;">
                             <svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </button>
                     </div>
                     
-                    <div class="card-actions-row" style="margin-top: 0 !important; padding-top: 0 !important; border-top: none !important; width: 100% !important;">
-                        <button class="btn-view-agents" onclick="window.openAgentsModal('${rawKakoLinkForModal}')" style="width: 100% !important; flex: none !important;">
+                    <div class="card-actions-row" style="margin-top: 10px !important;">
+                        <button class="btn-view-agents" onclick="window.openAgentsModal('${rawKakoLinkForModal}', '${safeProductName}')" style="width: 100%; flex: 1;">
                             View agents
                         </button>
                     </div>
@@ -1216,17 +1252,20 @@
             } catch (error) { 
                 console.error("Szczegóły błędu Firebase:", error);
                 grid.innerHTML = `<p style='color:#ef4444; text-align:center; width:100%; grid-column:1/-1;'>
-                    Błąd połączenia z bazą: <br><strong style="font-size:12px;">${error.message}</strong>
+                    Błąd połączenia z bazą lub limit przekroczony (Quota exceeded). <br><strong style="font-size:12px;">Zresetuje się ok. 9:00 rano.</strong>
                 </p>`;
             }
         }
 
-        // KONWERSJA Z KAKOBUY W LOCIE DLA MODALA AGENTÓW
-        window.openAgentsModal = (link) => {
+        // --- ZMODYFIKOWANY MODAL Z KONWERSJĄ I ANALITYKĄ ---
+        window.openAgentsModal = (link, productName = "Nieznany") => {
             const safeLink = link || '';
             const analysis = window.analyzeInput(safeLink);
             const originalUrl = analysis.originalUrl;
             const itemId = analysis.itemId;
+
+            // Log analityki: ktoś kliknął 'View agents' dla tego produktu
+            window.logEvent('view_agents', { product: productName, original_link: safeLink });
 
             document.getElementById('am-list').innerHTML = window.AGENTS.filter(a => a.id !== 'weidian').map(agent => {
                 let finalLink = "";
@@ -1248,11 +1287,11 @@
                 
                 return `
                     <div class="agent-row">
-                        <a href="${finalLink}" target="_blank" class="agent-direct-btn">
+                        <a href="${finalLink}" target="_blank" class="agent-direct-btn" onclick="window.logEvent('click_agent', { agent: '${agent.name}', product: '${productName}' })">
                             <span class="agent-info-left"><img src="${agent.icon}" onerror="this.style.display='none'"> ${agent.name}</span>
                             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                         </a>
-                        <button class="agent-copy-btn" onclick="window.copyText('${finalLink}', this)">
+                        <button class="agent-copy-btn" onclick="window.copyText('${finalLink}', this, '${productName}')">
                             <svg class="copy-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             <svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </button>
