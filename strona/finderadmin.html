@@ -17,6 +17,8 @@
             --accent: #3b82f6; /* Niebieski statystyk */
             --danger: #ef4444; /* Czerwony usuwania */
             --input-bg: #1e1e22; /* Tło inputów */
+            --success: #22c55e;
+            --warning: #f59e0b;
         }
 
         body { 
@@ -49,7 +51,7 @@
         .back-link { color: var(--text-meta); text-decoration: none; font-size: 14px; font-weight: 700; transition: 0.2s; }
         .back-link:hover { color: #fff; }
 
-        /* ZAKŁADKI (TABS) - NOWE */
+        /* ZAKŁADKI (TABS) */
         .tabs-container {
             display: flex;
             gap: 10px;
@@ -78,7 +80,7 @@
         /* PANELE STATYSTYK (GÓRNY RZĄD) */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
         }
         .stat-card {
@@ -89,7 +91,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .stat-card .kicker { font-size: 12px; font-weight: 800; color: var(--text-meta); text-transform: uppercase; margin-bottom: 8px; }
-        .stat-card .value { font-size: 44px; font-weight: 900; color: var(--accent); letter-spacing: -1px; }
+        .stat-card .value { font-size: 40px; font-weight: 900; color: var(--accent); letter-spacing: -1px; }
 
         /* GŁÓWNA SEKCJA (LISTA + FORMULARZ) */
         .main-grid {
@@ -114,7 +116,7 @@
         /* LISTA PRODUKTÓW (LEWA) */
         .search-field { margin-bottom: 20px; }
         .product-list-scroll, .analytics-list-scroll {
-            height: 400px; /* Wysokość listy do przewijania */
+            height: 400px;
             overflow-y: auto;
             padding-right: 10px;
         }
@@ -149,6 +151,7 @@
 
         /* FORMULARZ (PRAWA) */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
 
         .field { margin-bottom: 15px; }
         .field label { display: block; font-size: 12px; font-weight: 800; color: #555; text-transform: uppercase; margin-bottom: 6px; margin-left: 4px; }
@@ -165,11 +168,10 @@
             outline: none;
             box-sizing: border-box;
             transition: 0.2s;
-            appearance: none; /* Ukryj domyślną strzałkę w selectach */
+            appearance: none; 
         }
         input:focus, select:focus { border-color: var(--accent); background: #26262a; }
         
-        /* Strzałka dla dropdownów */
         select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='20' height='20' stroke='gray' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat;
@@ -206,8 +208,9 @@
         .analytics-table th { color: var(--text-meta); padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; text-transform: uppercase; font-weight: 800;}
         .analytics-table td { padding: 14px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; color: #ccc;}
         .analytics-table tr:hover td { background: rgba(255,255,255,0.02); color: #fff;}
-        .badge-action { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; background: rgba(59, 130, 246, 0.15); color: #60a5fa;}
+        .badge-action { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; display: inline-block; white-space: nowrap;}
         .badge-time { font-size: 12px; color: var(--text-meta); font-weight: 600;}
+        .badge-id { font-family: monospace; color: #666; font-size: 11px; background: #111; padding: 2px 6px; border-radius: 4px; }
 
         /* Scrolling bar stylization */
         .product-list-scroll::-webkit-scrollbar, .analytics-list-scroll::-webkit-scrollbar { width: 6px; }
@@ -215,9 +218,10 @@
         .product-list-scroll::-webkit-scrollbar-thumb, .analytics-list-scroll::-webkit-scrollbar-thumb { background: #26262a; border-radius: 10px; }
         .product-list-scroll::-webkit-scrollbar-thumb:hover, .analytics-list-scroll::-webkit-scrollbar-thumb:hover { background: #333; }
 
-        @media (max-width: 900px) {
-            .stats-grid { grid-template-columns: 1fr; gap: 10px; }
+        @media (max-width: 1000px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .main-grid { grid-template-columns: 1fr; gap: 20px; }
+            .grid-3 { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -230,25 +234,25 @@
     </div>
 
     <div class="tabs-container">
-        <button class="tab-btn active" data-target="view-products">Produkty</button>
-        <button class="tab-btn" data-target="view-analytics">Statystyki Live</button>
+        <button class="tab-btn active" data-target="view-products">Zarządzanie Produktami</button>
+        <button class="tab-btn" data-target="view-analytics">Statystyki & Ruch</button>
     </div>
 
     <div id="statusMsg"></div>
 
     <div id="view-products" class="view-section active">
-        <div class="stats-grid">
+        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
             <div class="stat-card">
                 <div class="kicker">Całkowita liczba produktów</div>
-                <div class="value" id="statTotal">...</div>
+                <div class="value" id="statTotal" style="color: #fff;">...</div>
             </div>
             <div class="stat-card">
                 <div class="kicker">Użyte kategorie</div>
-                <div class="value" id="statCategories">...</div>
+                <div class="value" id="statCategories" style="color: #fff;">...</div>
             </div>
             <div class="stat-card">
                 <div class="kicker">Użyte tagi</div>
-                <div class="value" id="statTags">...</div>
+                <div class="value" id="statTags" style="color: #fff;">...</div>
             </div>
         </div>
 
@@ -291,7 +295,7 @@
                     </div>
 
                     <div class="field">
-                        <label>Link do Agenta (Kakobuy)</label>
+                        <label>Link do Agenta (Kakobuy / Weidian)</label>
                         <input type="url" id="pLink" placeholder="https://kakobuy.com/..." required>
                     </div>
 
@@ -306,50 +310,73 @@
     <div id="view-analytics" class="view-section">
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="kicker">Odsłony strony</div>
-                <div class="value" id="anaTotalViews">0</div>
+                <div class="kicker">Unikalni Użytkownicy</div>
+                <div class="value" id="anaUniqueUsers" style="color: var(--accent);">0</div>
             </div>
             <div class="stat-card">
-                <div class="kicker">Skopiowane Linki</div>
-                <div class="value" id="anaTotalCopies" style="color: #22c55e;">0</div>
+                <div class="kicker">Odsłony Strony</div>
+                <div class="value" id="anaTotalViews" style="color: #fff;">0</div>
             </div>
             <div class="stat-card">
-                <div class="kicker">Kliknięcia w Agentów</div>
-                <div class="value" id="anaTotalClicks" style="color: #eab308;">0</div>
+                <div class="kicker">Interakcje (Kopie + Kliknięcia)</div>
+                <div class="value" id="anaTotalClicks" style="color: var(--warning);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="kicker">Współczynnik Aktywności</div>
+                <div class="value" id="anaConversion" style="color: var(--success);">0%</div>
             </div>
         </div>
 
-        <div class="main-grid">
-            <div class="dashboard-panel">
-                <div class="panel-title">Ostatnia aktywność (Live)</div>
-                <div class="analytics-list-scroll">
+        <div class="dashboard-panel" style="margin-bottom: -15px;">
+            <div class="panel-title">Ostatnia Aktywność (Live)</div>
+            <div class="analytics-list-scroll" style="height: 300px;">
+                <table class="analytics-table">
+                    <thead>
+                        <tr>
+                            <th>Akcja</th>
+                            <th>Szczegóły / Produkt</th>
+                            <th>Użytkownik</th>
+                            <th>Czas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="anaLiveTable">
+                        <tr><td colspan="4" style="text-align: center;">Ładowanie danych...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div class="dashboard-panel" style="grid-column: span 2;">
+                <div class="panel-title">Najpopularniejsze Produkty</div>
+                <div class="analytics-list-scroll" style="height: 250px;">
                     <table class="analytics-table">
                         <thead>
                             <tr>
-                                <th>Akcja</th>
-                                <th>Szczegóły</th>
-                                <th>Czas</th>
+                                <th>Pozycja</th>
+                                <th>Produkt</th>
+                                <th style="text-align: right;">Ilość Akcji</th>
                             </tr>
                         </thead>
-                        <tbody id="anaLiveTable">
-                            <tr><td colspan="3" style="text-align: center;">Ładowanie danych...</td></tr>
+                        <tbody id="anaTopProductsTable">
+                            <tr><td colspan="3" style="text-align: center;">Brak danych...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="dashboard-panel">
-                <div class="panel-title">Najpopularniejsze produkty</div>
-                <div class="analytics-list-scroll">
+                <div class="panel-title">Wybierani Agenci</div>
+                <div class="analytics-list-scroll" style="height: 250px;">
                     <table class="analytics-table">
                         <thead>
                             <tr>
-                                <th>Produkt</th>
-                                <th style="text-align: center;">Interakcje</th>
+                                <th>Agent</th>
+                                <th style="text-align: right;">Kliknięcia</th>
                             </tr>
                         </thead>
-                        <tbody id="anaTopProductsTable">
-                            <tr><td colspan="2" style="text-align: center;">Brak danych do wyświetlenia</td></tr>
+                        <tbody id="anaTopAgentsTable">
+                            <tr><td colspan="2" style="text-align: center;">Brak danych...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -381,18 +408,13 @@
     // =======================================================
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            // Usuń active z przycisków
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            // Dodaj active do klikniętego
             btn.classList.add('active');
 
-            // Ukryj sekcje
             document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
-            // Pokaż wybraną sekcję
             const targetId = btn.getAttribute('data-target');
             document.getElementById(targetId).classList.add('active');
 
-            // Jeśli to statystyki, załaduj je
             if(targetId === 'view-analytics') {
                 loadAnalytics();
             }
@@ -400,7 +422,7 @@
     });
 
     // =======================================================
-    // LOGIKA PRODUKTÓW (ORYGINALNA, NIETKNIĘTA)
+    // LOGIKA PRODUKTÓW
     // =======================================================
     let editingProductId = null; 
 
@@ -527,7 +549,6 @@
     function cancelEditing() {
         editingProductId = null;
         document.getElementById('addForm').reset();
-        
         document.getElementById('formPanelTitle').innerText = "Dodaj nowy produkt";
         document.getElementById('submitBtn').innerText = "DODAJ PRODUKT";
         document.getElementById('cancelEditBtn').style.display = 'none';
@@ -577,11 +598,7 @@
         const productItems = document.querySelectorAll('.product-item');
         productItems.forEach(item => {
             const name = item.querySelector('.name').innerText.toLowerCase();
-            if (name.includes(searchTerm)) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
-            }
+            item.style.display = name.includes(searchTerm) ? 'flex' : 'none';
         });
     });
 
@@ -590,7 +607,7 @@
 
 
     // =======================================================
-    // LOGIKA STATYSTYK (NOWE)
+    // LOGIKA STATYSTYK (ZAAWANSOWANA)
     // =======================================================
     function formatTime(timestamp) {
         if (!timestamp) return "Przed chwilą";
@@ -598,11 +615,16 @@
         return date.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
     }
 
+    function truncateId(vid) {
+        if(!vid) return "Anonim";
+        return vid.substring(0, 8) + "...";
+    }
+
     function translateAction(action) {
         switch(action) {
-            case 'page_view': return '<span class="badge-action" style="color:#a855f7; background:rgba(168,85,247,0.15)">Odsłona</span>';
+            case 'page_view': return '<span class="badge-action" style="color:#a855f7; background:rgba(168,85,247,0.15)">Odsłona Strony</span>';
             case 'copy_link': return '<span class="badge-action" style="color:#22c55e; background:rgba(34,197,94,0.15)">Kopia Linku</span>';
-            case 'view_agents': return '<span class="badge-action" style="color:#eab308; background:rgba(234,179,8,0.15)">Otwarcie Agenta</span>';
+            case 'view_agents': return '<span class="badge-action" style="color:#eab308; background:rgba(234,179,8,0.15)">Wybór Agenta</span>';
             case 'click_agent': return '<span class="badge-action" style="color:#f97316; background:rgba(249,115,22,0.15)">Klik w Agenta</span>';
             default: return `<span class="badge-action">${action}</span>`;
         }
@@ -610,84 +632,118 @@
 
     function buildDetails(data) {
         let text = "";
-        if (data.details?.page) text += `Strona: <b>/${data.details.page}</b>`;
-        if (data.details?.product && data.details?.product !== 'Nieznany') text += `<b>${data.details.product}</b> `;
-        if (data.details?.agent) text += `(${data.details.agent})`;
-        return text || "Brak danych";
+        if (data.action === 'page_view') {
+            return `Zakładka: <b style="color:#fff">/${data.details?.page || 'home'}</b>`;
+        }
+        if (data.details?.product && data.details?.product !== 'Nieznany') {
+            text += `<b style="color:#fff">${data.details.product}</b> `;
+        }
+        if (data.details?.agent) {
+            text += `→ Sklep: <span style="color:var(--text-meta)">${data.details.agent}</span>`;
+        }
+        return text || "Brak szczegółów";
     }
 
     async function loadAnalytics() {
         const liveTable = document.getElementById('anaLiveTable');
-        const topTable = document.getElementById('anaTopProductsTable');
+        const topProdTable = document.getElementById('anaTopProductsTable');
+        const topAgentsTable = document.getElementById('anaTopAgentsTable');
 
         try {
-            // Pobieramy max 300 ostatnich zdarzeń żeby nie nabijać limitów
-            const q = query(analyticsCol, orderBy("timestamp", "desc"), limit(300));
+            // Pobieramy bezpieczny limit logów by nie zabić bazy
+            const q = query(analyticsCol, orderBy("timestamp", "desc"), limit(1000));
             const snapshot = await getDocs(q);
 
+            let uniqueUsers = new Set();
             let totalViews = 0;
-            let totalCopies = 0;
-            let totalClicks = 0;
+            let totalClicks = 0; // copy_link + click_agent + view_agents
             
             let productCount = {};
+            let agentCount = {};
             let tableHtml = "";
 
             snapshot.forEach(docSnap => {
                 const data = docSnap.data();
                 
-                // Zliczanie do górnych kart
-                if (data.action === 'page_view') totalViews++;
-                if (data.action === 'copy_link') totalCopies++;
-                if (data.action === 'click_agent' || data.action === 'view_agents') totalClicks++;
+                // Zbieranie Unikalnych ID
+                if(data.visitorId) uniqueUsers.add(data.visitorId);
+
+                // Zliczanie do kart
+                if (data.action === 'page_view') {
+                    totalViews++;
+                } else {
+                    totalClicks++; // Dowolna inna interakcja
+                }
 
                 // Zliczanie popularności produktów
                 const pName = data.details?.product;
                 if (pName && pName !== 'Nieznany') {
-                    if(!productCount[pName]) productCount[pName] = 0;
-                    productCount[pName]++;
+                    productCount[pName] = (productCount[pName] || 0) + 1;
                 }
 
-                // Generowanie wiersza do tabeli "Live" (limitujemy wyświetlanie w HTML do ostatnich 50)
-                if(tableHtml.split('<tr>').length < 50) {
+                // Zliczanie popularności agentów
+                const aName = data.details?.agent;
+                if(aName) {
+                    agentCount[aName] = (agentCount[aName] || 0) + 1;
+                }
+
+                // Generowanie Feed'u na żywo (limit w HTML do ~50 sztuk dla czystości)
+                if(tableHtml.split('<tr>').length <= 50) {
                     tableHtml += `
                         <tr>
                             <td>${translateAction(data.action)}</td>
                             <td>${buildDetails(data)}</td>
+                            <td><span class="badge-id" title="${data.visitorId || ''}">${truncateId(data.visitorId)}</span></td>
                             <td class="badge-time">${formatTime(data.timestamp)}</td>
                         </tr>
                     `;
                 }
             });
 
-            // Aktualizacja górnych kart
+            // Obliczanie współczynnika (Interakcje / Odsłony)
+            let convRate = totalViews > 0 ? Math.round((totalClicks / totalViews) * 100) : 0;
+
+            // Render kart
+            document.getElementById('anaUniqueUsers').innerText = uniqueUsers.size;
             document.getElementById('anaTotalViews').innerText = totalViews;
-            document.getElementById('anaTotalCopies').innerText = totalCopies;
             document.getElementById('anaTotalClicks').innerText = totalClicks;
+            document.getElementById('anaConversion').innerText = convRate + "%";
 
-            // Render Tabeli Live
-            liveTable.innerHTML = tableHtml || `<tr><td colspan="3" style="text-align: center;">Brak zdarzeń.</td></tr>`;
+            // Render Tabela Live
+            liveTable.innerHTML = tableHtml || `<tr><td colspan="4" style="text-align: center;">Brak zdarzeń analitycznych.</td></tr>`;
 
-            // Sortowanie i render Tabeli Top Produktów
-            const sortedProducts = Object.entries(productCount).sort((a, b) => b[1] - a[1]).slice(0, 10); // Top 10
-            
-            let topHtml = "";
+            // TOP Produkty (Top 10)
+            const sortedProducts = Object.entries(productCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            let phtml = "";
             sortedProducts.forEach(([name, count], index) => {
-                let medal = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : `<span style="opacity:0.4; font-size:12px;">${index+1}.</span> `;
-                topHtml += `
+                let numeration = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : `<span style="opacity:0.4; font-size:12px; margin-right:8px;">${index+1}.</span>`;
+                phtml += `
                     <tr>
-                        <td style="font-weight: 800; color:#fff;">${medal} ${name}</td>
-                        <td style="text-align: center; color: var(--accent); font-weight: 900;">${count}</td>
+                        <td style="font-weight: 700; color:#fff;">${numeration}${name}</td>
+                        <td style="text-align: right; color: var(--accent); font-weight: 900;">${count}</td>
                     </tr>
                 `;
             });
-            topTable.innerHTML = topHtml || `<tr><td colspan="2" style="text-align: center;">Brak kliknięć w produkty.</td></tr>`;
+            topProdTable.innerHTML = phtml || `<tr><td colspan="2" style="text-align: center;">Za mało danych</td></tr>`;
+
+            // TOP Agenci (Top 5)
+            const sortedAgents = Object.entries(agentCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            let ahtml = "";
+            sortedAgents.forEach(([name, count], index) => {
+                ahtml += `
+                    <tr>
+                        <td style="font-weight: 700; color:#fff;">${name}</td>
+                        <td style="text-align: right; color: var(--warning); font-weight: 900;">${count}</td>
+                    </tr>
+                `;
+            });
+            topAgentsTable.innerHTML = ahtml || `<tr><td colspan="2" style="text-align: center;">Za mało danych</td></tr>`;
 
         } catch (error) {
             console.error("Błąd ładowania statystyk: ", error);
-            liveTable.innerHTML = `<tr><td colspan="3" style="color:var(--danger); text-align:center;">Błąd pobierania statystyk.</td></tr>`;
+            liveTable.innerHTML = `<tr><td colspan="4" style="color:var(--danger); text-align:center;">Błąd pobierania statystyk.</td></tr>`;
         }
     }
-
 </script>
 </body>
 </html>
