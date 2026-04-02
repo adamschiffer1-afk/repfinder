@@ -104,7 +104,8 @@
         .nav-link-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
         .nav-link-pill.active { background: #fff !important; color: #000 !important; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
         .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
-        /* Usunięto styl dla nav-admin-pill */
+        .nav-admin-pill { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #888; padding: 12px 20px; border-radius: 100px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.3s; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .nav-admin-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); }
         .nav-settings-btn-pill { width: 42px !important; height: 42px !important; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%; cursor: pointer; transition: 0.2s; color: #888; padding: 0 !important; }
         .nav-settings-btn-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); }
         .dropdown { position: relative; }
@@ -137,17 +138,14 @@
         .btn-filters-open:hover { background: #222; color: #fff; }
 
         .products-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; width: 100%; }
-        
-        /* Zmodyfikowana karta dla nowego układu */
         .product-card-new { background-color: #1a1a1a !important; border-radius: 16px !important; padding: 14px !important; display: flex; flex-direction: column; border: 1px solid #2a2a2a !important; transition: 0.3s; overflow: hidden; position: relative; width: 100%; }
         .product-card-new:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5) !important; }
 
-        .card-name { font-size: 14px; font-weight: 700; color: #fff; margin: 10px 0 6px 0; line-height: 1.3; }
-        .card-price { font-size: 20px !important; font-weight: 900 !important; color: #fff !important; white-space: nowrap !important; margin: 4px 0 10px 0 !important; }
+        .card-bottom-row { display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: auto !important; width: 100% !important; flex-wrap: nowrap !important; }
+        .card-price { font-size: 20px !important; font-weight: 900 !important; color: #fff !important; white-space: nowrap !important; flex-shrink: 0 !important; }
+        .card-actions { display: flex !important; gap: 8px !important; align-items: center !important; flex-shrink: 0 !important; }
         
-        .card-actions-row { display: flex !important; gap: 10px !important; align-items: center !important; width: 100% !important; margin-top: auto !important; padding-top: 10px; border-top: 1px solid #2a2a2a; }
-        
-        .btn-view-agents { background: #111 !important; border: 1px solid #333 !important; color: #fff !important; padding: 10px 14px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 12px !important; cursor: pointer !important; transition: 0.2s !important; white-space: nowrap !important; display: flex !important; align-items: center !important; justify-content: center !important; flex: 1; }
+        .btn-view-agents { background: #111 !important; border: 1px solid #333 !important; color: #fff !important; padding: 10px 14px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 12px !important; cursor: pointer !important; transition: 0.2s !important; white-space: nowrap !important; display: flex !important; align-items: center !important; justify-content: center !important; }
         .btn-view-agents:hover { background: #222 !important; }
         
         .btn-icon-pill-square { width: 38px !important; height: 38px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #111 !important; border: 1px solid #333 !important; border-radius: 10px !important; cursor: pointer !important; transition: 0.2s !important; padding: 0 !important; flex-shrink: 0 !important; position: relative; }
@@ -202,16 +200,20 @@
         .converter-dropdown-menu { display: none !important; position: absolute !important; top: 110% !important; left: 50% !important; transform: translateX(-50%); background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; padding: 8px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; flex-direction: column !important; gap: 4px !important; z-index: 2000 !important; min-width: 160px; backdrop-filter: blur(12px);}
         .converter-dropdown-wrapper.open .converter-dropdown-menu { display: flex !important; }
         
-        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 10px 15px !important; border-radius: 8px !important; font-weight: 700 !important; font-size: 13px !important; cursor: pointer !important; display: flex !important; align-items: center !important; gap: 10px !important; margin-bottom: 4px !important; transition: 0.2s !important;}
+        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 12px 16px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 13px !important; cursor: pointer !important; display: flex !important; align-items: center !important; gap: 10px !important; transition: 0.2s !important; }
         .converter-dropdown-item:hover { background: #222 !important; color: #fff !important; }
+        .converter-dropdown-item.active { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
 
-        .platform-pill { font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 100px; border: 1px solid var(--line); text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; background: rgba(255,255,255,0.05); color: var(--text); }
+        .platform-pill { font-size: 10px; font-weight: 900; padding: 6px 12px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; border: 1px solid #333; }
+        .platform-pill-weidian, .platform-pill-taobao, .platform-pill-1688, .platform-pill-tmall { background: rgba(255,255,255,0.05); color: #fff; }
+        .platform-pill-kakobuy, .platform-pill-usfans, .platform-pill-litbuy, .platform-pill-allchinabuy { background: #fff; color: #000; border-color: #fff; }
+        .platform-pill-neutral { background: transparent; color: #888; border-color: #333; }
 
         /* =====================================================================
            MODAL USTAWIEŃ I AGENTÓW
            ===================================================================== */
-        .settings-modal, .filter-modal, .agents-modal, .item-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85) !important; z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
-        .settings-modal.show, .filter-modal.show, .agents-modal.show, .item-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
+        .settings-modal, .filter-modal, .agents-modal, #adminLoginModal, .item-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85) !important; z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px); padding: 15px; }
+        .settings-modal.show, .filter-modal.show, .agents-modal.show, #adminLoginModal.show, .item-modal.show { display: flex; animation: fadeIn 0.2s ease-out; }
         .filter-content, .agents-modal-content, .item-modal-content { width: 100%; max-width: 440px; border-radius: 24px !important; padding: 30px !important; box-shadow: 0 25px 50px rgba(0,0,0,0.8) !important; background: #161616 !important; color: #fff !important; border: 1px solid #2a2a2a !important; }
         .settings-content { width: 100%; max-width: 460px; background: #161616 !important; border: 1px solid #2a2a2a !important; border-radius: 24px !important; padding: 30px !important; box-shadow: 0 25px 50px rgba(0,0,0,0.8) !important; }
         
@@ -272,7 +274,7 @@
         .agent-direct-btn:hover { background: #222 !important; border-color: #444 !important; }
         .agent-copy-btn { width: 54px !important; height: 54px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; cursor: pointer !important; color: #aaa !important; transition: 0.2s !important; padding: 0 !important; }
         .agent-copy-btn:hover { background: #222 !important; color: #fff !important; }
-        .settings-agent-btn-left img, .settings-agent-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
+        .settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
 
         /* CONFETTI Z PINIATY */
         .page-confetti-overlay { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: 9999; }
@@ -298,6 +300,7 @@
             .nav-left { justify-content: space-between; width: 100%; display: flex; }
             .nav-brand-pill { padding: 0; }
             .nav-right { flex: none; display: flex; gap: 8px; }
+            .nav-admin-pill span { display: none; }
             .nav-settings-btn-pill { width: 40px !important; height: 40px !important; }
 
             .nav-center { width: 100%; display: flex; overflow-x: auto; justify-content: flex-start; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.08); gap: 5px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
@@ -307,7 +310,6 @@
             .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important; }
             .product-card-new { padding: 10px !important; border-radius: 14px !important; }
             
-            /* Mobilne karty - Cena na środek, przyciski na całą szerokość */
             .card-name { font-size: 12px; }
             .card-price { font-size: 18px !important; text-align: center; margin-top: 5px !important; }
             .card-actions-row { flex-wrap: wrap; justify-content: center; gap: 6px !important; padding-top: 8px; }
@@ -618,7 +620,204 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // WYMUSZANIE POPRAWNEGO LINKU KAKOBUY
+        // ==========================================
+        //  GLOBALNE FUNKCJE DO KONWERSJI LINKÓW
+        // ==========================================
+        window.detectPlatform = function(url) {
+            const value = String(url || "").toLowerCase();
+            if (!value) return "auto";
+            if (value.includes("weidian.com")) return "weidian";
+            if (value.includes("taobao.com")) return "taobao";
+            if (value.includes("1688.com")) return "1688";
+            if (value.includes("tmall.com")) return "tmall";
+            if (value.includes("kakobuy.com") || value.includes("m.kakobuy.com")) return "kakobuy";
+            if (value.includes("usfans.com")) return "usfans";
+            if (value.includes("acbuy.com") || value.includes("allchinabuy.com")) return "allchinabuy";
+            if (value.includes("litbuy.com")) return "litbuy";
+            return "unknown";
+        };
+
+        window.normalizeUrl = function(value) {
+            const raw = String(value || "").trim();
+            if (!raw) return "";
+            if (/^https?:\/\//i.test(raw)) return raw;
+            if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(raw)) return `https://${raw}`;
+            return raw;
+        };
+
+        window.safeUrl = function(value) {
+            try { return new URL(value); } catch (error) { return null; }
+        };
+
+        window.deepDecode = function(value, rounds = 4) {
+            let result = String(value || "");
+            for (let i = 0; i < rounds; i += 1) {
+                try {
+                    const decoded = decodeURIComponent(result);
+                    if (decoded === result) break;
+                    result = decoded;
+                } catch (error) { break; }
+            }
+            return result;
+        };
+
+        window.extractWeidianItemId = function(url) {
+            const safe = window.safeUrl(url);
+            if (safe) {
+                const itemId = safe.searchParams.get("itemID") || safe.searchParams.get("itemId") || safe.searchParams.get("id");
+                if (itemId && /^\d+$/.test(itemId)) return itemId;
+            }
+            const match = String(url || "").match(/itemID(?:%3D|=)(\d+)/i);
+            return match ? match[1] : "";
+        };
+
+        window.extractUsFansItemId = function(url) {
+            const match = String(url || "").match(/\/product\/\d+\/(\d+)/i);
+            return match ? match[1] : "";
+        };
+
+        window.extractAllChinaBuyItemId = function(url) {
+            const safe = window.safeUrl(url);
+            if (!safe) return "";
+            const id = safe.searchParams.get("id");
+            if (id && /^\d+$/.test(id)) return id;
+            return "";
+        };
+
+        window.extractLitBuyItemId = function(url) {
+            const match = String(url || "").match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
+            return match ? match[1] : "";
+        };
+
+        window.extractLitBuySource = function(url) {
+            const match = String(url || "").match(/\/product\/([a-z0-9_-]+)\//i);
+            if (!match) return "unknown";
+            const source = match[1].toLowerCase();
+            if (source === "weidian") return "weidian";
+            return source;
+        };
+
+        window.extractSourceCode = function(url) {
+            const safe = window.safeUrl(url);
+            if (!safe) return "";
+            return String(safe.searchParams.get("source") || "").toUpperCase();
+        };
+
+        window.buildWeidianUrl = function(itemId) {
+            return `https://weidian.com/item.html?itemID=${itemId}`;
+        };
+
+        window.cleanupExtractedUrl = function(url) {
+            let cleaned = String(url || "").trim();
+            cleaned = cleaned.replace(/&affcode=[^&]+/gi, "");
+            cleaned = cleaned.replace(/[),.;]+$/g, "");
+            const itemId = window.extractWeidianItemId(cleaned);
+            if (itemId) return window.buildWeidianUrl(itemId);
+            return cleaned;
+        };
+
+        window.extractWeidianLikeUrlFromText = function(value) {
+            const decoded = window.deepDecode(String(value || ""));
+            const weidianMatch = decoded.match(/https?:\/\/(?:www\.)?weidian\.com\/item\.html\?[^ \n\r"'<>]*/i);
+            if (weidianMatch) return window.cleanupExtractedUrl(weidianMatch[0]);
+
+            const genericUrlMatch = decoded.match(/https?:\/\/[^ \n\r"'<>]+/i);
+            if (genericUrlMatch) return window.cleanupExtractedUrl(genericUrlMatch[0]);
+            return "";
+        };
+
+        window.extractOriginalUrlFromAnyAgent = function(inputUrl) {
+            const normalized = window.normalizeUrl(inputUrl);
+            const url = window.safeUrl(normalized);
+            if (!url) return window.extractWeidianLikeUrlFromText(normalized);
+
+            const candidateKeys = ["url", "itemUrl", "goodsUrl", "link", "target", "redirect", "redirectUrl", "shopUrl"];
+            for (const key of candidateKeys) {
+                const value = url.searchParams.get(key);
+                if (!value) continue;
+                const deep = window.deepDecode(value);
+                const directFound = window.extractWeidianLikeUrlFromText(deep);
+                if (directFound) return directFound;
+                const normalizedValue = window.normalizeUrl(deep);
+                if (normalizedValue.startsWith("http")) return normalizedValue;
+            }
+            return window.extractWeidianLikeUrlFromText(normalized);
+        };
+
+        window.extractKakoBuyItemId = function(url) {
+            const embedded = window.extractOriginalUrlFromAnyAgent(url);
+            const embeddedId = window.extractWeidianItemId(embedded);
+            if (embeddedId) return embeddedId;
+            const match = String(url || "").match(/itemID%3D(\d+)/i);
+            return match ? match[1] : "";
+        };
+
+        window.extractAnyKnownItemId = function(rawInput, extractedOriginalUrl) {
+            return window.extractWeidianItemId(extractedOriginalUrl) || window.extractWeidianItemId(rawInput) || window.extractKakoBuyItemId(rawInput) || window.extractUsFansItemId(rawInput) || window.extractAllChinaBuyItemId(rawInput) || window.extractLitBuyItemId(rawInput) || "";
+        };
+
+        window.analyzeInput = function(rawUrl) {
+            const cleaned = window.normalizeUrl(rawUrl);
+            if (!cleaned) {
+                return { displaySource: "auto", originalPlatform: "unknown", originalUrl: "", itemId: "", sourceCode: "" };
+            }
+            const platform = window.detectPlatform(cleaned);
+
+            if (platform === "weidian") {
+                const itemId = window.extractWeidianItemId(cleaned);
+                return { displaySource: "weidian", originalPlatform: "weidian", originalUrl: itemId ? window.buildWeidianUrl(itemId) : cleaned, itemId, sourceCode: "WD" };
+            }
+            if (platform === "kakobuy") {
+                const embeddedOriginal = window.extractOriginalUrlFromAnyAgent(cleaned);
+                const itemId = window.extractAnyKnownItemId(cleaned, embeddedOriginal);
+                const originalUrl = itemId ? window.buildWeidianUrl(itemId) : embeddedOriginal;
+                return { displaySource: "kakobuy", originalPlatform: itemId ? "weidian" : window.detectPlatform(originalUrl), originalUrl: originalUrl || "", itemId, sourceCode: itemId ? "WD" : "" };
+            }
+            if (platform === "usfans") {
+                const itemId = window.extractUsFansItemId(cleaned);
+                return { displaySource: "usfans", originalPlatform: itemId ? "weidian" : "unknown", originalUrl: itemId ? window.buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId ? "WD" : "" };
+            }
+            if (platform === "allchinabuy") {
+                const itemId = window.extractAllChinaBuyItemId(cleaned);
+                const sourceCode = window.extractSourceCode(cleaned) || (itemId ? "WD" : "");
+                return { displaySource: "allchinabuy", originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown", originalUrl: itemId && sourceCode === "WD" ? window.buildWeidianUrl(itemId) : "", itemId, sourceCode };
+            }
+            if (platform === "litbuy") {
+                const itemId = window.extractLitBuyItemId(cleaned);
+                const sourcePlatform = window.extractLitBuySource(cleaned);
+                return { displaySource: "litbuy", originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform, originalUrl: itemId && sourcePlatform === "weidian" ? window.buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : "" };
+            }
+            return { displaySource: platform, originalPlatform: platform, originalUrl: cleaned, itemId: window.extractWeidianItemId(cleaned), sourceCode: platform === "weidian" ? "WD" : "" };
+        };
+
+        window.buildConvertedResult = function(analysis, target) {
+            const itemId = analysis.itemId;
+            const sourcePlatform = analysis.originalPlatform;
+            if (!analysis.originalUrl) {
+                return { url: "" };
+            }
+            if (target === "weidian") {
+                if (itemId) return { url: window.buildWeidianUrl(itemId) };
+                if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
+                return { url: "" };
+            }
+            if (!itemId || sourcePlatform !== "weidian") {
+                if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
+                    return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}&affcode=xfrostyy` };
+                }
+                return { url: "" };
+            }
+            switch (target) {
+                case "kakobuy": return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(window.buildWeidianUrl(itemId))}&affcode=xfrostyy` };
+                case "usfans": return { url: `https://www.usfans.com/product/3/${itemId}` };
+                case "allchinabuy": return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
+                case "litbuy": return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?` };
+                default: return { url: "" };
+            }
+        };
+
+        // ==========================================
+
         function fixKakoLink(link) {
             if (!link || !link.includes('kakobuy.com')) return link;
             let clean = link.replace(/([?&])(affcode|ref_id)=[^&]*/gi, '');
@@ -813,6 +1012,11 @@
 
             loadProducts();
             
+            // Wymuś odpalenie tutoriala w locie po wejściu żeby od razu były widoczne (Zabezpieczenie)
+            if (typeof window.initTutorials === 'function') {
+                window.initTutorials();
+            }
+            
             const sentinel = document.getElementById("scrollSentinel");
             let isFetchingMore = false;
             const observer = new IntersectionObserver((entries) => {
@@ -876,16 +1080,27 @@
             itemsToRender.forEach(p => {
                 const displayPrice = prefix + convertCurrency(p.Cena_USD, currency) + suffix;
 
-                let linkToCopy = p.Link_Kakobuy || ''; 
-                if(pinnedAgentId === 'usfans' && p.Link_Usfans) linkToCopy = p.Link_Usfans;
-                if(pinnedAgentId === 'allchinabuy' && p.Link_Allchinabuy) linkToCopy = p.Link_Allchinabuy;
-                if(pinnedAgentId === 'litbuy' && p.Link_Litbuy) linkToCopy = p.Link_Litbuy;
+                let linkToCopy = ''; 
                 
-                if ((!pinnedAgentId || pinnedAgentId === 'kakobuy') && linkToCopy) {
-                    linkToCopy = fixKakoLink(linkToCopy);
+                // Konwertujemy w locie na podstawie przypiętego agenta
+                const analysis = window.analyzeInput(p.Link_Kakobuy || '');
+                const originalUrl = analysis.originalUrl;
+                const itemId = analysis.itemId;
+
+                if (originalUrl || itemId) {
+                    if (pinnedAgentId === 'usfans' && itemId) {
+                        linkToCopy = `https://www.usfans.com/product/3/${itemId}`;
+                    } else if (pinnedAgentId === 'allchinabuy' && itemId) {
+                        linkToCopy = `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD`;
+                    } else if (pinnedAgentId === 'litbuy' && itemId) {
+                        linkToCopy = `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?`;
+                    } else {
+                        linkToCopy = `https://www.kakobuy.com/item/details?url=${encodeURIComponent(originalUrl || `https://weidian.com/item.html?itemID=${itemId}`)}&affcode=xfrostyy`;
+                    }
                 }
 
                 const safeLinkToCopy = window.escapeHtml(linkToCopy || '');
+                const rawKakoLinkForModal = window.escapeHtml(p.Link_Kakobuy || '');
 
                 html += `
                 <article class="product-card-new">
@@ -896,20 +1111,20 @@
                         <span class="tag-red">${p.Tag || 'BEST BATCH'}</span>
                     </div>
                     
-                    <h3 class="card-name">${p.Nazwa}</h3>
+                    <h3 class="card-name" style="margin-bottom: 8px;">${p.Nazwa}</h3>
                     
-                    <div class="card-price">${displayPrice}</div>
-                    
-                    <div class="card-actions-row">
-                        <button class="btn-view-agents" onclick="window.openAgentsModal('${safeLinkToCopy}')">
-                            View agents
-                        </button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; width: 100%;">
+                        <div class="card-price" style="margin: 0 !important; text-align: left !important;">${displayPrice}</div>
                         
-                        <button class="btn-icon-pill-square" onclick="window.copyText('${safeLinkToCopy}', this)">
+                        <button class="btn-icon-pill-square" onclick="window.copyText('${safeLinkToCopy}', this)" style="margin: 0 !important; flex-shrink: 0 !important; display: flex !important;">
                             <img src="${agentObj.icon}" class="copy-icon">
                             <svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </button>
                     </div>
+                    
+                    <button class="btn-view-agents" onclick="window.openAgentsModal('${rawKakoLinkForModal}')" style="width: 100% !important; margin-top: auto !important; flex: none !important;">
+                        View agents
+                    </button>
                 </article>`;
             });
             
@@ -1008,22 +1223,37 @@
             } catch (error) { 
                 console.error("Szczegóły błędu Firebase:", error);
                 grid.innerHTML = `<p style='color:#ef4444; text-align:center; width:100%; grid-column:1/-1;'>
-                    Błąd połączenia z bazą: <br><strong style="font-size:12px;">${error.message}</strong>
+                    Błąd połączenia z bazą lub limit został przekroczony (Quota exceeded). <br><strong style="font-size:12px;">Poczekaj do 9:00 rano na zresetowanie.</strong>
                 </p>`;
             }
         }
 
         window.openAgentsModal = (link) => {
             let safeLink = link || '';
-            
-            if (safeLink.includes('kakobuy.com')) {
-                safeLink = fixKakoLink(safeLink);
-            }
+            const analysis = window.analyzeInput(safeLink);
+            const originalUrl = analysis.originalUrl;
+            const itemId = analysis.itemId;
 
             document.getElementById('am-list').innerHTML = window.AGENTS.filter(a => a.id !== 'weidian').map(agent => {
-                let finalLink = safeLink;
+                let finalLink = "";
                 
-                if(agent.id === 'kakobuy' && finalLink) {
+                if (originalUrl || itemId) {
+                    if (agent.id === 'kakobuy') {
+                        finalLink = `https://www.kakobuy.com/item/details?url=${encodeURIComponent(originalUrl || `https://weidian.com/item.html?itemID=${itemId}`)}&affcode=xfrostyy`;
+                    } else if (agent.id === 'usfans' && itemId) {
+                        finalLink = `https://www.usfans.com/product/3/${itemId}`;
+                    } else if (agent.id === 'allchinabuy' && itemId) {
+                        finalLink = `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD`;
+                    } else if (agent.id === 'litbuy' && itemId) {
+                        finalLink = `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?`;
+                    }
+                }
+                
+                if (!finalLink) {
+                    finalLink = safeLink; 
+                }
+                
+                if (agent.id === 'kakobuy' && finalLink) {
                     finalLink = fixKakoLink(finalLink);
                 }
                 
@@ -1325,7 +1555,7 @@
             resultSection.classList.add("hidden");
 
             input.addEventListener("input", () => {
-                const analysis = analyzeInput(input.value.trim());
+                const analysis = window.analyzeInput(input.value.trim());
                 updateSourceLabel(analysis.displaySource);
             });
 
@@ -1349,7 +1579,7 @@
                     return;
                 }
 
-                const analysis = analyzeInput(raw);
+                const analysis = window.analyzeInput(raw);
                 updateSourceLabel(analysis.displaySource);
 
                 if (!analysis.originalUrl) {
@@ -1366,7 +1596,7 @@
                     return;
                 }
 
-                const converted = buildConvertedResult(analysis, selectedTarget);
+                const converted = window.buildConvertedResult(analysis, selectedTarget);
 
                 if (!converted.url) {
                     setResult({
@@ -1415,9 +1645,9 @@
                     const active = target.value === selectedTarget ? "active" : "";
                     const agentObj = window.AGENTS.find(a => a.id === target.value) || { icon: 'https://s.weidian.com/assets/favicon.ico' };
                     return `
-                        <button type="button" class="converter-dropdown-item ${active}" data-target-value="${escapeHtml(target.value)}">
+                        <button type="button" class="converter-dropdown-item ${active}" data-target-value="${window.escapeHtml(target.value)}">
                             <img src="${agentObj.icon}" style="width:16px; height:16px; border-radius:50%;" onerror="this.style.display='none'">
-                            ${escapeHtml(target.label)}
+                            ${window.escapeHtml(target.label)}
                         </button>
                     `;
                 }).join("");
@@ -1437,211 +1667,6 @@
             function updateSourceLabel(source) {
                 if (!sourceLabel) return;
                 sourceLabel.textContent = source === "auto" ? "Auto detect" : formatPlatformLabel(source);
-            }
-
-            function analyzeInput(rawUrl) {
-                const cleaned = normalizeUrl(rawUrl);
-
-                if (!cleaned) {
-                    return { displaySource: "auto", originalPlatform: "unknown", originalUrl: "", itemId: "", sourceCode: "" };
-                }
-
-                const platform = detectPlatform(cleaned);
-
-                if (platform === "weidian") {
-                    const itemId = extractWeidianItemId(cleaned);
-                    return { displaySource: "weidian", originalPlatform: "weidian", originalUrl: itemId ? buildWeidianUrl(itemId) : cleaned, itemId, sourceCode: "WD" };
-                }
-
-                if (platform === "kakobuy") {
-                    const embeddedOriginal = extractOriginalUrlFromAnyAgent(cleaned);
-                    const itemId = extractAnyKnownItemId(cleaned, embeddedOriginal);
-                    const originalUrl = itemId ? buildWeidianUrl(itemId) : embeddedOriginal;
-
-                    return { displaySource: "kakobuy", originalPlatform: itemId ? "weidian" : detectPlatform(originalUrl), originalUrl: originalUrl || "", itemId, sourceCode: itemId ? "WD" : "" };
-                }
-
-                if (platform === "usfans") {
-                    const itemId = extractUsFansItemId(cleaned);
-                    return { displaySource: "usfans", originalPlatform: itemId ? "weidian" : "unknown", originalUrl: itemId ? buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId ? "WD" : "" };
-                }
-
-                if (platform === "allchinabuy") {
-                    const itemId = extractAllChinaBuyItemId(cleaned);
-                    const sourceCode = extractSourceCode(cleaned) || (itemId ? "WD" : "");
-                    return { displaySource: "allchinabuy", originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown", originalUrl: itemId && sourceCode === "WD" ? buildWeidianUrl(itemId) : "", itemId, sourceCode };
-                }
-
-                if (platform === "litbuy") {
-                    const itemId = extractLitBuyItemId(cleaned);
-                    const sourcePlatform = extractLitBuySource(cleaned);
-                    return { displaySource: "litbuy", originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform, originalUrl: itemId && sourcePlatform === "weidian" ? buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : "" };
-                }
-
-                return { displaySource: platform, originalPlatform: platform, originalUrl: cleaned, itemId: extractWeidianItemId(cleaned), sourceCode: platform === "weidian" ? "WD" : "" };
-            }
-
-            function buildConvertedResult(analysis, target) {
-                const itemId = analysis.itemId;
-                const sourcePlatform = analysis.originalPlatform;
-
-                if (!analysis.originalUrl) {
-                    return { url: "" };
-                }
-
-                if (target === "weidian") {
-                    if (itemId) return { url: buildWeidianUrl(itemId) };
-                    if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
-                    return { url: "" };
-                }
-
-                if (!itemId || sourcePlatform !== "weidian") {
-                    if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
-                        return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}&affcode=xfrostyy` };
-                    }
-                    return { url: "" };
-                }
-
-                switch (target) {
-                    case "kakobuy": return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}&affcode=xfrostyy` };
-                    case "usfans": return { url: `https://www.usfans.com/product/3/${itemId}` };
-                    case "allchinabuy": return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
-                    case "litbuy": return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}?` };
-                    default: return { url: "" };
-                }
-            }
-
-            function detectPlatform(url) {
-                const value = String(url || "").toLowerCase();
-                if (!value) return "auto";
-                if (value.includes("weidian.com")) return "weidian";
-                if (value.includes("taobao.com")) return "taobao";
-                if (value.includes("1688.com")) return "1688";
-                if (value.includes("tmall.com")) return "tmall";
-                if (value.includes("kakobuy.com") || value.includes("m.kakobuy.com")) return "kakobuy";
-                if (value.includes("usfans.com")) return "usfans";
-                if (value.includes("acbuy.com") || value.includes("allchinabuy.com")) return "allchinabuy";
-                if (value.includes("litbuy.com")) return "litbuy";
-                return "unknown";
-            }
-
-            function normalizeUrl(value) {
-                const raw = String(value || "").trim();
-                if (!raw) return "";
-                if (/^https?:\/\//i.test(raw)) return raw;
-                if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(raw)) return `https://${raw}`;
-                return raw;
-            }
-
-            function extractOriginalUrlFromAnyAgent(inputUrl) {
-                const normalized = normalizeUrl(inputUrl);
-                const url = safeUrl(normalized);
-                if (!url) return extractWeidianLikeUrlFromText(normalized);
-
-                const candidateKeys = ["url", "itemUrl", "goodsUrl", "link", "target", "redirect", "redirectUrl", "shopUrl"];
-                for (const key of candidateKeys) {
-                    const value = url.searchParams.get(key);
-                    if (!value) continue;
-                    const deep = deepDecode(value);
-                    const directFound = extractWeidianLikeUrlFromText(deep);
-                    if (directFound) return directFound;
-                    const normalizedValue = normalizeUrl(deep);
-                    if (normalizedValue.startsWith("http")) return normalizedValue;
-                }
-                return extractWeidianLikeUrlFromText(normalized);
-            }
-
-            function extractWeidianLikeUrlFromText(value) {
-                const decoded = deepDecode(String(value || ""));
-                const weidianMatch = decoded.match(/https?:\/\/(?:www\.)?weidian\.com\/item\.html\?[^ \n\r"'<>]*/i);
-                if (weidianMatch) return cleanupExtractedUrl(weidianMatch[0]);
-
-                const genericUrlMatch = decoded.match(/https?:\/\/[^ \n\r"'<>]+/i);
-                if (genericUrlMatch) return cleanupExtractedUrl(genericUrlMatch[0]);
-                return "";
-            }
-
-            function cleanupExtractedUrl(url) {
-                let cleaned = String(url || "").trim();
-                cleaned = cleaned.replace(/&affcode=[^&]+/gi, "");
-                cleaned = cleaned.replace(/[),.;]+$/g, "");
-                const itemId = extractWeidianItemId(cleaned);
-                if (itemId) return buildWeidianUrl(itemId);
-                return cleaned;
-            }
-
-            function extractAnyKnownItemId(rawInput, extractedOriginalUrl) {
-                return extractWeidianItemId(extractedOriginalUrl) || extractWeidianItemId(rawInput) || extractKakoBuyItemId(rawInput) || extractUsFansItemId(rawInput) || extractAllChinaBuyItemId(rawInput) || extractLitBuyItemId(rawInput) || "";
-            }
-
-            function extractWeidianItemId(url) {
-                const safe = safeUrl(url);
-                if (safe) {
-                    const itemId = safe.searchParams.get("itemID") || safe.searchParams.get("itemId") || safe.searchParams.get("id");
-                    if (itemId && /^\d+$/.test(itemId)) return itemId;
-                }
-                const match = String(url || "").match(/itemID(?:%3D|=)(\d+)/i);
-                return match ? match[1] : "";
-            }
-
-            function extractKakoBuyItemId(url) {
-                const embedded = extractOriginalUrlFromAnyAgent(url);
-                const embeddedId = extractWeidianItemId(embedded);
-                if (embeddedId) return embeddedId;
-                const match = String(url || "").match(/itemID%3D(\d+)/i);
-                return match ? match[1] : "";
-            }
-
-            function extractUsFansItemId(url) {
-                const match = String(url || "").match(/\/product\/\d+\/(\d+)/i);
-                return match ? match[1] : "";
-            }
-
-            function extractAllChinaBuyItemId(url) {
-                const safe = safeUrl(url);
-                if (!safe) return "";
-                const id = safe.searchParams.get("id");
-                if (id && /^\d+$/.test(id)) return id;
-                return "";
-            }
-
-            function extractSourceCode(url) {
-                const safe = safeUrl(url);
-                if (!safe) return "";
-                return String(safe.searchParams.get("source") || "").toUpperCase();
-            }
-
-            function extractLitBuyItemId(url) {
-                const match = String(url || "").match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
-                return match ? match[1] : "";
-            }
-
-            function extractLitBuySource(url) {
-                const match = String(url || "").match(/\/product\/([a-z0-9_-]+)\//i);
-                if (!match) return "unknown";
-                const source = match[1].toLowerCase();
-                if (source === "weidian") return "weidian";
-                return source;
-            }
-
-            function buildWeidianUrl(itemId) {
-                return `https://weidian.com/item.html?itemID=${itemId}`;
-            }
-
-            function safeUrl(value) {
-                try { return new URL(value); } catch (error) { return null; }
-            }
-
-            function deepDecode(value, rounds = 4) {
-                let result = String(value || "");
-                for (let i = 0; i < rounds; i += 1) {
-                    try {
-                        const decoded = decodeURIComponent(result);
-                        if (decoded === result) break;
-                        result = decoded;
-                    } catch (error) { break; }
-                }
-                return result;
             }
 
             function setResult(payload) {
