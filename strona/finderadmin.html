@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>repfinder | Dashboard Admina</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         /* =========================================================================
            OSTATECZNY DESIGN DASHBOARDU ADMINA (WIĘKSZY, SZARY, CZYSTY)
@@ -18,7 +20,7 @@
             --danger: #ef4444; /* Czerwony usuwania */
             --input-bg: #1e1e22; /* Tło inputów */
             --success: #22c55e;
-            --warning: #f59e0b;
+            --warning: #facc15;
         }
 
         body { 
@@ -71,6 +73,46 @@
         }
         .tab-btn:hover { background: var(--input-bg); color: #fff; }
         .tab-btn.active { background: #fff; color: #000; border-color: #fff; }
+
+        /* FILTRY CZASOWE DLA STATYSTYK */
+        .time-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            background: var(--panel);
+            padding: 15px 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 5px;
+        }
+        .time-filter-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-meta);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .time-filter-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .time-filter-btn.active { background: #fff; color: #000; border-color: #fff; }
+        
+        .custom-time-wrap { display: flex; gap: 10px; align-items: center; margin-left: auto; }
+        .custom-time-input {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            color-scheme: dark;
+        }
+        .custom-time-input:focus { border-color: var(--accent); }
 
         /* KONTENERY WIDOKÓW */
         .view-section { display: none; flex-direction: column; gap: 30px; }
@@ -168,7 +210,7 @@
             outline: none;
             box-sizing: border-box;
             transition: 0.2s;
-            appearance: none; 
+            appearance: none; /* Ukryj domyślną strzałkę w selectach */
         }
         input:focus, select:focus { border-color: var(--accent); background: #26262a; }
         
@@ -222,6 +264,8 @@
             .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .main-grid { grid-template-columns: 1fr; gap: 20px; }
             .grid-3 { grid-template-columns: 1fr; }
+            .custom-time-wrap { flex-direction: column; width: 100%; align-items: flex-start; }
+            .custom-time-wrap > div { display: flex; gap: 10px; width: 100%; }
         }
     </style>
 </head>
@@ -308,6 +352,26 @@
     </div>
 
     <div id="view-analytics" class="view-section">
+        
+        <div class="time-filters">
+            <button class="time-filter-btn" data-time="1h">1h</button>
+            <button class="time-filter-btn" data-time="6h">6h</button>
+            <button class="time-filter-btn" data-time="12h">12h</button>
+            <button class="time-filter-btn active" data-time="24h">24h</button>
+            <button class="time-filter-btn" data-time="7d">Tydzień</button>
+            <button class="time-filter-btn" data-time="30d">Miesiąc</button>
+
+            <div class="custom-time-wrap">
+                <span style="font-size: 12px; color: var(--text-meta); font-weight: 700;">WŁASNY ZAKRES:</span>
+                <div>
+                    <input type="datetime-local" id="customStart" class="custom-time-input">
+                    <span style="color: var(--text-meta);"> - </span>
+                    <input type="datetime-local" id="customEnd" class="custom-time-input">
+                    <button id="applyCustomTime" class="time-filter-btn" style="background: var(--accent); color: #fff; border-color: var(--accent); margin-left: 5px;">Zastosuj</button>
+                </div>
+            </div>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="kicker">Unikalni Użytkownicy</div>
@@ -318,24 +382,31 @@
                 <div class="value" id="anaTotalViews" style="color: #fff;">0</div>
             </div>
             <div class="stat-card">
-                <div class="kicker">Interakcje (Kopie + Kliknięcia)</div>
+                <div class="kicker">Kliknięcia i Kopie</div>
                 <div class="value" id="anaTotalClicks" style="color: var(--warning);">0</div>
             </div>
             <div class="stat-card">
-                <div class="kicker">Współczynnik Aktywności</div>
+                <div class="kicker">Aktywność / Konwersja</div>
                 <div class="value" id="anaConversion" style="color: var(--success);">0%</div>
             </div>
         </div>
 
+        <div class="dashboard-panel" style="grid-column: span 2; margin-bottom: -15px;">
+            <div class="panel-title" id="chartTitle">Aktywność Ruchu (Ostatnie 24 Godziny)</div>
+            <div style="height: 320px; width: 100%;">
+                <canvas id="activityChart"></canvas>
+            </div>
+        </div>
+
         <div class="dashboard-panel" style="margin-bottom: -15px;">
-            <div class="panel-title">Ostatnia Aktywność (Live)</div>
+            <div class="panel-title">Lista Zdarzeń (Najnowsze)</div>
             <div class="analytics-list-scroll" style="height: 300px;">
                 <table class="analytics-table">
                     <thead>
                         <tr>
                             <th>Akcja</th>
                             <th>Szczegóły / Produkt</th>
-                            <th>Użytkownik</th>
+                            <th>ID Sesji</th>
                             <th>Czas</th>
                         </tr>
                     </thead>
@@ -348,7 +419,7 @@
 
         <div class="grid-3">
             <div class="dashboard-panel" style="grid-column: span 2;">
-                <div class="panel-title">Najpopularniejsze Produkty</div>
+                <div class="panel-title">Najpopularniejsze Produkty (W wybranym czasie)</div>
                 <div class="analytics-list-scroll" style="height: 250px;">
                     <table class="analytics-table">
                         <thead>
@@ -359,7 +430,7 @@
                             </tr>
                         </thead>
                         <tbody id="anaTopProductsTable">
-                            <tr><td colspan="3" style="text-align: center;">Brak danych...</td></tr>
+                            <tr><td colspan="3" style="text-align: center;">Ładowanie...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -376,7 +447,7 @@
                             </tr>
                         </thead>
                         <tbody id="anaTopAgentsTable">
-                            <tr><td colspan="2" style="text-align: center;">Brak danych...</td></tr>
+                            <tr><td colspan="2" style="text-align: center;">Ładowanie...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -607,8 +678,63 @@
 
 
     // =======================================================
-    // LOGIKA STATYSTYK (ZAAWANSOWANA)
+    // LOGIKA STATYSTYK Z FILTROWANIEM CZASOWYM
     // =======================================================
+
+    let currentStartDate = new Date(Date.now() - 24 * 60 * 60 * 1000); // domyślnie 24h
+    let currentEndDate = new Date();
+    let currentTitle = "Ostatnie 24 Godziny";
+
+    // Obsługa przycisków szybkich filtrów
+    document.querySelectorAll('.time-filter-btn').forEach(btn => {
+        if(btn.id === "applyCustomTime") return; // Pomijamy przycisk z własnego wyboru
+        
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.time-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const timeVal = btn.getAttribute('data-time');
+            currentEndDate = new Date();
+            currentStartDate = new Date();
+            
+            if(timeVal === '1h') { currentStartDate.setHours(currentEndDate.getHours() - 1); currentTitle = "Ostatnia Godzina"; }
+            else if(timeVal === '6h') { currentStartDate.setHours(currentEndDate.getHours() - 6); currentTitle = "Ostatnie 6 Godzin"; }
+            else if(timeVal === '12h') { currentStartDate.setHours(currentEndDate.getHours() - 12); currentTitle = "Ostatnie 12 Godzin"; }
+            else if(timeVal === '24h') { currentStartDate.setHours(currentEndDate.getHours() - 24); currentTitle = "Ostatnie 24 Godziny"; }
+            else if(timeVal === '7d') { currentStartDate.setDate(currentEndDate.getDate() - 7); currentTitle = "Ostatni Tydzień"; }
+            else if(timeVal === '30d') { currentStartDate.setDate(currentEndDate.getDate() - 30); currentTitle = "Ostatni Miesiąc"; }
+            
+            document.getElementById('chartTitle').innerText = `Aktywność Ruchu (${currentTitle})`;
+            loadAnalytics();
+        });
+    });
+
+    // Obsługa własnego zakresu dat
+    document.getElementById('applyCustomTime').addEventListener('click', () => {
+        const startVal = document.getElementById('customStart').value;
+        const endVal = document.getElementById('customEnd').value;
+        
+        if(!startVal || !endVal) {
+            showStatus('Wybierz obie daty dla własnego zakresu!', true);
+            return;
+        }
+        
+        currentStartDate = new Date(startVal);
+        currentEndDate = new Date(endVal);
+        
+        // Zabezpieczenie przed złą kolejnością dat
+        if(currentStartDate >= currentEndDate) {
+            showStatus('Data początkowa musi być wcześniejsza.', true);
+            return;
+        }
+
+        document.querySelectorAll('.time-filter-btn').forEach(b => b.classList.remove('active'));
+        currentTitle = "Wybrany Zakres Czasowy";
+        document.getElementById('chartTitle').innerText = `Aktywność Ruchu (${currentTitle})`;
+        
+        loadAnalytics();
+    });
+
     function formatTime(timestamp) {
         if (!timestamp) return "Przed chwilą";
         const date = timestamp.toDate();
@@ -650,53 +776,99 @@
         const topAgentsTable = document.getElementById('anaTopAgentsTable');
 
         try {
-            // Pobieramy bezpieczny limit logów by nie zabić bazy
-            const q = query(analyticsCol, orderBy("timestamp", "desc"), limit(1000));
+            // Pobieramy bezpieczny limit logów (2000), żeby nie zabić darmowej bazy Firebase
+            // Następnie filtrujemy lokalnie - działa to niesamowicie szybko na 2000 elementach
+            // i pozwala uniknąć konieczności konfigurowania zaawansowanych Indeksów w Firestore
+            const q = query(analyticsCol, orderBy("timestamp", "desc"), limit(2000));
             const snapshot = await getDocs(q);
 
             let uniqueUsers = new Set();
             let totalViews = 0;
-            let totalClicks = 0; // copy_link + click_agent + view_agents
+            let totalClicks = 0; 
             
             let productCount = {};
             let agentCount = {};
             let tableHtml = "";
+            let liveRowsCount = 0;
 
+            // Wyliczanie podziałek (koszyków) do wykresu zależnie od wybranego zakresu czasu
+            let diffHours = (currentEndDate - currentStartDate) / (1000 * 60 * 60);
+            let timeMode = 'hours';
+            let bucketCount = 24;
+
+            if (diffHours <= 1.1) { timeMode = 'minutes'; bucketCount = 12; } // dla 1h pokazujemy punkty co 5 min
+            else if (diffHours <= 6.1) { timeMode = 'hours'; bucketCount = 6; } // dla 6h
+            else if (diffHours <= 12.1) { timeMode = 'hours'; bucketCount = 12; } // dla 12h
+            else if (diffHours <= 24.1) { timeMode = 'hours'; bucketCount = 24; } // dla 24h
+            else { timeMode = 'days'; bucketCount = Math.min(Math.ceil(diffHours / 24), 30); } // max 30 punktów na wykresie
+
+            const viewsData = new Array(bucketCount).fill(0);
+            const clicksData = new Array(bucketCount).fill(0);
+            const labels = new Array(bucketCount).fill('');
+            
+            let stepMs = (currentEndDate - currentStartDate) / bucketCount;
+            
+            // Wypełnianie podpisów do wykresu osi X
+            for(let i=0; i<bucketCount; i++) {
+                let d = new Date(currentStartDate.getTime() + (i * stepMs));
+                if(timeMode === 'minutes') {
+                    labels[i] = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+                } else if(timeMode === 'hours') {
+                    labels[i] = d.getHours() + ':00';
+                } else {
+                    labels[i] = d.getDate() + '.' + String(d.getMonth()+1).padStart(2, '0');
+                }
+            }
+
+            // Przetwarzanie i filtrowanie pobranych logów
             snapshot.forEach(docSnap => {
                 const data = docSnap.data();
+                if(!data.timestamp) return;
+
+                const date = data.timestamp.toDate();
                 
-                // Zbieranie Unikalnych ID
-                if(data.visitorId) uniqueUsers.add(data.visitorId);
+                // === FILTR GŁÓWNY PO WYBRANYM CZASIE ===
+                if (date >= currentStartDate && date <= currentEndDate) {
+                    
+                    if(data.visitorId) uniqueUsers.add(data.visitorId);
 
-                // Zliczanie do kart
-                if (data.action === 'page_view') {
-                    totalViews++;
-                } else {
-                    totalClicks++; // Dowolna inna interakcja
-                }
+                    if (data.action === 'page_view') {
+                        totalViews++;
+                    } else {
+                        totalClicks++; 
+                    }
 
-                // Zliczanie popularności produktów
-                const pName = data.details?.product;
-                if (pName && pName !== 'Nieznany') {
-                    productCount[pName] = (productCount[pName] || 0) + 1;
-                }
+                    // Tabela Live (maksymalnie wyświetlamy 50 dla płynności przeglądarki)
+                    if(liveRowsCount < 50) {
+                        tableHtml += `
+                            <tr>
+                                <td>${translateAction(data.action)}</td>
+                                <td>${buildDetails(data)}</td>
+                                <td><span class="badge-id" title="${data.visitorId || ''}">${truncateId(data.visitorId)}</span></td>
+                                <td class="badge-time">${formatTime(data.timestamp)}</td>
+                            </tr>
+                        `;
+                        liveRowsCount++;
+                    }
 
-                // Zliczanie popularności agentów
-                const aName = data.details?.agent;
-                if(aName) {
-                    agentCount[aName] = (agentCount[aName] || 0) + 1;
-                }
+                    // Zliczanie produktów
+                    const pName = data.details?.product;
+                    if (pName && pName !== 'Nieznany') {
+                        productCount[pName] = (productCount[pName] || 0) + 1;
+                    }
+                    
+                    // Zliczanie agentów
+                    const aName = data.details?.agent;
+                    if(aName) {
+                        agentCount[aName] = (agentCount[aName] || 0) + 1;
+                    }
 
-                // Generowanie Feed'u na żywo (limit w HTML do ~50 sztuk dla czystości)
-                if(tableHtml.split('<tr>').length <= 50) {
-                    tableHtml += `
-                        <tr>
-                            <td>${translateAction(data.action)}</td>
-                            <td>${buildDetails(data)}</td>
-                            <td><span class="badge-id" title="${data.visitorId || ''}">${truncateId(data.visitorId)}</span></td>
-                            <td class="badge-time">${formatTime(data.timestamp)}</td>
-                        </tr>
-                    `;
+                    // Wrzucanie zdarzenia do odpowiedniego słupka na wykresie
+                    let bucketIndex = Math.floor((date - currentStartDate) / stepMs);
+                    if (bucketIndex >= 0 && bucketIndex < bucketCount) {
+                        if (data.action === 'page_view') viewsData[bucketIndex]++;
+                        else clicksData[bucketIndex]++;
+                    }
                 }
             });
 
@@ -710,7 +882,57 @@
             document.getElementById('anaConversion').innerText = convRate + "%";
 
             // Render Tabela Live
-            liveTable.innerHTML = tableHtml || `<tr><td colspan="4" style="text-align: center;">Brak zdarzeń analitycznych.</td></tr>`;
+            liveTable.innerHTML = tableHtml || `<tr><td colspan="4" style="text-align: center;">Brak zdarzeń analitycznych w tym okresie.</td></tr>`;
+
+            // Rysowanie wykresu Chart.js
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            if (window.myChart) {
+                window.myChart.destroy(); // niszczymy poprzedni żeby wygenerować nowy dla innej daty
+            }
+            
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: 'Kliknięcia/Kopie',
+                            data: clicksData,
+                            borderColor: '#facc15',
+                            backgroundColor: '#facc15',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 4
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Odsłony strony',
+                            data: viewsData,
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#26262a' },
+                            ticks: { color: '#71717a', stepSize: 1 }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#71717a' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#fff' } }
+                    }
+                }
+            });
 
             // TOP Produkty (Top 10)
             const sortedProducts = Object.entries(productCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
@@ -724,9 +946,9 @@
                     </tr>
                 `;
             });
-            topProdTable.innerHTML = phtml || `<tr><td colspan="2" style="text-align: center;">Za mało danych</td></tr>`;
+            topProdTable.innerHTML = phtml || `<tr><td colspan="3" style="text-align: center;">Brak danych do wyświetlenia</td></tr>`;
 
-            // TOP Agenci (Top 5)
+            // TOP Agenci
             const sortedAgents = Object.entries(agentCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
             let ahtml = "";
             sortedAgents.forEach(([name, count], index) => {
@@ -737,13 +959,14 @@
                     </tr>
                 `;
             });
-            topAgentsTable.innerHTML = ahtml || `<tr><td colspan="2" style="text-align: center;">Za mało danych</td></tr>`;
+            topAgentsTable.innerHTML = ahtml || `<tr><td colspan="2" style="text-align: center;">Brak danych...</td></tr>`;
 
         } catch (error) {
             console.error("Błąd ładowania statystyk: ", error);
-            liveTable.innerHTML = `<tr><td colspan="4" style="color:var(--danger); text-align:center;">Błąd pobierania statystyk.</td></tr>`;
+            document.getElementById('anaTopProductsTable').innerHTML = `<tr><td colspan="3" style="color:var(--danger); text-align:center;">Błąd pobierania statystyk.</td></tr>`;
         }
     }
+
 </script>
 </body>
 </html>
