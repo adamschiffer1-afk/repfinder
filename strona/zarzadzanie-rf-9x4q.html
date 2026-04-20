@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>repfinder | Dashboard Admina</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* =========================================================================
+           OSTATECZNY DESIGN DASHBOARDU ADMINA (WIĘKSZY, SZARY, CZYSTY)
+           ========================================================================= */
+        :root {
+            --bg: #0d0d0f; /* Tło strony (bardzo ciemny szary) */
+            --panel: #161618; /* Panele (trochę jaśniejszy szary) */
+            --border: #26262a; /* Ramki */
+            --text: #fff;
+            --text-meta: #71717a;
+            --accent: #3b82f6; /* Niebieski statystyk */
+            --danger: #ef4444; /* Czerwony usuwania */
+            --input-bg: #1e1e22; /* Tło inputów */
+            --success: #22c55e;
+            --warning: #facc15;
+        }
+
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* NAGŁÓWEK */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .header h1 { font-size: 28px; font-weight: 900; margin: 0; letter-spacing: -1.5px; }
+        .back-link { color: var(--text-meta); text-decoration: none; font-size: 14px; font-weight: 700; transition: 0.2s; }
+        .back-link:hover { color: #fff; }
+
+        /* ZAKŁADKI (TABS) */
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            padding: 0 10px;
+            margin-top: -10px;
+        }
+        .tab-btn {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: var(--text-meta);
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn:hover { background: var(--input-bg); color: #fff; }
+        .tab-btn.active { background: #fff; color: #000; border-color: #fff; }
+
+        /* FILTRY CZASOWE DLA STATYSTYK */
+        .time-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            background: var(--panel);
+            padding: 15px 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 5px;
+        }
+        .time-filter-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-meta);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .time-filter-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .time-filter-btn.active { background: #fff; color: #000; border-color: #fff; }
+        
+        .custom-time-wrap { display: flex; gap: 10px; align-items: center; margin-left: auto; }
+        .custom-time-input {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            color-scheme: dark;
+        }
+        .custom-time-input:focus { border-color: var(--accent); }
+
+        /* KONTENERY WIDOKÓW */
+        .view-section { display: none; flex-direction: column; gap: 30px; }
+        .view-section.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* PANELE STATYSTYK (GÓRNY RZĄD) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .stat-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .stat-card .kicker { font-size: 12px; font-weight: 800; color: var(--text-meta); text-transform: uppercase; margin-bottom: 8px; }
+        .stat-card .value { font-size: 40px; font-weight: 900; color: var(--accent); letter-spacing: -1px; }
+
+        /* GŁÓWNA SEKCJA (LISTA + FORMULARZ) */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 3fr; /* Lista po lewej, Formularz po prawej */
+            gap: 30px;
+        }
+
+        /* Panele */
+        .dashboard-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-title { font-size: 18px; font-weight: 800; margin-bottom: 25px; color: #fff; }
+
+        /* LISTA PRODUKTÓW (LEWA) */
+        .search-field { margin-bottom: 20px; }
+        .product-list-scroll, .analytics-list-scroll {
+            height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .product-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid transparent;
+            transition: 0.2s;
+        }
+        .product-item:hover { border-color: #333; background: rgba(255,255,255,0.04); }
+
+        .item-info { display: flex; align-items: center; gap: 14px; }
+        .item-info img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; background: #222; }
+        .item-details .name { font-weight: 800; font-size: 15px; color: #fff; margin-bottom: 3px;}
+        .item-details .meta { font-size: 12px; color: var(--text-meta); font-weight: 600; }
+
+        .item-actions { display: flex; gap: 8px; }
+        .btn-action { 
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
+            color: var(--text-meta); padding: 8px 12px; border-radius: 8px; 
+            font-size: 11px; font-weight: 800; cursor: pointer; transition: 0.2s;
+        }
+        .btn-action:hover { background: #fff; color: #000; }
+        .btn-del { border-color: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .btn-del:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+        /* FORMULARZ (PRAWA) */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+        .field { margin-bottom: 15px; }
+        .field label { display: block; font-size: 12px; font-weight: 800; color: #555; text-transform: uppercase; margin-bottom: 6px; margin-left: 4px; }
+        
+        /* Styl dla inputów I DROPDOWNÓW */
+        input, select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.2s;
+            appearance: none; /* Ukryj domyślną strzałkę w selectach */
+        }
+        input:focus, select:focus { border-color: var(--accent); background: #26262a; }
+        
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='20' height='20' stroke='gray' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+        }
+
+        .card-price-value { font-weight: 900; color: var(--accent); }
+
+        .btn-submit {
+            background: #fff;
+            color: #000;
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.2s;
+        }
+        .btn-submit:hover { transform: scale(0.98); opacity: 0.9; }
+
+        /* Komunikaty */
+        #statusMsg { 
+            position: fixed; top: 20px; right: 20px; padding: 15px 25px; 
+            border-radius: 12px; font-weight: 800; display: none; z-index: 100;
+            animation: slideIn 0.3s ease-out; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        /* TABELE ANALITYKI */
+        .analytics-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .analytics-table th { color: var(--text-meta); padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; text-transform: uppercase; font-weight: 800;}
+        .analytics-table td { padding: 14px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; color: #ccc;}
+        .analytics-table tr:hover td { background: rgba(255,255,255,0.02); color: #fff;}
+        .badge-action { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; display: inline-block; white-space: nowrap;}
+        .badge-time { font-size: 12px; color: var(--text-meta); font-weight: 600;}
+        .badge-id { font-family: monospace; color: #666; font-size: 11px; background: #111; padding: 2px 6px; border-radius: 4px; }
+
+        /* Scrolling bar stylization */
+        .product-list-scroll::-webkit-scrollbar, .analytics-list-scroll::-webkit-scrollbar { width: 6px; }
+        .product-list-scroll::-webkit-scrollbar-track, .analytics-list-scroll::-webkit-scrollbar-track { background: var(--bg); border-radius: 10px; }
+        .product-list-scroll::-webkit-scrollbar-thumb, .analytics-list-scroll::-webkit-scrollbar-thumb { background: #26262a; border-radius: 10px; }
+        .product-list-scroll::-webkit-scrollbar-thumb:hover, .analytics-list-scroll::-webkit-scrollbar-thumb:hover { background: #333; }
+
+        @media (max-width: 1000px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .main-grid { grid-template-columns: 1fr; gap: 20px; }
+            .grid-3 { grid-template-columns: 1fr; }
+            .custom-time-wrap { flex-direction: column; width: 100%; align-items: flex-start; }
+            .custom-time-wrap > div { display: flex; gap: 10px; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <div class="header">
+        <h1>repfinder <span style="color:var(--text-meta); font-size:20px">dashboard</span></h1>
+        <a href="index.html" class="back-link">WRÓĆ DO STRONY GŁÓWNEJ</a>
+    </div>
+
+    <div class="tabs-container">
+        <button class="tab-btn active" data-target="view-products">Zarządzanie Produktami</button>
+        <button class="tab-btn" data-target="view-analytics">Statystyki & Ruch</button>
+    </div>
+
+    <div id="statusMsg"></div>
+
+    <div id="view-products" class="view-section active">
+        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="stat-card">
+                <div class="kicker">Całkowita liczba produktów</div>
+                <div class="value" id="statTotal" style="color: #fff;">...</div>
+            </div>
+            <div class="stat-card">
+                <div class="kicker">Użyte kategorie</div>
+                <div class="value" id="statCategories" style="color: #fff;">...</div>
+            </div>
+            <div class="stat-card">
+                <div class="kicker">Użyte tagi</div>
+                <div class="value" id="statTags" style="color: #fff;">...</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="dashboard-panel">
+                <div class="panel-title">Lista Produktów</div>
+                <div class="field search-field">
+                    <input type="text" id="adminSearchInput" placeholder="Szukaj po nazwie...">
+                </div>
+                <div class="product-list-scroll" id="adminProductList">Ładowanie produktów...</div>
+            </div>
+
+            <div class="dashboard-panel">
+                <div class="panel-title" id="formPanelTitle">Dodaj nowy produkt</div>
+                <form id="addForm">
+                    <div class="field">
+                        <label>Nazwa Przedmiotu</label>
+                        <input type="text" id="pName" placeholder="np. Jordan 4 Military Black" required>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="field">
+                            <label>Kategoria (Dropdown)</label>
+                            <select id="pCatDropdown" required></select>
+                        </div>
+                        <div class="field">
+                            <label>Tag (Dropdown)</label>
+                            <select id="pTagDropdown" required></select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Cena w USD ($)</label>
+                        <input type="number" step="0.01" id="pPrice" placeholder="45.00" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Link do zdjęcia (.jpg/.png)</label>
+                        <input type="url" id="pImg" placeholder="https://imgur.com/...">
+                    </div>
+
+                    <div class="field">
+                        <label>Link do Agenta (Kakobuy / Weidian)</label>
+                        <input type="url" id="pLink" placeholder="https://kakobuy.com/..." required>
+                    </div>
+
+                    <button type="button" id="cancelEditBtn" class="btn-action" style="display:none; width:100%; margin-top:10px; padding:10px;">ANULUJ EDYCJĘ</button>
+
+                    <button type="submit" id="submitBtn" class="btn-submit">DODAJ PRODUKT</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-analytics" class="view-section">
+        
+        <div class="time-filters">
+            <button class="time-filter-btn" data-time="1h">1h</button>
+            <button class="time-filter-btn" data-time="6h">6h</button>
+            <button class="time-filter-btn" data-time="12h">12h</button>
+            <button class="time-filter-btn active" data-time="24h">24h</button>
+            <button class="time-filter-btn" data-time="7d">Tydzień</button>
+            <button class="time-filter-btn" data-time="30d">Miesiąc</button>
+
+            <div class="custom-time-wrap">
+                <span style="font-size: 12px; color: var(--text-meta); font-weight: 700;">WŁASNY ZAKRES:</span>
+                <div>
+                    <input type="datetime-local" id="customStart" class="custom-time-input">
+                    <span style="color: var(--text-meta);"> - </span>
+                    <input type="datetime-local" id="customEnd" class="custom-time-input">
+                    <button id="applyCustomTime" class="time-filter-btn" style="background: var(--accent); color: #fff; border-color: var(--accent); margin-left: 5px;">Zastosuj</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="kicker">Unikalni Użytkownicy</div>
+                <div class="value" id="anaUniqueUsers" style="color: var(--accent);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="kicker">Odsłony Strony</div>
+                <div class="value" id="anaTotalViews" style="color: #fff;">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="kicker">Kliknięcia i Kopie</div>
+                <div class="value" id="anaTotalClicks" style="color: var(--warning);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="kicker">Aktywność / Konwersja</div>
+                <div class="value" id="anaConversion" style="color: var(--success);">0%</div>
+            </div>
+        </div>
+
+        <div class="dashboard-panel" style="grid-column: span 2; margin-bottom: -15px;">
+            <div class="panel-title" id="chartTitle">Aktywność Ruchu (Ostatnie 24 Godziny)</div>
+            <div style="height: 320px; width: 100%;">
+                <canvas id="activityChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-panel" style="margin-bottom: -15px;">
+            <div class="panel-title">Lista Zdarzeń (Najnowsze)</div>
+            <div class="analytics-list-scroll" style="height: 300px;">
+                <table class="analytics-table">
+                    <thead>
+                        <tr>
+                            <th>Akcja</th>
+                            <th>Szczegóły / Produkt</th>
+                            <th>ID Sesji</th>
+                            <th>Czas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="anaLiveTable">
+                        <tr><td colspan="4" style="text-align: center;">Ładowanie danych...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="grid-3">
+            <div class="dashboard-panel" style="grid-column: span 2;">
+                <div class="panel-title">Najpopularniejsze Produkty (W wybranym czasie)</div>
+                <div class="analytics-list-scroll" style="height: 250px;">
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Pozycja</th>
+                                <th>Produkt</th>
+                                <th style="text-align: right;">Ilość Akcji</th>
+                            </tr>
+                        </thead>
+                        <tbody id="anaTopProductsTable">
+                            <tr><td colspan="3" style="text-align: center;">Ładowanie...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-panel">
+                <div class="panel-title">Wybierani Agenci</div>
+                <div class="analytics-list-scroll" style="height: 250px;">
+                    <table class="analytics-table">
+                        <thead>
+                            <tr>
+                                <th>Agent</th>
+                                <th style="text-align: right;">Kliknięcia</th>
+                            </tr>
+                        </thead>
+                        <tbody id="anaTopAgentsTable">
+                            <tr><td colspan="2" style="text-align: center;">Ładowanie...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, serverTimestamp, query, orderBy, limit, getDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDsB1L1BZTmQheWIyt87FUwZP5EB5E9L18",
+        authDomain: "repfinder-f0510.firebaseapp.com",
+        projectId: "repfinder-f0510",
+        storageBucket: "repfinder-f0510.firebasestorage.app",
+        messagingSenderId: "994027023312",
+        appId: "1:994027023312:web:77220fee0211a2b7ea27d5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const productsCol = collection(db, "products");
+    const analyticsCol = collection(db, "analytics");
+
+    // =======================================================
+    // LOGIKA ZAKŁADEK (TABS)
+    // =======================================================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+            const targetId = btn.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+
+            if(targetId === 'view-analytics') {
+                loadAnalytics();
+            }
+        });
+    });
+
+    // =======================================================
+    // LOGIKA PRODUKTÓW
+    // =======================================================
+    let editingProductId = null; 
+
+    const PREDEFINED_CATEGORIES = ['SHOES', 'T-SHIRTS', 'JACKETS', 'PANTS', 'HOODIES', 'SHORTS', 'ACCESSORIES', 'OTHER'];
+    const PREDEFINED_TAGS = ['BEST BATCH', 'BUDGET BATCH', 'RETAIL READY', 'RANDOM BATCH', 'NONE'];
+
+    function showStatus(msg, isError = false) {
+        const s = document.getElementById('statusMsg');
+        s.innerText = msg;
+        s.style.background = isError ? '#ef4444' : '#22c55e';
+        s.style.color = '#fff';
+        s.style.display = 'block';
+        setTimeout(() => s.style.display = 'none', 3000);
+    }
+
+    function populateDropdowns() {
+        const catSelect = document.getElementById('pCatDropdown');
+        const tagSelect = document.getElementById('pTagDropdown');
+        catSelect.innerHTML = PREDEFINED_CATEGORIES.map(cat => `<option value="${cat}">${cat}</option>`).join("");
+        tagSelect.innerHTML = PREDEFINED_TAGS.map(tag => `<option value="${tag}">${tag}</option>`).join("");
+    }
+
+    function updateStats(snapshot) {
+        let total = snapshot.size;
+        let categories = new Set();
+        let tags = new Set();
+
+        snapshot.forEach(docSnap => {
+            const p = docSnap.data();
+            if (p.Kategoria) categories.add(p.Kategoria);
+            if (p.Tag) tags.add(p.Tag);
+        });
+
+        document.getElementById('statTotal').innerText = total;
+        document.getElementById('statCategories').innerText = categories.size;
+        document.getElementById('statTags').innerText = tags.size;
+    }
+
+    async function loadAdminProducts() {
+        const listDiv = document.getElementById('adminProductList');
+        try {
+            const q = query(productsCol, orderBy("createdAt", "desc"));
+            const snapshot = await getDocs(q);
+            
+            updateStats(snapshot);
+
+            if (snapshot.empty) {
+                listDiv.innerHTML = "<p style='color:var(--text-meta); text-align:center;'>Brak produktów. Dodaj pierwszy powyżej!</p>";
+                return;
+            }
+            
+            let html = "";
+            snapshot.forEach(docSnap => {
+                const p = docSnap.data();
+                html += `
+                <div class="product-item" data-id="${docSnap.id}">
+                    <div class="item-info">
+                        <img src="${p.Link_Zdjecie || ''}" onerror="this.src='https://placehold.co/100/1a1a1a/333?text=Brak'">
+                        <div class="item-details">
+                            <div class="name">${p.Nazwa}</div>
+                            <div class="meta"><span class="card-price-value">${p.Cena_USD}$</span> — ${p.Kategoria}</div>
+                        </div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn-action btn-edit" data-id="${docSnap.id}">Edytuj</button>
+                        <button class="btn-action btn-del" data-id="${docSnap.id}">Usuń</button>
+                    </div>
+                </div>`;
+            });
+            listDiv.innerHTML = html;
+
+            document.querySelectorAll('.btn-del').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = btn.getAttribute('data-id');
+                    if(confirm("Usunąć ten produkt? Operacja jest nieodwracalna.")) {
+                        await deleteDoc(doc(db, "products", id));
+                        showStatus("Pomyślnie usunięto produkt");
+                        if(editingProductId === id) cancelEditing(); 
+                        loadAdminProducts();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = btn.getAttribute('data-id');
+                    startEditing(id);
+                });
+            });
+
+        } catch (e) {
+            console.error(e);
+            listDiv.innerHTML = "<p style='color:#ef4444; text-align:center;'>Błąd łączenia z Firebase</p>";
+        }
+    }
+
+    async function startEditing(productId) {
+        try {
+            const productRef = doc(db, "products", productId);
+            const docSnap = await getDoc(productRef);
+            
+            if (docSnap.exists()) {
+                const p = docSnap.data();
+                editingProductId = productId;
+
+                document.getElementById('pName').value = p.Nazwa;
+                document.getElementById('pCatDropdown').value = p.Kategoria; 
+                document.getElementById('pTagDropdown').value = p.Tag; 
+                document.getElementById('pPrice').value = p.Cena_USD;
+                document.getElementById('pImg').value = p.Link_Zdjecie || '';
+                document.getElementById('pLink').value = p.Link_Kakobuy;
+
+                document.getElementById('formPanelTitle').innerText = "Edytuj produkt";
+                document.getElementById('submitBtn').innerText = "ZAPISZ ZMIANY";
+                document.getElementById('submitBtn').style.background = "#fff";
+                document.getElementById('submitBtn').style.color = "#000";
+                document.getElementById('cancelEditBtn').style.display = 'block';
+
+                window.scrollTo(0,0);
+            }
+        } catch (e) { console.error(e); showStatus("Błąd pobierania danych edycji", true); }
+    }
+
+    function cancelEditing() {
+        editingProductId = null;
+        document.getElementById('addForm').reset();
+        document.getElementById('formPanelTitle').innerText = "Dodaj nowy produkt";
+        document.getElementById('submitBtn').innerText = "DODAJ PRODUKT";
+        document.getElementById('cancelEditBtn').style.display = 'none';
+    }
+    document.getElementById('cancelEditBtn').addEventListener('click', cancelEditing);
+
+
+    document.getElementById('addForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        btn.innerText = "TRWA PRZETWARZANIE...";
+        btn.disabled = true;
+        
+        const productData = {
+            Nazwa: document.getElementById('pName').value,
+            Kategoria: document.getElementById('pCatDropdown').value, 
+            Tag: document.getElementById('pTagDropdown').value, 
+            Cena_USD: document.getElementById('pPrice').value,
+            Link_Zdjecie: document.getElementById('pImg').value,
+            Link_Kakobuy: document.getElementById('pLink').value,
+        };
+
+        try {
+            if (editingProductId) {
+                const productRef = doc(db, "products", editingProductId);
+                await updateDoc(productRef, productData);
+                showStatus("Pomyślnie zaktualizowano produkt!");
+                cancelEditing(); 
+            } else {
+                productData.createdAt = serverTimestamp(); 
+                await addDoc(productsCol, productData);
+                showStatus("Produkt dodany pomyślnie!");
+                document.getElementById('addForm').reset();
+            }
+            loadAdminProducts(); 
+        } catch (error) {
+            console.error(error);
+            showStatus("Błąd zapisu bazy Firebase!", true);
+        }
+        
+        btn.innerText = editingProductId ? "ZAPISZ ZMIANY" : "DODAJ PRODUKT";
+        btn.disabled = false;
+    });
+
+    document.getElementById('adminSearchInput').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const productItems = document.querySelectorAll('.product-item');
+        productItems.forEach(item => {
+            const name = item.querySelector('.name').innerText.toLowerCase();
+            item.style.display = name.includes(searchTerm) ? 'flex' : 'none';
+        });
+    });
+
+    populateDropdowns();
+    loadAdminProducts();
+
+
+    // =======================================================
+    // LOGIKA STATYSTYK Z FILTROWANIEM CZASOWYM
+    // =======================================================
+
+    let currentStartDate = new Date(Date.now() - 24 * 60 * 60 * 1000); // domyślnie 24h
+    let currentEndDate = new Date();
+    let currentTitle = "Ostatnie 24 Godziny";
+
+    // Obsługa przycisków szybkich filtrów
+    document.querySelectorAll('.time-filter-btn').forEach(btn => {
+        if(btn.id === "applyCustomTime") return; // Pomijamy przycisk z własnego wyboru
+        
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.time-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const timeVal = btn.getAttribute('data-time');
+            currentEndDate = new Date();
+            currentStartDate = new Date();
+            
+            if(timeVal === '1h') { currentStartDate.setHours(currentEndDate.getHours() - 1); currentTitle = "Ostatnia Godzina"; }
+            else if(timeVal === '6h') { currentStartDate.setHours(currentEndDate.getHours() - 6); currentTitle = "Ostatnie 6 Godzin"; }
+            else if(timeVal === '12h') { currentStartDate.setHours(currentEndDate.getHours() - 12); currentTitle = "Ostatnie 12 Godzin"; }
+            else if(timeVal === '24h') { currentStartDate.setHours(currentEndDate.getHours() - 24); currentTitle = "Ostatnie 24 Godziny"; }
+            else if(timeVal === '7d') { currentStartDate.setDate(currentEndDate.getDate() - 7); currentTitle = "Ostatni Tydzień"; }
+            else if(timeVal === '30d') { currentStartDate.setDate(currentEndDate.getDate() - 30); currentTitle = "Ostatni Miesiąc"; }
+            
+            document.getElementById('chartTitle').innerText = `Aktywność Ruchu (${currentTitle})`;
+            loadAnalytics();
+        });
+    });
+
+    // Obsługa własnego zakresu dat
+    document.getElementById('applyCustomTime').addEventListener('click', () => {
+        const startVal = document.getElementById('customStart').value;
+        const endVal = document.getElementById('customEnd').value;
+        
+        if(!startVal || !endVal) {
+            showStatus('Wybierz obie daty dla własnego zakresu!', true);
+            return;
+        }
+        
+        currentStartDate = new Date(startVal);
+        currentEndDate = new Date(endVal);
+        
+        // Zabezpieczenie przed złą kolejnością dat
+        if(currentStartDate >= currentEndDate) {
+            showStatus('Data początkowa musi być wcześniejsza.', true);
+            return;
+        }
+
+        document.querySelectorAll('.time-filter-btn').forEach(b => b.classList.remove('active'));
+        currentTitle = "Wybrany Zakres Czasowy";
+        document.getElementById('chartTitle').innerText = `Aktywność Ruchu (${currentTitle})`;
+        
+        loadAnalytics();
+    });
+
+    function formatTime(timestamp) {
+        if (!timestamp) return "Przed chwilą";
+        const date = timestamp.toDate();
+        return date.toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function truncateId(vid) {
+        if(!vid) return "Anonim";
+        return vid.substring(0, 8) + "...";
+    }
+
+    function translateAction(action) {
+        switch(action) {
+            case 'page_view': return '<span class="badge-action" style="color:#a855f7; background:rgba(168,85,247,0.15)">Odsłona Strony</span>';
+            case 'copy_link': return '<span class="badge-action" style="color:#22c55e; background:rgba(34,197,94,0.15)">Kopia Linku</span>';
+            case 'view_agents': return '<span class="badge-action" style="color:#eab308; background:rgba(234,179,8,0.15)">Wybór Agenta</span>';
+            case 'click_agent': return '<span class="badge-action" style="color:#f97316; background:rgba(249,115,22,0.15)">Klik w Agenta</span>';
+            default: return `<span class="badge-action">${action}</span>`;
+        }
+    }
+
+    function buildDetails(data) {
+        let text = "";
+        if (data.action === 'page_view') {
+            return `Zakładka: <b style="color:#fff">/${data.details?.page || 'home'}</b>`;
+        }
+        if (data.details?.product && data.details?.product !== 'Nieznany') {
+            text += `<b style="color:#fff">${data.details.product}</b> `;
+        }
+        if (data.details?.agent) {
+            text += `→ Sklep: <span style="color:var(--text-meta)">${data.details.agent}</span>`;
+        }
+        return text || "Brak szczegółów";
+    }
+
+    async function loadAnalytics() {
+        const liveTable = document.getElementById('anaLiveTable');
+        const topProdTable = document.getElementById('anaTopProductsTable');
+        const topAgentsTable = document.getElementById('anaTopAgentsTable');
+
+        try {
+            // Pobieramy bezpieczny limit logów (2000), żeby nie zabić darmowej bazy Firebase
+            // Następnie filtrujemy lokalnie - działa to niesamowicie szybko na 2000 elementach
+            // i pozwala uniknąć konieczności konfigurowania zaawansowanych Indeksów w Firestore
+            const q = query(analyticsCol, orderBy("timestamp", "desc"), limit(2000));
+            const snapshot = await getDocs(q);
+
+            let uniqueUsers = new Set();
+            let totalViews = 0;
+            let totalClicks = 0; 
+            
+            let productCount = {};
+            let agentCount = {};
+            let tableHtml = "";
+            let liveRowsCount = 0;
+
+            // Wyliczanie podziałek (koszyków) do wykresu zależnie od wybranego zakresu czasu
+            let diffHours = (currentEndDate - currentStartDate) / (1000 * 60 * 60);
+            let timeMode = 'hours';
+            let bucketCount = 24;
+
+            if (diffHours <= 1.1) { timeMode = 'minutes'; bucketCount = 12; } // dla 1h pokazujemy punkty co 5 min
+            else if (diffHours <= 6.1) { timeMode = 'hours'; bucketCount = 6; } // dla 6h
+            else if (diffHours <= 12.1) { timeMode = 'hours'; bucketCount = 12; } // dla 12h
+            else if (diffHours <= 24.1) { timeMode = 'hours'; bucketCount = 24; } // dla 24h
+            else { timeMode = 'days'; bucketCount = Math.min(Math.ceil(diffHours / 24), 30); } // max 30 punktów na wykresie
+
+            const viewsData = new Array(bucketCount).fill(0);
+            const clicksData = new Array(bucketCount).fill(0);
+            const labels = new Array(bucketCount).fill('');
+            
+            let stepMs = (currentEndDate - currentStartDate) / bucketCount;
+            
+            // Wypełnianie podpisów do wykresu osi X
+            for(let i=0; i<bucketCount; i++) {
+                let d = new Date(currentStartDate.getTime() + (i * stepMs));
+                if(timeMode === 'minutes') {
+                    labels[i] = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+                } else if(timeMode === 'hours') {
+                    labels[i] = d.getHours() + ':00';
+                } else {
+                    labels[i] = d.getDate() + '.' + String(d.getMonth()+1).padStart(2, '0');
+                }
+            }
+
+            // Przetwarzanie i filtrowanie pobranych logów
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if(!data.timestamp) return;
+
+                const date = data.timestamp.toDate();
+                
+                // === FILTR GŁÓWNY PO WYBRANYM CZASIE ===
+                if (date >= currentStartDate && date <= currentEndDate) {
+                    
+                    if(data.visitorId) uniqueUsers.add(data.visitorId);
+
+                    if (data.action === 'page_view') {
+                        totalViews++;
+                    } else {
+                        totalClicks++; 
+                    }
+
+                    // Tabela Live (maksymalnie wyświetlamy 50 dla płynności przeglądarki)
+                    if(liveRowsCount < 50) {
+                        tableHtml += `
+                            <tr>
+                                <td>${translateAction(data.action)}</td>
+                                <td>${buildDetails(data)}</td>
+                                <td><span class="badge-id" title="${data.visitorId || ''}">${truncateId(data.visitorId)}</span></td>
+                                <td class="badge-time">${formatTime(data.timestamp)}</td>
+                            </tr>
+                        `;
+                        liveRowsCount++;
+                    }
+
+                    // Zliczanie produktów
+                    const pName = data.details?.product;
+                    if (pName && pName !== 'Nieznany') {
+                        productCount[pName] = (productCount[pName] || 0) + 1;
+                    }
+                    
+                    // Zliczanie agentów
+                    const aName = data.details?.agent;
+                    if(aName) {
+                        agentCount[aName] = (agentCount[aName] || 0) + 1;
+                    }
+
+                    // Wrzucanie zdarzenia do odpowiedniego słupka na wykresie
+                    let bucketIndex = Math.floor((date - currentStartDate) / stepMs);
+                    if (bucketIndex >= 0 && bucketIndex < bucketCount) {
+                        if (data.action === 'page_view') viewsData[bucketIndex]++;
+                        else clicksData[bucketIndex]++;
+                    }
+                }
+            });
+
+            // Obliczanie współczynnika (Interakcje / Odsłony)
+            let convRate = totalViews > 0 ? Math.round((totalClicks / totalViews) * 100) : 0;
+
+            // Render kart
+            document.getElementById('anaUniqueUsers').innerText = uniqueUsers.size;
+            document.getElementById('anaTotalViews').innerText = totalViews;
+            document.getElementById('anaTotalClicks').innerText = totalClicks;
+            document.getElementById('anaConversion').innerText = convRate + "%";
+
+            // Render Tabela Live
+            liveTable.innerHTML = tableHtml || `<tr><td colspan="4" style="text-align: center;">Brak zdarzeń analitycznych w tym okresie.</td></tr>`;
+
+            // Rysowanie wykresu Chart.js
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            if (window.myChart) {
+                window.myChart.destroy(); // niszczymy poprzedni żeby wygenerować nowy dla innej daty
+            }
+            
+            window.myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: 'Kliknięcia/Kopie',
+                            data: clicksData,
+                            borderColor: '#facc15',
+                            backgroundColor: '#facc15',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            pointRadius: 4
+                        },
+                        {
+                            type: 'bar',
+                            label: 'Odsłony strony',
+                            data: viewsData,
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#26262a' },
+                            ticks: { color: '#71717a', stepSize: 1 }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#71717a' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#fff' } }
+                    }
+                }
+            });
+
+            // TOP Produkty (Top 10)
+            const sortedProducts = Object.entries(productCount).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            let phtml = "";
+            sortedProducts.forEach(([name, count], index) => {
+                let numeration = index === 0 ? "🥇 " : index === 1 ? "🥈 " : index === 2 ? "🥉 " : `<span style="opacity:0.4; font-size:12px; margin-right:8px;">${index+1}.</span>`;
+                phtml += `
+                    <tr>
+                        <td style="font-weight: 700; color:#fff;">${numeration}${name}</td>
+                        <td style="text-align: right; color: var(--accent); font-weight: 900;">${count}</td>
+                    </tr>
+                `;
+            });
+            topProdTable.innerHTML = phtml || `<tr><td colspan="3" style="text-align: center;">Brak danych do wyświetlenia</td></tr>`;
+
+            // TOP Agenci
+            const sortedAgents = Object.entries(agentCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            let ahtml = "";
+            sortedAgents.forEach(([name, count], index) => {
+                ahtml += `
+                    <tr>
+                        <td style="font-weight: 700; color:#fff;">${name}</td>
+                        <td style="text-align: right; color: var(--warning); font-weight: 900;">${count}</td>
+                    </tr>
+                `;
+            });
+            topAgentsTable.innerHTML = ahtml || `<tr><td colspan="2" style="text-align: center;">Brak danych...</td></tr>`;
+
+        } catch (error) {
+            console.error("Błąd ładowania statystyk: ", error);
+            document.getElementById('anaTopProductsTable').innerHTML = `<tr><td colspan="3" style="color:var(--danger); text-align:center;">Błąd pobierania statystyk.</td></tr>`;
+        }
+    }
+
+</script>
+</body>
+</html>
