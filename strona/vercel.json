@@ -1,4 +1,16 @@
 {
+  "redirects": [
+    {
+      "source": "/admin.html",
+      "destination": "/finderadmin.html",
+      "permanent": true
+    },
+    {
+      "source": "/admin",
+      "destination": "/finderadmin.html",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

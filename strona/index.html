@@ -6,6 +6,9 @@
     <title>repfinder | Premium</title>
     
     <link rel="stylesheet" href="css/style.css" />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* =====================================================================
@@ -104,7 +107,6 @@
         .nav-link-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
         .nav-link-pill.active { background: #fff !important; color: #000 !important; box-shadow: 0 4px 15px rgba(255,255,255,0.2); }
         .nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
-        /* Usunięto styl dla nav-admin-pill */
         .nav-settings-btn-pill { width: 42px !important; height: 42px !important; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%; cursor: pointer; transition: 0.2s; color: #888; padding: 0 !important; }
         .nav-settings-btn-pill:hover { color: #fff; background: rgba(255, 255, 255, 0.1); transform: rotate(30deg); }
         .dropdown { position: relative; }
@@ -120,7 +122,6 @@
         .hero-block { min-height: calc(100vh - 80px); width: min(1100px, calc(100% - 24px)); margin: 0 auto; display: flex; align-items: center; justify-content: center; padding: 40px 0 80px; }
         .hero-inner { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
         .hero-title { margin: 0; font-size: clamp(48px, 13vw, 92px); line-height: 0.94; letter-spacing: -0.07em; font-weight: 800; color: transparent; background: linear-gradient(110deg, #ffffff 0%, #9e9e9e 50%, #ffffff 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; animation: heroTextSweep 6s linear infinite; }
-        @keyframes heroTextSweep { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
         .hero-subtitle { margin: 20px 0 0; max-width: 420px; font-size: clamp(15px, 4vw, 20px); color: var(--text); font-weight: 600; line-height: 1.58; }
         .hero-cta-btn { margin-top: 32px; width: 100%; max-width: 340px; height: 68px; padding: 0 24px; border-radius: 26px; background: var(--primary); color: #000; font-size: 19px; font-weight: 800; box-shadow: 0 10px 25px rgba(255,255,255,0.15); transition: transform 0.18s ease; display: flex; align-items: center; justify-content: center;}
         .hero-cta-btn:hover { transform: translateY(-2px); }
@@ -143,14 +144,10 @@
 
         .card-name { font-size: 14px; font-weight: 700; color: #fff; margin: 10px 0 6px 0; line-height: 1.3; }
         
-        .card-bottom-row { display: flex !important; justify-content: space-between !important; align-items: center !important; margin-top: auto !important; width: 100% !important; flex-wrap: nowrap !important; }
-        .card-price { font-size: 19px !important; font-weight: 900 !important; color: #fff !important; white-space: nowrap !important; flex-shrink: 0 !important; margin: 0 !important; }
-        .card-actions { display: flex !important; gap: 8px !important; align-items: center !important; flex-shrink: 0 !important; margin-left: 10px; }
-        
-        .btn-view-agents { background: #111 !important; border: 1px solid #333 !important; color: #fff !important; padding: 8px 12px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 12px !important; cursor: pointer !important; transition: 0.2s !important; white-space: nowrap !important; display: flex !important; align-items: center !important; justify-content: center !important; flex: 1; }
+        .btn-view-agents { background: #111 !important; border: 1px solid #333 !important; color: #fff !important; padding: 10px 14px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 12px !important; cursor: pointer !important; transition: 0.2s !important; white-space: nowrap !important; display: flex !important; align-items: center !important; justify-content: center !important; flex: 1; }
         .btn-view-agents:hover { background: #222 !important; }
         
-        .btn-icon-pill-square { width: 34px !important; height: 34px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #111 !important; border: 1px solid #333 !important; border-radius: 10px !important; cursor: pointer !important; transition: 0.2s !important; padding: 0 !important; flex-shrink: 0 !important; position: relative; }
+        .btn-icon-pill-square { width: 38px !important; height: 38px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #111 !important; border: 1px solid #333 !important; border-radius: 10px !important; cursor: pointer !important; transition: 0.2s !important; padding: 0 !important; flex-shrink: 0 !important; position: relative; }
         .btn-icon-pill-square:hover { background: #222 !important; }
 
         .copied { border-color: #22c55e !important; }
@@ -164,8 +161,6 @@
         .tag-red { color: #ef4444; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
 
         .load-more-container { text-align: center; margin-top: 40px; width: 100%; display: none; }
-        .load-more-btn { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); color: #fff; padding: 14px 40px; border-radius: 100px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;}
-        .load-more-btn:hover { background: #222; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.5);}
 
         /* =====================================================================
            TRACKER
@@ -202,7 +197,7 @@
         .converter-dropdown-menu { display: none !important; position: absolute !important; top: 110% !important; left: 50% !important; transform: translateX(-50%); background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; padding: 8px !important; box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; flex-direction: column !important; gap: 4px !important; z-index: 2000 !important; min-width: 160px; backdrop-filter: blur(12px);}
         .converter-dropdown-wrapper.open .converter-dropdown-menu { display: flex !important; }
         
-        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 12px 16px !important; border-radius: 10px !important; font-weight: 800 !important; font-size: 13px !important; cursor: pointer !important; display: flex !important; align-items: center !important; gap: 10px !important; transition: 0.2s !important;}
+        .converter-dropdown-item { width: 100% !important; text-align: left !important; background: none !important; border: none !important; color: #ccc !important; padding: 10px 15px !important; border-radius: 8px !important; font-weight: 700 !important; font-size: 13px !important; cursor: pointer !important; display: flex !important; align-items: center !important; gap: 10px !important; margin-bottom: 4px !important; transition: 0.2s !important;}
         .converter-dropdown-item:hover { background: #222 !important; color: #fff !important; }
         .converter-dropdown-item.active { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
 
@@ -328,9 +323,146 @@
 
             .settings-lang-grid { grid-template-columns: 1fr !important; }
         }
+
+        /* =====================================================================
+           POPUP REPFINDER (SZARO-BIAŁY)
+           ===================================================================== */
+        .promo-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100000;
+            display: none; 
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .promo-overlay.active { display: flex; opacity: 1; }
+
+        .promo-box {
+            background: #161618; 
+            border: 1px solid #333; 
+            border-radius: 20px;
+            padding: 40px 30px; /* Zwiększony odstęp góra-dół */
+            width: 90%;
+            max-width: 480px; /* Poszerzone, żeby tekst lepiej leżał */
+            text-align: center;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .promo-overlay.active .promo-box { transform: scale(1); }
+
+        .close-promo {
+            position: absolute;
+            top: 15px; right: 15px;
+            background: #222;
+            border: 1px solid #333;
+            border-radius: 50%;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            color: #888;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .close-promo:hover { background: #333; color: #fff; }
+
+        .promo-title {
+            margin: 0 0 20px 0;
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            color: #fff;
+        }
+
+        .promo-pill {
+            display: inline-flex;
+            align-items: center;
+            background: #1e1e1e;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .promo-text-main {
+            font-size: 17px; /* Powiększony tekst */
+            font-weight: 600;
+            color: #ccc;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+
+        .highlight-text {
+            color: #fff;
+            font-weight: 900;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .promo-text-sub {
+            color: #777;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0 0 25px 0;
+            font-weight: 500;
+        }
+
+        .promo-btn-action {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 800;
+            border-radius: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .promo-btn-action:hover {
+            background: #e5e5e5;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15);
+        }
     </style>
 </head>
 <body>
+
+    <div class="promo-overlay" id="promoOverlay">
+        <div class="promo-box">
+            <button class="close-promo" onclick="window.closePromoModal()">✕</button>
+            <h2 class="promo-title">repfinder</h2>
+            <div class="promo-pill">Specjalna Oferta 🔥</div>
+            <p class="promo-text-main">
+                Obecnie <span class="highlight-text">-15$ oraz 400$ w kuponach na wysyłkę</span> w Kakobuy!
+            </p>
+            <p class="promo-text-sub">
+                Zarejestruj się teraz i skorzystaj z promocyjnej zniżki.
+            </p>
+            <button class="promo-btn-action" onclick="window.open('https://ikako.vip/r/xfrostyy', '_blank')">
+                Zarejestruj się w Kakobuy
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+    </div>
     <div class="page-confetti-overlay" id="confettiOverlay"></div>
 
     <div class="site-shell">
@@ -621,8 +753,38 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, serverTimestamp, orderBy, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // --- ZAAWANSOWANY SYSTEM ANALITYKI (ZBIERANIE DANYCH) ---
-        // 1. Generowanie Unikalnego ID Użytkownika (zamiast IP)
+        // ========================================================
+        // LOGIKA DLA POP-UPU PROMOCYJNEGO
+        // ========================================================
+        window.showPromoModal = function() {
+            const overlay = document.getElementById('promoOverlay');
+            if(overlay) {
+                overlay.style.display = 'flex';
+                setTimeout(() => { overlay.classList.add('active'); }, 10);
+            }
+        }
+
+        window.closePromoModal = function() {
+            const overlay = document.getElementById('promoOverlay');
+            if(overlay) {
+                overlay.classList.remove('active');
+                setTimeout(() => { overlay.style.display = 'none'; }, 300);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const overlay = document.getElementById('promoOverlay');
+            if(overlay) {
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        window.closePromoModal();
+                    }
+                });
+            }
+        });
+        // ========================================================
+
+        // --- ZAAWANSOWANY SYSTEM ANALITYKI ---
         let visitorId = localStorage.getItem('rf_vid');
         if(!visitorId) {
             visitorId = 'vid_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
@@ -631,7 +793,6 @@
 
         window.logEvent = async function(action, details) {
             try {
-                // 2. Blokada spamu (Odsłony logują się tylko raz na sesję przeglądarki dla danej zakładki)
                 if (action === 'page_view') {
                     const sessionKey = 'rf_viewed_' + details.page;
                     if (sessionStorage.getItem(sessionKey)) return; 
@@ -649,7 +810,6 @@
             }
         };
 
-        // WYMUSZANIE POPRAWNEGO LINKU KAKOBUY
         function fixKakoLink(link) {
             if (!link || !link.includes('kakobuy.com')) return link;
             let clean = link.replace(/([?&])(affcode|ref_id)=[^&]*/gi, '');
@@ -725,6 +885,7 @@
             }, 1500);
         };
 
+        // GŁÓWNA FUNKCJA ZMIENIAJĄCA SEKCJE
         window.switchSection = function(id, updateUrl = true) {
             const target = document.getElementById(id);
             if(!target) return;
@@ -747,6 +908,20 @@
                 const newPath = id === 'home' ? '/' : '/' + id;
                 history.pushState({ section: id }, '', newPath);
             }
+
+            // ======= TUTAJ JEST LOGIKA WYŚWIETLANIA POP-UP'U =======
+            // Odpala się wyłącznie dla sekcji "products" z 2 sekundowym opóźnieniem
+            if (id === 'products' && !sessionStorage.getItem('promoShown')) {
+                sessionStorage.setItem('promoShown', 'true'); // Od razu zapisujemy, żeby się nie powieliło
+                setTimeout(() => {
+                    const overlay = document.getElementById('promoOverlay');
+                    if(overlay) {
+                        overlay.style.display = 'flex';
+                        setTimeout(() => { overlay.classList.add('active'); }, 10);
+                    }
+                }, 2000); // 2000ms = 2 sekundy opóźnienia
+            }
+            // ========================================================
             
             if(id === 'tutorials' && !window.tutorialsInited && typeof window.initTutorials === 'function') {
                 window.initTutorials();
@@ -769,7 +944,7 @@
         });
 
         /* =====================================================================
-           LOGIKA KONWERTERA GLOBANIE (WYCIĄGNIĘTA DLA MODALA AGENTÓW)
+           LOGIKA KONWERTERA GLOBANIE
            ===================================================================== */
         window.detectPlatform = function(url) {
             const value = String(url || "").toLowerCase();
@@ -906,67 +1081,55 @@
 
         window.analyzeInput = function(rawUrl) {
             const cleaned = window.normalizeUrl(rawUrl);
-
             if (!cleaned) {
                 return { displaySource: "auto", originalPlatform: "unknown", originalUrl: "", itemId: "", sourceCode: "" };
             }
-
             const platform = window.detectPlatform(cleaned);
 
             if (platform === "weidian") {
                 const itemId = window.extractWeidianItemId(cleaned);
                 return { displaySource: "weidian", originalPlatform: "weidian", originalUrl: itemId ? window.buildWeidianUrl(itemId) : cleaned, itemId, sourceCode: "WD" };
             }
-
             if (platform === "kakobuy") {
                 const embeddedOriginal = window.extractOriginalUrlFromAnyAgent(cleaned);
                 const itemId = window.extractAnyKnownItemId(cleaned, embeddedOriginal);
                 const originalUrl = itemId ? window.buildWeidianUrl(itemId) : embeddedOriginal;
-
                 return { displaySource: "kakobuy", originalPlatform: itemId ? "weidian" : window.detectPlatform(originalUrl), originalUrl: originalUrl || "", itemId, sourceCode: itemId ? "WD" : "" };
             }
-
             if (platform === "usfans") {
                 const itemId = window.extractUsFansItemId(cleaned);
                 return { displaySource: "usfans", originalPlatform: itemId ? "weidian" : "unknown", originalUrl: itemId ? window.buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId ? "WD" : "" };
             }
-
             if (platform === "allchinabuy") {
                 const itemId = window.extractAllChinaBuyItemId(cleaned);
                 const sourceCode = window.extractSourceCode(cleaned) || (itemId ? "WD" : "");
                 return { displaySource: "allchinabuy", originalPlatform: itemId && sourceCode === "WD" ? "weidian" : "unknown", originalUrl: itemId && sourceCode === "WD" ? window.buildWeidianUrl(itemId) : "", itemId, sourceCode };
             }
-
             if (platform === "litbuy") {
                 const itemId = window.extractLitBuyItemId(cleaned);
                 const sourcePlatform = window.extractLitBuySource(cleaned);
                 return { displaySource: "litbuy", originalPlatform: itemId && sourcePlatform === "weidian" ? "weidian" : sourcePlatform, originalUrl: itemId && sourcePlatform === "weidian" ? window.buildWeidianUrl(itemId) : "", itemId, sourceCode: itemId && sourcePlatform === "weidian" ? "WD" : "" };
             }
-
             return { displaySource: platform, originalPlatform: platform, originalUrl: cleaned, itemId: window.extractWeidianItemId(cleaned), sourceCode: platform === "weidian" ? "WD" : "" };
         };
 
         window.buildConvertedResult = function(analysis, target) {
             const itemId = analysis.itemId;
             const sourcePlatform = analysis.originalPlatform;
-
             if (!analysis.originalUrl) {
                 return { url: "" };
             }
-
             if (target === "weidian") {
                 if (itemId) return { url: window.buildWeidianUrl(itemId) };
                 if (sourcePlatform === "weidian") return { url: analysis.originalUrl };
                 return { url: "" };
             }
-
             if (!itemId || sourcePlatform !== "weidian") {
                 if (target === "kakobuy" && analysis.originalUrl.startsWith("http")) {
                     return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(analysis.originalUrl)}&affcode=xfrostyy` };
                 }
                 return { url: "" };
             }
-
             switch (target) {
                 case "kakobuy": return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(window.buildWeidianUrl(itemId))}&affcode=xfrostyy` };
                 case "usfans": return { url: `https://www.usfans.com/product/3/${itemId}` };
@@ -976,11 +1139,9 @@
             }
         };
 
-
         document.addEventListener('DOMContentLoaded', () => {
             checkMobileNav();
 
-            // Ładowanie odpowiedniej sekcji na podstawie URL przy starcie strony
             let path = window.location.pathname.replace(/^\/|\/$/g, '');
             if (!path || path === 'index.html') path = 'home';
             
@@ -1330,7 +1491,7 @@
                         </a>
                         <button class="agent-copy-btn" onclick="window.copyText('${finalLink}', this, '${productName}')">
                             <svg class="copy-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                            <svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="#22c55e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <svg class="success-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
                         </button>
                     </div>`;
             }).join("");
@@ -1338,464 +1499,6 @@
         };
         
         window.closeAgentsModal = () => document.getElementById('agentsModal').classList.remove('show');
-        
-        /* =====================================================================
-           MODERN TUTORIAL
-           ===================================================================== */
-        window.initTutorials = function () {
-            const overview = document.getElementById("tutorialsOverview");
-            const player = document.getElementById("tutorialPlayer");
-
-            if (!overview || !player) return;
-
-            const tutorialData = {
-                title: "Jak zamawiać na KakoBuy",
-                subtitle: "Prosty przewodnik krok po kroku, jak zrobić zamówienie przez agentów KakoBuy.",
-                steps: [
-                    { title: "Załóż konto", desc: "Wejdź na stronę KakoBuy, utwórz konto podając e-mail i hasło, a następnie potwierdź rejestrację.", img: "krok1", action: { text: "Załóż konto na KakoBuy", url: "https://ikako.vip/r/xfrostyy" } },
-                    { title: "Znajdź produkty", desc: "Szukaj interesujących Cię rzeczy w spreadsheetach lub zobacz propozycje na Repfinder.", img: "krok2" },
-                    { title: "Dodaj do koszyka", desc: "Wybierz odpowiedni kolor, rozmiar i ilość, a następnie dodaj produkty do koszyka na KakoBuy.", img: "krok3" },
-                    { title: "Złóż zamówienie", desc: "Sprawdź koszyk, wybierz produkty i opłać koszt towarów oraz krajowej wysyłki w Chinach.", img: "krok4" },
-                    { title: "Potwierdź i zapłać", desc: "Zaznacz „I have read and agree” i kliknij „Buy Now”, aby przejść do płatności.", img: "krok5" },
-                    { title: "Wybierz płatność", desc: "Wybierz preferowaną metodę płatności i kliknij „Pay for Order”, aby sfinalizować zakup.", img: "krok6" },
-                    { title: "Realizacja zamówienia", desc: "Po opłaceniu KakoBuy weryfikuje produkty i zamawia je u sprzedawców." }, 
-                    { title: "Kontrola jakości (QC)", desc: "Po dotarciu produktów KakoBuy wykonuje kontrolę jakości i przesyła Ci zdjęcia do oceny.", img: "krok8" },
-                    { title: "Zleć wstępne ważenie", desc: "Kiedy wszystkie produkty są już w magazynie, zleć wstępne ważenie paczki.", img: "krok9" },
-                    { title: "Zleć wysyłkę", desc: "Po ważeniu możesz zlecić wysyłkę międzynarodową swojej paczki." }, 
-                    { title: "Wybierz metodę wysyłki", desc: "Wybierz sposób dostawy (np. DHL, DPD) i opłać koszty transportu.", img: "krok11" },
-                    { title: "Odbierz paczkę", desc: "Po otrzymaniu przesyłki sprawdź jej zawartość i potwierdź odbiór w panelu użytkownika." }, 
-                    { title: "Gotowe!", desc: "Gratulacje! Udało Ci się przejść cały proces. Dołącz do naszej społeczności na Discordzie, aby być na bieżąco!", action: { text: "wkrótce",  } } 
-                ]
-            };
-
-            let currentStepIndex = 0;
-
-            renderOverview();
-
-            function renderOverview() {
-                overview.innerHTML = `
-                <div class="tutorials-overview" style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; max-width: 1000px; width: 100%; margin: 0 auto; align-items: stretch;">
-                    <div style="background: #1c1c1e; border-radius: 24px; padding: 50px; border: 1px solid #2c2c2e; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-                        <div style="position: relative; z-index: 2;">
-                            <span style="color: #888; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px; display: inline-block;">Tutorial</span>
-                            <h3 style="font-size: clamp(32px, 5vw, 48px); font-weight: 900; color: #fff; margin: 0 0 15px 0; line-height: 1.1; letter-spacing: -1px;">Jak zamawiać na<br>KakoBuy</h3>
-                            <p style="color: #888; font-size: 15px; line-height: 1.6; max-width: 400px; margin: 0 0 30px 0;">Prosty przewodnik krok po kroku, jak zrobić zamówienie przez agentów KakoBuy.</p>
-                            <button id="startTutorialBtn" style="background: #fff; color: #000; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s;">Uruchom tutorial</button>
-                        </div>
-                        <div style="position: absolute; bottom: -50px; right: -50px; width: 300px; height: 300px; background: #242426; border-radius: 50%; z-index: 1;"></div>
-                    </div>
-                    <div style="background: #121212; border-radius: 24px; padding: 40px; border: 1px solid #1f1f1f; display: flex; flex-direction: column; justify-content: flex-start;">
-                        <h4 style="font-size: 18px; font-weight: 800; color: #fff; margin: 0 0 15px 0;">Dowiesz się jak</h4>
-                        <p style="color: #888; font-size: 15px; line-height: 1.6; margin: 0;">Zamawiać i jak korzystać z naszych narzędzi krok po kroku.</p>
-                    </div>
-                </div>`;
-                
-                document.getElementById("startTutorialBtn").addEventListener("click", () => {
-                    overview.classList.add("hidden");
-                    player.classList.remove("hidden");
-                    currentStepIndex = 0;
-                    renderStep();
-                });
-            }
-
-            function renderStep() {
-                const step = tutorialData.steps[currentStepIndex];
-                const total = tutorialData.steps.length;
-                let progressPercentage = ((currentStepIndex + 1) / total) * 100;
-                
-                const progressBarHtml = `
-                    <div style="width: 100%; max-width: 800px; margin: 0 auto 20px auto; background: #222; border-radius: 4px; height: 3px; position: relative; overflow: hidden;">
-                        <div style="position: absolute; left: 0; top: 0; bottom: 0; width: ${progressPercentage}%; background: #fff; border-radius: 4px; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);"></div>
-                    </div>
-                `;
-
-                let topDots = '';
-                for(let i=0; i<total; i++) {
-                    const isActive = i === currentStepIndex;
-                    const bg = isActive ? '#fff' : 'transparent';
-                    const color = isActive ? '#000' : '#888';
-                    const border = isActive ? '1px solid #fff' : '1px solid #333';
-                    topDots += `<div data-tut-step-idx="${i}" style="width: 28px; height: 28px; border-radius: 50%; background: ${bg}; border: ${border}; color: ${color}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; cursor: pointer; transition: 0.2s;">${i + 1}</div>`;
-                }
-
-                let sideDots = '';
-                for(let i=0; i<total; i++) {
-                    const isActive = i === currentStepIndex;
-                    const bg = isActive ? '#fff' : 'transparent';
-                    const color = isActive ? '#000' : '#888';
-                    const border = isActive ? '1px solid #fff' : '1px solid #333';
-                    sideDots += `<div data-tut-step-idx="${i}" style="width: 40px; height: 40px; border-radius: 50%; background: ${bg}; border: ${border}; color: ${color}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s;">${i + 1}</div>`;
-                }
-
-                let mediaHtml = '';
-                if(step.img) {
-                    mediaHtml = `
-                        <div style="background: #111; border: 1px solid #222; border-radius: 12px; margin-bottom: ${step.action ? '15px' : '30px'}; display: flex; justify-content: center; align-items: center; overflow: hidden; padding: 10px; position: relative; min-height: 100px;">
-                            <img src="${window.escapeHtml(step.img)}.png" alt="Krok ${currentStepIndex + 1}" style="max-width: 100%; height: auto; max-height: 450px; object-fit: contain; border-radius: 8px; z-index: 2; position: relative;" onerror="if(!this.dataset.fallback){ this.dataset.fallback='1'; this.src='${window.escapeHtml(step.img)}.jpg'; } else { this.style.display='none'; this.nextElementSibling.style.display='flex'; }">
-                            <div style="display: none; padding: 30px; color: #888; text-align: center; font-size: 13px; position: absolute; inset: 0; align-items: center; justify-content: center; z-index: 1;">
-                                Błąd: Brak pliku zdjęcia w folderze.<br>Upewnij się, że plik <b>${window.escapeHtml(step.img)}.png</b> (lub .jpg) istnieje!
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    mediaHtml = `<div style="height: 10px;"></div>`; 
-                }
-
-                let actionHtml = '';
-                if(step.action) {
-                    actionHtml = `
-                        <a href="${window.escapeHtml(step.action.url || '#')}" target="${step.action.url ? '_blank' : '_self'}" style="display: block; text-align: center; background: #fff; color: #000; border-radius: 8px; font-weight: 900; font-size: 14px; padding: 14px 20px; text-decoration: none; margin-bottom: 30px; transition: 0.2s;">
-                            ${window.escapeHtml(step.action.text)}
-                        </a>
-                    `;
-                }
-
-                player.innerHTML = `
-                    <div style="max-width: 1000px; margin: 0 auto; width: 100%;">
-                        <div style="text-align: center; margin-bottom: 25px; position: relative; padding-top: 10px;">
-                            <button id="tutBackToList" style="position: absolute; left: 0; top: 15px; background: none; border: none; color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                                Wróć do tutoriali
-                            </button>
-                            <h2 style="font-size: 28px; font-weight: 900; color: #fff; margin: 0 0 10px 0;">${window.escapeHtml(tutorialData.title)}</h2>
-                            <p style="color: #888; font-size: 13px; margin: 0;">${window.escapeHtml(tutorialData.subtitle)}</p>
-                        </div>
-
-                        ${progressBarHtml}
-
-                        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 35px;">
-                            ${topDots}
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 280px; gap: 20px; align-items: start;">
-                            <div style="background: #111; border: 1px solid #222; border-radius: 16px; padding: 30px; display: flex; flex-direction: column; min-height: 400px;">
-                                <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 25px;">
-                                    <div style="background: #222; border: 1px solid #333; color: #fff; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; flex-shrink: 0;">
-                                        ${currentStepIndex + 1}
-                                    </div>
-                                    <div>
-                                        <h3 style="font-size: 20px; font-weight: 900; color: #fff; margin: 0 0 4px 0;">${window.escapeHtml(step.title)}</h3>
-                                        <p style="color: #666; font-size: 12px; font-weight: 700; margin: 0;">Krok ${currentStepIndex + 1} z ${total}</p>
-                                    </div>
-                                </div>
-                                
-                                <p style="color: #aaa; font-size: 14px; line-height: 1.6; margin-bottom: 30px;">${window.escapeHtml(step.desc)}</p>
-                                
-                                ${mediaHtml}
-                                ${actionHtml}
-                                
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 20px; border-top: 1px solid #222;">
-                                    <button id="tutRestartBtn" style="background: none; border: none; color: #666; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
-                                        Rozpocznij ponownie
-                                    </button>
-                                    
-                                    <div style="display: flex; align-items: center; gap: 15px;">
-                                        <button id="tutPrevBtn" style="background: none; border: none; color: #888; font-weight: 700; font-size: 14px; cursor: pointer; ${currentStepIndex === 0 ? 'opacity:0; pointer-events:none;' : ''}">
-                                            < Wstecz
-                                        </button>
-                                        <button id="tutNextBtn" style="background: #fff; color: #000; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; padding: 12px 24px;">
-                                            ${currentStepIndex === total - 1 ? 'Zakończ' : 'Dalej >'}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div style="background: #111; border: 1px solid #222; border-radius: 16px; padding: 30px; display: flex; flex-direction: column; align-items: center;">
-                                <h4 style="font-size: 15px; font-weight: 900; color: #fff; margin: 0 0 25px 0;">Kroki tutoriala</h4>
-                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-                                    ${sideDots}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                player.querySelectorAll("[data-tut-step-idx]").forEach(btn => {
-                    btn.addEventListener("click", () => { 
-                        currentStepIndex = Number(btn.getAttribute("data-tut-step-idx")); 
-                        renderStep(); 
-                    });
-                });
-                
-                document.getElementById('tutBackToList').addEventListener("click", () => { resetTutorial(); });
-                document.getElementById('tutPrevBtn').addEventListener("click", () => { if (currentStepIndex > 0) { currentStepIndex -= 1; renderStep(); } });
-                
-                document.getElementById('tutNextBtn').addEventListener("click", () => {
-                    if (currentStepIndex < total - 1) { 
-                        currentStepIndex += 1; 
-                        renderStep(); 
-                    } else {
-                        resetTutorial(); 
-                    }
-                });
-                
-                document.getElementById('tutRestartBtn').addEventListener("click", () => { currentStepIndex = 0; renderStep(); });
-
-                if (currentStepIndex === total - 1) {
-                    window.generateConfetti();
-                }
-            }
-
-            function resetTutorial() { 
-                currentStepIndex = 0; 
-                player.classList.add("hidden"); 
-                overview.classList.remove("hidden"); 
-            }
-        };
-
-        window.generateConfetti = function () {
-            const overlay = document.getElementById("confettiOverlay") || (() => {
-                const el = document.createElement("div");
-                el.id = "confettiOverlay";
-                el.className = "page-confetti-overlay";
-                document.body.appendChild(el);
-                return el;
-            })();
-
-            overlay.innerHTML = "";
-
-            const COLORS = ['#ff0000', '#ff9900', '#ffff00', '#33cc33', '#9933ff', '#ffcc00', '#ff6600'];
-            for (let i = 0; i < 150; i++) {
-                const piece = document.createElement("div");
-                piece.classList.add("confetti-piece");
-                piece.style.backgroundColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-                const width = Math.random() * 8 + 4;
-                piece.style.width = width + "px";
-                piece.style.height = (width * 1.5) + "px"; 
-                piece.style.left = (Math.random() * 100) + "%";
-                piece.style.setProperty('--drift', (Math.random() * 60 - 30) + 'px');
-                piece.style.animationDelay = (Math.random() * 1.5) + "s";
-                overlay.appendChild(piece);
-            }
-            setTimeout(() => { overlay.innerHTML = ""; }, 4000);
-        };
-
-        /* =====================================================================
-           LOGIKA KONWERTERA
-           ===================================================================== */
-        window.initConverter = function () {
-            const input = document.getElementById("converterInput");
-            const convertBtn = document.getElementById("convertBtn");
-            const copyConverted = document.getElementById("copyConverted");
-            const openConverted = document.getElementById("openConverted");
-            const copyOriginal = document.getElementById("copyOriginal");
-            const openOriginal = document.getElementById("openOriginal");
-            const output = document.getElementById("converterOutput");
-            const status = document.getElementById("converterStatus");
-            const originalBadge = document.getElementById("converterOriginalBadge");
-            const convertedBadge = document.getElementById("converterConvertedBadge");
-            const originalUrlBox = document.getElementById("converterOriginalUrl");
-            const resultSection = document.getElementById("converter-result");
-
-            const sourceLabel = document.getElementById("converterSourceLabel");
-            const targetLabel = document.getElementById("converterTargetLabel");
-            const targetSelectWrap = document.getElementById("converterTargetSelect");
-            const targetButton = document.getElementById("converterTargetButton");
-            const targetMenu = document.getElementById("converterTargetMenu");
-
-            if (
-                !input || !convertBtn || !output || !status || !originalBadge || 
-                !convertedBadge || !originalUrlBox || !resultSection || 
-                !sourceLabel || !targetLabel || !targetSelectWrap || 
-                !targetButton || !targetMenu
-            ) {
-                console.error("Converter init failed: missing HTML elements");
-                return;
-            }
-
-            let hasShownResultOnce = false;
-            let selectedTarget = "kakobuy";
-
-            const targets = [
-                { value: "kakobuy", label: "KakoBuy" },
-                { value: "usfans", label: "UsFans" },
-                { value: "litbuy", label: "LITBUY" },
-                { value: "allchinabuy", label: "AllChinaBuy" },
-                { value: "weidian", label: "Weidian" }
-            ];
-
-            buildTargetMenu();
-            updateSourceLabel("auto");
-            resultSection.classList.add("hidden");
-
-            input.addEventListener("input", () => {
-                const analysis = window.analyzeInput(input.value.trim());
-                updateSourceLabel(analysis.displaySource);
-            });
-
-            targetButton.addEventListener("click", (event) => {
-                event.stopPropagation();
-                targetSelectWrap.classList.toggle("open");
-            });
-
-            document.addEventListener("click", (event) => {
-                if (!targetSelectWrap.contains(event.target)) {
-                    targetSelectWrap.classList.remove("open");
-                }
-            });
-
-            convertBtn.addEventListener("click", () => {
-                const raw = input.value.trim();
-
-                if (!raw) {
-                    resultSection.classList.add("hidden");
-                    setStatus("Wklej link, żeby rozpocząć konwersję.");
-                    return;
-                }
-
-                const analysis = window.analyzeInput(raw);
-                updateSourceLabel(analysis.displaySource);
-
-                if (!analysis.originalUrl) {
-                    setResult({
-                        originalPlatform: "unknown",
-                        originalUrl: raw,
-                        convertedPlatform: selectedTarget,
-                        convertedUrl: ""
-                    });
-
-                    setStatus("Nie udało się odczytać poprawnego linku źródłowego.");
-                    revealResultSection(resultSection, hasShownResultOnce);
-                    hasShownResultOnce = true;
-                    return;
-                }
-
-                const converted = window.buildConvertedResult(analysis, selectedTarget);
-
-                if (!converted.url) {
-                    setResult({
-                        originalPlatform: analysis.originalPlatform,
-                        originalUrl: analysis.originalUrl,
-                        convertedPlatform: selectedTarget,
-                        convertedUrl: ""
-                    });
-
-                    setStatus(`Nie udało się zbudować poprawnego linku dla tego formatu.`);
-                    revealResultSection(resultSection, hasShownResultOnce);
-                    hasShownResultOnce = true;
-                    return;
-                }
-
-                setResult({
-                    originalPlatform: analysis.originalPlatform,
-                    originalUrl: analysis.originalUrl,
-                    convertedPlatform: selectedTarget,
-                    convertedUrl: converted.url
-                });
-
-                setStatus("");
-                revealResultSection(resultSection, hasShownResultOnce);
-                hasShownResultOnce = true;
-            });
-
-            if (copyConverted) {
-                copyConverted.addEventListener("click", function() { window.copyText(output.textContent, this); });
-            }
-
-            if (openConverted) {
-                openConverted.addEventListener("click", () => openLink(output.textContent));
-            }
-
-            if (copyOriginal) {
-                copyOriginal.addEventListener("click", function() { window.copyText(originalUrlBox.textContent, this); });
-            }
-
-            if (openOriginal) {
-                openOriginal.addEventListener("click", () => openLink(originalUrlBox.textContent));
-            }
-
-            function buildTargetMenu() {
-                targetMenu.innerHTML = targets.map((target) => {
-                    const active = target.value === selectedTarget ? "active" : "";
-                    const agentObj = window.AGENTS.find(a => a.id === target.value) || { icon: 'https://s.weidian.com/assets/favicon.ico' };
-                    return `
-                        <button type="button" class="converter-dropdown-item ${active}" data-target-value="${window.escapeHtml(target.value)}">
-                            <img src="${agentObj.icon}" style="width:16px; height:16px; border-radius:50%;" onerror="this.style.display='none'">
-                            ${window.escapeHtml(target.label)}
-                        </button>
-                    `;
-                }).join("");
-
-                const currentAgentObj = window.AGENTS.find(a => a.id === selectedTarget) || {icon: 'https://s.weidian.com/assets/favicon.ico'};
-                targetLabel.innerHTML = `<img src="${currentAgentObj.icon}" style="width:16px; height:16px; border-radius:50%; vertical-align:middle; margin-right:6px;" onerror="this.style.display='none'"> ${formatPlatformLabel(selectedTarget)}`;
-
-                targetMenu.querySelectorAll("[data-target-value]").forEach((button) => {
-                    button.addEventListener("click", () => {
-                        selectedTarget = button.getAttribute("data-target-value");
-                        buildTargetMenu();
-                        targetSelectWrap.classList.remove("open");
-                    });
-                });
-            }
-
-            function updateSourceLabel(source) {
-                if (!sourceLabel) return;
-                sourceLabel.textContent = source === "auto" ? "Auto detect" : formatPlatformLabel(source);
-            }
-
-            function setResult(payload) {
-                const originalPlatform = payload.originalPlatform || "unknown";
-                const convertedPlatform = payload.convertedPlatform || "unknown";
-
-                originalUrlBox.textContent = payload.originalUrl || "Brak danych";
-                output.textContent = payload.convertedUrl || "Brak wyniku";
-
-                originalBadge.className = `platform-pill ${platformClassName(originalPlatform)}`;
-                convertedBadge.className = `platform-pill ${platformClassName(convertedPlatform)}`;
-
-                originalBadge.textContent = formatPlatformLabel(originalPlatform);
-                convertedBadge.textContent = formatPlatformLabel(convertedPlatform);
-            }
-
-            function setStatus(message) {
-                if (status) {
-                    status.innerHTML = message ? `<span style="color:#ef4444;">${message}</span>` : '';
-                }
-            }
-
-            function platformClassName(platform) {
-                return "platform-pill-neutral"; 
-            }
-
-            function formatPlatformLabel(platform) {
-                const map = {
-                    auto: "Auto detect",
-                    unknown: "Nieznany Agent",
-                    weidian: "Weidian",
-                    kakobuy: "KakoBuy",
-                    usfans: "UsFans",
-                    litbuy: "LITBUY",
-                    allchinabuy: "AllChinaBuy",
-                    taobao: "Taobao",
-                    tmall: "Tmall",
-                    "1688": "1688"
-                };
-                return map[platform] || String(platform || "Unknown");
-            }
-
-            function openLink(value) {
-                const text = String(value || "").trim();
-                if (!text || !text.startsWith("http")) return;
-                window.open(text, "_blank", "noopener,noreferrer");
-            }
-
-            function revealResultSection(section, hasShownBefore) {
-                const wasHidden = section.classList.contains("hidden");
-                section.classList.remove("hidden");
-
-                if (wasHidden || !hasShownBefore) {
-                    section.animate(
-                        [ { opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "translateY(0)" } ],
-                        { duration: 380, easing: "ease-out", fill: "both" }
-                    );
-                }
-
-                requestAnimationFrame(() => {
-                    section.scrollIntoView({ behavior: "smooth", block: "start" });
-                });
-            }
-        };
     </script>
 </body>
 </html>
