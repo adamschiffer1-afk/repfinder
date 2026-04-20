@@ -325,7 +325,7 @@
         }
 
         /* =====================================================================
-           POPUP REPFINDER (SZARO-BIAŁY)
+           POPUP REPFINDER (SZARO-BIAŁY) - ZAAWANSOWANY STYL
            ===================================================================== */
         .promo-overlay {
             position: fixed;
@@ -346,9 +346,9 @@
             background: #161618; 
             border: 1px solid #333; 
             border-radius: 20px;
-            padding: 40px 30px; /* Zwiększony odstęp góra-dół */
+            padding: 40px 30px; 
             width: 90%;
-            max-width: 480px; /* Poszerzone, żeby tekst lepiej leżał */
+            max-width: 480px; 
             text-align: center;
             position: relative;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
@@ -373,12 +373,21 @@
         }
         .close-promo:hover { background: #333; color: #fff; }
 
+        /* NOWY, LEPSZY STYL DLA REPFINDER */
         .promo-title {
-            margin: 0 0 20px 0;
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: -1.5px;
-            color: #fff;
+            text-transform: uppercase; /* Wielkie litery */
+            font-size: clamp(32px, 5vw, 42px); /* Duży, responsywny rozmiar */
+            font-weight: 800; /* Bardzo gruby */
+            letter-spacing: 1.5px; /* Szeroki odstęp - nowoczesny look */
+            margin: 0 0 15px 0; /* Odstęp od pigułki */
+            
+            /* Subtelny gradient i cień dla efektu premium */
+            color: #fff; /* Fallback */
+            background: linear-gradient(180deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
 
         .promo-pill {
@@ -395,7 +404,7 @@
         }
 
         .promo-text-main {
-            font-size: 17px; /* Powiększony tekst */
+            font-size: 17px; 
             font-weight: 600;
             color: #ccc;
             margin: 0 0 12px 0;
@@ -446,7 +455,7 @@
     <div class="promo-overlay" id="promoOverlay">
         <div class="promo-box">
             <button class="close-promo" onclick="window.closePromoModal()">✕</button>
-            <h2 class="promo-title">repfinder</h2>
+            <h2 class="promo-title">REPFINDER</h2>
             <div class="promo-pill">Specjalna Oferta 🔥</div>
             <p class="promo-text-main">
                 Obecnie <span class="highlight-text">-15$ oraz 400$ w kuponach na wysyłkę</span> w Kakobuy!
