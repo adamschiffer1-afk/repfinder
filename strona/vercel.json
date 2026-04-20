@@ -2,16 +2,25 @@
   "redirects": [
     {
       "source": "/admin.html",
-      "destination": "/finderadmin.html",
+      "destination": "/",
       "permanent": true
     },
     {
       "source": "/admin",
-      "destination": "/finderadmin.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/finderadmin.html",
+      "destination": "/",
       "permanent": true
     }
   ],
   "rewrites": [
+    {
+      "source": "/zarzadzanie-rf-9x4q",
+      "destination": "/zarzadzanie-rf-9x4q.html"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
