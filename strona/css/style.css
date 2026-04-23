@@ -487,14 +487,98 @@ img {
 .settings-save-btn { width: 100%; background: #fff; color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s;}
 .settings-save-btn:hover { background: #e5e5e5; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,255,255,0.1);}
 
-/* AGENTS MODAL */
-.agent-row { display: flex !important; flex-wrap: nowrap !important; align-items: center !important; gap: 10px !important; margin-bottom: 12px !important; width: 100% !important; }
-.agent-direct-btn { flex: 1 !important; min-width: 0 !important; display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 14px 20px !important; border: 1px solid #333 !important; border-radius: 16px !important; background: #1a1a1a !important; text-decoration: none !important; color: #fff !important; transition: 0.2s !important; }
-.agent-direct-btn:hover { background: #222 !important; border-color: #444 !important; }
-.agent-copy-btn { width: 54px !important; height: 54px !important; flex-shrink: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #1a1a1a !important; border: 1px solid #333 !important; border-radius: 16px !important; cursor: pointer !important; color: #aaa !important; transition: 0.2s !important; padding: 0 !important; }
-.agent-copy-btn:hover { background: #222 !important; color: #fff !important; }
-.settings-agent-btn-left img, .settings-agent-item img, .converter-dropdown-item img, .btn-icon-pill-square img, .agent-info-left img { width: 24px !important; height: 24px !important; min-width: 24px !important; border-radius: 50%; object-fit: contain; flex-shrink: 0; display: block; background: transparent; }
+/* =====================================================================
+           AGENTS MODAL (Niezwykle Clean & Minimalist)
+           ===================================================================== */
+        .agents-modal-content {
+            background: #161616 !important;
+            border: 1px solid #2a2a2a !important;
+            border-radius: 20px !important;
+            padding: 24px 20px !important;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8) !important;
+        }
+        
+        .modal-header-top h3 {
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            color: #fff !important;
+            margin: 0 !important;
+        }
 
+        .agent-row { 
+            display: flex !important; 
+            flex-wrap: nowrap !important; 
+            align-items: stretch !important; /* Guziki mają idealnie równą wysokość */
+            gap: 12px !important; 
+            margin-bottom: 12px !important; 
+            width: 100% !important; 
+        }
+
+        .agent-row:last-child {
+            margin-bottom: 0 !important;
+        }
+
+        .agent-direct-btn { 
+            flex: 1 !important; 
+            min-width: 0 !important; 
+            display: flex !important; 
+            justify-content: space-between !important; 
+            align-items: center !important; 
+            padding: 12px 16px !important; 
+            border: 1px solid #2a2a2a !important; 
+            border-radius: 14px !important; 
+            background: rgba(255, 255, 255, 0.03) !important; /* Bardzo subtelne tło */
+            text-decoration: none !important; 
+            color: #fff !important; 
+            transition: 0.2s !important; 
+        }
+
+        .agent-direct-btn:hover { 
+            background: rgba(255, 255, 255, 0.06) !important; 
+            border-color: #3a3a3a !important; 
+        }
+
+        .agent-info-left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            font-weight: 500 !important; /* Czysty, nie pogrubiony tekst */
+            font-size: 15px !important;
+        }
+
+        .agent-info-left img { 
+            width: 24px !important; 
+            height: 24px !important; 
+            border-radius: 50% !important; 
+            object-fit: contain !important; 
+        }
+
+        .agent-copy-btn { 
+            width: 52px !important; 
+            flex-shrink: 0 !important; 
+            display: flex !important; 
+            align-items: center !important; 
+            justify-content: center !important; 
+            background: rgba(255, 255, 255, 0.03) !important; 
+            border: 1px solid #2a2a2a !important; 
+            border-radius: 14px !important; 
+            cursor: pointer !important; 
+            color: #aaa !important; 
+            transition: 0.2s !important; 
+            padding: 0 !important; 
+        }
+
+        .agent-copy-btn:hover { 
+            background: rgba(255, 255, 255, 0.06) !important; 
+            color: #fff !important; 
+            border-color: #3a3a3a !important; 
+        }
+
+        .agent-copy-btn svg {
+            width: 16px !important; /* Minimalistyczna wielkość ikonki kopiowania */
+            height: 16px !important;
+        }
+        
 /* CONFETTI Z PINIATY */
 .page-confetti-overlay { pointer-events: none; position: fixed; inset: 0; overflow: hidden; z-index: 9999; }
 .confetti-piece { position: absolute; top: -24px; border-radius: 3px; opacity: 0.95; animation: confettiFallPage 2300ms linear forwards; }
