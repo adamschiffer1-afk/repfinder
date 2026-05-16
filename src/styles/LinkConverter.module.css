@@ -105,6 +105,11 @@
   min-width: 0;
 }
 
+.input:focus,
+.input:focus-visible {
+  outline: none !important;
+}
+
 .input::placeholder {
   color: rgba(255, 255, 255, 0.2);
 }

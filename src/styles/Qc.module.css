@@ -90,6 +90,11 @@
   font-size: 18px;
 }
 
+.input:focus,
+.input:focus-visible {
+  outline: none !important;
+}
+
 .input {
   flex: 1;
   background: transparent;

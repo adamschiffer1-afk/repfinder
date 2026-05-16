@@ -95,6 +95,11 @@
   min-width: 0;
 }
 
+.input:focus,
+.input:focus-visible {
+  outline: none !important;
+}
+
 .trackBtn {
   background: linear-gradient(135deg, #4338ca, #6d28d9);
   border: none;
