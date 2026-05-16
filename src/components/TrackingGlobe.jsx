@@ -122,8 +122,9 @@ export default function TrackingGlobe({ data }) {
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Globe
         ref={globeRef}
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
+        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
         bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
         
         arcsData={arcsData}
         arcColor={'color'}
@@ -165,7 +166,7 @@ export default function TrackingGlobe({ data }) {
         htmlLat={d => d.lat}
         htmlLng={d => d.lng}
         
-        atmosphereColor="#8b5cf6"
+        atmosphereColor="#ffffff"
         atmosphereAltitude={0.15}
         
         backgroundColor="rgba(0,0,0,0)"
