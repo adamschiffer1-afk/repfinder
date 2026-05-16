@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useLanguage } from '@/context/LanguageContext';
 import styles from '@/styles/Qc.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -18,6 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 export default function Quality() {
+  const { t } = useLanguage();
   const [url, setUrl] = useState('');
   const [qcData, setQcData] = useState(null);
   const [loading, setLoading] = useState(false);

@@ -23,8 +23,8 @@ const COORDINATES = {
 export default function TrackingGlobe({ data }) {
   const globeRef = useRef();
 
-  const { arcsData, labelsData } = useMemo(() => {
-    if (!data?.Szczegóły_przesyłki) return { arcsData: [], labelsData: [] };
+  const { arcsData, labelsData, pointsData } = useMemo(() => {
+    if (!data?.Szczegóły_przesyłki) return { arcsData: [], labelsData: [], pointsData: [] };
 
     const getCoords = (text) => {
       const lower = (text || '').toLowerCase();
@@ -102,9 +102,11 @@ export default function TrackingGlobe({ data }) {
   useEffect(() => {
     if (globeRef.current) {
       const controls = globeRef.current.controls();
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.5; // Smoother and slower rotation
-      controls.enableZoom = false; // Prevent accidental scrolling
+      if (controls) {
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
+        controls.enableZoom = false;
+      }
       
       if (labelsData.length > 0) {
         // Focus on the current (last) location
