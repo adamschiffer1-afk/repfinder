@@ -12,8 +12,37 @@ import AnalyticsTracker from '@/components/AnalyticsTracker';
 config.autoAddCss = false;
 
 export const metadata = {
-  title: 'RepFinder - Najlepsza wyszukiwarka repów',
-  description: 'Znajdź najlepsze repliki w sieci.',
+  metadataBase: new URL('https://repfinder.xyz'),
+  title: 'RepFinder | Premium Products & Tools Hub',
+  description: 'The ultimate hub for finding premium quality products, tracking packages globally, inspecting QC photos, and converting agent links instantly.',
+  keywords: ['RepFinder', 'agent links', 'weidian', 'taobao', '1688', 'package tracking', 'qc photos', 'link converter', 'premium products'],
+  openGraph: {
+    title: 'RepFinder | Premium Products & Tools Hub',
+    description: 'Find premium products, track your packages globally, check QC photos, and convert links effortlessly.',
+    url: 'https://repfinder.xyz',
+    siteName: 'RepFinder',
+    images: [
+      {
+        url: '/images/rf-logo-removebg-preview.png',
+        width: 800,
+        height: 600,
+        alt: 'RepFinder Logo',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }) {
