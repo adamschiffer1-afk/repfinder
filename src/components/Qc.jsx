@@ -77,7 +77,7 @@ export default function Quality() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!url) return setError('Proszę wkleić link do produktu.');
+    if (!url) return setError(t('qcPage.emptyError'));
     fetchQCData(url);
   };
 
@@ -238,8 +238,8 @@ export default function Quality() {
 
       <div className={`${styles.mainContainer} ${styles.animateIn}`}>
         <div className={styles.header}>
-          <h1>Quality Check</h1>
-          <p>Wklej link do produktu, aby sprawdzić zdjęcia QC (Weidian, Taobao, 1688...)</p>
+          <h1>{t('qcPage.title')}</h1>
+          <p>{t('qcPage.subtitle')}</p>
         </div>
 
         <div className={styles.qcBox}>
@@ -248,7 +248,7 @@ export default function Quality() {
             <input
               type="text"
               className={styles.input}
-              placeholder="Wklej link do produktu..."
+              placeholder={t('qcPage.placeholder')}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
             />

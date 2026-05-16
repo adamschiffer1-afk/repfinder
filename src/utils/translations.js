@@ -121,6 +121,12 @@ export const translations = {
       origin: "(ORIGIN)",
       destination: "(DOCELOWY)",
       beta: "BETA"
+    },
+    qcPage: {
+      title: "Quality Check",
+      subtitle: "Wklej link do produktu, aby sprawdzić zdjęcia QC (Weidian, Taobao, 1688...)",
+      placeholder: "Wklej link do produktu...",
+      emptyError: "Proszę wkleić link do produktu."
     }
   },
   en: {
@@ -245,6 +251,12 @@ export const translations = {
       origin: "(ORIGIN)",
       destination: "(DESTINATION)",
       beta: "BETA"
+    },
+    qcPage: {
+      title: "Quality Check",
+      subtitle: "Paste the product link to check QC photos (Weidian, Taobao, 1688...)",
+      placeholder: "Paste the product link...",
+      emptyError: "Please paste a product link."
     }
   },
   cn: {
@@ -359,6 +371,12 @@ export const translations = {
       errorServer: "服务器错误",
       errorNotFound: "未找到追踪信息。",
       errorGeneral: "未找到该包裹追踪"
+    },
+    qcPage: {
+      title: "质检查询 (QC)",
+      subtitle: "粘贴产品链接以查看QC照片（微店，淘宝，1688...）",
+      placeholder: "粘贴产品链接...",
+      emptyError: "请粘贴产品链接。"
     }
   },
   de: {
@@ -473,6 +491,12 @@ export const translations = {
       errorServer: "Serverfehler",
       errorNotFound: "Keine Sendungsinformationen gefunden.",
       errorGeneral: "Sendungsverfolgung nicht gefunden"
+    },
+    qcPage: {
+      title: "Qualitätsprüfung",
+      subtitle: "Füge den Produktlink ein, um QC-Fotos zu überprüfen (Weidian, Taobao, 1688...)",
+      placeholder: "Füge den Produktlink ein...",
+      emptyError: "Bitte füge einen Produktlink ein."
     }
   },
   es: {
@@ -587,6 +611,12 @@ export const translations = {
       errorServer: "Error del servidor",
       errorNotFound: "No se ha encontrado información de seguimiento.",
       errorGeneral: "Seguimiento de paquete no encontrado"
+    },
+    qcPage: {
+      title: "Control de Calidad",
+      subtitle: "Pega el enlace del producto para revisar las fotos de control de calidad (Weidian, Taobao, 1688...)",
+      placeholder: "Pega el enlace del producto...",
+      emptyError: "Por favor, pega un enlace del producto."
     }
   },
 };
