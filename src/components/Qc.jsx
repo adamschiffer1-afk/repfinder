@@ -287,12 +287,10 @@ export default function Quality() {
                 return (
                   <div key={index} className={styles.qcCard}>
                     <div className={styles.qcImageContainer} onClick={() => openModal(index, currentIndex)}>
-                      {imageLoading[index] && <div className={styles.loadingBar} />}
                       <img
                         src={images[currentIndex]}
                         alt="QC Preview"
                         className={styles.qcImage}
-                        onLoad={() => setImageLoading(prev => ({ ...prev, [index]: false }))}
                         onError={(e) => e.target.src = '/placeholder.png'}
                       />
 
@@ -320,6 +318,9 @@ export default function Quality() {
                 );
               })}
             </div>
+            
+
+
             {totalPages > 1 && (
               <div className={styles.pagination}>
                 <button
