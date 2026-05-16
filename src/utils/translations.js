@@ -266,7 +266,7 @@ export const translations = {
       tutorials: "教程",
       tools: "工具",
       calculator: "运费计算",
-      qualityCheck: "质检查询",
+      qualityCheck: "Quality Check",
       login: "登录",
       soon: "(即将推出)"
     },
@@ -309,7 +309,7 @@ export const translations = {
       titleHighlight: "功能",
       converter: "链接转换器",
       calculator: "运费计算",
-      qc: "质量检查",
+      qc: "Quality Check",
       converterDesc: "即时转换不同代理之间的链接。支持微店、淘宝、1688等。",
       calcDesc: "估算您的运费成本。",
       qcDesc: "查看真实的质检照片。",
@@ -373,7 +373,7 @@ export const translations = {
       errorGeneral: "未找到该包裹追踪"
     },
     qcPage: {
-      title: "质检查询 (QC)",
+      title: "Quality Check",
       subtitle: "粘贴产品链接以查看QC照片（微店，淘宝，1688...）",
       placeholder: "粘贴产品链接...",
       emptyError: "请粘贴产品链接。"
@@ -386,7 +386,7 @@ export const translations = {
       tutorials: "Anleitungen",
       tools: "Tools",
       calculator: "Versandkosten",
-      qualityCheck: "Qualitätsprüfung",
+      qualityCheck: "Quality Check",
       login: "Anmelden",
       soon: "(Bald)"
     },
@@ -493,7 +493,7 @@ export const translations = {
       errorGeneral: "Sendungsverfolgung nicht gefunden"
     },
     qcPage: {
-      title: "Qualitätsprüfung",
+      title: "Quality Check",
       subtitle: "Füge den Produktlink ein, um QC-Fotos zu überprüfen (Weidian, Taobao, 1688...)",
       placeholder: "Füge den Produktlink ein...",
       emptyError: "Bitte füge einen Produktlink ein."
@@ -506,7 +506,7 @@ export const translations = {
       tutorials: "Tutoriales",
       tools: "Herramientas",
       calculator: "Calculadora",
-      qualityCheck: "Control de Calidad",
+      qualityCheck: "Quality Check",
       login: "Iniciar sesión",
       soon: "(Pronto)"
     },
@@ -613,7 +613,7 @@ export const translations = {
       errorGeneral: "Seguimiento de paquete no encontrado"
     },
     qcPage: {
-      title: "Control de Calidad",
+      title: "Quality Check",
       subtitle: "Pega el enlace del producto para revisar las fotos de control de calidad (Weidian, Taobao, 1688...)",
       placeholder: "Pega el enlace del producto...",
       emptyError: "Por favor, pega un enlace del producto."
