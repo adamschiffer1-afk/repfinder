@@ -13,7 +13,8 @@ import {
   faChevronLeft,
   faChevronRight,
   faPlus,
-  faMinus
+  faMinus,
+  faArrowRight
 } from '@fortawesome/free-solid-svg-icons';
 
 export default function Quality() {
@@ -241,37 +242,41 @@ export default function Quality() {
   };
 
   return (
-    <div className={styles.qcContainer}>
-      <div className={styles.contentWrapper}>
-        <h1 className={styles.qcHeader}>Quality Checker</h1>
-        {/* ... (Search form code remains same) ... */}
-        <form onSubmit={handleSubmit} className={styles.inputGroup}>
-          <input
-            type="text"
-            className={styles.formControl}
-            placeholder="Wklej link do produktu (Weidian, Taobao, 1688...)"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-          />
-          <div className={styles.buttonGroup}>
-            <button className={styles.btnPrimary} type="submit" disabled={loading}>
-              {loading ? 'Szukam...' : 'Sprawdź QC'} <FontAwesomeIcon icon={faSearch} />
+    <div className={styles.qcPage}>
+      <div className={styles.nebulaGlow} />
+
+      <div className={`${styles.mainContainer} ${styles.animateIn}`}>
+        <div className={styles.header}>
+          <h1>Quality Check</h1>
+          <p>Wklej link do produktu, aby sprawdzić zdjęcia QC (Weidian, Taobao, 1688...)</p>
+        </div>
+
+        <div className={styles.qcBox}>
+          <form onSubmit={handleSubmit} className={styles.inputGroup}>
+            <FontAwesomeIcon icon={faSearch} className={styles.inputIcon} />
+            <input
+              type="text"
+              className={styles.input}
+              placeholder="Wklej link do produktu..."
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
+            <button className={styles.actionBtn} type="submit" disabled={loading}>
+              {loading ? <div className={styles.spinnerSmall}></div> : <FontAwesomeIcon icon={faArrowRight} />}
             </button>
-            <button className={styles.copyBtn} onClick={copyLink} disabled={!qcData} title="Kopiuj link do wyników">
-              <FontAwesomeIcon icon={faCopy} />
-            </button>
-          </div>
+          </form>
+
+          {qcData && (
+             <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
+               <button className={styles.copyLinkBtn} onClick={copyLink}>
+                 <FontAwesomeIcon icon={faCopy} /> Kopiuj link do wyników
+               </button>
+             </div>
+          )}
+
           {copyMessage && <div className={styles.copyMessage}>{copyMessage}</div>}
-        </form>
-
-        {error && <div className={styles.alertDanger}>{error}</div>}
-
-        {loading && (
-          <div className={styles.loading}>
-            <div className={styles.spinner}></div>
-            <p>Pobieranie zdjęć...</p>
-          </div>
-        )}
+          {error && <div className={styles.statusMsg}>{error}</div>}
+        </div>
 
         {qcData && allQCs.length > 0 && (
           <>

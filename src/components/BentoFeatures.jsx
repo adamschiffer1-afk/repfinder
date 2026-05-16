@@ -70,16 +70,17 @@ export default function BentoFeatures() {
             <p>{t('tracking.subtitle')}</p>
           </Link>
 
-          <div 
-            className={`${styles.bentoCard} ${styles.disabled}`}
+          <Link 
+            href="/qc"
+            className={styles.bentoCard}
             onClick={() => trackClick('quality_check')}
           >
             <div className={styles.iconWrapper}>
               <FontAwesomeIcon icon={faBox} />
             </div>
-            <h3>{t('features.qc')} <span className={styles.comingSoon}>{t('features.soon')}</span></h3>
+            <h3>{t('features.qc')}</h3>
             <p>{t('features.qcDesc')}</p>
-          </div>
+          </Link>
           
 
         </div>

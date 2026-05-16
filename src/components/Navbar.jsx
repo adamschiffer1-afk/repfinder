@@ -101,8 +101,8 @@ export default function Navbar() {
                 <div className={styles.toolsDropdown}>
                   <Link href="/link-converter" className={styles.toolsLink}>Link Converter</Link>
                   <Link href="/tracking" className={styles.toolsLink}>Tracking</Link>
+                  <Link href="/qc" className={styles.toolsLink}>{t('navbar.qualityCheck')}</Link>
                   <Link href="#" onClick={(e) => e.preventDefault()} style={{ opacity: 0.5, cursor: 'not-allowed' }} className={styles.toolsLink}>{t('navbar.calculator')} {t('navbar.soon')}</Link>
-                  <Link href="#" onClick={(e) => e.preventDefault()} style={{ opacity: 0.5, cursor: 'not-allowed' }} className={styles.toolsLink}>{t('navbar.qualityCheck')} {t('navbar.soon')}</Link>
                 </div>
               )}
             </div>
@@ -175,8 +175,8 @@ export default function Navbar() {
               <div className={styles.mobileToolsList}>
                 <Link href="/link-converter" className={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Link Converter</Link>
                 <Link href="/tracking" className={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Tracking</Link>
+                <Link href="/qc" className={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>{t('navbar.qualityCheck')}</Link>
                 <Link href="#" onClick={(e) => e.preventDefault()} style={{ opacity: 0.5, cursor: 'not-allowed' }} className={styles.mobileNavLink}>{t('navbar.calculator')} {t('navbar.soon')}</Link>
-                <Link href="#" onClick={(e) => e.preventDefault()} style={{ opacity: 0.5, cursor: 'not-allowed' }} className={styles.mobileNavLink}>{t('navbar.qualityCheck')} {t('navbar.soon')}</Link>
               </div>
             </div>
 
