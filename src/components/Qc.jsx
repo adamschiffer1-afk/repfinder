@@ -278,7 +278,7 @@ export default function Quality() {
           {error && <div className={styles.statusMsg}>{error}</div>}
         </div>
 
-        {qcData && allQCs.length > 0 && (
+        {qcData && qcData.albums && qcData.albums.length > 0 && (
           <>
             <div className={styles.qcGrid}>
               {qcData.albums?.map((album, index) => {
