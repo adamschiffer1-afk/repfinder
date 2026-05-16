@@ -1,0 +1,226 @@
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(8, 5, 12, 0.6);
+  backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.popupActive {
+  opacity: 1;
+  visibility: visible;
+}
+
+.popupContent {
+  background: linear-gradient(165deg, rgba(18, 14, 26, 0.95) 0%, rgba(10, 10, 15, 0.98) 100%);
+  width: 92%;
+  max-width: 500px;
+  padding: 50px 40px;
+  border-radius: 28px;
+  position: relative;
+  text-align: center;
+  border: 1px solid rgba(167, 139, 250, 0.15);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(139, 92, 246, 0.05);
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+.popupContent::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.popupActive .popupContent {
+  transform: translateY(0) scale(1);
+}
+
+.popupClose {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.popupClose:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
+  transform: rotate(90deg);
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 24px;
+}
+
+.brandWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.modalLogo {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 0 15px rgba(167, 139, 250, 0.3);
+}
+
+.brandTitle {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  margin: 0;
+  text-transform: none;
+  background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(167, 139, 250, 0.08);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #a78bfa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.badgeDot {
+  width: 6px;
+  height: 6px;
+  background: #a78bfa;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #a78bfa;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.body {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 32px;
+}
+
+.mainOffer {
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.highlight {
+  color: #a78bfa;
+  font-weight: 800;
+  background: rgba(167, 139, 250, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.subText {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+.primaryBtn {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+  color: #fff;
+  padding: 18px 32px;
+  border-radius: 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width: 100%;
+  box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.primaryBtn:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.6);
+  filter: brightness(1.1);
+}
+
+.btnIcon {
+  transition: transform 0.3s ease;
+}
+
+.primaryBtn:hover .btnIcon {
+  transform: translateX(4px);
+}
+
+@media (max-width: 600px) {
+  .popupContent {
+    padding: 40px 24px;
+    width: 92%;
+  }
+  
+  .brandTitle {
+    font-size: 2.2rem;
+  }
+  
+  .mainOffer {
+    font-size: 1.2rem;
+  }
+  
+  .primaryBtn {
+    padding: 16px 24px;
+    font-size: 1rem;
+  }
+}

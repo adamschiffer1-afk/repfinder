@@ -1,0 +1,42 @@
+/* src/styles/VideoSection.module.css */
+.videoSection {
+    background-color: #0a0a0a;
+    padding: 4rem 0;
+    opacity: 1;
+    animation-delay: 0.8s;
+  }
+  
+  .embedResponsive {
+    border-radius: 2rem;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 217, 255, 0.2);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .embedResponsive:hover {
+    box-shadow: 0 20px 36px rgba(0, 217, 255, 0.4);
+  }
+  
+  .embedResponsiveItem {
+    border-radius: 1rem;
+  }
+  
+  .tiktokEmbed {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 217, 255, 0.2);
+    transition: box-shadow 0.3s ease;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .tiktokEmbed:hover {
+    box-shadow: 0 6px 16px rgba(0, 217, 255, 0.4);
+  }
+  
+  @media (max-width: 767px) {
+    .tiktokEmbed {
+      width: 280px;
+      height: 520px;
+    }
+  }

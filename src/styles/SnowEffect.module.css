@@ -1,0 +1,32 @@
+.snowContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+    /* Behind navbar (1300) but above background */
+    overflow: hidden;
+}
+
+.snowflake {
+    position: absolute;
+    top: -10px;
+    background: white;
+    border-radius: 50%;
+    filter: blur(1px);
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-10px) translateX(0);
+    }
+
+    100% {
+        transform: translateY(100vh) translateX(20px);
+    }
+}

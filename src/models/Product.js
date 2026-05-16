@@ -1,0 +1,38 @@
+import mongoose from 'mongoose';
+
+const ProductSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Please provide a name for this product.'],
+    maxlength: [60, 'Name cannot be more than 60 characters'],
+  },
+  price: {
+    type: Number,
+    required: [true, 'Please provide a price.'],
+  },
+  image: {
+    type: String,
+    required: [true, 'Please provide an image URL.'],
+  },
+  category: {
+    type: String,
+    required: [true, 'Please provide a category.'],
+  },
+  batch: {
+    type: String,
+    enum: ['best', 'budget', 'random'],
+    default: 'random',
+  },
+  link: {
+    type: String,
+    required: [true, 'Please provide a product link.'],
+  },
+  clicks: {
+    type: Number,
+    default: 0,
+  }
+}, {
+  timestamps: true,
+});
+
+export default mongoose.models.Product || mongoose.model('Product', ProductSchema);
