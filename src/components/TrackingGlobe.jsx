@@ -78,7 +78,7 @@ export default function TrackingGlobe({ data }) {
         startLng: points[i].lng,
         endLat: points[i+1].lat,
         endLng: points[i+1].lng,
-        color: ['#ffffff', '#60a5fa'] // White to blue gradient
+        color: ['#8b5cf6', '#00d9ff'] // Purple to Cyan gradient
       });
     }
 
@@ -96,22 +96,24 @@ export default function TrackingGlobe({ data }) {
       }
     });
 
-    return { arcsData: arcs, labelsData: labels };
+    return { arcsData: arcs, labelsData: labels, pointsData: points };
   }, [data]);
 
   useEffect(() => {
     if (globeRef.current) {
-      globeRef.current.controls().autoRotate = true;
-      globeRef.current.controls().autoRotateSpeed = 0.8;
+      const controls = globeRef.current.controls();
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.5; // Smoother and slower rotation
+      controls.enableZoom = false; // Prevent accidental scrolling
       
       if (labelsData.length > 0) {
-        const first = labelsData[0];
+        // Focus on the current (last) location
         const last = labelsData[labelsData.length - 1];
         globeRef.current.pointOfView({ 
-          lat: (first.lat + last.lat) / 2, 
-          lng: (first.lng + last.lng) / 2, 
-          altitude: 1.6 
-        }, 1000);
+          lat: last.lat, 
+          lng: last.lng, 
+          altitude: 1.5 
+        }, 2000);
       }
     }
   }, [labelsData]);
@@ -120,17 +122,22 @@ export default function TrackingGlobe({ data }) {
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Globe
         ref={globeRef}
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+        globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
         bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
-        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
         
         arcsData={arcsData}
         arcColor={'color'}
-        arcDashLength={1}
-        arcDashGap={0}
-        arcDashAnimateTime={0}
-        arcStroke={1.2}
-        arcAltitude={0.25}
+        arcDashLength={0.4}
+        arcDashGap={0.2}
+        arcDashAnimateTime={1500}
+        arcStroke={1.5}
+        arcAltitude={0.2}
+
+        ringsData={pointsData}
+        ringColor={() => '#8b5cf6'}
+        ringMaxRadius={3}
+        ringPropagationSpeed={2}
+        ringRepeatPeriod={1000}
         
         htmlElementsData={labelsData}
         htmlElement={d => {
@@ -158,8 +165,8 @@ export default function TrackingGlobe({ data }) {
         htmlLat={d => d.lat}
         htmlLng={d => d.lng}
         
-        atmosphereColor="#ffffff"
-        atmosphereAltitude={0.12}
+        atmosphereColor="#8b5cf6"
+        atmosphereAltitude={0.15}
         
         backgroundColor="rgba(0,0,0,0)"
       />
