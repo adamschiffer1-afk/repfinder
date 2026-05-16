@@ -38,7 +38,7 @@ export default function Quality() {
   const [currentPage, setCurrentPage] = useState(0);
   const [isLocked, setIsLocked] = useState(false);
   const [imageLoading, setImageLoading] = useState({});
-  const [copyMessage, setCopyMessage] = useState('');
+
   const itemsPerPage = 8; // Increased items per page
 
   const imageRefs = useRef({});
@@ -152,15 +152,7 @@ export default function Quality() {
     });
   };
 
-  const copyLink = (e) => {
-    e.preventDefault();
-    const encodedUrl = encodeURIComponent(url);
-    const currentUrl = `${window.location.origin}${window.location.pathname}?qcurl=${encodedUrl}`;
-    navigator.clipboard.writeText(currentUrl).then(() => {
-      setCopyMessage('Skopiowano link!');
-      setTimeout(() => setCopyMessage(''), 2000);
-    });
-  };
+
 
   // --- Smart Touch Logic ---
   const handleTouchStart = (e) => {
@@ -265,15 +257,7 @@ export default function Quality() {
             </button>
           </form>
 
-          {qcData && (
-             <div style={{display: 'flex', justifyContent: 'center', marginTop: '20px'}}>
-               <button className={styles.copyLinkBtn} onClick={copyLink}>
-                 <FontAwesomeIcon icon={faCopy} /> Kopiuj link do wyników
-               </button>
-             </div>
-          )}
 
-          {copyMessage && <div className={styles.copyMessage}>{copyMessage}</div>}
           {error && <div className={styles.statusMsg}>{error}</div>}
         </div>
 
