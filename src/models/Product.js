@@ -30,6 +30,10 @@ const ProductSchema = new mongoose.Schema({
   clicks: {
     type: Number,
     default: 0,
+  },
+  isPinned: {
+    type: Boolean,
+    default: false,
   }
 }, {
   timestamps: true,

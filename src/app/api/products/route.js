@@ -3,10 +3,46 @@ import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 
-export async function GET() {
+export async function GET(req) {
   try {
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page'));
+    const limit = parseInt(searchParams.get('limit')) || 50;
+    const admin = searchParams.get('admin') === 'true';
+    const search = searchParams.get('search');
+    const skip = (page - 1) * limit;
+
     await dbConnect();
-    const products = await Product.find({}).sort({ createdAt: -1 });
+    
+    let query = {};
+    if (search) {
+      query = { name: { $regex: search, $options: 'i' } };
+    }
+
+    let sort = { createdAt: -1 };
+
+    if (admin) {
+      sort = { isPinned: -1, createdAt: -1 };
+    }
+
+    if (page) {
+      const products = await Product.find(query)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit);
+      
+      const total = await Product.countDocuments(query);
+      
+      return NextResponse.json({
+        products,
+        total,
+        page,
+        pages: Math.ceil(total / limit)
+      });
+    }
+
+    // Default: return all products (backward compatibility)
+    const products = await Product.find(query).sort(sort);
     return NextResponse.json(products);
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });

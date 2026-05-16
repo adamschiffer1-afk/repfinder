@@ -397,3 +397,28 @@
   margin-top: -5px;
   margin-bottom: 5px;
 }
+
+.adminSearch {
+  transition: all 0.3s ease;
+}
+
+.adminSearch:focus {
+  outline: none;
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.2);
+}
+
+.pagination button {
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.pagination button:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-1px);
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

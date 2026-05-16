@@ -20,18 +20,32 @@ export default function ManageProducts() {
     batch: 'best',
     link: ''
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [totalProducts, setTotalProducts] = useState(0);
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    fetchProducts(1);
+  }, [searchTerm]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = currentPage) => {
     try {
       setLoading(true);
-      const res = await fetch('/api/products');
+      const url = `/api/products?page=${page}&limit=50&admin=true${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json();
-      setProducts(data);
+      
+      if (data.products) {
+        setProducts(data.products);
+        setTotalPages(data.pages);
+        setCurrentPage(data.page);
+        setTotalProducts(data.total);
+      } else {
+        // Fallback for all products
+        setProducts(data);
+      }
     } catch (err) {
       console.error(err);
       alert("Błąd pobierania produktów. Sprawdź połączenie z bazą.");
@@ -113,6 +127,21 @@ export default function ManageProducts() {
       <header className={styles.adminHeader}>
         <h1>Manage Products</h1>
         <div className={styles.adminNav}>
+          <input 
+            type="text" 
+            placeholder="Search products..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={styles.adminSearch}
+            style={{ 
+              padding: '8px 15px', 
+              borderRadius: '8px', 
+              border: '1px solid rgba(255,255,255,0.1)', 
+              background: 'rgba(0,0,0,0.2)', 
+              color: 'white',
+              marginRight: '15px'
+            }}
+          />
           <button className={styles.scraperBtn} onClick={() => setShowScraperModal(true)}>
             🚀 Add via Scraper
           </button>
@@ -122,6 +151,10 @@ export default function ManageProducts() {
         </div>
       </header>
 
+      <div style={{ marginBottom: '15px', opacity: 0.6, fontSize: '14px' }}>
+        Total products: {totalProducts}
+      </div>
+
       {loading ? <p>Loading...</p> : (
         <table className={styles.adminTable}>
           <thead>
@@ -130,6 +163,7 @@ export default function ManageProducts() {
               <th>Name</th>
               <th>Price</th>
               <th>Category</th>
+              <th>Pinned</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -140,6 +174,7 @@ export default function ManageProducts() {
                 <td>{product.name}</td>
                 <td>${product.price}</td>
                 <td>{product.category}</td>
+                <td>{product.isPinned ? '📌 Yes' : 'No'}</td>
                 <td className={styles.actions}>
                   <button onClick={() => openEdit(product)}>Edit</button>
                   <button onClick={() => handleDelete(product._id)}>Delete</button>
@@ -148,6 +183,26 @@ export default function ManageProducts() {
             ))}
           </tbody>
         </table>
+      )}
+
+      {!loading && totalPages > 1 && (
+        <div className={styles.pagination} style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '30px', alignItems: 'center' }}>
+          <button 
+            onClick={() => fetchProducts(currentPage - 1)} 
+            disabled={currentPage === 1}
+            style={{ padding: '8px 15px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+          >
+            Previous
+          </button>
+          <span style={{ color: 'white' }}>Page {currentPage} of {totalPages}</span>
+          <button 
+            onClick={() => fetchProducts(currentPage + 1)} 
+            disabled={currentPage === totalPages}
+            style={{ padding: '8px 15px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
+          >
+            Next
+          </button>
+        </div>
       )}
 
       {/* Manual Add/Edit Modal */}

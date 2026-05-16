@@ -1454,7 +1454,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-3e6700000192a3c6d8640a232357_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1463,7 +1463,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-528000000192a3c6daba0a239383_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1472,7 +1472,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-18a400000192a3c6dd1f0a8115b5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1481,7 +1481,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-608e00000192a3c6df860a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1490,7 +1490,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-6c2900000192a3c6e1f10a210298_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1499,7 +1499,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-3e6f00000192a3c6e3c80a232357_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1508,7 +1508,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4c1d00000192a3c6e65c0a8133b5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1517,7 +1517,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-609800000192a3c6e8a20a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1526,7 +1526,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-18b000000192a3c6eb180a8115b5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1535,7 +1535,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-609a00000192a3c6ed5b0a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1544,7 +1544,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-243700000193b3cad8d10a210256_240_240.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1553,7 +1553,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-251700000193b3cb03c60a230115_240_240.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1562,7 +1562,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-22b600000193b3cb3d4a0a2304aa_240_240.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1571,7 +1571,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-251e00000193b3cb5f600a23111a_240_240.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1580,7 +1580,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-0ba3000001950c5955210a231316_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1589,7 +1589,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-06b0000001950c5973880a20e284_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1598,7 +1598,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-021b000001950c598c7c0a23038e_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1607,7 +1607,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-0755000001950c5a497e0a2304aa_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1616,7 +1616,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-0a33000001950c5a62060a21146b_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1625,7 +1625,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-0442000001950c5a7abc0a20e2c5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1634,7 +1634,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-3bc2000001953bac6b710a20e2c5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -2885,7 +2885,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-5d550000019386145a280a210559_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2894,7 +2894,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-5d570000019386145d560a210559_520_520.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2903,7 +2903,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-398c00000193861461f80a239383_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2912,7 +2912,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-4cdb00000193861466350a22d234_1920_1920.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2921,7 +2921,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-5d5d0000019386146df50a210559_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2930,7 +2930,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-49d6000001938614777d0aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2939,7 +2939,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-68010000019386147c290aa0834c_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2948,7 +2948,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-4ceb00000193861481420a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2957,7 +2957,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-23c400000193861486410a232357_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2966,7 +2966,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-49e40000019386148b790aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2975,7 +2975,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-680b00000193861490410aa0834c_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2984,7 +2984,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-578c00000193861493d60a210298_1920_1920.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -2993,7 +2993,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-4cf50000019386149a9a0a22d234_1920_1920.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -3002,7 +3002,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-23d0000001938614a1a50a232357_1920_1920.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -3011,7 +3011,7 @@ export const productsData = [
     "name": "CP Knitted Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/open1839861941-252808396-4cfb000001938614a7980a22d234_1920_1920.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506880357&affcode=xfrostyy"
   },
@@ -6080,7 +6080,7 @@ export const productsData = [
     "name": "Denim Tears Shorts",
     "price": 18.9,
     "image": "https://si.geilicdn.com/pcitem1583459867-74520000018ecab7c2260a231418_2457_3276.jpg?w=400&h=400",
-    "category": "pants",
+    "category": "shorts",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508719014&affcode=xfrostyy"
   },
@@ -8240,7 +8240,7 @@ export const productsData = [
     "name": "Jordan Bag",
     "price": 14,
     "image": "https://si.geilicdn.com/pcitem1477302019-668b00000193c4587a270a2395a3_1200_1200.jpg?w=400&h=400",
-    "category": "shoes",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514643114&affcode=xfrostyy"
   },
@@ -9689,7 +9689,7 @@ export const productsData = [
     "name": "Moncler Hoodie",
     "price": 30.8,
     "image": "https://si.geilicdn.com/pcitem901891552790-7da90000019207db57980a230115_1200_1200.jpg?w=400&h=400",
-    "category": "jackets",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514198310&affcode=xfrostyy"
   },
@@ -10535,7 +10535,7 @@ export const productsData = [
     "name": "Moncler Sweater",
     "price": 30.8,
     "image": "https://si.geilicdn.com/pcitem901891552790-7da90000019207db57980a230115_1200_1200.jpg?w=400&h=400",
-    "category": "jackets",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514198310&affcode=xfrostyy"
   },
@@ -20183,7 +20183,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 12.32,
     "image": "https://si.geilicdn.com/pcitem901862111700-47c7000001922201cae80a20e672-unadjust_499_624.png?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506391499&affcode=xfrostyy"
   },
@@ -20192,7 +20192,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 12.32,
     "image": "https://si.geilicdn.com/pcitem901862111700-4d1a000001922201cc420a23111a-unadjust_481_649.png?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506391499&affcode=xfrostyy"
   },
@@ -20201,7 +20201,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 12.32,
     "image": "https://si.geilicdn.com/pcitem901862111700-517f000001922201ce940a2102c5-unadjust_492_661.png?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506391499&affcode=xfrostyy"
   },
@@ -20210,7 +20210,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 12.32,
     "image": "https://si.geilicdn.com/pcitem901862111700-0b5c000001922201cfa10a21146b-unadjust_495_633.png?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506391499&affcode=xfrostyy"
   },
@@ -20219,7 +20219,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 12.32,
     "image": "https://si.geilicdn.com/pcitem901862111700-50bc000001922201d0b40a210256-unadjust_496_663.png?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506391499&affcode=xfrostyy"
   },
@@ -20228,7 +20228,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 12.32,
     "image": "https://si.geilicdn.com/pcitem901862111700-4d8f000001922201d1b50a23057e-unadjust_500_668.png?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506391499&affcode=xfrostyy"
   },
@@ -20237,7 +20237,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 12.32,
     "image": "https://si.geilicdn.com/pcitem901862111700-47a4000001922201d2d80a23041a-unadjust_503_631.png?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506391499&affcode=xfrostyy"
   },
@@ -20246,7 +20246,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 12.32,
     "image": "https://si.geilicdn.com/pcitem901862111700-5027000001922201d4030a20e284-unadjust_487_637.png?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506391499&affcode=xfrostyy"
   },
@@ -20255,7 +20255,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 12.32,
     "image": "https://si.geilicdn.com/pcitem1874236696-2a0600000193057065dc0a81347d-unadjust_610_548.png?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506391499&affcode=xfrostyy"
   },
@@ -20480,7 +20480,7 @@ export const productsData = [
     "name": "Palm Angel Hoodie",
     "price": 17.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-2df0000001933e2c9a450a2396f4-unadjust_596_860.png?w=400&h=400",
-    "category": "shoes",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509503756&affcode=xfrostyy"
   },
@@ -21596,7 +21596,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 15.4,
     "image": "https://si.geilicdn.com/pcitem901908505730-17a200000194fde755350a8133cc-unadjust_804_573.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7515401830&affcode=xfrostyy"
   },
@@ -21992,7 +21992,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4040000001938f8b8b830a210298_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22001,7 +22001,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-3562000001938f8b8d4c0a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22010,7 +22010,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-699a000001938f8b8f470a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22019,7 +22019,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-473b000001938f8b91320a210559_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22028,7 +22028,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-3222000001938f8b93710aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22037,7 +22037,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-519e000001938f8b95570aa0834c_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22046,7 +22046,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-404c000001938f8b979b0a210298_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22055,7 +22055,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-356c000001938f8b99a00a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22064,7 +22064,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-473f000001938f8b9b630a210559_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22073,7 +22073,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4741000001938f8b9d250a210559_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22082,7 +22082,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-69a6000001938f8b9f4d0a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22091,7 +22091,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-3572000001938f8ba18e0a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22100,7 +22100,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-69a8000001938f8ba3820a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22109,7 +22109,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-69ae000001938f8ba5fc0a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22118,7 +22118,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-2283000001938f8ba8450a239383_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22127,7 +22127,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4054000001938f8baa970a210298_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22136,7 +22136,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-51ac000001938f8baca90aa0834c_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22145,7 +22145,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-405a000001938f8baeaf0a210298_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22154,7 +22154,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-69b8000001938f8bb0b30a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22163,7 +22163,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-3580000001938f8bb2f60a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22172,7 +22172,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-51b4000001938f8bb5320aa0834c_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22181,7 +22181,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4757000001938f8bb70a0a210559_1276_1276.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22190,7 +22190,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-51ba000001938f8bb9d70aa0834c_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22199,7 +22199,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-1c83000001938f8bbc2f0a8133b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -22208,7 +22208,7 @@ export const productsData = [
     "name": "Carhartt knitted hat",
     "price": 9.1,
     "image": "https://si.geilicdn.com/open1685879877-252808396-69c0000001938f8bbea50a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508281470&affcode=xfrostyy"
   },
@@ -24089,7 +24089,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-2e4400000192a38300840a239383_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24098,7 +24098,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-1a2e00000192a38302b30a232357_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24107,7 +24107,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-348600000192a38304b50aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24116,7 +24116,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-2e4800000192a383072b0a239383_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24125,7 +24125,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-747000000192a38309550a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24134,7 +24134,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-560b00000192a3830b8b0a210559_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24143,7 +24143,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-348c00000192a3830d9d0aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24152,7 +24152,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-3c7a00000192a383103a0a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24161,7 +24161,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-348e00000192a38312470aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24170,7 +24170,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-560f00000192a383141c0a210559_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24179,7 +24179,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-1a3600000192a38316100a232357_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24188,7 +24188,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-3c7e00000192a38318050a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24197,7 +24197,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-2e5200000192a3831a2f0a239383_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24206,7 +24206,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-27e000000192a3831c650a8133b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24215,7 +24215,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-3c8200000192a3831e8d0a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24224,7 +24224,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-1a3a00000192a38320b30a232357_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24233,7 +24233,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-2e5600000192a38322d40a239383_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24242,7 +24242,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-349600000192a383250c0aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24251,7 +24251,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-747e00000192a38327580a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24260,7 +24260,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-561500000192a38329af0a210559_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24269,7 +24269,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-480b00000192a3832be60a210298_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24278,7 +24278,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-3c8a00000192a3832de00a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24287,7 +24287,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-1a4000000192a38330250a232357_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24296,7 +24296,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-481100000192a38332440a210298_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24305,7 +24305,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-481300000192a38334c30a210298_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24314,7 +24314,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-1a4600000192a38336890a232357_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24323,7 +24323,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-1a4800000192a38338630a232357_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24332,7 +24332,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-2e5c00000192a3833a1e0a239383_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24341,7 +24341,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-748200000192a3833c140a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24350,7 +24350,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-27ec00000192a3833de70a8133b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24359,7 +24359,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-561d00000192a3833fc60a210559_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24368,7 +24368,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-34a000000192a38341ac0aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24377,7 +24377,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-3c9000000192a38343b90a22d234_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24386,7 +24386,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-2e6200000192a38345fd0a239383_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24395,7 +24395,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-2e6400000192a383483a0a239383_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24404,7 +24404,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-748600000192a3834a710a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24413,7 +24413,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-481900000192a3834c6f0a210298_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24422,7 +24422,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-748a00000192a3834f4a0a8115b5_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -24431,7 +24431,7 @@ export const productsData = [
     "name": "Denim Tears Hoodie",
     "price": 12.88,
     "image": "https://si.geilicdn.com/open1652813497-252808396-1a5000000192a38351760a232357_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512514732&affcode=xfrostyy"
   },
@@ -27635,7 +27635,7 @@ export const productsData = [
     "name": "Nofs Summer Set",
     "price": 24.33,
     "image": "https://si.geilicdn.com/pcitem901857861682-715c0000018f85db50b30a20e672_828_828.jpg?w=400&h=400",
-    "category": "pants",
+    "category": "t-shirts",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514615466&affcode=xfrostyy"
   },
@@ -29336,7 +29336,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4fbe000001956e9831250a23b491_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29345,7 +29345,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-447a000001956e9833520a231226_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29354,7 +29354,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5f12000001956e9835a40aa0834c_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29363,7 +29363,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-601d000001956e983a570a8115c2_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29372,7 +29372,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5c9d000001956e983c870aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29381,7 +29381,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5c9f000001956e983f940aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29390,7 +29390,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4fcc000001956e9841f20a23b491_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29399,7 +29399,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-659e000001956e9844150a8133b0_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29408,7 +29408,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4fd2000001956e9846ca0a23b491_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29417,7 +29417,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-448a000001956e9848db0a231226_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29426,7 +29426,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5f28000001956e984b700aa0834c_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29435,7 +29435,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-689d000001956e984d680a23b4de_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29444,7 +29444,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-65a8000001956e9850060a8133b0_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29453,7 +29453,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5cb5000001956e9852150aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29462,7 +29462,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5f32000001956e9854840aa0834c_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29471,7 +29471,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5cb7000001956e9856f10aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29480,7 +29480,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-6041000001956e98593c0a8115c2_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29489,7 +29489,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5e1e000001956e985baf0a22d249_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29498,7 +29498,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5cbf000001956e985eb80aa08290_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29507,7 +29507,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-449c000001956e9860ea0a231226_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29516,7 +29516,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5e2a000001956e9865b00a22d249_1080_1080.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29525,7 +29525,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4fec000001956e9869350a23b491_1280_1280.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29534,7 +29534,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5f42000001956e986c9a0aa0834c_1280_1280.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29543,7 +29543,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-68b7000001956e986fe70a23b4de_1280_1280.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29552,7 +29552,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-6596000001956e9838680a8133b0_800_800.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29561,7 +29561,7 @@ export const productsData = [
     "name": "Nike Tech Hoodie",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-68a9000001956e9863810a23b4de_494_495.jpg?w=400&h=400",
-    "category": "hoodies",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514164652&affcode=xfrostyy"
   },
@@ -29741,7 +29741,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-26bb00000193fd0bf3780aa0834c_1440_1080.jpg?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514708328&affcode=xfrostyy"
   },
@@ -29750,7 +29750,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-26c300000193fd0bf9100aa0834c_1440_1080.jpg?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514708328&affcode=xfrostyy"
   },
@@ -29759,7 +29759,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-05ed00000193fd0bfda00aa08290_1440_1080.jpg?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514708328&affcode=xfrostyy"
   },
@@ -29768,7 +29768,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-0a5800000193fd0c04e60a22d234_1440_1080.jpg?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514708328&affcode=xfrostyy"
   },
@@ -29777,7 +29777,7 @@ export const productsData = [
     "name": "moncler hat",
     "price": 22.4,
     "image": "https://si.geilicdn.com/open1685879877-252808396-5da800000193fd0c0a940a232357_1440_1080.jpg?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514708328&affcode=xfrostyy"
   },
@@ -30722,7 +30722,7 @@ export const productsData = [
     "name": "Arcteryx Hat",
     "price": 13.3,
     "image": "https://si.geilicdn.com/weidian1796390085-15ea0000018dfe0e4e4d0a2102d0_966_966.jpg?w=400&h=400",
-    "category": "jackets",
+    "category": "accessories",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651099070&affcode=xfrostyy"
   },
