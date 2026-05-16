@@ -214,8 +214,8 @@
 
 .qcCard:hover {
   transform: translateY(-10px);
-  border-color: rgba(0, 217, 255, 0.3);
-  box-shadow: 0 20px 40px rgba(0, 217, 255, 0.15);
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
 }
 
 /* Image Container */
@@ -285,8 +285,8 @@
 }
 
 .arrowBtn:hover {
-  background: #00d9ff;
-  border-color: #00d9ff;
+  background: #8b5cf6;
+  border-color: #8b5cf6;
   transform: translateY(-50%) scale(1.1);
 }
 
@@ -334,8 +334,8 @@
 }
 
 .pageButton:hover:not(:disabled) {
-  background: #00d9ff;
-  border-color: #00d9ff;
+  background: #8b5cf6;
+  border-color: #8b5cf6;
   transform: scale(1.1);
 }
 
@@ -456,7 +456,7 @@
 
 .controlBtn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #00d9ff;
+  color: #8b5cf6;
 }
 
 .modalNavBtn {
@@ -481,11 +481,11 @@
 }
 
 .modalNavBtn:hover {
-  background: rgba(0, 217, 255, 0.2);
-  border-color: #00d9ff;
+  background: rgba(139, 92, 246, 0.2);
+  border-color: #8b5cf6;
   color: #fff;
   transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
 }
 
 .modalPrev {
@@ -515,15 +515,15 @@
 .loading {
   text-align: center;
   margin: 3rem 0;
-  color: #00d9ff;
+  color: #8b5cf6;
 }
 
 .spinner {
   display: inline-block;
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(0, 217, 255, 0.3);
-  border-top: 3px solid #00d9ff;
+  border: 3px solid rgba(139, 92, 246, 0.3);
+  border-top: 3px solid #8b5cf6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-top: 1rem;
@@ -613,7 +613,7 @@
 }
 
 .qcAttribution a {
-  color: #00d9ff;
+  color: #8b5cf6;
   text-decoration: none;
   font-weight: 600;
 }
