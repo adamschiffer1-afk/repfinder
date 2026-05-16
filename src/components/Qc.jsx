@@ -85,7 +85,6 @@ export default function Quality() {
     const images = getImagesForOrder(orderKey);
     if (images.length === 0) return;
 
-    setImageLoading((prev) => ({ ...prev, [orderKey]: true }));
     setCurrentImages((prev) => {
       const currentIndex = prev[orderKey] || 0;
       let newIndex = currentIndex + direction;
@@ -317,20 +316,10 @@ export default function Quality() {
                         </>
                       )}
                     </div>
-
-                    <div className={styles.cardBody}>
-                      <h5 className={styles.cardTitle}>{album.name || `Album #${index + 1}`}</h5>
-                      <p className={styles.cardText}>{album.source || 'Picks.ly'}</p>
-                    </div>
                   </div>
                 );
               })}
             </div>
-            
-            <div className={styles.qcAttribution}>
-                {qcData.attribution} — <a href={qcData.picksly_url} target="_blank" rel="noopener noreferrer">Zobacz wszystko na picks.ly</a>
-            </div>
-
             {totalPages > 1 && (
               <div className={styles.pagination}>
                 <button
