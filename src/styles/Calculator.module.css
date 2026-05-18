@@ -743,7 +743,7 @@
 .carrierGridDivider {
   height: 1px;
   background: #1c1d24;
-  margin: auto 0 10px;
+  margin: 10px 0;
 }
 
 .carrierGridPriceRow {
@@ -1284,13 +1284,25 @@
   .splitWorkspace {
     flex-direction: column;
     align-items: stretch;
+    display: flex;
   }
   
+  .calcLeftColumn {
+    display: contents;
+  }
+
   .calcRightColumn {
     position: static;
     max-height: none;
     height: auto;
+    order: 3;
+    width: 100%;
   }
+
+  .addConsoleCard { order: 1; }
+  .packingShelfCard { order: 2; }
+  .bottomSummaryDashboard { order: 4; }
+  .savedPackagesCard { order: 5; }
   
   .carriersScrollContainer {
     max-height: 450px;
@@ -1406,12 +1418,16 @@
 
   .carrierGridCard {
     padding: 12px;
+    height: auto;
+    min-height: auto;
   }
 
   .carrierGridHeader {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: 8px;
+    flex-wrap: wrap;
   }
 
   .priceBigUsd {
