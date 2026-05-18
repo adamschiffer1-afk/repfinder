@@ -748,8 +748,10 @@
 
 .carrierGridPriceRow {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: flex-end;
+  margin-top: auto;
+  padding-bottom: 2px;
 }
 
 .carrierGridBaseFee {
