@@ -1,3 +1,24 @@
+/* ─── ENTRANCE ANIMATIONS ─── */
+@keyframes calcFadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes calcSlideRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes calcSlideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nebulaIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .calcPage {
   min-height: 100vh;
   background: #08080a;
@@ -9,6 +30,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  animation: nebulaIn 0.5s ease both;
 }
 
 .nebulaGlow {
@@ -38,6 +60,7 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  animation: calcSlideDown 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
 
 .headerLogo {
@@ -110,6 +133,7 @@
   border-radius: 20px;
   padding: 24px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  animation: calcSlideRight 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
 }
 
 /* ─── SEKCJA 1: KONSOLA DODAWANIA PRZEDMIOTÓW (GÓRA) ─── */
@@ -122,6 +146,7 @@
   flex-direction: column;
   gap: 20px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  animation: calcFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
 }
 
 .cardHeaderClean {
@@ -309,6 +334,7 @@
   flex-direction: column;
   gap: 20px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: calcFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
 }
 
 .shelfHeader {
@@ -823,6 +849,7 @@
   gap: 20px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
   margin-top: 10px;
+  animation: calcFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both;
 }
 
 .summaryStatsRow {
@@ -1133,6 +1160,125 @@
   cursor: not-allowed;
 }
 
+.saveBtnFlash {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
+  animation: savePulse 0.4s ease-out;
+}
+
+@keyframes savePulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
+/* ─── SAVED PACKAGES PANEL ─── */
+.savedPackagesCard {
+  background: #111218;
+  border: 1px solid rgba(139, 92, 246, 0.12);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.savedPackagesList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.savedPackageRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.savedPackageRestoreBtn {
+  flex: 1;
+  background: #171821;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  transition: all 0.22s ease;
+  font-family: inherit;
+  color: #fff;
+}
+
+.savedPackageRestoreBtn:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
+}
+
+.savedPkgInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.savedPkgDate {
+  font-size: 11px;
+  color: #8a8e9b;
+  font-weight: 600;
+}
+
+.savedPkgMeta {
+  font-size: 11px;
+  color: #a78bfa;
+  font-weight: 700;
+}
+
+.savedPkgItems {
+  font-size: 12px;
+  color: #d1d5db;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.savedPkgDeleteBtn {
+  background: none;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  opacity: 0.6;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: all 0.2s;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.savedPkgDeleteBtn:hover {
+  opacity: 1;
+  background: rgba(239, 68, 68, 0.08);
+  border-color: #ef4444;
+}
+
+.saveBtnFlash {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
+  animation: savePulse 0.4s ease-out;
+}
+
+@keyframes savePulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.07); }
+  100% { transform: scale(1); }
+}
+
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .splitWorkspace {
@@ -1152,26 +1298,129 @@
 }
 
 @media (max-width: 768px) {
+  .calcPage {
+    padding: 100px 12px 40px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+  }
+
+  .header p {
+    font-size: 13px;
+  }
+
+  .headerLogo {
+    height: 40px;
+  }
+
+  .addConsoleCard,
+  .packingShelfCard,
+  .bottomSummaryDashboard,
+  .savedPackagesCard,
+  .calcRightColumn {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
   .consoleInputsRow {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
   }
   
+  .inputGroupFull,
+  .inputWrapperMedium {
+    width: 100%;
+    min-width: 100%;
+  }
+
   .qtySelector {
-    justify-content: center;
+    justify-content: space-between;
+    width: 100%;
   }
   
   .addButtonConsole {
     width: 100%;
   }
+
+  .shelfItemCard {
+    min-width: 160px;
+    width: 160px;
+    padding: 12px;
+  }
+
+  .shelfItemTitle {
+    font-size: 12px;
+  }
+
+  .summaryStatsRow {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .statValue,
+  .statValueSec {
+    font-size: 18px;
+  }
+
+  .promoActionsContainer {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .referralInlineCard {
+    width: 100%;
+    min-width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .referralLinkInline {
+    margin-left: 0;
+    align-self: flex-start;
+  }
   
   .dashboardActionButtons {
     width: 100%;
     justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
   }
   
   .resetBtn, .saveBtn {
-    flex: 1;
+    width: 100%;
     text-align: center;
+  }
+
+  .couponsTabs {
+    grid-template-columns: 1fr;
+  }
+
+  .savedPkgInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .carrierGridCard {
+    padding: 12px;
+  }
+
+  .carrierGridHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .priceBigUsd {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .calcPage {
+    padding: 80px 10px 30px;
   }
 }

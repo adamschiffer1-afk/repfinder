@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faCalculator, 
@@ -18,6 +18,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/styles/Calculator.module.css';
 import { useLanguage } from '@/context/LanguageContext';
+import { useCurrency } from '@/hooks/useCurrency';
 
 const ESTIMATED_WEIGHTS = {
   // ── Longest / Most specific first ──
@@ -120,6 +121,7 @@ const ESTIMATED_WEIGHTS = {
 
 export default function Calculator() {
   const { language, t } = useLanguage();
+  const { currency, formatPrice } = useCurrency();
   
   const QUICK_TAGS_DYNAMIC = [
     { label: language === 'pl' ? 'Koszulka' : (t('products.t-shirts') || 'T-shirt'), name: 'T-shirt', weight: 230 },
@@ -137,13 +139,18 @@ export default function Calculator() {
   const [includeCoupon, setIncludeCoupon] = useState(true);
   const [selectedCoupon, setSelectedCoupon] = useState('frostyy'); // 'frostyy' (-$15 flat) or 'frostyy20' (-20%)
   const [isAiActive, setIsAiActive] = useState(false);
+  const [savedPackages, setSavedPackages] = useState([]);
+  const [saveFlash, setSaveFlash] = useState(false);
 
   // Live Shipping Estimation API states
   const [liveShippingLines, setLiveShippingLines] = useState([]);
   const [isLoadingLive, setIsLoadingLive] = useState(false);
   const [liveError, setLiveError] = useState(null);
 
-  // Exchange rate USD -> PLN
+  // Ref for shipping section (for scroll-to)
+  const shippingRef = useRef(null);
+
+  // Currency rates (kept for coupon savings display only)
   const USD_TO_PLN = 3.65;
 
   const isShoeType = (name) => {
@@ -320,6 +327,51 @@ export default function Calculator() {
 
   const handleClearAll = () => {
     setItems([]);
+  };
+
+  // Load saved packages on mount
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('rf_saved_packages') || '[]');
+    setSavedPackages(stored);
+  }, []);
+
+  const handleRestorePackage = (pkg) => {
+    setItems(pkg.items.map(item => ({ ...item, id: Date.now() + Math.random() })));
+    setIncludeCoupon(pkg.includeCoupon);
+    setSelectedCoupon(pkg.selectedCoupon);
+    // scroll back to top of left column
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDeleteSavedPackage = (pkgId) => {
+    const updated = savedPackages.filter(p => p.id !== pkgId);
+    setSavedPackages(updated);
+    localStorage.setItem('rf_saved_packages', JSON.stringify(updated));
+  };
+
+  const handleSavePackage = () => {
+    if (items.length === 0) return;
+    const packageData = {
+      id: Date.now(),
+      savedAt: new Date().toISOString(),
+      items: [...items],
+      totalWeight,
+      includeCoupon,
+      selectedCoupon,
+    };
+    const existing = JSON.parse(localStorage.getItem('rf_saved_packages') || '[]');
+    const updated = [packageData, ...existing].slice(0, 10); // keep last 10
+    localStorage.setItem('rf_saved_packages', JSON.stringify(updated));
+    setSavedPackages(updated);
+    // Flash feedback
+    setSaveFlash(true);
+    setTimeout(() => setSaveFlash(false), 2000);
+    // Scroll to shipping section
+    setTimeout(() => {
+      if (shippingRef.current) {
+        shippingRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 150);
   };
 
   const handleQuickTagClick = (tag) => {
@@ -675,8 +727,8 @@ export default function Calculator() {
                       <span className={styles.greenSparkle}>✨</span>
                       <span className={styles.calloutText}>
                         {language === 'pl' 
-                          ? `Zastosowano kupon ${selectedCoupon} (oszczędzasz ${totalWeight > 0 ? selectedDiscountAmountPln.toFixed(2) : '60.00'} PLN)`
-                          : `Applied coupon ${selectedCoupon} (saving ${totalWeight > 0 ? selectedDiscountAmountPln.toFixed(2) : '60.00'} PLN)`}
+                          ? `Zastosowano kupon ${selectedCoupon} (oszczędzasz ${totalWeight > 0 ? formatPrice(selectedDiscountAmountUsd) : formatPrice(15)})`
+                          : `Applied coupon ${selectedCoupon} (saving ${totalWeight > 0 ? formatPrice(selectedDiscountAmountUsd) : formatPrice(15)})`}
                       </span>
                     </div>
                   </div>
@@ -708,22 +760,68 @@ export default function Calculator() {
                   </button>
                   
                   <button 
-                    className={styles.saveBtn} 
-                    onClick={() => alert(language === 'pl' ? 'Zapisano oszacowanie paczki!' : 'Package estimate saved!')} 
+                    className={`${styles.saveBtn} ${saveFlash ? styles.saveBtnFlash : ''}`} 
+                    onClick={handleSavePackage} 
                     disabled={items.length === 0}
                   >
-                    <FontAwesomeIcon icon={faSave} style={{marginRight: '8px'}} /> {language === 'pl' ? 'ZAPISZ OSZACOWANIE' : 'SAVE ESTIMATE'}
+                    <FontAwesomeIcon icon={faSave} style={{marginRight: '8px'}} />
+                    {saveFlash
+                      ? (language === 'pl' ? '✓ ZAPISANO!' : '✓ SAVED!')
+                      : (language === 'pl' ? 'ZAPISZ PACZKE' : 'SAVE PACKAGE')}
                   </button>
                 </div>
               </div>
             </div>
+
+          {/* ─── ZAPISANE PACZKI ─── */}
+          {savedPackages.length > 0 && (
+            <div className={styles.savedPackagesCard}>
+              <div className={styles.shelfHeader}>
+                <div className={styles.cardTitleBox}>
+                  <span className={styles.panelIcon}>📋</span>
+                  <h2>{language === 'pl' ? 'Zapisane Paczki' : 'Saved Packages'}</h2>
+                </div>
+                <span className={styles.shelfCountBadge}>{savedPackages.length}</span>
+              </div>
+              <div className={styles.savedPackagesList}>
+                {savedPackages.map((pkg) => (
+                  <div key={pkg.id} className={styles.savedPackageRow}>
+                    <button
+                      className={styles.savedPackageRestoreBtn}
+                      onClick={() => handleRestorePackage(pkg)}
+                      title={language === 'pl' ? 'Wczytaj tę paczkę' : 'Restore this package'}
+                    >
+                      <div className={styles.savedPkgInfo}>
+                        <span className={styles.savedPkgDate}>
+                          🕐 {new Date(pkg.savedAt).toLocaleDateString(language === 'pl' ? 'pl-PL' : 'en-US', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                        <span className={styles.savedPkgMeta}>
+                          {pkg.items.length} {language === 'pl' ? 'przedm.' : 'items'} · {pkg.totalWeight}g
+                        </span>
+                      </div>
+                      <span className={styles.savedPkgItems}>
+                        {pkg.items.slice(0, 3).map(i => i.name).join(', ')}{pkg.items.length > 3 ? '...' : ''}
+                      </span>
+                    </button>
+                    <button
+                      className={styles.savedPkgDeleteBtn}
+                      onClick={() => handleDeleteSavedPackage(pkg.id)}
+                      aria-label="Delete saved package"
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           </div>
 
           {/* ─── PRAWA KOLUMNA: PRZYKLEJONA LISTA KURIERÓW ZE SCROLLOWANIEM ─── */}
           <div className={styles.calcRightColumn}>
             
-            <div className={styles.shippingSection}>
+            <div className={styles.shippingSection} ref={shippingRef}>
               <div className={styles.shippingSectionHeader}>
                 <div className={styles.cardTitleBox}>
                   <span className={styles.panelIcon}>✈️</span>
@@ -849,11 +947,11 @@ export default function Calculator() {
                             <div className={styles.carrierGridDivider} />
                             <div className={styles.carrierGridPriceRow}>
                               <span className={styles.carrierGridBaseFee}>
-                                {language === 'pl' ? 'Baza:' : 'Base:'} ${rawLineUsd.toFixed(2)}
+                                {language === 'pl' ? 'Baza:' : 'Base:'} {formatPrice(rawLineUsd)}
                               </span>
                               <div className={styles.carrierGridPriceGroup}>
-                                <p className={styles.priceBigUsd}>${finalLineUsd.toFixed(2)}</p>
-                                <p className={styles.priceSubPln}>~{finalLinePln.toFixed(2)} PLN</p>
+                                <p className={styles.priceBigUsd}>{formatPrice(finalLineUsd)}</p>
+                                {currency === 'USD' && <p className={styles.priceSubPln}>~{finalLinePln.toFixed(2)} PLN</p>}
                               </div>
                             </div>
                           </div>
