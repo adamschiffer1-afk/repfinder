@@ -617,3 +617,210 @@
     transform: none;
   }
 }
+
+/* ══════════════════════════════════════════
+   ESTIMATED DELIVERY CARD (main view)
+══════════════════════════════════════════ */
+.estimateCard {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 28px;
+  border-radius: 24px;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  background: linear-gradient(135deg,
+    rgba(139, 92, 246, 0.08) 0%,
+    rgba(99, 102, 241, 0.04) 100%);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.4s ease;
+  transition: all 0.3s ease;
+}
+
+.estimateCard:hover {
+  border-color: rgba(139, 92, 246, 0.45);
+  box-shadow: 0 10px 40px rgba(139, 92, 246, 0.12);
+}
+
+.estimateCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8b5cf6, #6366f1, transparent);
+}
+
+/* Confidence color variants */
+.estimate_high {
+  border-color: rgba(52, 211, 153, 0.3);
+  background: linear-gradient(135deg,
+    rgba(52, 211, 153, 0.07) 0%,
+    rgba(16, 185, 129, 0.03) 100%);
+}
+.estimate_high::before { background: linear-gradient(90deg, #34d399, #10b981, transparent); }
+
+.estimate_medium {
+  border-color: rgba(251, 191, 36, 0.3);
+  background: linear-gradient(135deg,
+    rgba(251, 191, 36, 0.07) 0%,
+    rgba(245, 158, 11, 0.03) 100%);
+}
+.estimate_medium::before { background: linear-gradient(90deg, #fbbf24, #f59e0b, transparent); }
+
+.estimate_low {
+  border-color: rgba(139, 92, 246, 0.25);
+}
+
+.estimateIcon {
+  font-size: 28px;
+  color: #a78bfa;
+  min-width: 36px;
+  text-align: center;
+  filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.6));
+}
+
+.estimate_high .estimateIcon { color: #34d399; filter: drop-shadow(0 0 12px rgba(52,211,153,0.6)); }
+.estimate_medium .estimateIcon { color: #fbbf24; filter: drop-shadow(0 0 12px rgba(251,191,36,0.6)); }
+
+.estimateBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.estimateLabel {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+
+.estimateDates {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.estimateDelivered {
+  font-size: 22px;
+  font-weight: 800;
+  color: #34d399;
+}
+
+.estimateMilestone {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.estimateCountryNote {
+  font-size: 11px;
+  color: rgba(251, 191, 36, 0.7);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+}
+
+.estimateMilestone svg { color: #a78bfa; font-size: 9px; }
+.estimate_high .estimateMilestone svg { color: #34d399; }
+.estimate_medium .estimateMilestone svg { color: #fbbf24; }
+
+.estimateConfidenceDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+.dot_high { background: #34d399; box-shadow: 0 0 8px #34d399; }
+.dot_medium { background: #fbbf24; box-shadow: 0 0 8px #fbbf24; }
+.dot_low { background: #8b5cf6; box-shadow: 0 0 8px #8b5cf6; }
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.8); }
+}
+
+/* ══════════════════════════════════════════
+   GLOBE PANEL — ESTIMATE SECTION
+══════════════════════════════════════════ */
+.globeEstimateSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.globeEstimateDates {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.globeEstimateMilestone {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.globeCountryNote {
+  font-size: 10px;
+  color: rgba(251, 191, 36, 0.75);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.globeEstimateMilestone svg { color: #a78bfa; font-size: 9px; }
+
+.deliveredBadge {
+  color: #34d399 !important;
+  background: rgba(52, 211, 153, 0.12) !important;
+  border-color: rgba(52, 211, 153, 0.3) !important;
+}
+
+.confidenceBar {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.confidenceFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.fill_high { width: 90%; background: linear-gradient(90deg, #34d399, #10b981); }
+.fill_medium { width: 55%; background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+.fill_low { width: 25%; background: linear-gradient(90deg, #8b5cf6, #6366f1); }
+
+.confidenceText {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 640px) {
+  .estimateDates { font-size: 20px; }
+  .estimateCard { padding: 18px 20px; gap: 14px; }
+  .estimateIcon { font-size: 22px; }
+}

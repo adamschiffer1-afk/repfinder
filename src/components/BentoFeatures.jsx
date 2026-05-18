@@ -46,16 +46,17 @@ export default function BentoFeatures() {
             <p>{t('features.converterDesc')}</p>
           </Link>
           
-          <div 
-            className={`${styles.bentoCard} ${styles.disabled}`}
+          <Link 
+            href="/calculator" 
+            className={styles.bentoCard}
             onClick={() => trackClick('shipping_calc')}
           >
             <div className={styles.iconWrapper}>
               <FontAwesomeIcon icon={faCalculator} />
             </div>
-            <h3>{t('features.calculator')} <span className={styles.comingSoon}>{t('features.soon')}</span></h3>
+            <h3>{t('features.calculator')}</h3>
             <p>{t('features.calcDesc')}</p>
-          </div>
+          </Link>
           
           {/* Wiersz 2 */}
           <Link 

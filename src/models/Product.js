@@ -34,6 +34,10 @@ const ProductSchema = new mongoose.Schema({
   isPinned: {
     type: Boolean,
     default: false,
+  },
+  imageVector: {
+    type: [Number],
+    select: false, // Ukryte domyślnie, by nie obciążać zapytań
   }
 }, {
   timestamps: true,

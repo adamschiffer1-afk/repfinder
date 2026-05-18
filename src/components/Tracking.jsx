@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
 import { translateStatus as translateStatusFe, translateLocation as translateLocationFe } from '@/utils/trackingTranslations';
+import { estimateDelivery, getCountryDeltaNote } from '@/utils/deliveryEstimator';
 import styles from '@/styles/Tracking.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -18,7 +19,8 @@ import {
   faUser,
   faInfoCircle,
   faTimes,
-  faMap
+  faMap,
+  faClock
 } from '@fortawesome/free-solid-svg-icons';
 import TrackingGlobe from './TrackingGlobe';
 
@@ -253,7 +255,12 @@ export default function Tracking() {
             </div>
           )}
 
-          {trackingData && (
+          {trackingData && (() => {
+            const destCountry = (trackingData.Informacje_główne?.Kraj || 'PL')
+              .trim().toUpperCase().replace(/^.*\(([A-Z]{2})\).*$/, '$1').slice(0, 2);
+            const estimate = estimateDelivery(trackingData.Szczegóły_przesyłki || [], language, destCountry);
+            const deltaNote = getCountryDeltaNote(estimate.destinationCountry, estimate.countryDelta, language);
+            return (
             <div className={styles.resultCard}>
               
               <div className={styles.mapBannerWrapper}>
@@ -263,6 +270,40 @@ export default function Tracking() {
                     {t('tracking.open3DMap')} <FontAwesomeIcon icon={faArrowRight} />
                   </h3>
                 </div>
+              </div>
+
+              {/* ── ESTIMATED DELIVERY CARD ── */}
+              <div className={`${styles.estimateCard} ${styles[`estimate_${estimate.confidence}`]}`}>
+                <div className={styles.estimateIcon}>
+                  <FontAwesomeIcon icon={estimate.isDelivered ? faBox : faClock} />
+                </div>
+                <div className={styles.estimateBody}>
+                  <p className={styles.estimateLabel}>
+                    {language === 'pl' ? 'SZACOWANA DOSTAWA' :
+                     language === 'de' ? 'GESCHÄTZTE LIEFERUNG' :
+                     language === 'es' ? 'ENTREGA ESTIMADA' :
+                     'ESTIMATED DELIVERY'}
+                  </p>
+                  {estimate.isDelivered ? (
+                    <p className={styles.estimateDelivered}>
+                      ✓ {estimate.label}
+                    </p>
+                  ) : estimate.dateRange ? (
+                    <>
+                      <p className={styles.estimateDates}>{estimate.dateRange}</p>
+                      {deltaNote && (
+                        <p className={styles.estimateCountryNote}>{deltaNote}</p>
+                      )}
+                    </>
+                  ) : (
+                    <p className={styles.estimateDates}>—</p>
+                  )}
+                  <p className={styles.estimateMilestone}>
+                    <FontAwesomeIcon icon={faMapPin} />
+                    {estimate.label}
+                  </p>
+                </div>
+                <div className={`${styles.estimateConfidenceDot} ${styles[`dot_${estimate.confidence}`]}`} />
               </div>
 
               <div className={styles.mainInfoSection}>
@@ -336,7 +377,8 @@ export default function Tracking() {
                 )}
               </div>
             </div>
-          )}
+            );
+          })()}
         </div>
       </div>
 
@@ -368,15 +410,48 @@ export default function Tracking() {
               <p className={styles.locationLabel}>{translateLocationFe(trackingData.Informacje_główne.Kraj || 'Polska', language)}</p>
             </div>
 
-            <div className={styles.deliverySection}>
-              <p className={styles.deliveryTimeLabel}>{t('tracking.date')}:</p>
-              <p className={styles.deliveryTimeValue}>
-                {trackingData.Informacje_główne['Ostatni status'].toLowerCase().includes('deliv') || trackingData.Informacje_główne['Ostatni status'].toLowerCase().includes('dostarczon') 
-                  ? (language === 'pl' ? 'DOSTARCZONO' : (language === 'de' ? 'ZUGESTELLT' : 'DELIVERED')) 
-                  : (language === 'pl' ? 'W DRODZE' : (language === 'de' ? 'UNTERWEGS' : 'IN TRANSIT'))}
-              </p>
-            </div>
-
+            {/* ── ESTIMATED DELIVERY IN GLOBE PANEL ── */}
+            {(() => {
+              const destCountry2 = (trackingData.Informacje_główne?.Kraj || 'PL')
+                .trim().toUpperCase().replace(/^.*\(([A-Z]{2})\).*$/, '$1').slice(0, 2);
+              const est = estimateDelivery(trackingData.Szczegóły_przesyłki || [], language, destCountry2);
+              const dn = getCountryDeltaNote(est.destinationCountry, est.countryDelta, language);
+              return (
+                <div className={styles.globeEstimateSection}>
+                  <p className={styles.statusLabel}>
+                    <FontAwesomeIcon icon={faClock} style={{marginRight:'6px'}} />
+                    {language === 'pl' ? 'SZACOWANA DOSTAWA' :
+                     language === 'de' ? 'GESCHÄTZTE LIEFERUNG' :
+                     language === 'es' ? 'ENTREGA ESTIMADA' :
+                     'ESTIMATED DELIVERY'}
+                  </p>
+                  {est.isDelivered ? (
+                    <p className={`${styles.deliveryTimeValue} ${styles.deliveredBadge}`}>✓ {est.label}</p>
+                  ) : est.dateRange ? (
+                    <>
+                      <p className={styles.globeEstimateDates}>{est.dateRange}</p>
+                      {dn && <p className={styles.globeCountryNote}>{dn}</p>}
+                      <p className={styles.globeEstimateMilestone}>
+                        <FontAwesomeIcon icon={faMapPin} />
+                        {est.label}
+                      </p>
+                    </>
+                  ) : (
+                    <p className={styles.deliveryTimeValue}>{est.label}</p>
+                  )}
+                  <div className={styles.confidenceBar}>
+                    <div className={`${styles.confidenceFill} ${styles[`fill_${est.confidence}`]}`} />
+                  </div>
+                  <p className={styles.confidenceText}>
+                    {est.confidence === 'high'
+                      ? (language === 'pl' ? '● Wysoka pewność' : language === 'de' ? '● Hohe Genauigkeit' : '● High confidence')
+                      : est.confidence === 'medium'
+                      ? (language === 'pl' ? '◐ Średnia pewność' : language === 'de' ? '◐ Mittlere Genauigkeit' : '◐ Medium confidence')
+                      : (language === 'pl' ? '○ Niska pewność' : language === 'de' ? '○ Niedrige Genauigkeit' : '○ Low confidence')}
+                  </p>
+                </div>
+              );
+            })()}
 
           </div>
 

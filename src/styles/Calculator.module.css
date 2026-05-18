@@ -1,0 +1,1177 @@
+.calcPage {
+  min-height: 100vh;
+  background: #08080a;
+  color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  padding: 120px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nebulaGlow {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 50% -20%, rgba(139, 92, 246, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mainContainer {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ─── NATIVE HEADER & LOGO ─── */
+.header {
+  text-align: center;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerLogo {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 4px;
+}
+
+.header h1 {
+  font-size: 38px;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 0%, #a5a5a5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+}
+
+.header p {
+  color: #8a8e9b;
+  font-size: 15px;
+  margin: 0;
+}
+
+/* ─── CARD BASICS ─── */
+.cardTitleBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panelIcon {
+  font-size: 20px;
+}
+
+.cardTitleBox h2 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+/* ─── SPLIT WORKSPACE CONTAINER (DWUKOLUMNOWY UKŁAD) ─── */
+.splitWorkspace {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.calcLeftColumn {
+  flex: 1.6;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.calcRightColumn {
+  flex: 1.1;
+  position: sticky;
+  top: 110px;
+  max-height: calc(100vh - 150px);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #111218;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* ─── SEKCJA 1: KONSOLA DODAWANIA PRZEDMIOTÓW (GÓRA) ─── */
+.addConsoleCard {
+  background: #111218;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.cardHeaderClean {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1c1d24;
+  padding-bottom: 14px;
+}
+
+.aiPill {
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.5px;
+}
+
+.aiActiveGlow {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+}
+
+.aiDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  display: inline-block;
+  animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+.consoleForm {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.consoleInputsRow {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.inputGroupFull {
+  flex: 2;
+  min-width: 220px;
+}
+
+.inputWrapperMedium {
+  flex: 1;
+  min-width: 90px;
+}
+
+.formInput {
+  width: 100%;
+  height: 48px;
+  background: #171821;
+  border: 1px solid #232530;
+  border-radius: 12px;
+  padding: 0 16px;
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.25s;
+}
+
+.formInput:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.15);
+}
+
+/* Qty Selector */
+.qtySelector {
+  display: flex;
+  align-items: center;
+  background: #171821;
+  border: 1px solid #232530;
+  border-radius: 12px;
+  height: 48px;
+  padding: 0 4px;
+}
+
+.qtyBtn {
+  background: none;
+  border: none;
+  color: #8a8e9b;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.qtyBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.qtyValue {
+  color: #ffffff;
+  width: 28px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* Add button */
+.addButtonConsole {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  height: 48px;
+  padding: 0 24px;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addButtonConsole:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35);
+}
+
+/* Quick chips cloud */
+.quickChipsCloud {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.quickChip {
+  background: rgba(139, 92, 246, 0.03);
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickChip:hover {
+  background: rgba(139, 92, 246, 0.1);
+  color: #ffffff;
+  border-color: #8b5cf6;
+  transform: translateY(-1px);
+}
+
+/* ─── SEKCJA 2: WIZUALNA PÓŁKA PAKOWANIA „TWÓJ KARTON” (ŚRODEK) ─── */
+.packingShelfCard {
+  background: #111218;
+  border: 1px solid rgba(139, 92, 246, 0.08);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.shelfHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1c1d24;
+  padding-bottom: 14px;
+}
+
+.shelfCountBadge {
+  background: #1c1d24;
+  border: 1px solid #232530;
+  color: #8a8e9b;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.shelfContainer {
+  width: 100%;
+}
+
+.emptyShelfVisual {
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 2px dashed rgba(139, 92, 246, 0.15);
+  border-radius: 16px;
+  padding: 20px;
+  background: rgba(139, 92, 246, 0.01);
+}
+
+.emptyShelfBox {
+  font-size: 32px;
+  opacity: 0.65;
+}
+
+.emptyShelfText {
+  color: #8a8e9b;
+  font-size: 13px;
+  text-align: center;
+  max-width: 420px;
+  line-height: 1.5;
+}
+
+.horizontalShelfRow {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 10px 4px 16px;
+  scrollbar-width: thin;
+  scrollbar-color: #2b2e3c #111218;
+}
+
+.horizontalShelfRow::-webkit-scrollbar {
+  height: 6px;
+}
+
+.horizontalShelfRow::-webkit-scrollbar-track {
+  background: #111218;
+}
+
+.horizontalShelfRow::-webkit-scrollbar-thumb {
+  background: #2b2e3c;
+  border-radius: 10px;
+}
+
+.shelfItemCard {
+  background: #171821;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 200px;
+  width: 200px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s;
+  position: relative;
+}
+
+.shelfItemCard:hover {
+  border-color: rgba(139, 92, 246, 0.25);
+  transform: translateY(-2px);
+}
+
+.shelfItemBadge {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  background: #8b5cf6;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #111218;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+}
+
+.shelfItemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.shelfItemTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 36px;
+}
+
+.shelfItemMeta {
+  font-size: 11px;
+  color: #8a8e9b;
+  margin: 0;
+  font-weight: 600;
+}
+
+.shelfItemActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  border-top: 1px solid #232530;
+  padding-top: 12px;
+  margin-top: auto;
+}
+
+.shelfItemWeight {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.shelfBoxTag {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #8a8e9b;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.shelfBoxTagActive {
+  background: rgba(139, 92, 246, 0.15) !important;
+  border-color: #8b5cf6 !important;
+  color: #a78bfa !important;
+}
+
+.shelfDeleteBtn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  opacity: 0.65;
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.2s;
+  font-size: 12px;
+}
+
+.shelfDeleteBtn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ─── SEKCJA 3: PRAWA PRZYKLEJONA SEKCOJA KURIERÓW ─── */
+.shippingSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.shippingSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1c1d24;
+  padding-bottom: 14px;
+}
+
+.carriersScrollContainer {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  padding-right: 4px;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.2) rgba(255, 255, 255, 0.01);
+}
+
+.carriersScrollContainer::-webkit-scrollbar {
+  width: 5px;
+}
+
+.carriersScrollContainer::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.carriersScrollContainer::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.2);
+  border-radius: 4px;
+}
+
+.carriersScrollContainer::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.4);
+}
+
+.carrierGridCard {
+  background: #171821;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: relative;
+  min-height: 140px;
+}
+
+.carrierGridCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(139, 92, 246, 0.25);
+}
+
+.cardDhl {
+  border-color: rgba(139, 92, 246, 0.05);
+}
+
+.cardEms {
+  border-color: rgba(139, 92, 246, 0.05);
+}
+
+/* Fioletowy Glow i animacja pulsowania */
+.cheapestGlowCard {
+  border-color: #8b5cf6 !important;
+  background: linear-gradient(180deg, #171821 0%, rgba(139, 92, 246, 0.04) 100%) !important;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.25) !important;
+  animation: fioletowyGlowAnimation 3s infinite ease-in-out;
+}
+
+.purpleGlowCard {
+  border-color: rgba(139, 92, 246, 0.4) !important;
+  background: linear-gradient(180deg, #171821 0%, rgba(139, 92, 246, 0.02) 100%) !important;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.15) !important;
+}
+
+@keyframes fioletowyGlowAnimation {
+  0% { box-shadow: 0 0 12px rgba(139, 92, 246, 0.15); }
+  50% { box-shadow: 0 0 22px rgba(139, 92, 246, 0.35); }
+  100% { box-shadow: 0 0 12px rgba(139, 92, 246, 0.15); }
+}
+
+.cheapestRibbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: white;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-bottom-left-radius: 8px;
+  letter-spacing: 0.5px;
+  z-index: 2;
+}
+
+.carrierGridHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Logo Boxes */
+.carrierGridLogoBox {
+  background: #1f222b;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.carrierGridLogoBoxYellow {
+  background: #8b5cf6;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.carrierGridLogoBoxBlue {
+  background: #3b82f6;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.carrierGridLogoBoxPurple {
+  background: #8b5cf6;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.carrierGridLogoBoxDark {
+  background: #1c1d24;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.carrierNameBold {
+  font-weight: 800;
+}
+
+.badgeSafest {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.badgeRisk {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.carrierGridBody {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+}
+
+.lineFullName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px;
+  min-height: 20px;
+  line-height: 1.4;
+}
+
+.carrierGridTransit {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #8a8e9b;
+  margin-bottom: 8px;
+}
+
+.carrierGridTransit strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.carrierGridDivider {
+  height: 1px;
+  background: #1c1d24;
+  margin: auto 0 10px;
+}
+
+.carrierGridPriceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.carrierGridBaseFee {
+  font-size: 11px;
+  color: #8a8e9b;
+  margin-bottom: 2px;
+}
+
+.carrierGridPriceGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.priceBigUsd {
+  font-size: 19px;
+  font-weight: 800;
+  color: #8b5cf6;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.priceSubPln {
+  font-size: 11px;
+  color: #8a8e9b;
+  margin: 2px 0 0;
+  font-weight: 600;
+}
+
+.liveErrorWidescreen {
+  min-height: 100px;
+  border: 1px dashed rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.02);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  text-align: center;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Skeletons */
+.skeletonColumn {
+  background: #111218;
+  border: 1px solid #1f222b;
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonColumn::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.02), transparent);
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeletonHeader {
+  height: 20px;
+  width: 60%;
+  background: #1c1d24;
+  border-radius: 6px;
+}
+
+.skeletonPrice {
+  height: 24px;
+  width: 40%;
+  background: #1c1d24;
+  border-radius: 6px;
+  margin-top: auto;
+}
+
+/* ─── SEKCJA 4: DOLNY PANEL PODSUMOWANIA (STOPKA) ─── */
+.bottomSummaryDashboard {
+  background: #111218;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  margin-top: 10px;
+}
+
+.summaryStatsRow {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.summaryStatItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: #8a8e9b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.statValueSec {
+  font-size: 20px;
+  font-weight: 800;
+  color: #a78bfa;
+}
+
+.dividerLine {
+  height: 1px;
+  background: #1c1d24;
+  width: 100%;
+}
+
+.summaryCouponRow {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.couponToggleBlock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toggleLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Switch Styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #232530;
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+.switch input:checked + .slider {
+  background-color: #8b5cf6;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.summaryCouponTabsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.couponsTabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.couponTabBtn {
+  background: #171821;
+  border: 1px solid #232530;
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  color: #fff;
+}
+
+.couponTabBtn:hover {
+  border-color: rgba(139, 92, 246, 0.4);
+  background: #1a1b26;
+}
+
+.couponTabActive {
+  border-color: #8b5cf6 !important;
+  background: rgba(139, 92, 246, 0.08) !important;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.1);
+}
+
+.tabCode {
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.tabBenefit {
+  font-size: 11px;
+  font-weight: 800;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.couponAppliedCallout {
+  background: rgba(16, 185, 129, 0.04);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.greenSparkle {
+  font-size: 14px;
+}
+
+.calloutText {
+  font-size: 12px;
+  font-weight: 700;
+  color: #10b981;
+}
+
+/* Promo & Actions Row */
+.promoActionsContainer {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.referralInlineCard {
+  flex: 1.8;
+  min-width: 320px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(109, 40, 217, 0.04) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 16px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.25s;
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.1);
+}
+
+.referralInlineCard:hover {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.2);
+  transform: translateY(-1px);
+}
+
+.giftIcon {
+  font-size: 24px;
+}
+
+.referralTextGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.referralTitleInline {
+  font-size: 12px;
+  font-weight: 800;
+  color: #a78bfa;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.referralDescInline {
+  font-size: 11px;
+  color: #8a8e9b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.referralLinkInline {
+  color: #c084fc;
+  font-weight: 800;
+  font-size: 11px;
+  text-decoration: none;
+  border-bottom: 1px dashed;
+  padding-bottom: 1px;
+  transition: all 0.2s;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.referralLinkInline:hover {
+  color: #ffffff;
+  opacity: 1;
+}
+
+.dashboardActionButtons {
+  display: flex;
+  gap: 12px;
+  flex: 1.2;
+  justify-content: flex-end;
+  min-width: 300px;
+}
+
+.resetBtn {
+  background: none;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  border-radius: 12px;
+  height: 48px;
+  padding: 0 20px;
+  font-weight: 800;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.5px;
+}
+
+.resetBtn:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: #ef4444;
+}
+
+.resetBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.saveBtn {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  height: 48px;
+  padding: 0 24px;
+  font-weight: 800;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.5px;
+}
+
+.saveBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.saveBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .splitWorkspace {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .calcRightColumn {
+    position: static;
+    max-height: none;
+    height: auto;
+  }
+  
+  .carriersScrollContainer {
+    max-height: 450px;
+  }
+}
+
+@media (max-width: 768px) {
+  .consoleInputsRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .qtySelector {
+    justify-content: center;
+  }
+  
+  .addButtonConsole {
+    width: 100%;
+  }
+  
+  .dashboardActionButtons {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .resetBtn, .saveBtn {
+    flex: 1;
+    text-align: center;
+  }
+}
