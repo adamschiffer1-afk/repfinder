@@ -156,11 +156,14 @@
 }
 
 .highlight {
-  color: #a78bfa;
-  font-weight: 800;
-  background: rgba(167, 139, 250, 0.1);
+  color: #c084fc;
+  font-weight: 700;
+  background: rgba(167, 139, 250, 0.15);
+  border: 1px solid rgba(167, 139, 250, 0.25);
   padding: 2px 8px;
   border-radius: 6px;
+  margin: 0 4px;
+  white-space: nowrap;
   display: inline-block;
 }
 

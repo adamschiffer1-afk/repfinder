@@ -18,6 +18,22 @@ export default function PopupModal() {
     return () => clearTimeout(timer);
   }, []);
 
+  const renderTitle = (title) => {
+    if (!title) return null;
+    const regex = /(-15\$|-20%|15\s*\S*美元|8\s*折)/gi;
+    const parts = title.split(regex);
+    return parts.map((part, index) => {
+      if (regex.test(part)) {
+        return (
+          <span key={index} className={styles.highlight}>
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   if (!showModal) return null;
 
   return (
@@ -47,7 +63,7 @@ export default function PopupModal() {
 
         <div className={styles.body}>
           <p className={styles.mainOffer}>
-            {t('promo.title')}
+            {renderTitle(t('promo.title'))}
           </p>
           <p className={styles.subText}>
             {t('promo.description')}

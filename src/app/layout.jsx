@@ -8,7 +8,6 @@ import Navbar from '@/components/Navbar';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { AuthProvider } from '@/context/AuthContext';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
-import AiChat from '@/components/AiChat';
 
 config.autoAddCss = false;
 
@@ -63,7 +62,6 @@ export default function RootLayout({ children }) {
               {children}
             </main>
             <Footer />
-            <AiChat />
           </LanguageProvider>
         </AuthProvider>
       </body>
