@@ -247,7 +247,10 @@ export async function POST(req) {
     let found = false;
     let baseWeight = 0;
 
-    for (const key in ESTIMATED_WEIGHTS) {
+    // Sort keys by length descending to match most specific keywords first (preventing e.g. 'samba' matching inside 'sambariner')
+    const sortedKeys = Object.keys(ESTIMATED_WEIGHTS).sort((a, b) => b.length - a.length);
+
+    for (const key of sortedKeys) {
       if (nameLower.includes(key)) {
         baseWeight = ESTIMATED_WEIGHTS[key];
         found = true;
