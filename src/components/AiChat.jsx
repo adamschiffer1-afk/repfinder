@@ -96,9 +96,10 @@ export default function AiChat() {
       }
     } catch (error) {
       console.error('Failed to send message:', error);
+      const errMsg = error.response?.data?.error || error.message || 'Unknown error';
       setMessages(prev => [
         ...prev,
-        { role: 'assistant', content: 'Wystąpił problem techniczny po stronie AI. Upewnij się, czy w pliku `.env.local` jest poprawny `GEMINI_API_KEY`.' }
+        { role: 'assistant', content: `Wystąpił problem techniczny: **${errMsg}**. Upewnij się, czy w pliku \`.env.local\` jest poprawny \`GEMINI_API_KEY\` i zrestartowałeś serwer (\`npm run dev\`).` }
       ]);
     } finally {
       setIsLoading(false);
