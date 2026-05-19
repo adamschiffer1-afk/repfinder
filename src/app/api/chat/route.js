@@ -4,7 +4,9 @@ export async function POST(req) {
   try {
     const { messages } = await req.json();
 
-    if (!process.env.GEMINI_API_KEY) {
+    const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyClxuJJMyyOuzXvb8jOlnVgC8H6KwDz208';
+
+    if (!apiKey) {
       return NextResponse.json({ error: 'API Key not configured' }, { status: 500 });
     }
 
@@ -45,7 +47,7 @@ ZASADY:
     }));
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: {
