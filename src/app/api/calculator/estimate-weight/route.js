@@ -82,10 +82,53 @@ const ESTIMATED_WEIGHTS = {
   'shoes': 950,
   'watch': 150,
   'zegarek': 150,
+  'rolex': 150,
+  'omega': 150,
+  'patek': 150,
+  'submariner': 150,
+  'sambariner': 150,
   'socks': 80,
   'skarpetki': 80,
   'skarpety': 80,
   'airpods': 50,
+  'headphones': 150,
+  'sluchawki': 150,
+  'słuchawki': 150,
+  'charger': 80,
+  'ladowarka': 80,
+  'ładowarka': 80,
+  'powerbank': 250,
+  'phone': 200,
+  'telefon': 200,
+  'iphone': 200,
+  'speaker': 450,
+  'glosnik': 450,
+  'głośnik': 450,
+  'cable': 60,
+  'kabel': 60,
+  'case': 40,
+  'etui': 40,
+  'ring': 10,
+  'pierscionek': 10,
+  'pierścionek': 10,
+  'necklace': 30,
+  'naszyjnik': 30,
+  'chain': 30,
+  'lancuszek': 30,
+  'łańcuszek': 30,
+  'bracelet': 20,
+  'bransoletka': 20,
+  'keychain': 20,
+  'brelok': 20,
+  'cardholder': 60,
+  'wizytownik': 60,
+  'gloves': 100,
+  'rekawice': 100,
+  'rękawice': 100,
+  'rekawiczki': 100,
+  'rękawiczki': 100,
+  'scarf': 150,
+  'szalik': 150,
   'buty': 950,
   'dunk': 900,
   'af1': 1000,
@@ -97,6 +140,65 @@ const ESTIMATED_WEIGHTS = {
   'bag': 750,
   'portfel': 120,
   'wallet': 120
+};
+
+const MULTILINGUAL_KEYWORDS = {
+  watch: [
+    'watch', 'zegar', 'rolex', 'submariner', 'sambariner', 'omega', 'patek', 'hublot', 'cartier', 'casio', 'seiko', 'citizen',
+    'uhr', 'reloj', 'montre', 'orologio'
+  ],
+  tshirt: [
+    't-shirt', 'tee', 'tshirt', 'koszul', 'shirt', 'camiseta', 'maglietta', 'hemd', 'camisa'
+  ],
+  hoodie: [
+    'hoodie', 'bluz', 'kapuzen', 'pullover', 'sudadera', 'sweat', 'pull'
+  ],
+  pants: [
+    'spodn', 'pants', 'dres', 'hose', 'pantalones', 'pantalon', 'pantaloni', 'jeans', 'trousers'
+  ],
+  shorts: [
+    'shorts', 'spoden', 'kurze hose', 'pantalones cortos', 'short', 'pantaloncino'
+  ],
+  jacket: [
+    'jacket', 'kurt', 'puffer', 'coat', 'jacke', 'chaqueta', 'veste', 'giacca', 'manteau', 'abrigo'
+  ],
+  hat: [
+    'hat', 'czap', 'cap', 'beanie', 'mütze', 'muetze', 'kappe', 'sombrero', 'gorra', 'chapeau', 'bonnet', 'cappello'
+  ],
+  socks: [
+    'socks', 'skarp', 'socken', 'calcetines', 'chaussettes', 'calzini'
+  ],
+  bag: [
+    'bag', 'torb', 'plecak', 'backpack', 'tasche', 'rucksack', 'bolso', 'mochila', 'sac', 'borsa', 'zaino'
+  ],
+  belt: [
+    'belt', 'pasek', 'gürtel', 'guertel', 'cinturón', 'cinturon', 'ceinture', 'cintura'
+  ],
+  wallet: [
+    'wallet', 'portfel', 'geldbeutel', 'brieftasche', 'cartera', 'portefeuille', 'portafoglio', 'cardholder', 'wizytownik'
+  ],
+  electronics: [
+    'airpods', 'sluchaw', 'słuchaw', 'headphones', 'earphones', 'charger', 'ladowar', 'ładowar', 'powerbank', 'phone', 'telefon',
+    'iphone', 'speaker', 'glosnik', 'głośnik', 'cable', 'kabel', 'case', 'etui', 'electronics', 'elektronika'
+  ],
+  glasses: [
+    'okulary', 'glass', 'sunglasses', 'brille', 'gafas', 'lunettes', 'occhiali'
+  ],
+  perfume: [
+    'perfum', 'parfüm', 'parfum', 'profumo'
+  ],
+  jewelry: [
+    'ring', 'pierscion', 'pierścion', 'chain', 'lancusz', 'łańcusz', 'necklace', 'naszyj', 'bracelet', 'bransolet', 'keychain', 'brelok'
+  ],
+  gloves: [
+    'gloves', 'rekawic', 'rękawic', 'handschuhe', 'guantes', 'gants', 'guanti'
+  ],
+  scarf: [
+    'scarf', 'szalik', 'schal', 'bufanda', 'echarpe', 'écharpe', 'sciarpa'
+  ],
+  shoes: [
+    'shoes', 'buty', 'but', 'sneaker', 'tramp', 'kick', 'obuw', 'adid', 'schuhe', 'zapatos', 'chaussures', 'scarpe'
+  ]
 };
 
 export async function POST(req) {
@@ -111,17 +213,35 @@ export async function POST(req) {
     
     const isShoeType = (name) => {
       const lower = (name || '').toLowerCase();
-      return lower.includes('jordan') || lower.includes('dunk') || lower.includes('yeezy') || 
-             lower.includes('force') || lower.includes('af1') || lower.includes('trainer') || 
-             lower.includes('skate') || lower.includes('b30') || lower.includes('b22') || 
-             lower.includes('b33') || lower.includes('b27') || lower.includes('nyc') || 
-             lower.includes('gel') || lower.includes('spezial') || lower.includes('gazelle') || 
-             lower.includes('samba') || lower.includes('campus') || lower.includes('superstar') || 
-             lower.includes('lanvin') || lower.includes('shoes') || lower.includes('buty') || 
-             lower.includes('bapesta') || lower.includes('shox') || lower.includes('tn') || 
-             lower.includes('air max') || lower.includes('crocs') || lower.includes('slide') || 
-             lower.includes('slides') || lower.includes('obuw') || lower.includes('sneaker') || 
-             lower.includes('trampki') || lower.includes('klapki') || lower.includes('kicksy');
+      
+      // If it matches any accessory, clothing, watch or electronic category, it's NOT a shoe
+      const nonShoeCategories = [
+        'watch', 'tshirt', 'hoodie', 'pants', 'shorts', 'jacket', 'hat', 'socks',
+        'bag', 'belt', 'wallet', 'electronics', 'glasses', 'perfume', 'jewelry', 'gloves', 'scarf'
+      ];
+      
+      for (const cat of nonShoeCategories) {
+        if (MULTILINGUAL_KEYWORDS[cat].some(kw => lower.includes(kw))) {
+          return false;
+        }
+      }
+      
+      // Otherwise check if it contains shoe terms or brands
+      const shoeKeywords = [
+        'jordan', 'dunk', 'yeezy', 'force', 'af1', 'trainer', 'skate', 'b30', 'b22', 
+        'b33', 'b27', 'nyc', 'gel', 'spezial', 'gazelle', 'samba', 'campus', 'superstar', 
+        'lanvin', 'bapesta', 'shox', 'tn', 'air max', 'crocs', 'slide', 'slides', 'klapki', 'kicksy'
+      ];
+      
+      if (shoeKeywords.some(kw => lower.includes(kw))) {
+        return true;
+      }
+      
+      if (MULTILINGUAL_KEYWORDS.shoes.some(kw => lower.includes(kw))) {
+        return true;
+      }
+      
+      return false;
     };
 
     let found = false;
@@ -137,50 +257,64 @@ export async function POST(req) {
 
     // Smart Fallback/Logic deduction based on word roots if no exact match is found
     if (!found) {
-      if (nameLower.includes('kosz') || nameLower.includes('tshirt') || nameLower.includes('tee') || nameLower.includes('top')) {
+      if (MULTILINGUAL_KEYWORDS.tshirt.some(kw => nameLower.includes(kw))) {
         baseWeight = 230;
         found = true;
-      } else if (nameLower.includes('bluz') || nameLower.includes('hood') || nameLower.includes('swet') || nameLower.includes('sweat')) {
+      } else if (MULTILINGUAL_KEYWORDS.hoodie.some(kw => nameLower.includes(kw))) {
         baseWeight = 850;
         found = true;
-      } else if (nameLower.includes('but') || nameLower.includes('shoes') || nameLower.includes('sneaker') || nameLower.includes('tramp') || nameLower.includes('kick') || nameLower.includes('obuw') || nameLower.includes('adid')) {
+      } else if (MULTILINGUAL_KEYWORDS.shoes.some(kw => nameLower.includes(kw))) {
         baseWeight = 950;
         found = true;
-      } else if (nameLower.includes('spoden') || nameLower.includes('short')) {
+      } else if (MULTILINGUAL_KEYWORDS.shorts.some(kw => nameLower.includes(kw))) {
         baseWeight = 300;
         found = true;
-      } else if (nameLower.includes('spodn') || nameLower.includes('pant') || nameLower.includes('dres') || nameLower.includes('jeans') || nameLower.includes('trousers')) {
+      } else if (MULTILINGUAL_KEYWORDS.pants.some(kw => nameLower.includes(kw))) {
         baseWeight = 600;
         found = true;
-      } else if (nameLower.includes('kurt') || nameLower.includes('jack') || nameLower.includes('puffer') || nameLower.includes('coat') || nameLower.includes('vest') || nameLower.includes('kamiz')) {
+      } else if (MULTILINGUAL_KEYWORDS.jacket.some(kw => nameLower.includes(kw))) {
         baseWeight = 1000;
         found = true;
-      } else if (nameLower.includes('czap') || nameLower.includes('hat') || nameLower.includes('cap') || nameLower.includes('beanie')) {
+      } else if (MULTILINGUAL_KEYWORDS.hat.some(kw => nameLower.includes(kw))) {
         baseWeight = 120;
         found = true;
-      } else if (nameLower.includes('skarp') || nameLower.includes('sock')) {
+      } else if (MULTILINGUAL_KEYWORDS.socks.some(kw => nameLower.includes(kw))) {
         baseWeight = 80;
         found = true;
-      } else if (nameLower.includes('torb') || nameLower.includes('bag') || nameLower.includes('plecak') || nameLower.includes('backpack')) {
+      } else if (MULTILINGUAL_KEYWORDS.bag.some(kw => nameLower.includes(kw))) {
         baseWeight = 750;
         found = true;
-      } else if (nameLower.includes('klapk') || nameLower.includes('slid') || nameLower.includes('sandal') || nameLower.includes('japonk') || nameLower.includes('croc')) {
-        baseWeight = 400;
-        found = true;
-      } else if (nameLower.includes('zegar') || nameLower.includes('watch')) {
+      } else if (MULTILINGUAL_KEYWORDS.watch.some(kw => nameLower.includes(kw))) {
         baseWeight = 150;
         found = true;
-      } else if (nameLower.includes('pas') || nameLower.includes('belt')) {
+      } else if (MULTILINGUAL_KEYWORDS.belt.some(kw => nameLower.includes(kw))) {
         baseWeight = 220;
         found = true;
-      } else if (nameLower.includes('portfel') || nameLower.includes('wallet')) {
+      } else if (MULTILINGUAL_KEYWORDS.wallet.some(kw => nameLower.includes(kw))) {
         baseWeight = 120;
         found = true;
-      } else if (nameLower.includes('perfum')) {
+      } else if (MULTILINGUAL_KEYWORDS.perfume.some(kw => nameLower.includes(kw))) {
         baseWeight = 250;
         found = true;
-      } else if (nameLower.includes('okulary') || nameLower.includes('glass')) {
+      } else if (MULTILINGUAL_KEYWORDS.glasses.some(kw => nameLower.includes(kw))) {
         baseWeight = 100;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.electronics.some(kw => nameLower.includes(kw))) {
+        if (nameLower.includes('airpods')) baseWeight = 50;
+        else if (nameLower.includes('powerbank')) baseWeight = 250;
+        else if (nameLower.includes('phone') || nameLower.includes('telefon') || nameLower.includes('iphone')) baseWeight = 200;
+        else if (nameLower.includes('speaker') || nameLower.includes('glosnik') || nameLower.includes('głośnik')) baseWeight = 450;
+        else if (nameLower.includes('case') || nameLower.includes('etui')) baseWeight = 40;
+        else baseWeight = 100; // default for other electronics / chargers
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.jewelry.some(kw => nameLower.includes(kw))) {
+        baseWeight = 25;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.gloves.some(kw => nameLower.includes(kw))) {
+        baseWeight = 100;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.scarf.some(kw => nameLower.includes(kw))) {
+        baseWeight = 150;
         found = true;
       }
     }
@@ -190,10 +324,26 @@ export async function POST(req) {
     if (found) {
       let finalWeight = baseWeight;
       
+      // Apply brand-specific weight premium for heavyweight designer blanks (e.g. Balenciaga, Vetements, Yeezy Gap, Represent, heavyweight)
+      const isHeavyweightBrand = nameLower.includes('balenciaga') || nameLower.includes('vetements') || nameLower.includes('yeezy gap') || nameLower.includes('heavyweight') || nameLower.includes('represent');
+      if (isHeavyweightBrand) {
+        if (MULTILINGUAL_KEYWORDS.hoodie.some(kw => nameLower.includes(kw))) {
+          finalWeight += 250; // Ultra-heavy hoodies
+        } else if (MULTILINGUAL_KEYWORDS.tshirt.some(kw => nameLower.includes(kw))) {
+          finalWeight += 80;  // Thick heavy cotton tees
+        }
+      }
+
       // Dynamic weight scaling based on size
       if (itemSize) {
         const cleanSize = itemSize.trim().toUpperCase();
-        const numSize = parseFloat(cleanSize);
+        
+        // Extract first numeric sequence (e.g., "EU 43" -> 43, "US 10" -> 10, "42.5" -> 42.5)
+        let numSize = NaN;
+        const sizeMatch = cleanSize.match(/\d+(?:\.\d+)?/);
+        if (sizeMatch) {
+          numSize = parseFloat(sizeMatch[0]);
+        }
         
         if (!isNaN(numSize) && numSize >= 25 && numSize <= 52) {
           if (isShoe) {
