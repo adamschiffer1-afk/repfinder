@@ -196,6 +196,12 @@ const MULTILINGUAL_KEYWORDS = {
   scarf: [
     'scarf', 'szalik', 'schal', 'bufanda', 'echarpe', 'écharpe', 'sciarpa'
   ],
+  laces: [
+    'lace', 'laces', 'sznurowadl', 'sznurowadł', 'senkel', 'cordones', 'lacets', 'stringhe'
+  ],
+  box: [
+    'box', 'pudełk', 'karton', 'packaging', 'verpackung', 'caja', 'boite', 'scatola'
+  ],
   shoes: [
     'shoes', 'buty', 'but', 'sneaker', 'tramp', 'kick', 'obuw', 'adid', 'schuhe', 'zapatos', 'chaussures', 'scarpe'
   ]
@@ -217,7 +223,8 @@ export async function POST(req) {
       // If it matches any accessory, clothing, watch or electronic category, it's NOT a shoe
       const nonShoeCategories = [
         'watch', 'tshirt', 'hoodie', 'pants', 'shorts', 'jacket', 'hat', 'socks',
-        'bag', 'belt', 'wallet', 'electronics', 'glasses', 'perfume', 'jewelry', 'gloves', 'scarf'
+        'bag', 'belt', 'wallet', 'electronics', 'glasses', 'perfume', 'jewelry', 'gloves', 'scarf',
+        'laces', 'box'
       ];
       
       for (const cat of nonShoeCategories) {
@@ -260,14 +267,44 @@ export async function POST(req) {
 
     // Smart Fallback/Logic deduction based on word roots if no exact match is found
     if (!found) {
-      if (MULTILINGUAL_KEYWORDS.tshirt.some(kw => nameLower.includes(kw))) {
+      if (MULTILINGUAL_KEYWORDS.laces.some(kw => nameLower.includes(kw))) {
+        baseWeight = 25;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.jewelry.some(kw => nameLower.includes(kw))) {
+        baseWeight = 25;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.box.some(kw => nameLower.includes(kw))) {
+        baseWeight = 200;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.socks.some(kw => nameLower.includes(kw))) {
+        baseWeight = 80;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.glasses.some(kw => nameLower.includes(kw))) {
+        baseWeight = 100;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.gloves.some(kw => nameLower.includes(kw))) {
+        baseWeight = 100;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.hat.some(kw => nameLower.includes(kw))) {
+        baseWeight = 120;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.wallet.some(kw => nameLower.includes(kw))) {
+        baseWeight = 120;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.watch.some(kw => nameLower.includes(kw))) {
+        baseWeight = 150;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.scarf.some(kw => nameLower.includes(kw))) {
+        baseWeight = 150;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.belt.some(kw => nameLower.includes(kw))) {
+        baseWeight = 220;
+        found = true;
+      } else if (MULTILINGUAL_KEYWORDS.tshirt.some(kw => nameLower.includes(kw))) {
         baseWeight = 230;
         found = true;
-      } else if (MULTILINGUAL_KEYWORDS.hoodie.some(kw => nameLower.includes(kw))) {
-        baseWeight = 850;
-        found = true;
-      } else if (MULTILINGUAL_KEYWORDS.shoes.some(kw => nameLower.includes(kw))) {
-        baseWeight = 950;
+      } else if (MULTILINGUAL_KEYWORDS.perfume.some(kw => nameLower.includes(kw))) {
+        baseWeight = 250;
         found = true;
       } else if (MULTILINGUAL_KEYWORDS.shorts.some(kw => nameLower.includes(kw))) {
         baseWeight = 300;
@@ -275,49 +312,26 @@ export async function POST(req) {
       } else if (MULTILINGUAL_KEYWORDS.pants.some(kw => nameLower.includes(kw))) {
         baseWeight = 600;
         found = true;
-      } else if (MULTILINGUAL_KEYWORDS.jacket.some(kw => nameLower.includes(kw))) {
-        baseWeight = 1000;
-        found = true;
-      } else if (MULTILINGUAL_KEYWORDS.hat.some(kw => nameLower.includes(kw))) {
-        baseWeight = 120;
-        found = true;
-      } else if (MULTILINGUAL_KEYWORDS.socks.some(kw => nameLower.includes(kw))) {
-        baseWeight = 80;
-        found = true;
       } else if (MULTILINGUAL_KEYWORDS.bag.some(kw => nameLower.includes(kw))) {
         baseWeight = 750;
         found = true;
-      } else if (MULTILINGUAL_KEYWORDS.watch.some(kw => nameLower.includes(kw))) {
-        baseWeight = 150;
+      } else if (MULTILINGUAL_KEYWORDS.hoodie.some(kw => nameLower.includes(kw))) {
+        baseWeight = 850;
         found = true;
-      } else if (MULTILINGUAL_KEYWORDS.belt.some(kw => nameLower.includes(kw))) {
-        baseWeight = 220;
+      } else if (MULTILINGUAL_KEYWORDS.shoes.some(kw => nameLower.includes(kw))) {
+        baseWeight = 950;
         found = true;
-      } else if (MULTILINGUAL_KEYWORDS.wallet.some(kw => nameLower.includes(kw))) {
-        baseWeight = 120;
-        found = true;
-      } else if (MULTILINGUAL_KEYWORDS.perfume.some(kw => nameLower.includes(kw))) {
-        baseWeight = 250;
-        found = true;
-      } else if (MULTILINGUAL_KEYWORDS.glasses.some(kw => nameLower.includes(kw))) {
-        baseWeight = 100;
+      } else if (MULTILINGUAL_KEYWORDS.jacket.some(kw => nameLower.includes(kw))) {
+        baseWeight = 1000;
         found = true;
       } else if (MULTILINGUAL_KEYWORDS.electronics.some(kw => nameLower.includes(kw))) {
-        if (nameLower.includes('airpods')) baseWeight = 50;
+        // Evaluate covering accessories first to prevent "iphone case" from matching "iphone" phone weight
+        if (nameLower.includes('case') || nameLower.includes('etui') || nameLower.includes('cover') || nameLower.includes('pudełk')) baseWeight = 40;
+        else if (nameLower.includes('airpods')) baseWeight = 50;
         else if (nameLower.includes('powerbank')) baseWeight = 250;
         else if (nameLower.includes('phone') || nameLower.includes('telefon') || nameLower.includes('iphone')) baseWeight = 200;
         else if (nameLower.includes('speaker') || nameLower.includes('glosnik') || nameLower.includes('głośnik')) baseWeight = 450;
-        else if (nameLower.includes('case') || nameLower.includes('etui')) baseWeight = 40;
         else baseWeight = 100; // default for other electronics / chargers
-        found = true;
-      } else if (MULTILINGUAL_KEYWORDS.jewelry.some(kw => nameLower.includes(kw))) {
-        baseWeight = 25;
-        found = true;
-      } else if (MULTILINGUAL_KEYWORDS.gloves.some(kw => nameLower.includes(kw))) {
-        baseWeight = 100;
-        found = true;
-      } else if (MULTILINGUAL_KEYWORDS.scarf.some(kw => nameLower.includes(kw))) {
-        baseWeight = 150;
         found = true;
       }
     }
