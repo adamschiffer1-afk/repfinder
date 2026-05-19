@@ -157,6 +157,26 @@ export const translations = {
       referralBtn: "Odbierz pakiet 400$",
       boxToggleYes: "📦 Z pudełkiem",
       boxToggleNo: "📦 Bez pudełka"
+    },
+    tutorialSteps: {
+      promoTitle: "$400 BONUS IN KAKOBUY COUPONS",
+      promoDesc: "Zarejestruj się z linku partnerskiego RepFinder, aby automatycznie otrzymać pakiet kuponów o wartości 400$ na pierwsze wysyłki!",
+      promoBtn: "Odbierz Pakiet $400 →",
+      steps: [
+        { title: "Załóż konto", description: "Wejdź na stronę Kakobuy, utwórz konto podając e-mail i hasło, a następnie potwierdź rejestrację." },
+        { title: "Znajdź produkty", description: "Szukaj interesujących Cię rzeczy w spreadsheetach lub zobacz propozycje na Repfinder." },
+        { title: "Dodaj do koszyka", description: "Wybierz odpowiedni kolor, rozmiar i ilość, a następnie dodaj produkty do koszyka na Kakobuy." },
+        { title: "Złóż zamówienie", description: "Sprawdź koszyk, wybierz produkty i opłać koszt towarów oraz krajowej wysyłki w Chinach." },
+        { title: "Potwierdź i zapłać", description: "Zaznacz „I have read and agree” i kliknij „Buy Now”, aby przejść do płatności." },
+        { title: "Wybierz płatność", description: "Wybierz preferowaną metodę płatności i kliknij „Pay for Order”, aby sfinalizować zakup." },
+        { title: "Realizacja zamówienia", description: "Po opłaceniu Kakobuy weryfikuje produkty (zazwyczaj w ciągu 3–5 godzin) i zamawia je u sprzedawców. Dostawa do magazynu trwa 3–5 dni." },
+        { title: "Kontrola jakości (QC)", description: "Po dotarciu produktów Kakobuy wykonuje kontrolę jakości i przesyła Ci zdjęcia do oceny." },
+        { title: "Zleć wstępne ważenie", description: "Kiedy wszystkie produkty są już w magazynie, zleć wstępne ważenie paczki." },
+        { title: "Zleć wysyłkę", description: "Po ważeniu możesz zlecić wysyłkę międzynarodową swojej paczki." },
+        { title: "Wybierz metodę wysyłki", description: "Wybierz sposób dostawy (np. DHL, DPD) i opłać koszty transportu." },
+        { title: "Odbierz paczkę", description: "Po otrzymaniu przesyłki sprawdź jej zawartość i potwierdź odbiór w panelu użytkownika." },
+        { title: "Gotowe!", description: "Gratulacje! Udało Ci się przejść cały proces." }
+      ]
     }
   },
   en: {
@@ -317,6 +337,26 @@ export const translations = {
       referralBtn: "Claim $400 Package",
       boxToggleYes: "📦 With box",
       boxToggleNo: "📦 Without box"
+    },
+    tutorialSteps: {
+      promoTitle: "$400 BONUS IN KAKOBUY COUPONS",
+      promoDesc: "Register from the RepFinder partner link to automatically receive a package of coupons worth $400 for your first shipments!",
+      promoBtn: "Claim $400 Package →",
+      steps: [
+        { title: "Create an account", description: "Go to the Kakobuy website, create an account by providing your e-mail and password, and then confirm your registration." },
+        { title: "Find products", description: "Look for things that interest you in spreadsheets or see suggestions on Repfinder." },
+        { title: "Add to cart", description: "Choose the right color, size and quantity, then add the products to your cart on Kakobuy." },
+        { title: "Place an order", description: "Check your cart, select products and pay for the goods and domestic shipping within China." },
+        { title: "Confirm and pay", description: "Check 'I have read and agree' and click 'Buy Now' to proceed to payment." },
+        { title: "Choose payment method", description: "Choose your preferred payment method and click 'Pay for Order' to finalize the purchase." },
+        { title: "Order processing", description: "After payment, Kakobuy verifies the products (usually within 3-5 hours) and orders them from sellers. Delivery to the warehouse takes 3-5 days." },
+        { title: "Quality Control (QC)", description: "Upon arrival, Kakobuy performs a quality check and sends you photos for evaluation." },
+        { title: "Request rehearsal packaging", description: "When all products are in the warehouse, request an initial weighing of the package." },
+        { title: "Submit parcel", description: "After weighing, you can submit your parcel for international shipping." },
+        { title: "Choose shipping method", description: "Choose the delivery method (e.g. DHL, DPD) and pay the shipping costs." },
+        { title: "Receive your package", description: "Upon receipt, check the contents and confirm delivery in your user panel." },
+        { title: "All done!", description: "Congratulations! You have successfully completed the entire process." }
+      ]
     }
   },
   cn: {
@@ -467,6 +507,26 @@ export const translations = {
       referralBtn: "领取 400 美元礼包",
       boxToggleYes: "📦 带鞋盒",
       boxToggleNo: "📦 无鞋盒"
+    },
+    tutorialSteps: {
+      promoTitle: "KAKOBUY 400美元优惠券奖励",
+      promoDesc: "通过 RepFinder 合作伙伴链接注册，即可自动获得价值 400 美元的首批包裹优惠券！",
+      promoBtn: "领取 400 美元礼包 →",
+      steps: [
+        { title: "创建账户", description: "前往 Kakobuy 网站，提供您的电子邮件和密码创建账户，然后确认注册。" },
+        { title: "查找产品", description: "在电子表格中寻找您感兴趣的商品，或在 Repfinder 上查看推荐。" },
+        { title: "加入购物车", description: "选择合适的颜色、尺寸和数量，然后将产品添加到您在 Kakobuy 的购物车。" },
+        { title: "下订单", description: "检查购物车，选择产品并支付商品费用以及中国国内的运费。" },
+        { title: "确认并付款", description: "勾选“我已阅读并同意”，然后点击“立即购买”进入支付页面。" },
+        { title: "选择支付方式", description: "选择您偏好的支付方式，点击“为订单付款”以完成购买。" },
+        { title: "订单处理", description: "付款后，Kakobuy 会核实产品（通常在 3-5 小时内）并向卖家订购。送达仓库需 3-5 天。" },
+        { title: "质量控制 (QC)", description: "产品到达后，Kakobuy 会进行质量检查并发送照片供您评估。" },
+        { title: "申请预打包称重", description: "当所有产品都在仓库时，申请对包裹进行初始称重。" },
+        { title: "提交包裹", description: "称重后，您可以提交包裹进行国际运输。" },
+        { title: "选择运输方式", description: "选择送货方式（如 DHL, DPD）并支付运费。" },
+        { title: "签收包裹", description: "收到包裹后，检查内容并在用户面板中确认收货。" },
+        { title: "完成！", description: "恭喜！您已成功完成整个流程。" }
+      ]
     }
   },
   de: {
@@ -617,6 +677,26 @@ export const translations = {
       referralBtn: "400 $ Paket beanspruchen",
       boxToggleYes: "📦 Mit Karton",
       boxToggleNo: "📦 Ohne Karton"
+    },
+    tutorialSteps: {
+      promoTitle: "$400 BONUS IN KAKOBUY GUTSCHEINEN",
+      promoDesc: "Registrieren Sie sich über den RepFinder-Partnerlink, um automatisch ein Gutscheinpaket im Wert von 400 $ für Ihre ersten Sendungen zu erhalten!",
+      promoBtn: "400 $ Paket beanspruchen →",
+      steps: [
+        { title: "Konto erstellen", description: "Gehen Sie auf die Kakobuy-Website, erstellen Sie ein Konto mit Ihrer E-Mail und Passwort und bestätigen Sie die Registrierung." },
+        { title: "Produkte finden", description: "Suchen Sie in Tabellen nach interessanten Artikeln oder sehen Sie sich Empfehlungen auf Repfinder an." },
+        { title: "Zum Warenkorb hinzufügen", description: "Wählen Sie Farbe, Größe und Menge und fügen Sie die Produkte Ihrem Warenkorb bei Kakobuy hinzu." },
+        { title: "Bestellung aufgeben", description: "Überprüfen Sie den Warenkorb, wählen Sie Produkte aus und bezahlen Sie die Waren sowie den Inlandsversand in China." },
+        { title: "Bestätigen und bezahlen", description: "Markieren Sie „Ich habe gelesen und stimme zu“ und klicken Sie auf „Jetzt kaufen“, um zur Zahlung zu gelangen." },
+        { title: "Zahlungsmethode wählen", description: "Wählen Sie Ihre bevorzugte Zahlungsmethode und klicken Sie auf „Bestellung bezahlen“, um den Kauf abzuschließen." },
+        { title: "Auftragsabwicklung", description: "Nach der Zahlung überprüft Kakobuy die Produkte (meist innerhalb 3-5 Stunden) und bestellt sie. Die Lieferung ins Lager dauert 3-5 Tage." },
+        { title: "Qualitätskontrolle (QC)", description: "Nach Ankunft führt Kakobuy eine Qualitätsprüfung durch und sendet Ihnen Fotos zur Bewertung." },
+        { title: "Vorabwiegung beantragen", description: "Wenn alle Produkte im Lager sind, fordern Sie eine erste Wiegung des Pakets an." },
+        { title: "Paket einreichen", description: "Nach dem Wiegen können Sie Ihr Paket für den internationalen Versand einreichen." },
+        { title: "Versandmethode wählen", description: "Wählen Sie die Liefermethode (z. B. DHL, DPD) und bezahlen Sie die Versandkosten." },
+        { title: "Paket erhalten", description: "Überprüfen Sie nach Erhalt den Inhalt und bestätigen Sie die Zustellung im Benutzerpanel." },
+        { title: "Fertig!", description: "Herzlichen Glückwunsch! Sie haben den gesamten Prozess erfolgreich abgeschlossen." }
+      ]
     }
   },
   es: {
@@ -767,6 +847,26 @@ export const translations = {
       referralBtn: "Reclamar paquete de $400",
       boxToggleYes: "📦 Con caja",
       boxToggleNo: "📦 Sin caja"
+    },
+    tutorialSteps: {
+      promoTitle: "$400 DE BONO EN CUPONES KAKOBUY",
+      promoDesc: "¡Regístrese desde el enlace de socio de RepFinder para recibir automáticamente un paquete de cupones por valor de $400 para sus primeros envíos!",
+      promoBtn: "Reclamar paquete de $400 →",
+      steps: [
+        { title: "Crear una cuenta", description: "Vaya al sitio web de Kakobuy, cree una cuenta proporcionando su correo electrónico y contraseña, y confirme el registro." },
+        { title: "Encontrar productos", description: "Busque cosas que le interesen en hojas de cálculo o vea sugerencias en Repfinder." },
+        { title: "Añadir al carrito", description: "Elija el color, tamaño y cantidad adecuados, luego agregue los productos a su carrito en Kakobuy." },
+        { title: "Hacer un pedido", description: "Revise su carrito, seleccione productos y pague los artículos y el envío nacional en China." },
+        { title: "Confirmar y pagar", description: "Marque 'He leído y acepto' y haga clic en 'Comprar ahora' para proceder al pago." },
+        { title: "Elegir método de pago", description: "Elija su método de pago preferido y haga clic en 'Pagar pedido' para finalizar la compra." },
+        { title: "Procesamiento del pedido", description: "Después de pagar, Kakobuy verifica los productos (generalmente en 3-5 horas) y los pide a los vendedores. La entrega al almacén toma de 3 a 5 días." },
+        { title: "Control de calidad (QC)", description: "A su llegada, Kakobuy realiza un control de calidad y le envía fotos para su evaluación." },
+        { title: "Solicitar pesaje inicial", description: "Cuando todos los productos estén en el almacén, solicite un pesaje inicial del paquete." },
+        { title: "Enviar paquete", description: "Después de pesar, puede enviar su paquete para envío internacional." },
+        { title: "Elegir método de envío", description: "Elija el método de entrega (ej. DHL, DPD) y pague los costos de envío." },
+        { title: "Recibir paquete", description: "Al recibirlo, verifique el contenido y confirme la entrega en su panel de usuario." },
+        { title: "¡Listo!", description: "¡Felicidades! Has completado con éxito todo el proceso." }
+      ]
     }
   },
 };
