@@ -92,16 +92,16 @@ export default function Tutorials() {
         />
       )}
       <div className={styles.heroSection}>
-        <h1 className={styles.title}>Jak zamawiać krok po kroku</h1>
-        <p className={styles.subtitle}>Kompletny poradnik od założenia konta do odbioru paczki</p>
+        <h1 className={styles.title}>{t('tutorials.pageTitle')}</h1>
+        <p className={styles.subtitle}>{t('tutorials.pageSubtitle')}</p>
       </div>
 
       <div className={styles.layoutWrapper}>
         {/* Sidebar Navigation */}
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
-            <h3>Spis Treści</h3>
-            <span>{translatedSteps.length} Kroków</span>
+            <h3>{t('tutorials.tableOfContents')}</h3>
+            <span>{translatedSteps.length} {t('tutorials.stepsCount')}</span>
           </div>
           <div className={styles.sidebarList}>
             {translatedSteps.map((step, index) => (
@@ -114,7 +114,7 @@ export default function Tutorials() {
                   <FontAwesomeIcon icon={step.icon} className={styles.itemIcon} />
                 </div>
                 <div className={styles.itemText}>
-                  <span className={styles.itemStepNum}>Krok {index + 1}</span>
+                  <span className={styles.itemStepNum}>{t('tutorials.step')} {index + 1}</span>
                   <span className={styles.itemTitle}>{step.title}</span>
                 </div>
               </button>
@@ -131,7 +131,7 @@ export default function Tutorials() {
                 <FontAwesomeIcon icon={currentStep.icon} className={styles.headerIcon} />
               </div>
               <div className={styles.headerTitles}>
-                <span className={styles.stepBadge}>Krok {activeStep + 1} z {translatedSteps.length}</span>
+                <span className={styles.stepBadge}>{t('tutorials.step')} {activeStep + 1} {t('tutorials.of')} {translatedSteps.length}</span>
                 <h2 className={styles.contentTitle}>{currentStep.title}</h2>
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function Tutorials() {
                 className={styles.imageContainer} 
                 onClick={() => setZoomedImage(currentStep.imagePath)}
               >
-                <div className={styles.zoomHint}>Kliknij, aby przybliżyć</div>
+                <div className={styles.zoomHint}>{t('tutorials.zoomHint')}</div>
                 <img 
                   src={currentStep.imagePath} 
                   alt={`Krok ${activeStep + 1}: ${currentStep.title}`} 
@@ -175,14 +175,14 @@ export default function Tutorials() {
                 onClick={prevStep}
                 disabled={activeStep === 0}
               >
-                <FontAwesomeIcon icon={faArrowLeft} /> Poprzedni
+                <FontAwesomeIcon icon={faArrowLeft} /> {t('tutorials.prev')}
               </button>
               <button 
                 className={`${styles.navBtn} ${styles.navBtnPrimary} ${activeStep === translatedSteps.length - 1 ? styles.navBtnDisabled : ''}`}
                 onClick={nextStep}
                 disabled={activeStep === translatedSteps.length - 1}
               >
-                Następny <FontAwesomeIcon icon={faArrowRight} />
+                {t('tutorials.next')} <FontAwesomeIcon icon={faArrowRight} />
               </button>
             </div>
 

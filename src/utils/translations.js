@@ -93,7 +93,16 @@ export const translations = {
     tutorials: {
       title: "Poradniki Wkrótce",
       description: "Pracujemy nad przygotowaniem najlepszych poradników zakupowych dla Ciebie. Wróć do nas niebawem!",
-      backBtn: "Wróć na stronę główną"
+      backBtn: "Wróć na stronę główną",
+      pageTitle: "Jak zamawiać krok po kroku",
+      pageSubtitle: "Kompletny poradnik od założenia konta do odbioru paczki",
+      tableOfContents: "Spis Treści",
+      stepsCount: "Kroków",
+      step: "Krok",
+      of: "z",
+      zoomHint: "Kliknij, aby przybliżyć",
+      prev: "Poprzedni",
+      next: "Następny"
     },
     featured: {
       title: "POLECANE",
@@ -273,7 +282,16 @@ export const translations = {
     tutorials: {
       title: "Tutorials Coming Soon",
       description: "We are working on preparing the best shopping guides for you. Come back soon!",
-      backBtn: "Back to Home"
+      backBtn: "Back to Home",
+      pageTitle: "How to order step by step",
+      pageSubtitle: "A complete guide from creating an account to receiving your package",
+      tableOfContents: "Table of Contents",
+      stepsCount: "Steps",
+      step: "Step",
+      of: "of",
+      zoomHint: "Click to zoom in",
+      prev: "Previous",
+      next: "Next"
     },
     featured: {
       title: "FEATURED",
@@ -447,7 +465,16 @@ export const translations = {
     tutorials: {
       title: "教程即将推出",
       description: "我们正在为您准备最佳购物指南。请稍后再来！",
-      backBtn: "返回首页"
+      backBtn: "返回首页",
+      pageTitle: "如何一步步下单",
+      pageSubtitle: "从注册账户到签收包裹的完整指南",
+      tableOfContents: "目录",
+      stepsCount: "步",
+      step: "步骤",
+      of: "/",
+      zoomHint: "点击放大",
+      prev: "上一步",
+      next: "下一步"
     },
     featured: {
       title: "推荐",
@@ -617,7 +644,16 @@ export const translations = {
     tutorials: {
       title: "Anleitungen folgen in Kürze",
       description: "Wir arbeiten daran, die besten Einkaufsführer für dich vorzubereiten. Komm bald wieder!",
-      backBtn: "Zurück zur Startseite"
+      backBtn: "Zurück zur Startseite",
+      pageTitle: "Wie man Schritt für Schritt bestellt",
+      pageSubtitle: "Ein vollständiger Leitfaden von der Kontoerstellung bis zum Erhalt des Pakets",
+      tableOfContents: "Inhaltsverzeichnis",
+      stepsCount: "Schritte",
+      step: "Schritt",
+      of: "von",
+      zoomHint: "Klicken zum Vergrößern",
+      prev: "Zurück",
+      next: "Weiter"
     },
     featured: {
       title: "EMPFOHLENE",
@@ -787,7 +823,16 @@ export const translations = {
     tutorials: {
       title: "Tutoriales muy pronto",
       description: "Estamos trabajando para preparar las mejores guías de compra para ti. ¡Vuelve pronto!",
-      backBtn: "Volver al inicio"
+      backBtn: "Volver al inicio",
+      pageTitle: "Cómo ordenar paso a paso",
+      pageSubtitle: "Una guía completa desde la creación de la cuenta hasta la recepción del paquete",
+      tableOfContents: "Tabla de contenidos",
+      stepsCount: "Pasos",
+      step: "Paso",
+      of: "de",
+      zoomHint: "Haga clic para ampliar",
+      prev: "Anterior",
+      next: "Siguiente"
     },
     featured: {
       title: "PRODUCTOS",
