@@ -200,13 +200,18 @@ export default function Products() {
       });
     }
     
-    // Safety check for search
-    if (searchQuery) {
+    // Search Query (normalized: trim trailing spaces, also match without spaces)
+    if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
+      const queryNoSpaces = query.replace(/\s+/g, '');
       filtered = filtered.filter(p => {
         if (!p || !p.name) return false;
-        return p.name.toLowerCase().includes(query) || 
-               (p.category && p.category.toLowerCase().includes(query));
+        const name = p.name.toLowerCase();
+        const nameNoSpaces = name.replace(/\s+/g, '');
+        const cat = p.category ? p.category.toLowerCase() : '';
+        const catNoSpaces = cat.replace(/\s+/g, '');
+        return name.includes(query) || nameNoSpaces.includes(queryNoSpaces) ||
+               cat.includes(query) || catNoSpaces.includes(queryNoSpaces);
       });
     }
 
@@ -215,14 +220,7 @@ export default function Products() {
       filtered = filtered.filter(p => p.batch === selectedBatch);
     }
 
-    // Search Query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(query) || 
-        (p.category && p.category.toLowerCase().includes(query))
-      );
-    }
+    // (search already applied above)
 
     // Price Range
     if (priceRange.min) filtered = filtered.filter(p => p.price >= parseFloat(priceRange.min));
