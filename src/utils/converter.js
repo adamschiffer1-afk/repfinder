@@ -11,10 +11,19 @@ export function detectPlatform(url) {
 export function extractItemId(url) {
     try {
         const safe = new URL(url);
-        return safe.searchParams.get('itemID') || safe.searchParams.get('itemId') || safe.searchParams.get('id');
+        const id = safe.searchParams.get('itemID') || safe.searchParams.get('itemId') || safe.searchParams.get('id');
+        if (id) return id;
+        
+        const pathMatch = safe.pathname.match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
+        if (pathMatch) return pathMatch[1];
+        
+        return '';
     } catch {
         const match = String(url || '').match(/(?:itemID|itemId|id)(?:%3D|=)(\d+)/i);
-        return match ? match[1] : '';
+        if (match) return match[1];
+        
+        const pathMatch = String(url || '').match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
+        return pathMatch ? pathMatch[1] : '';
     }
 }
 
@@ -40,6 +49,8 @@ export function convertLink(originalUrl, target) {
             return `https://oopbuy.com/product/weidian/${itemId}`;
         case 'gtbuy': 
             return `https://www.gtbuy.com/product/weidian/${itemId}`;
+        case 'hipobuy':
+            return `https://hipobuy.com/product/weidian/${itemId}`;
         default: 
             return originalUrl;
     }
@@ -53,4 +64,5 @@ export const SUPPORTED_AGENTS = [
     { value: 'mulebuy', label: 'MuleBuy', icon: '/images/Mulebuy.jpg' },
     { value: 'oopbuy', label: 'OopBuy', icon: '/images/oopbuy.png' },
     { value: 'gtbuy', label: 'GTBuy', icon: '/images/gtbuy.png' },
+    { value: 'hipobuy', label: 'HipoBuy', icon: '/images/Hipobuy.png' },
 ];

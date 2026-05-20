@@ -27,6 +27,7 @@ function detectPlatform(url) {
     if (v.includes('mulebuy.com')) return 'mulebuy';
     if (v.includes('oopbuy.com')) return 'oopbuy';
     if (v.includes('gtbuy.com')) return 'gtbuy';
+    if (v.includes('hipobuy.com')) return 'hipobuy';
     return 'unknown';
 }
 
@@ -143,6 +144,11 @@ function extractGtbuyItemId(url) {
     return match ? match[1] : '';
 }
 
+function extractHipoBuyItemId(url) {
+    const match = String(url || '').match(/\/product\/[a-z0-9_-]+\/(\d+)/i);
+    return match ? match[1] : '';
+}
+
 function extractLitBuySource(url) {
     const match = String(url || '').match(/\/product\/([a-z0-9_-]+)\//i);
     if (!match) return 'unknown';
@@ -164,6 +170,7 @@ function extractAnyKnownItemId(rawInput, extractedOriginalUrl) {
         extractMulebuyItemId(rawInput) ||
         extractOopbuyItemId(rawInput) ||
         extractGtbuyItemId(rawInput) ||
+        extractHipoBuyItemId(rawInput) ||
         ''
     );
 }
@@ -206,6 +213,10 @@ function analyzeInput(rawUrl) {
         const itemId = platform === 'oopbuy' ? extractOopbuyItemId(cleaned) : extractGtbuyItemId(cleaned);
         return { displaySource: platform, originalPlatform: itemId ? 'weidian' : 'unknown', originalUrl: itemId ? buildWeidianUrl(itemId) : '', itemId, sourceCode: itemId ? 'WD' : '' };
     }
+    if (platform === 'hipobuy') {
+        const itemId = extractHipoBuyItemId(cleaned);
+        return { displaySource: 'hipobuy', originalPlatform: itemId ? 'weidian' : 'unknown', originalUrl: itemId ? buildWeidianUrl(itemId) : '', itemId, sourceCode: itemId ? 'WD' : '' };
+    }
 
     return { displaySource: platform, originalPlatform: platform, originalUrl: cleaned, itemId: extractWeidianItemId(cleaned), sourceCode: platform === 'weidian' ? 'WD' : '' };
 }
@@ -233,6 +244,7 @@ function buildConvertedResult(analysis, target) {
         case 'mulebuy': return { url: `https://mulebuy.com/product?id=${itemId}&platform=WEIDIAN` };
         case 'oopbuy': return { url: `https://oopbuy.com/product/weidian/${itemId}` };
         case 'gtbuy': return { url: `https://www.gtbuy.com/product/weidian/${itemId}` };
+        case 'hipobuy': return { url: `https://hipobuy.com/product/weidian/${itemId}` };
         default: return { url: '' };
     }
 }
@@ -248,7 +260,8 @@ function formatPlatformLabel(platform) {
         allchinabuy: 'AllChinaBuy',
         mulebuy: 'MuleBuy',
         oopbuy: 'OopBuy',
-        gtbuy: 'GTBuy'
+        gtbuy: 'GTBuy',
+        hipobuy: 'HipoBuy'
     };
     return map[platform] || String(platform || 'Unknown');
 }
@@ -262,6 +275,7 @@ function getAgentIcon(platform) {
         allchinabuy: '/images/allchinabuy.png',
         mulebuy: '/images/Mulebuy.jpg',
         oopbuy: '/images/oopbuy.png',
+        hipobuy: '/images/Hipobuy.png',
     };
     return map[platform] || null;
 }
@@ -278,6 +292,7 @@ const TARGETS = [
     { value: 'allchinabuy', label: 'AllChinaBuy' },
     { value: 'mulebuy', label: 'MuleBuy' },
     { value: 'oopbuy', label: 'OopBuy' },
+    { value: 'hipobuy', label: 'HipoBuy' },
 ];
 
 import { useLanguage } from '@/context/LanguageContext';

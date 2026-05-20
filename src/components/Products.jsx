@@ -142,7 +142,8 @@ export default function Products() {
           'LitBuy': 'litbuy',
           'GTBuy': 'gtbuy',
           'OopBuy': 'oopbuy',
-          'MuleBuy': 'mulebuy'
+          'MuleBuy': 'mulebuy',
+          'HipoBuy': 'hipobuy'
         };
         const logoMapping = {
           'KakoBuy': '/images/kako.png',
@@ -151,7 +152,8 @@ export default function Products() {
           'LitBuy': '/images/litbuy.png',
           'GTBuy': '/images/gtbuy.png',
           'OopBuy': '/images/oopbuy.png',
-          'MuleBuy': '/images/Mulebuy.jpg'
+          'MuleBuy': '/images/Mulebuy.jpg',
+          'HipoBuy': '/images/Hipobuy.png'
         };
         setPreferredAgent(mapping[saved] || 'kakobuy');
         setPreferredAgentLogo(logoMapping[saved] || '/images/kako.png');
