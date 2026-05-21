@@ -48,6 +48,7 @@ export const translations = {
       pants: "Spodnie",
       shorts: "Spodenki",
       jackets: "Kurtki",
+      tracksuit: "Dresy",
       accessories: "Akcesoria"
     },
     features: {
@@ -237,6 +238,7 @@ export const translations = {
       pants: "Pants",
       shorts: "Shorts",
       jackets: "Jackets",
+      tracksuit: "Tracksuits",
       accessories: "Accessories"
     },
     features: {
@@ -420,7 +422,8 @@ export const translations = {
       next: "下一页",
       liveData: "实时数据",
       productsCount: "个产品",
-      jackets: "夹克"
+      jackets: "夹克",
+      tracksuit: "运动服"
     },
     features: {
       title: "更多",
@@ -599,7 +602,8 @@ export const translations = {
       next: "Nächste",
       liveData: "Live-Daten",
       productsCount: "produkte",
-      jackets: "Jacken"
+      jackets: "Jacken",
+      tracksuit: "Trainingsanzüge"
     },
     features: {
       title: "MEHR",
@@ -778,7 +782,8 @@ export const translations = {
       next: "Siguiente",
       liveData: "Datos en vivo",
       productsCount: "productos",
-      jackets: "Chaquetas"
+      jackets: "Chaquetas",
+      tracksuit: "Chándales"
     },
     features: {
       title: "MÁS",

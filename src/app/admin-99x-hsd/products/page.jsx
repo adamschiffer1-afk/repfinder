@@ -249,6 +249,8 @@ export default function ManageProducts() {
                 <option value="t-shirts">T-shirts</option>
                 <option value="pants">Pants</option>
                 <option value="shorts">Shorts</option>
+                <option value="jackets">Jackets</option>
+                <option value="tracksuit">Tracksuit</option>
                 <option value="accessories">Accessories</option>
               </select>
               <select 
