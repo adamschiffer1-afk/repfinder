@@ -25,25 +25,33 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Global focus reset — removes white outline flash on click for all buttons/inputs */
-button,
-a,
-input,
-select,
-textarea,
-[role="button"] {
-  outline: none;
+/* Disable default tap highlight on mobile devices */
+* {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-focus-ring-color: transparent !important;
 }
 
-/* Restore visible focus only for keyboard navigation (accessibility) */
+/* Global focus reset — completely removes outline flash on click/focus/active everywhere */
+*,
+*:focus,
+*:focus-visible,
+*:active {
+  outline: none !important;
+  outline: 0 !important;
+}
+
+/* Disable default focus/active box shadows specifically on buttons, links and clickable elements to prevent ugly browser outlines/glows, without breaking text inputs */
+button:focus,
 button:focus-visible,
+button:active,
+a:focus,
 a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-[role="button"]:focus-visible {
-  outline: 2px solid rgba(139, 92, 246, 0.6);
-  outline-offset: 2px;
+a:active,
+[role="button"]:focus,
+[role="button"]:active,
+input[type="button"]:focus,
+input[type="submit"]:focus {
+  box-shadow: none !important;
 }
 
 
