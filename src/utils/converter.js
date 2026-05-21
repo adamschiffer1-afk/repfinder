@@ -30,13 +30,23 @@ export function extractItemId(url) {
 export function convertLink(originalUrl, target) {
     if (!originalUrl) return '';
     
+    // Extract raw URL from Kakobuy wrapper parameter if present
+    let cleanUrl = originalUrl;
+    try {
+        const safe = new URL(originalUrl);
+        const nestedUrl = safe.searchParams.get('url');
+        if (nestedUrl) {
+            cleanUrl = nestedUrl;
+        }
+    } catch {}
+
     // Simple extraction for common platforms
-    let itemId = extractItemId(originalUrl);
-    if (!itemId) return originalUrl; // Fallback if no ID found
+    let itemId = extractItemId(cleanUrl);
+    if (!itemId) return cleanUrl; // Fallback if no ID found
 
     switch (target) {
         case 'kakobuy': 
-            return `https://www.kakobuy.com/item/details?url=${encodeURIComponent(originalUrl)}&affcode=xfrostyy`;
+            return `https://www.kakobuy.com/item/details?url=${encodeURIComponent(cleanUrl)}&affcode=xfrostyy`;
         case 'usfans': 
             return `https://www.usfans.com/product/3/${itemId}`;
         case 'allchinabuy': 
@@ -52,7 +62,7 @@ export function convertLink(originalUrl, target) {
         case 'hipobuy':
             return `https://hipobuy.com/product/weidian/${itemId}`;
         default: 
-            return originalUrl;
+            return cleanUrl;
     }
 }
 
