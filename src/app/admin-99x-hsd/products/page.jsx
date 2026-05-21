@@ -250,7 +250,7 @@ export default function ManageProducts() {
                 <option value="pants">Pants</option>
                 <option value="shorts">Shorts</option>
                 <option value="jackets">Jackets</option>
-                <option value="tracksuit">Tracksuit</option>
+                <option value="sets">Sets (Komplety)</option>
                 <option value="accessories">Accessories</option>
               </select>
               <select 
