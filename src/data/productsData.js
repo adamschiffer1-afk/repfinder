@@ -584,7 +584,6 @@ export const productsData = [
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512510866&affcode=xfrostyy"
   },
-  null,
   {
     "_id": "d7wonqkxfrj",
     "name": "Stone Island hat",
@@ -31095,7 +31094,6 @@ export const productsData = [
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511375544&affcode=xfrostyy"
   },
-  null,
   {
     "_id": "904akt9vb7",
     "name": "Lv Skate",
@@ -31324,12 +31322,12 @@ export const productsData = [
 ];
 
 export const categoriesData = [
-  'shoes',
-  'hoodies',
-  't-shirts',
-  'pants',
-  'shorts',
-  'jackets',
-  'sets',
-  'accessories'
+  "shoes",
+  "hoodies",
+  "t-shirts",
+  "pants",
+  "shorts",
+  "jackets",
+  "sets",
+  "accessories"
 ];
