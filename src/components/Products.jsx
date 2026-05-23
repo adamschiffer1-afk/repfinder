@@ -566,7 +566,13 @@ export default function Products() {
 
   // Reset page when filters change
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+    const nextQuery = e.target.value;
+    setSearchQuery(nextQuery);
+    if (nextQuery.trim()) {
+      setSelectedCategories([]);
+      setSelectedBatch('');
+      setPriceRange({ min: '', max: '' });
+    }
     setPage(1);
   };
 
@@ -575,6 +581,9 @@ export default function Products() {
       setSelectedCategories([suggestion.value]);
       setSearchQuery('');
     } else {
+      setSelectedCategories([]);
+      setSelectedBatch('');
+      setPriceRange({ min: '', max: '' });
       setSearchQuery(suggestion.value);
     }
     setIsSearchFocused(false);
