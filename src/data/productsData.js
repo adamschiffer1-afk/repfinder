@@ -19858,7 +19858,7 @@ export const productsData = [
     "name": "OFF-WHITE Ow Be Right Back",
     "price": 40.6,
     "image": "https://si.geilicdn.com/pcitem901862111711-5aa300000193d86c4ce90a20e273_1200_1200.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7513780172&affcode=xfrostyy"
   },
@@ -25411,7 +25411,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-5c730000019cc76a12800aa08239_1280_1280.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -25420,7 +25420,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-45900000019cc76a169e0a8115c2_1280_1280.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -25429,7 +25429,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-5b190000019cc76a18e40a23b491_1280_1280.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -25438,7 +25438,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-5b1b0000019cc76a1c040a23b491_1280_1280.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -25447,7 +25447,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-5c770000019cc76a1ee80aa08239-unadjust_1050_1050.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -25456,7 +25456,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-50550000019cc76a26ca0aa08676-unadjust_1050_1050.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -25465,7 +25465,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-5b900000019cc76a65690a231226-unadjust_1920_1280.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -25474,7 +25474,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-5b940000019cc76a70ec0a231226-unadjust_1440_960.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -25483,7 +25483,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-5c930000019cc76a72ee0aa08239-unadjust_1440_960.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -25492,7 +25492,7 @@ export const productsData = [
     "name": "Nike Mind 001",
     "price": 40.32,
     "image": "https://si.geilicdn.com/open1790911188-252808396-45ae0000019cc76a75bd0a8115c2-unadjust_1920_1280.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7702660885&affcode=xfrostyy"
   },
@@ -27634,7 +27634,7 @@ export const productsData = [
     "name": "Nofs Summer Set",
     "price": 24.33,
     "image": "https://si.geilicdn.com/pcitem901857861682-715c0000018f85db50b30a20e672_828_828.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "sets",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514615466&affcode=xfrostyy"
   },
@@ -30208,7 +30208,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-6ca7000001932494f31c0a20e2c5-unadjust_470_301.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30217,7 +30217,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-744e000001932494f40e0a2396f4-unadjust_430_281.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30226,7 +30226,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-6bc8000001932494f5000a20e672-unadjust_412_290.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30235,7 +30235,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-7239000001932494f5f40a8134f0-unadjust_413_296.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30244,7 +30244,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-01e8000001932494f70d0a2303ee-unadjust_426_325.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30253,7 +30253,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-7851000001932494f7fc0a81347d-unadjust_427_282.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30262,7 +30262,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-76fe000001932494f91a0a2315ef-unadjust_421_308.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30271,7 +30271,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-7174000001932494fa610a23111a-unadjust_429_298.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30280,7 +30280,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-7721000001932494fc0e0a23047e-unadjust_464_302.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30289,7 +30289,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-73e3000001932494fdd80a239846-unadjust_431_304.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30298,7 +30298,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-7f71000001932494ffbf0a23038e-unadjust_416_292.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30307,7 +30307,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-7b6700000193249502190a2102c5-unadjust_426_299.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30316,7 +30316,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-7ea600000193249503ed0a20e7c7-unadjust_459_275.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30325,7 +30325,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-646b000001932495068a0a811411-unadjust_452_321.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30334,7 +30334,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-3a59000001932496f3220a231316-unadjust_434_294.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30343,7 +30343,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-6c3000000193249709440a20e672-unadjust_438_308.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30352,7 +30352,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-71de0000019324971ea00a23111a-unadjust_434_311.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30361,7 +30361,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-702000000193249741490a2301b4-unadjust_432_325.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30370,7 +30370,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-71f6000001932497885f0a23111a-unadjust_431_311.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30379,7 +30379,7 @@ export const productsData = [
     "name": "Dior B27",
     "price": 59.5,
     "image": "https://si.geilicdn.com/pcitem901878418355-00a00000019324979da90a210349-unadjust_402_290.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505789915&affcode=xfrostyy"
   },
@@ -30613,7 +30613,7 @@ export const productsData = [
     "name": "Adidas superstar",
     "price": 33.6,
     "image": "https://si.geilicdn.com/pcitem901878418355-25b60000019347b2fca20a23047e_1300_1200.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "shoes",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510654157&affcode=xfrostyy"
   },

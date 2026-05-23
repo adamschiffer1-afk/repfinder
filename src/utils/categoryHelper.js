@@ -24,12 +24,16 @@ const CATEGORY_MAP = {
         'jacket', 'coat', 'windbreaker', 'vest', 'parka', 'puffer', 'down jacket', 
         'moncler', 'arcteryx', 'arc\'teryx', 'nuptse', 'maya', 'bomber', 'harrington', 'varsity'
     ],
+    'sets': [
+        'set'
+    ],
     'shoes': [
         'shoes', 'sneakers', 'skate', 'shoe', 'dunk', 'force', 'jordan', 'yeezy', 'gazelle', 
         'track', 'trainer', 'b30', 'b22', 'b33', 'nb', 'balance', 'campus', 'samba', 
         'spezial', 'crocs', 'slide', 'hotstep', 'shox', 'aj1', 'aj3', 'aj4', 'aj11', 
         'air max', 'vapormax', 'tn', '9060', '2002r', '1906r', 'bapesta', 'lanvin', 
-        'miu miu', 'asics', 'acics', 'foam', 'slides', 'clog', 'mule', 'birk', 'boston', 'rick owens', 'gel'
+        'miu miu', 'asics', 'acics', 'foam', 'slides', 'clog', 'mule', 'birk', 'boston', 'rick owens', 'gel',
+        'b27', 'superstar', 'mind 001', 'be right back'
     ]
 };
 
