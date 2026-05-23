@@ -117,7 +117,10 @@ const getEditDistance = (a, b) => {
 };
 
 const hasFuzzyTokenMatch = (query, searchable) => {
-  const queryTokens = normalizeSearchText(query).split(' ').filter(token => token.length >= 4);
+  const allQueryTokens = normalizeSearchText(query).split(' ').filter(Boolean);
+  if (!allQueryTokens.length || allQueryTokens.some(token => token.length < 4)) return false;
+
+  const queryTokens = allQueryTokens.filter(token => token.length >= 4);
   if (!queryTokens.length) return false;
 
   const productTokens = normalizeSearchText(searchable)
@@ -459,18 +462,14 @@ export default function Products() {
   }, [allProducts, categories, recentSearchSuggestions, searchQuery, t]);
 
   const visibleSearchSuggestions = useMemo(() => (
-    [...recentSearchSuggestions, ...searchSuggestions].slice(0, 10)
-  ), [recentSearchSuggestions, searchSuggestions]);
+    searchSuggestions.slice(0, searchQuery.trim() ? 5 : 4)
+  ), [searchSuggestions, searchQuery]);
 
-  useEffect(() => {
-    if (!searchQuery.trim()) return undefined;
+  const visibleRecentSearchSuggestions = useMemo(() => (
+    recentSearchSuggestions.slice(0, searchQuery.trim() ? 3 : 4)
+  ), [recentSearchSuggestions, searchQuery]);
 
-    const timeoutId = setTimeout(() => {
-      saveRecentSearch(searchQuery);
-    }, 1200);
-
-    return () => clearTimeout(timeoutId);
-  }, [saveRecentSearch, searchQuery]);
+  const hasSearchDropdown = visibleRecentSearchSuggestions.length > 0 || visibleSearchSuggestions.length > 0;
 
   // Disable body scroll when modals are open
   useEffect(() => {
@@ -756,10 +755,34 @@ export default function Products() {
               onChange={handleSearchChange}
               onKeyDown={handleSearchKeyDown}
               onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setTimeout(() => setIsSearchFocused(false), 120)}
+              onBlur={() => {
+                saveRecentSearch(searchQuery);
+                setTimeout(() => setIsSearchFocused(false), 120);
+              }}
             />
-            {isSearchFocused && visibleSearchSuggestions.length > 0 && (
+            {isSearchFocused && hasSearchDropdown && (
               <div className={styles.searchSuggestions}>
+                {visibleRecentSearchSuggestions.length > 0 && (
+                  <div className={styles.suggestionSectionLabel}>Ostatnie wyszukiwania</div>
+                )}
+                {visibleRecentSearchSuggestions.map((suggestion) => (
+                  <button
+                    key={`${suggestion.type}-${suggestion.value}`}
+                    type="button"
+                    className={styles.searchSuggestionItem}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => handleSuggestionSelect(suggestion)}
+                  >
+                    <span className={styles.suggestionIcon}>
+                      <FontAwesomeIcon icon={faClock} />
+                    </span>
+                    <span className={styles.suggestionText}>{suggestion.label}</span>
+                    <span className={styles.suggestionMeta}>{suggestion.meta}</span>
+                  </button>
+                ))}
+                {visibleRecentSearchSuggestions.length > 0 && visibleSearchSuggestions.length > 0 && (
+                  <div className={styles.suggestionDivider} />
+                )}
                 {visibleSearchSuggestions.map((suggestion) => (
                   <button
                     key={`${suggestion.type}-${suggestion.value}`}
@@ -769,7 +792,7 @@ export default function Products() {
                     onClick={() => handleSuggestionSelect(suggestion)}
                   >
                     <span className={styles.suggestionIcon}>
-                      <FontAwesomeIcon icon={suggestion.type === 'recent' ? faClock : suggestion.type === 'category' ? faLayerGroup : suggestion.type === 'brand' ? faTags : faSearch} />
+                      <FontAwesomeIcon icon={suggestion.type === 'category' ? faLayerGroup : suggestion.type === 'brand' ? faTags : faSearch} />
                     </span>
                     <span className={styles.suggestionText}>{suggestion.label}</span>
                     <span className={styles.suggestionMeta}>{suggestion.meta}</span>
