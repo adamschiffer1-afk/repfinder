@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useState, useEffect, useCallback, useMemo, useDeferredValue } from 'react';
+import { memo, useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
@@ -11,7 +11,6 @@ import {
   faSearch,
   faFilter,
   faTimes,
-  faArrowRight,
   faCheck,
   faLayerGroup,
   faSortAmountDown,
@@ -22,11 +21,9 @@ import {
   faRandom,
   faSortNumericDown,
   faSortNumericUp,
-  faCamera,
   faThumbsUp,
   faThumbsDown,
   faHeart,
-  faInfoCircle,
   faSpinner,
   faBoxOpen,
   faChevronRight,
@@ -213,6 +210,28 @@ const clauseMatchesSearchIndex = (clauseTerms, searchIndex) => (
   ))
 );
 
+const matchesSuggestionQuery = (searchIndex, query) => {
+  const normalizedQuery = normalizeSearchText(query);
+  const compactQuery = compactSearchText(query);
+  if (!normalizedQuery && !compactQuery) return true;
+  if (!searchIndex?.normalizedSearchable) return false;
+
+  if (
+    searchIndex.normalizedSearchable.includes(normalizedQuery)
+    || searchIndex.compactSearchable.includes(compactQuery)
+  ) {
+    return true;
+  }
+
+  const queryTokens = normalizedQuery.split(' ').filter(token => token.length >= 2);
+  if (!queryTokens.length) return false;
+
+  return queryTokens.every(token => (
+    searchIndex.normalizedSearchable.includes(token)
+    || searchIndex.compactSearchable.includes(compactSearchText(token))
+  ));
+};
+
 const productMatchesSearch = (
   productOrSearchIndex,
   query,
@@ -242,7 +261,6 @@ const ProductCard = memo(function ProductCard({
   formatPrice,
   preferredAgentLogo,
   quickCopied,
-  onOpenQC,
   onOpenAgent,
   onQuickCopy
 }) {
@@ -275,13 +293,6 @@ const ProductCard = memo(function ProductCard({
         </div>
 
         <div className={styles.cardActionRow}>
-          <button
-            className={styles.qcBtn}
-            onClick={() => onOpenQC(product)}
-            title="Zobacz zdjecia QC"
-          >
-            <FontAwesomeIcon icon={faCamera} />
-          </button>
           <button
             className={styles.viewBtnFull}
             onClick={() => onOpenAgent(product)}
@@ -338,17 +349,10 @@ export default function Products() {
   const [preferredAgent, setPreferredAgent] = useState('kakobuy');
   const [preferredAgentLogo, setPreferredAgentLogo] = useState('/images/kako.png');
   const [quickCopiedId, setQuickCopiedId] = useState(null);
-  const [qcModalProduct, setQcModalProduct] = useState(null);
-  const [qcData, setQcData] = useState(null);
-  const [qcLoading, setQcLoading] = useState(false);
-  const [activeAlbumIndex, setActiveAlbumIndex] = useState(0);
   const [recentSearches, setRecentSearches] = useState([]);
   const [filteredProductCount, setFilteredProductCount] = useState(null);
-  const deferredSearchQuery = useDeferredValue(searchQuery);
   const searchClauses = useMemo(() => getSearchClauses(searchQuery), [searchQuery]);
   const searchFuzzyQueryTokens = useMemo(() => getFuzzyQueryTokens(searchQuery), [searchQuery]);
-  const deferredSearchClauses = useMemo(() => getSearchClauses(deferredSearchQuery), [deferredSearchQuery]);
-  const deferredFuzzyQueryTokens = useMemo(() => getFuzzyQueryTokens(deferredSearchQuery), [deferredSearchQuery]);
   const indexedProducts = useMemo(() => allProducts.map(createProductSearchIndex), [allProducts]);
   const productNameSuggestions = useMemo(() => {
     const nameCounts = new Map();
@@ -372,6 +376,18 @@ export default function Products() {
   const searchableProductNames = useMemo(() => (
     allProducts.map(product => normalizeSearchText(product?.name)).join(' ')
   ), [allProducts]);
+  const catalogBrands = useMemo(() => {
+    const brands = new Set(SEARCH_BRANDS);
+
+    allProducts.forEach((product) => {
+      const brandToken = product?.name?.trim().split(/\s+/)[0];
+      if (brandToken && brandToken.length > 2) {
+        brands.add(brandToken);
+      }
+    });
+
+    return [...brands].sort((a, b) => a.localeCompare(b));
+  }, [allProducts]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -591,8 +607,8 @@ export default function Products() {
   }, []);
 
   const recentSearchSuggestions = useMemo(() => {
-    const query = normalizeSearchText(deferredSearchQuery);
-    const compactQuery = compactSearchText(deferredSearchQuery);
+    const query = normalizeSearchText(searchQuery);
+    const compactQuery = compactSearchText(searchQuery);
 
     return recentSearches
       .filter(item => {
@@ -603,26 +619,27 @@ export default function Products() {
       })
       .slice(0, 4)
       .map(item => ({ type: 'recent', label: item, meta: 'Ostatnie', value: item }));
-  }, [recentSearches, deferredSearchQuery]);
+  }, [recentSearches, searchQuery]);
 
   const searchSuggestions = useMemo(() => {
-    const query = normalizeSearchText(deferredSearchQuery);
-    const compactQuery = compactSearchText(deferredSearchQuery);
+    const query = normalizeSearchText(searchQuery);
+    const compactQuery = compactSearchText(searchQuery);
 
     const productSuggestions = productNameSuggestions
-      .filter((suggestion) => {
-        if (!query) return true;
-        return productMatchesSearch(suggestion, deferredSearchQuery, deferredSearchClauses, deferredFuzzyQueryTokens);
-      })
+      .filter((suggestion) => matchesSuggestionQuery(suggestion, searchQuery))
       .slice(0, query ? 5 : 4)
       .map(({ type, label, meta, value }) => ({ type, label, meta, value }));
 
-    const brandSuggestions = SEARCH_BRANDS
+    const brandSuggestions = catalogBrands
       .filter(brand => {
         if (!query) return searchableProductNames.includes(normalizeSearchText(brand));
         const normalizedBrand = normalizeSearchText(brand);
         const compactBrand = compactSearchText(brand);
-        return normalizedBrand.includes(query) || compactBrand.includes(compactQuery);
+        return (
+          normalizedBrand.includes(query)
+          || compactBrand.includes(compactQuery)
+          || query.includes(normalizedBrand)
+        );
       })
       .slice(0, 4)
       .map(brand => ({ type: 'brand', label: brand, meta: 'Brand', value: brand }));
@@ -643,13 +660,12 @@ export default function Products() {
       .filter(item => !recentLabels.has(normalizeSearchText(item.label)))
       .slice(0, 9);
   }, [
+    catalogBrands,
     categories,
-    deferredFuzzyQueryTokens,
-    deferredSearchQuery,
-    deferredSearchClauses,
     productNameSuggestions,
     recentSearchSuggestions,
     searchableProductNames,
+    searchQuery,
     t
   ]);
 
@@ -661,11 +677,15 @@ export default function Products() {
     recentSearchSuggestions.slice(0, searchQuery.trim() ? 3 : 4)
   ), [recentSearchSuggestions, searchQuery]);
 
-  const hasSearchDropdown = visibleRecentSearchSuggestions.length > 0 || visibleSearchSuggestions.length > 0;
+  const hasSearchDropdown = (
+    visibleRecentSearchSuggestions.length > 0
+    || visibleSearchSuggestions.length > 0
+    || !searchQuery.trim()
+  );
 
   // Disable body scroll when modals are open
   useEffect(() => {
-    if (isFilterModalOpen || agentModalProduct || selectedProduct || qcModalProduct) {
+    if (isFilterModalOpen || agentModalProduct || selectedProduct) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -673,30 +693,7 @@ export default function Products() {
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isFilterModalOpen, agentModalProduct, selectedProduct, qcModalProduct]);
-
-  const openQCModal = useCallback(async (product) => {
-    setQcModalProduct(product);
-    setQcLoading(true);
-    setQcData(null);
-    setActiveAlbumIndex(0);
-
-    try {
-      const res = await fetch(`/api/qc?url=${encodeURIComponent(product.link)}`);
-      const data = await res.json();
-      setQcData(data);
-    } catch (err) {
-      console.error("QC Fetch error:", err);
-      setError({ message: "Błąd podczas pobierania zdjęć QC", type: "error" });
-    } finally {
-      setQcLoading(false);
-    }
-  }, []);
-
-  const closeQCModal = () => {
-    setQcModalProduct(null);
-    setQcData(null);
-  };
+  }, [isFilterModalOpen, agentModalProduct, selectedProduct]);
 
   // Toast Timer
 
@@ -1030,7 +1027,6 @@ export default function Products() {
               formatPrice={formatPrice}
               preferredAgentLogo={preferredAgentLogo}
               quickCopied={quickCopiedId === product._id}
-              onOpenQC={openQCModal}
               onOpenAgent={openAgentModal}
               onQuickCopy={handleQuickCopy}
             />
@@ -1137,92 +1133,6 @@ export default function Products() {
                   </button>
                 </div>
               ))}
-            </div>
-          </div>
-        </div>
-      )}
-      {/* QC Modal */}
-      {qcModalProduct && (
-        <div className={styles.qcModalOverlay} onClick={closeQCModal}>
-          <div className={styles.qcModalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.qcModalHeader}>
-              <div className={styles.qcHeaderTitleGroup}>
-                <h2 className={styles.qcModalTitle}>Zdjęcia QC</h2>
-                <span className={styles.qcProductName}>{qcModalProduct.name}</span>
-              </div>
-              <button className={styles.closeModalBtn} onClick={closeQCModal}>
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
-            </div>
-
-            <div className={styles.qcModalBody}>
-              {qcLoading ? (
-                <div className={styles.qcLoadingState}>
-                  <FontAwesomeIcon icon={faSpinner} spin className={styles.qcLoadingIcon} />
-                  <p>Pobieranie zdjęć od picks.ly...</p>
-                </div>
-              ) : qcData && qcData.success ? (
-                <div className={styles.qcContent}>
-                  {qcData.albums && qcData.albums.length > 0 ? (
-                    <>
-                      <div className={styles.qcAlbumsNav}>
-                        {qcData.albums.map((album, idx) => (
-                          <button
-                            key={idx}
-                            className={`${styles.albumTab} ${activeAlbumIndex === idx ? styles.active : ''}`}
-                            onClick={() => setActiveAlbumIndex(idx)}
-                          >
-                            Album {idx + 1}
-                            <span className={styles.albumImgCount}>{album.image_count} zdj.</span>
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className={styles.qcImageGrid}>
-                        {qcData.albums[activeAlbumIndex].images.map((img, i) => (
-                          <div key={i} className={styles.qcImageWrapper}>
-                            <img src={img} alt={`QC Photo ${i + 1}`} loading="lazy" />
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className={styles.qcFooterInfo}>
-                        {qcData.total_albums_available > qcData.albums.length && (
-                          <a 
-                            href={qcData.picksly_url} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className={styles.seeAllLink}
-                          >
-                            Zobacz wszystkie {qcData.total_albums_available} albumy na picks.ly <FontAwesomeIcon icon={faArrowRight} />
-                          </a>
-                        )}
-                        <div className={styles.qcAttribution}>
-                          {qcData.attribution} — <a href={qcData.picksly_url} target="_blank" rel="noopener noreferrer">Otwórz w nowej karcie</a>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className={styles.qcEmptyState}>
-                      <FontAwesomeIcon icon={faBoxOpen} className={styles.qcEmptyIcon} />
-                      <p>Brak dostępnych zdjęć QC dla tego produktu.</p>
-                      <a href={qcData.picksly_url} target="_blank" rel="noopener noreferrer" className={styles.pickslyRedirectBtn}>
-                        Sprawdź na picks.ly
-                      </a>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className={styles.qcErrorState}>
-                  <FontAwesomeIcon icon={faInfoCircle} className={styles.qcErrorIcon} />
-                  <p>{qcData?.error || "Nie udało się załadować zdjęć QC."}</p>
-                  {qcData?.picksly_url && (
-                    <a href={qcData.picksly_url} target="_blank" rel="noopener noreferrer" className={styles.pickslyRedirectBtn}>
-                      Odwiedź picks.ly
-                    </a>
-                  )}
-                </div>
-              )}
             </div>
           </div>
         </div>
