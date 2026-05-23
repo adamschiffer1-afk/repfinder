@@ -154,6 +154,70 @@
   font-size: 0.9rem;
 }
 
+.searchSuggestions {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(12, 10, 18, 0.98);
+  border: 1px solid rgba(167, 139, 250, 0.22);
+  border-radius: 12px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(14px);
+}
+
+.searchSuggestionItem {
+  width: 100%;
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.searchSuggestionItem:hover {
+  background: rgba(167, 139, 250, 0.14);
+}
+
+.suggestionIcon {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #a78bfa;
+  font-size: 0.8rem;
+}
+
+.suggestionText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.suggestionMeta {
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
 @media (max-width: 600px) {
   .searchWrapper {
     width: 100%;
@@ -170,6 +234,17 @@
   .searchIcon {
     left: 16px;
     font-size: 1.1rem;
+  }
+  .searchSuggestions {
+    top: calc(100% + 8px);
+    border-radius: 12px;
+  }
+  .searchSuggestionItem {
+    min-height: 46px;
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+  .suggestionMeta {
+    display: none;
   }
 }
 

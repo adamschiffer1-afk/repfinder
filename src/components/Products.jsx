@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
@@ -38,6 +38,110 @@ import { useCurrency } from '@/hooks/useCurrency';
 
 import { useLanguage } from '@/context/LanguageContext';
 
+const SEARCH_SYNONYM_GROUPS = [
+  ['af1', 'airforce', 'air force', 'forces', 'air force 1', 'air force one', 'nike air force'],
+  ['b27', 'dior b27', 'dior shoes', 'dior sneaker', 'dior sneakers'],
+  ['j4', 'jordan 4', 'aj4', 'air jordan 4'],
+  ['j1', 'jordan 1', 'aj1', 'air jordan 1'],
+  ['j3', 'jordan 3', 'aj3', 'air jordan 3'],
+  ['j11', 'jordan 11', 'aj11', 'air jordan 11'],
+  ['tn', 'air max plus', 'nike tn'],
+  ['nb', 'new balance'],
+  ['yeezy slide', 'yeezy slides', 'slides'],
+  ['tee', 'tees', 't shirt', 't-shirt', 'tshirt'],
+  ['hoodie', 'hoody', 'sweatshirt', 'sweater'],
+  ['pants', 'trousers', 'joggers', 'sweatpants'],
+  ['shorts', 'short'],
+  ['jacket', 'coat', 'puffer', 'windbreaker'],
+  ['bag', 'backpack']
+];
+
+const SEARCH_BRANDS = [
+  'Nike', 'Adidas', 'Jordan', 'Dior', 'KITH', 'Moncler', 'New Balance', 'Stone Island',
+  'Arc\'teryx', 'Essentials', 'Hellstar', 'Chrome Hearts', 'Balenciaga', 'Louis Vuitton',
+  'Off-White', 'Supreme', 'Corteiz', 'Patagonia', 'Trapstar', 'Bape', 'Asics'
+];
+
+const normalizeSearchText = (value = '') =>
+  value
+    .toString()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+
+const compactSearchText = (value = '') => normalizeSearchText(value).replace(/\s+/g, '');
+
+const getSearchTerms = (query) => {
+  const normalized = normalizeSearchText(query);
+  const compact = compactSearchText(query);
+  const terms = new Set([normalized, compact].filter(Boolean));
+
+  SEARCH_SYNONYM_GROUPS.forEach((group) => {
+    const normalizedGroup = group.map(normalizeSearchText);
+    const compactGroup = group.map(compactSearchText);
+    const matchesGroup = normalizedGroup.some(term => term.includes(normalized) || normalized.includes(term))
+      || compactGroup.some(term => term.includes(compact) || compact.includes(term));
+
+    if (matchesGroup) {
+      group.forEach((term) => {
+        terms.add(normalizeSearchText(term));
+        terms.add(compactSearchText(term));
+      });
+    }
+  });
+
+  return [...terms].filter(Boolean);
+};
+
+const getEditDistance = (a, b) => {
+  if (Math.abs(a.length - b.length) > 1) return 2;
+  let previous = Array.from({ length: b.length + 1 }, (_, index) => index);
+
+  for (let i = 1; i <= a.length; i++) {
+    const current = [i];
+    for (let j = 1; j <= b.length; j++) {
+      current[j] = a[i - 1] === b[j - 1]
+        ? previous[j - 1]
+        : Math.min(previous[j - 1], previous[j], current[j - 1]) + 1;
+    }
+    previous = current;
+  }
+
+  return previous[b.length];
+};
+
+const hasFuzzyTokenMatch = (query, searchable) => {
+  const queryTokens = normalizeSearchText(query).split(' ').filter(token => token.length >= 4);
+  if (!queryTokens.length) return false;
+
+  const productTokens = normalizeSearchText(searchable)
+    .split(' ')
+    .filter(token => token.length >= 4);
+
+  return queryTokens.every(queryToken =>
+    productTokens.some(productToken => getEditDistance(queryToken, productToken) <= 1)
+  );
+};
+
+const productMatchesSearch = (product, query) => {
+  if (!product || !product.name) return false;
+
+  const searchable = [
+    product.name,
+    product.category,
+    product.batch
+  ].filter(Boolean).join(' ');
+
+  const normalizedSearchable = normalizeSearchText(searchable);
+  const compactSearchable = compactSearchText(searchable);
+  const terms = getSearchTerms(query);
+
+  return terms.some(term => normalizedSearchable.includes(term) || compactSearchable.includes(term))
+    || hasFuzzyTokenMatch(query, searchable);
+};
+
 export default function Products() {
   const { t } = useLanguage();
   const { user, fetchWithAuth } = useAuth();
@@ -66,6 +170,7 @@ export default function Products() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [agentModalProduct, setAgentModalProduct] = useState(null);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const [preferredAgent, setPreferredAgent] = useState('kakobuy');
   const [preferredAgentLogo, setPreferredAgentLogo] = useState('/images/kako.png');
@@ -202,19 +307,9 @@ export default function Products() {
       });
     }
     
-    // Search Query (normalized: trim trailing spaces, also match without spaces)
+    // Search Query (with synonyms and light typo tolerance)
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      const queryNoSpaces = query.replace(/\s+/g, '');
-      filtered = filtered.filter(p => {
-        if (!p || !p.name) return false;
-        const name = p.name.toLowerCase();
-        const nameNoSpaces = name.replace(/\s+/g, '');
-        const cat = p.category ? p.category.toLowerCase() : '';
-        const catNoSpaces = cat.replace(/\s+/g, '');
-        return name.includes(query) || nameNoSpaces.includes(queryNoSpaces) ||
-               cat.includes(query) || catNoSpaces.includes(queryNoSpaces);
-      });
+      filtered = filtered.filter(p => productMatchesSearch(p, searchQuery));
     }
 
     // Filter by Batch
@@ -265,6 +360,49 @@ export default function Products() {
   useEffect(() => {
     filterAndSortData();
   }, [filterAndSortData]);
+
+  const searchSuggestions = useMemo(() => {
+    const query = normalizeSearchText(searchQuery);
+    const compactQuery = compactSearchText(searchQuery);
+    const nameCounts = new Map();
+
+    allProducts.forEach(product => {
+      if (!product?.name) return;
+      nameCounts.set(product.name, (nameCounts.get(product.name) || 0) + 1);
+    });
+
+    const productSuggestions = [...nameCounts.entries()]
+      .filter(([name]) => {
+        if (!query) return true;
+        return productMatchesSearch({ name, category: '' }, searchQuery);
+      })
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, query ? 5 : 4)
+      .map(([name, count]) => ({ type: 'product', label: name, meta: `${count} items`, value: name }));
+
+    const brandSuggestions = SEARCH_BRANDS
+      .filter(brand => {
+        if (!query) return nameCounts.has(brand) || allProducts.some(product => normalizeSearchText(product?.name).includes(normalizeSearchText(brand)));
+        const normalizedBrand = normalizeSearchText(brand);
+        const compactBrand = compactSearchText(brand);
+        return normalizedBrand.includes(query) || compactBrand.includes(compactQuery);
+      })
+      .slice(0, 4)
+      .map(brand => ({ type: 'brand', label: brand, meta: 'Brand', value: brand }));
+
+    const categorySuggestions = categories
+      .filter(category => {
+        if (!query) return true;
+        const categoryLabel = t(`products.${category}`);
+        const normalizedCategory = normalizeSearchText(category);
+        const normalizedLabel = normalizeSearchText(categoryLabel);
+        return normalizedCategory.includes(query) || normalizedLabel.includes(query);
+      })
+      .slice(0, 4)
+      .map(category => ({ type: 'category', label: t(`products.${category}`), meta: 'Category', value: category }));
+
+    return [...productSuggestions, ...brandSuggestions, ...categorySuggestions].slice(0, 9);
+  }, [allProducts, categories, searchQuery, t]);
 
   // Disable body scroll when modals are open
   useEffect(() => {
@@ -432,6 +570,17 @@ export default function Products() {
     setPage(1);
   };
 
+  const handleSuggestionSelect = (suggestion) => {
+    if (suggestion.type === 'category') {
+      setSelectedCategories([suggestion.value]);
+      setSearchQuery('');
+    } else {
+      setSearchQuery(suggestion.value);
+    }
+    setIsSearchFocused(false);
+    setPage(1);
+  };
+
   const handleCategoryToggle = (category) => {
     if (category === 'all') {
       setSelectedCategories([]);
@@ -520,7 +669,28 @@ export default function Products() {
               placeholder={t('products.searchPlaceholder')}
               value={searchQuery}
               onChange={handleSearchChange}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setTimeout(() => setIsSearchFocused(false), 120)}
             />
+            {isSearchFocused && searchSuggestions.length > 0 && (
+              <div className={styles.searchSuggestions}>
+                {searchSuggestions.map((suggestion) => (
+                  <button
+                    key={`${suggestion.type}-${suggestion.value}`}
+                    type="button"
+                    className={styles.searchSuggestionItem}
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => handleSuggestionSelect(suggestion)}
+                  >
+                    <span className={styles.suggestionIcon}>
+                      <FontAwesomeIcon icon={suggestion.type === 'category' ? faLayerGroup : suggestion.type === 'brand' ? faTags : faSearch} />
+                    </span>
+                    <span className={styles.suggestionText}>{suggestion.label}</span>
+                    <span className={styles.suggestionMeta}>{suggestion.meta}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           
           <button
