@@ -228,6 +228,29 @@
   padding: 12px;
   border-radius: 8px;
   color: #fff;
+  color-scheme: dark;
+  font: inherit;
+}
+
+.adminModal input:focus, .adminModal select:focus {
+  outline: none;
+  border-color: rgba(167, 139, 250, 0.65);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.12);
+}
+
+.adminModal select {
+  cursor: pointer;
+}
+
+.adminModal select option {
+  background: #242426;
+  color: #fff;
+}
+
+.adminModal select option:checked {
+  background: #7c3aed;
+  color: #fff;
 }
 
 .modalActions {

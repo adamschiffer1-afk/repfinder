@@ -30,7 +30,8 @@ import {
   faSpinner,
   faBoxOpen,
   faChevronRight,
-  faCopy
+  faCopy,
+  faClock
 } from '@fortawesome/free-solid-svg-icons';
 import { productsData, categoriesData } from '@/data/productsData';
 import { convertLink, SUPPORTED_AGENTS } from '@/utils/converter';
@@ -61,6 +62,9 @@ const SEARCH_BRANDS = [
   'Arc\'teryx', 'Essentials', 'Hellstar', 'Chrome Hearts', 'Balenciaga', 'Louis Vuitton',
   'Off-White', 'Supreme', 'Corteiz', 'Patagonia', 'Trapstar', 'Bape', 'Asics'
 ];
+
+const RECENT_SEARCHES_KEY = 'repfinder_recent_searches';
+const RECENT_SEARCHES_LIMIT = 6;
 
 const normalizeSearchText = (value = '') =>
   value
@@ -179,6 +183,7 @@ export default function Products() {
   const [qcData, setQcData] = useState(null);
   const [qcLoading, setQcLoading] = useState(false);
   const [activeAlbumIndex, setActiveAlbumIndex] = useState(0);
+  const [recentSearches, setRecentSearches] = useState([]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -235,6 +240,17 @@ export default function Products() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    try {
+      const savedSearches = JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || '[]');
+      if (Array.isArray(savedSearches)) {
+        setRecentSearches(savedSearches.slice(0, RECENT_SEARCHES_LIMIT));
+      }
+    } catch (err) {
+      console.warn('Could not load recent searches:', err);
+    }
+  }, []);
 
   useEffect(() => {
     const loadSettings = () => {
@@ -361,6 +377,41 @@ export default function Products() {
     filterAndSortData();
   }, [filterAndSortData]);
 
+  const saveRecentSearch = useCallback((value) => {
+    const query = value.trim();
+    if (query.length < 2) return;
+
+    setRecentSearches((current) => {
+      const next = [
+        query,
+        ...current.filter(item => normalizeSearchText(item) !== normalizeSearchText(query))
+      ].slice(0, RECENT_SEARCHES_LIMIT);
+
+      try {
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(next));
+      } catch (err) {
+        console.warn('Could not save recent searches:', err);
+      }
+
+      return next;
+    });
+  }, []);
+
+  const recentSearchSuggestions = useMemo(() => {
+    const query = normalizeSearchText(searchQuery);
+    const compactQuery = compactSearchText(searchQuery);
+
+    return recentSearches
+      .filter(item => {
+        if (!query) return true;
+        const normalizedItem = normalizeSearchText(item);
+        const compactItem = compactSearchText(item);
+        return normalizedItem.includes(query) || compactItem.includes(compactQuery);
+      })
+      .slice(0, 4)
+      .map(item => ({ type: 'recent', label: item, meta: 'Ostatnie', value: item }));
+  }, [recentSearches, searchQuery]);
+
   const searchSuggestions = useMemo(() => {
     const query = normalizeSearchText(searchQuery);
     const compactQuery = compactSearchText(searchQuery);
@@ -401,8 +452,25 @@ export default function Products() {
       .slice(0, 4)
       .map(category => ({ type: 'category', label: t(`products.${category}`), meta: 'Category', value: category }));
 
-    return [...productSuggestions, ...brandSuggestions, ...categorySuggestions].slice(0, 9);
-  }, [allProducts, categories, searchQuery, t]);
+    const recentLabels = new Set(recentSearchSuggestions.map(item => normalizeSearchText(item.label)));
+    return [...productSuggestions, ...brandSuggestions, ...categorySuggestions]
+      .filter(item => !recentLabels.has(normalizeSearchText(item.label)))
+      .slice(0, 9);
+  }, [allProducts, categories, recentSearchSuggestions, searchQuery, t]);
+
+  const visibleSearchSuggestions = useMemo(() => (
+    [...recentSearchSuggestions, ...searchSuggestions].slice(0, 10)
+  ), [recentSearchSuggestions, searchSuggestions]);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) return undefined;
+
+    const timeoutId = setTimeout(() => {
+      saveRecentSearch(searchQuery);
+    }, 1200);
+
+    return () => clearTimeout(timeoutId);
+  }, [saveRecentSearch, searchQuery]);
 
   // Disable body scroll when modals are open
   useEffect(() => {
@@ -576,6 +644,13 @@ export default function Products() {
     setPage(1);
   };
 
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      saveRecentSearch(searchQuery);
+      setIsSearchFocused(false);
+    }
+  };
+
   const handleSuggestionSelect = (suggestion) => {
     if (suggestion.type === 'category') {
       setSelectedCategories([suggestion.value]);
@@ -585,6 +660,7 @@ export default function Products() {
       setSelectedBatch('');
       setPriceRange({ min: '', max: '' });
       setSearchQuery(suggestion.value);
+      saveRecentSearch(suggestion.value);
     }
     setIsSearchFocused(false);
     setPage(1);
@@ -678,12 +754,13 @@ export default function Products() {
               placeholder={t('products.searchPlaceholder')}
               value={searchQuery}
               onChange={handleSearchChange}
+              onKeyDown={handleSearchKeyDown}
               onFocus={() => setIsSearchFocused(true)}
               onBlur={() => setTimeout(() => setIsSearchFocused(false), 120)}
             />
-            {isSearchFocused && searchSuggestions.length > 0 && (
+            {isSearchFocused && visibleSearchSuggestions.length > 0 && (
               <div className={styles.searchSuggestions}>
-                {searchSuggestions.map((suggestion) => (
+                {visibleSearchSuggestions.map((suggestion) => (
                   <button
                     key={`${suggestion.type}-${suggestion.value}`}
                     type="button"
@@ -692,7 +769,7 @@ export default function Products() {
                     onClick={() => handleSuggestionSelect(suggestion)}
                   >
                     <span className={styles.suggestionIcon}>
-                      <FontAwesomeIcon icon={suggestion.type === 'category' ? faLayerGroup : suggestion.type === 'brand' ? faTags : faSearch} />
+                      <FontAwesomeIcon icon={suggestion.type === 'recent' ? faClock : suggestion.type === 'category' ? faLayerGroup : suggestion.type === 'brand' ? faTags : faSearch} />
                     </span>
                     <span className={styles.suggestionText}>{suggestion.label}</span>
                     <span className={styles.suggestionMeta}>{suggestion.meta}</span>
