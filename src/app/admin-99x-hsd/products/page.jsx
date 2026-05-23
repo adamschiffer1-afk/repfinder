@@ -1,7 +1,39 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import styles from '@/styles/Admin.module.css';
+
+const ProductTable = memo(function ProductTable({ products, onEdit, onDelete }) {
+  return (
+    <table className={styles.adminTable}>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Pinned</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {products.map(product => (
+          <tr key={product._id}>
+            <td><img src={product.image} alt="" className={styles.tableImg} /></td>
+            <td>{product.name}</td>
+            <td>${product.price}</td>
+            <td>{product.category}</td>
+            <td>{product.isPinned ? 'Yes' : 'No'}</td>
+            <td className={styles.actions}>
+              <button onClick={() => onEdit(product)}>Edit</button>
+              <button onClick={() => onDelete(product._id)}>Delete</button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+});
 
 export default function ManageProducts() {
   const [products, setProducts] = useState([]);
@@ -23,19 +55,27 @@ export default function ManageProducts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [totalProducts, setTotalProducts] = useState(0);
 
   useEffect(() => {
-    fetchProducts(1);
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm.trim());
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  const fetchProducts = async (page = currentPage) => {
+  const fetchProducts = useCallback(async (page = 1, search = debouncedSearchTerm, signal) => {
     try {
       setLoading(true);
-      const url = `/api/products?page=${page}&limit=50&admin=true${searchTerm ? `&search=${encodeURIComponent(searchTerm)}` : ''}`;
-      const res = await fetch(url);
+      const searchParam = search.trim();
+      const url = `/api/products?page=${page}&limit=50&admin=true${searchParam ? `&search=${encodeURIComponent(searchParam)}` : ''}`;
+      const res = await fetch(url, { signal });
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json();
+
+      if (signal?.aborted) return;
       
       if (data.products) {
         setProducts(data.products);
@@ -47,12 +87,19 @@ export default function ManageProducts() {
         setProducts(data);
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       console.error(err);
       alert("Błąd pobierania produktów. Sprawdź połączenie z bazą.");
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
-  };
+  }, [debouncedSearchTerm]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchProducts(1, debouncedSearchTerm, controller.signal);
+    return () => controller.abort();
+  }, [debouncedSearchTerm, fetchProducts]);
 
   const handleScrape = async (e) => {
     e.preventDefault();
@@ -71,7 +118,7 @@ export default function ManageProducts() {
       if (res.ok) {
         setScraperStatus({ type: 'success', message: data.message });
         setScraperData({ name: '', url: '' });
-        fetchProducts();
+        fetchProducts(currentPage);
         setTimeout(() => setShowScraperModal(false), 2000);
       } else {
         setScraperStatus({ type: 'error', message: data.error || 'Wystąpił błąd podczas scrapowania.' });
@@ -95,21 +142,21 @@ export default function ManageProducts() {
     });
 
     if (res.ok) {
-      fetchProducts();
+      fetchProducts(currentPage);
       setShowModal(false);
       setEditingProduct(null);
       setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '' });
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = useCallback(async (id) => {
     if (confirm('Are you sure?')) {
       const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
-      if (res.ok) fetchProducts();
+      if (res.ok) fetchProducts(currentPage);
     }
-  };
+  }, [currentPage, fetchProducts]);
 
-  const openEdit = (product) => {
+  const openEdit = useCallback((product) => {
     setEditingProduct(product);
     setFormData({
       name: product.name,
@@ -120,7 +167,7 @@ export default function ManageProducts() {
       link: product.link
     });
     setShowModal(true);
-  };
+  }, []);
 
   return (
     <div className={styles.adminContainer}>
@@ -156,33 +203,7 @@ export default function ManageProducts() {
       </div>
 
       {loading ? <p>Loading...</p> : (
-        <table className={styles.adminTable}>
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Price</th>
-              <th>Category</th>
-              <th>Pinned</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map(product => (
-              <tr key={product._id}>
-                <td><img src={product.image} alt="" className={styles.tableImg} /></td>
-                <td>{product.name}</td>
-                <td>${product.price}</td>
-                <td>{product.category}</td>
-                <td>{product.isPinned ? '📌 Yes' : 'No'}</td>
-                <td className={styles.actions}>
-                  <button onClick={() => openEdit(product)}>Edit</button>
-                  <button onClick={() => handleDelete(product._id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ProductTable products={products} onEdit={openEdit} onDelete={handleDelete} />
       )}
 
       {!loading && totalPages > 1 && (

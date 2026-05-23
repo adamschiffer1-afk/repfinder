@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 export function useCurrency() {
   const [currency, setCurrency] = useState('USD');
@@ -47,7 +47,7 @@ export function useCurrency() {
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
-  const formatPrice = (priceInUSD) => {
+  const formatPrice = useCallback((priceInUSD) => {
     // Upewnijmy się, że cena to liczba
     const parsedPrice = parseFloat(priceInUSD) || 0;
     const rate = rates[currency] || 1;
@@ -62,7 +62,7 @@ export function useCurrency() {
       // Domyślnie USD
       return `$${converted.toFixed(2)}`;
     }
-  };
+  }, [currency, rates]);
 
-  return { currency, formatPrice };
+  return useMemo(() => ({ currency, formatPrice }), [currency, formatPrice]);
 }

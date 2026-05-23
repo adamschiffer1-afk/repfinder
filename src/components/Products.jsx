@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { memo, useState, useEffect, useCallback, useMemo, useDeferredValue } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
@@ -75,28 +75,103 @@ const normalizeSearchText = (value = '') =>
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 
-const compactSearchText = (value = '') => normalizeSearchText(value).replace(/\s+/g, '');
+const compactNormalizedText = (value = '') => value.replace(/\s+/g, '');
 
-const getSearchTerms = (query) => {
-  const normalized = normalizeSearchText(query);
-  const compact = compactSearchText(query);
-  const terms = new Set([normalized, compact].filter(Boolean));
+const compactSearchText = (value = '') => compactNormalizedText(normalizeSearchText(value));
+
+const SEARCH_SYNONYM_GROUPS_BY_PHRASE_LENGTH = [...SEARCH_SYNONYM_GROUPS].sort((groupA, groupB) => {
+  const longest = (group) => Math.max(...group.map(term => normalizeSearchText(term).length), 0);
+  return longest(groupB) - longest(groupA);
+});
+
+const createSearchIndex = (searchable = '') => {
+  const normalizedSearchable = normalizeSearchText(searchable);
+  return {
+    searchable,
+    normalizedSearchable,
+    compactSearchable: compactNormalizedText(normalizedSearchable),
+    fuzzyTokens: normalizedSearchable.split(' ').filter(token => token.length >= 4)
+  };
+};
+
+const getProductSearchableText = (product = {}) => [
+  product.name,
+  product.category,
+  product.batch
+].filter(Boolean).join(' ');
+
+const createProductSearchIndex = (product) => ({
+  product,
+  ...createSearchIndex(getProductSearchableText(product))
+});
+
+const getExpandedTermsForGroup = (group) => {
+  const terms = new Set();
+  group.forEach((term) => {
+    const normalized = normalizeSearchText(term);
+    const compact = compactSearchText(term);
+    if (normalized) terms.add(normalized);
+    if (compact) terms.add(compact);
+  });
+  return [...terms];
+};
+
+const getExpandedTermsForToken = (token) => {
+  const terms = new Set();
+  const normalized = normalizeSearchText(token);
+  const compact = compactSearchText(token);
+  if (normalized) terms.add(normalized);
+  if (compact) terms.add(compact);
 
   SEARCH_SYNONYM_GROUPS.forEach((group) => {
     const normalizedGroup = group.map(normalizeSearchText);
-    const compactGroup = group.map(compactSearchText);
-    const matchesGroup = normalizedGroup.some(term => term.includes(normalized) || normalized.includes(term))
-      || compactGroup.some(term => term.includes(compact) || compact.includes(term));
-
-    if (matchesGroup) {
-      group.forEach((term) => {
-        terms.add(normalizeSearchText(term));
-        terms.add(compactSearchText(term));
-      });
+    if (normalizedGroup.includes(normalized)) {
+      getExpandedTermsForGroup(group).forEach(term => terms.add(term));
     }
   });
 
-  return [...terms].filter(Boolean);
+  return [...terms];
+};
+
+const getSearchClauses = (query) => {
+  const normalized = normalizeSearchText(query);
+  const compact = compactSearchText(query);
+  if (!normalized && !compact) return [];
+
+  let remainder = ` ${normalized} `;
+  const clauses = [];
+
+  SEARCH_SYNONYM_GROUPS_BY_PHRASE_LENGTH.forEach((group) => {
+    const groupTerms = [...group].sort(
+      (termA, termB) => normalizeSearchText(termB).length - normalizeSearchText(termA).length
+    );
+
+    for (const groupTerm of groupTerms) {
+      const phrase = normalizeSearchText(groupTerm);
+      if (!phrase) continue;
+
+      const paddedPhrase = ` ${phrase} `;
+      if (!remainder.includes(paddedPhrase)) continue;
+
+      clauses.push(getExpandedTermsForGroup(group));
+      remainder = remainder.split(paddedPhrase).join(' ');
+      break;
+    }
+  });
+
+  remainder
+    .trim()
+    .split(' ')
+    .filter(token => token.length >= 2)
+    .forEach(token => {
+      clauses.push(getExpandedTermsForToken(token));
+    });
+
+  if (!clauses.length) {
+    clauses.push([normalized, compact].filter(Boolean));
+  }
+
+  return clauses;
 };
 
 const getEditDistance = (a, b) => {
@@ -116,38 +191,119 @@ const getEditDistance = (a, b) => {
   return previous[b.length];
 };
 
-const hasFuzzyTokenMatch = (query, searchable) => {
+const getFuzzyQueryTokens = (query) => {
   const allQueryTokens = normalizeSearchText(query).split(' ').filter(Boolean);
-  if (!allQueryTokens.length || allQueryTokens.some(token => token.length < 4)) return false;
+  if (!allQueryTokens.length || allQueryTokens.some(token => token.length < 4)) return [];
 
-  const queryTokens = allQueryTokens.filter(token => token.length >= 4);
-  if (!queryTokens.length) return false;
+  return allQueryTokens.filter(token => token.length >= 4);
+};
 
-  const productTokens = normalizeSearchText(searchable)
-    .split(' ')
-    .filter(token => token.length >= 4);
+const hasFuzzyTokenMatch = (queryTokens, productTokens) => {
+  if (!queryTokens.length || !productTokens.length) return false;
 
   return queryTokens.every(queryToken =>
     productTokens.some(productToken => getEditDistance(queryToken, productToken) <= 1)
   );
 };
 
-const productMatchesSearch = (product, query) => {
-  if (!product || !product.name) return false;
+const clauseMatchesSearchIndex = (clauseTerms, searchIndex) => (
+  clauseTerms.some(term => (
+    searchIndex.normalizedSearchable.includes(term)
+    || searchIndex.compactSearchable.includes(term)
+  ))
+);
 
-  const searchable = [
-    product.name,
-    product.category,
-    product.batch
-  ].filter(Boolean).join(' ');
+const productMatchesSearch = (
+  productOrSearchIndex,
+  query,
+  clauses = getSearchClauses(query),
+  fuzzyQueryTokens = getFuzzyQueryTokens(query)
+) => {
+  if (!productOrSearchIndex) return false;
 
-  const normalizedSearchable = normalizeSearchText(searchable);
-  const compactSearchable = compactSearchText(searchable);
-  const terms = getSearchTerms(query);
+  const searchIndex = productOrSearchIndex.normalizedSearchable !== undefined
+    ? productOrSearchIndex
+    : createSearchIndex(getProductSearchableText(productOrSearchIndex));
 
-  return terms.some(term => normalizedSearchable.includes(term) || compactSearchable.includes(term))
-    || hasFuzzyTokenMatch(query, searchable);
+  if (!searchIndex.normalizedSearchable) return false;
+
+  const matchesClauses = clauses.length > 0
+    && clauses.every(clauseTerms => clauseMatchesSearchIndex(clauseTerms, searchIndex));
+
+  const fuzzyMatch = fuzzyQueryTokens.length > 0
+    && hasFuzzyTokenMatch(fuzzyQueryTokens, searchIndex.fuzzyTokens);
+
+  return matchesClauses || fuzzyMatch;
 };
+
+const ProductCard = memo(function ProductCard({
+  product,
+  index,
+  formatPrice,
+  preferredAgentLogo,
+  quickCopied,
+  onOpenQC,
+  onOpenAgent,
+  onQuickCopy
+}) {
+  return (
+    <div
+      className={styles.productCard}
+      style={{ animationDelay: `${index * 0.05}s` }}
+    >
+      <div className={styles.imageWrapper}>
+        <Image
+          src={product.image}
+          alt={product.name}
+          width={300}
+          height={300}
+          className={styles.productImage}
+          unoptimized={true}
+        />
+      </div>
+      <div className={styles.cardContent}>
+        <div className={styles.cardTags}>
+          {product.category && <span className={styles.tagCategory}>{product.category.toUpperCase()}</span>}
+          {product.batch === 'best' && <span className={styles.tagBest}>BEST BATCH</span>}
+          {product.batch === 'budget' && <span className={styles.tagBudget}>BUDGET BATCH</span>}
+        </div>
+
+        <h3 className={styles.productName}>{product.name}</h3>
+
+        <div className={styles.cardPriceRow}>
+          <span className={styles.price}>{formatPrice(product.price)}</span>
+        </div>
+
+        <div className={styles.cardActionRow}>
+          <button
+            className={styles.qcBtn}
+            onClick={() => onOpenQC(product)}
+            title="Zobacz zdjecia QC"
+          >
+            <FontAwesomeIcon icon={faCamera} />
+          </button>
+          <button
+            className={styles.viewBtnFull}
+            onClick={() => onOpenAgent(product)}
+          >
+            Zobacz agentow
+          </button>
+          <button
+            className={`${styles.quickCopyBtn} ${quickCopied ? styles.quickCopied : ''}`}
+            onClick={(event) => onQuickCopy(event, product)}
+            title="Kopiuj link do agenta"
+          >
+            {quickCopied ? (
+              <FontAwesomeIcon icon={faCheck} className={styles.quickCopyIcon} />
+            ) : (
+              <img src={preferredAgentLogo} alt="Agent" className={styles.quickCopyAgentImg} />
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+});
 
 export default function Products() {
   const { t } = useLanguage();
@@ -187,6 +343,35 @@ export default function Products() {
   const [qcLoading, setQcLoading] = useState(false);
   const [activeAlbumIndex, setActiveAlbumIndex] = useState(0);
   const [recentSearches, setRecentSearches] = useState([]);
+  const [filteredProductCount, setFilteredProductCount] = useState(null);
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+  const searchClauses = useMemo(() => getSearchClauses(searchQuery), [searchQuery]);
+  const searchFuzzyQueryTokens = useMemo(() => getFuzzyQueryTokens(searchQuery), [searchQuery]);
+  const deferredSearchClauses = useMemo(() => getSearchClauses(deferredSearchQuery), [deferredSearchQuery]);
+  const deferredFuzzyQueryTokens = useMemo(() => getFuzzyQueryTokens(deferredSearchQuery), [deferredSearchQuery]);
+  const indexedProducts = useMemo(() => allProducts.map(createProductSearchIndex), [allProducts]);
+  const productNameSuggestions = useMemo(() => {
+    const nameCounts = new Map();
+
+    allProducts.forEach(product => {
+      if (!product?.name) return;
+      nameCounts.set(product.name, (nameCounts.get(product.name) || 0) + 1);
+    });
+
+    return [...nameCounts.entries()]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([name, count]) => ({
+        type: 'product',
+        label: name,
+        meta: `${count} items`,
+        value: name,
+        count,
+        ...createSearchIndex(name)
+      }));
+  }, [allProducts]);
+  const searchableProductNames = useMemo(() => (
+    allProducts.map(product => normalizeSearchText(product?.name)).join(' ')
+  ), [allProducts]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -288,7 +473,7 @@ export default function Products() {
     return () => window.removeEventListener('storage', loadSettings);
   }, []);
 
-  const trackStat = async (productId, type = 'product_click', agent = null) => {
+  const trackStat = useCallback(async (productId, type = 'product_click', agent = null) => {
     try {
       await fetch('/api/stats', {
         method: 'POST',
@@ -303,9 +488,9 @@ export default function Products() {
     } catch (err) {
       console.error("Stats error:", err);
     }
-  };
+  }, []);
 
-  const handleQuickCopy = (e, product) => {
+  const handleQuickCopy = useCallback((e, product) => {
     e.preventDefault();
     e.stopPropagation();
     const link = convertLink(product.link, preferredAgent);
@@ -313,44 +498,46 @@ export default function Products() {
     setQuickCopiedId(product._id);
     trackStat(product._id, 'product_click', preferredAgent);
     setTimeout(() => setQuickCopiedId(null), 2000);
-  };
+  }, [preferredAgent, trackStat]);
 
   const filterAndSortData = useCallback(() => {
-    let filtered = [...allProducts];
+    let filtered = [...indexedProducts];
 
     // Filter by Category
     if (selectedCategories && selectedCategories.length > 0) {
-      filtered = filtered.filter(p => {
+      filtered = filtered.filter(({ product: p }) => {
         if (!p || !p.category) return false;
         return selectedCategories.includes(p.category);
       });
     }
     
-    // Search Query (with synonyms and light typo tolerance)
+    // Search Query (immediate — deferred value lags behind dropdown selections)
     if (searchQuery.trim()) {
-      filtered = filtered.filter(p => productMatchesSearch(p, searchQuery));
+      filtered = filtered.filter(item => (
+        productMatchesSearch(item, searchQuery, searchClauses, searchFuzzyQueryTokens)
+      ));
     }
 
     // Filter by Batch
     if (selectedBatch && selectedBatch !== 'random') {
-      filtered = filtered.filter(p => p.batch === selectedBatch);
+      filtered = filtered.filter(({ product: p }) => p.batch === selectedBatch);
     }
 
     // (search already applied above)
 
     // Price Range
-    if (priceRange.min) filtered = filtered.filter(p => p.price >= parseFloat(priceRange.min));
-    if (priceRange.max) filtered = filtered.filter(p => p.price <= parseFloat(priceRange.max));
+    if (priceRange.min) filtered = filtered.filter(({ product: p }) => p.price >= parseFloat(priceRange.min));
+    if (priceRange.max) filtered = filtered.filter(({ product: p }) => p.price <= parseFloat(priceRange.max));
 
     // Sorting
     filtered.sort((a, b) => {
       if (sortField === 'price') {
-        return sortOrder === 'asc' ? a.price - b.price : b.price - a.price;
+        return sortOrder === 'asc' ? a.product.price - b.product.price : b.product.price - a.product.price;
       }
       if (sortField === 'name') {
         return sortOrder === 'asc' 
-          ? a.name.localeCompare(b.name) 
-          : b.name.localeCompare(a.name);
+          ? a.product.name.localeCompare(b.product.name)
+          : b.product.name.localeCompare(a.product.name);
       }
       return 0;
     });
@@ -358,16 +545,19 @@ export default function Products() {
     // Pagination
     const total = Math.ceil(filtered.length / limit);
     setTotalPages(total || 1);
+    setFilteredProductCount(filtered.length);
     
     const startIndex = (page - 1) * limit;
-    const paginated = filtered.slice(startIndex, startIndex + limit);
+    const paginated = filtered.slice(startIndex, startIndex + limit).map(item => item.product);
 
     setProducts(paginated);
   }, [
-    allProducts,
+    indexedProducts,
     selectedCategories,
     selectedBatch,
     searchQuery,
+    searchClauses,
+    searchFuzzyQueryTokens,
     priceRange,
     sortField,
     sortOrder,
@@ -401,8 +591,8 @@ export default function Products() {
   }, []);
 
   const recentSearchSuggestions = useMemo(() => {
-    const query = normalizeSearchText(searchQuery);
-    const compactQuery = compactSearchText(searchQuery);
+    const query = normalizeSearchText(deferredSearchQuery);
+    const compactQuery = compactSearchText(deferredSearchQuery);
 
     return recentSearches
       .filter(item => {
@@ -413,30 +603,23 @@ export default function Products() {
       })
       .slice(0, 4)
       .map(item => ({ type: 'recent', label: item, meta: 'Ostatnie', value: item }));
-  }, [recentSearches, searchQuery]);
+  }, [recentSearches, deferredSearchQuery]);
 
   const searchSuggestions = useMemo(() => {
-    const query = normalizeSearchText(searchQuery);
-    const compactQuery = compactSearchText(searchQuery);
-    const nameCounts = new Map();
+    const query = normalizeSearchText(deferredSearchQuery);
+    const compactQuery = compactSearchText(deferredSearchQuery);
 
-    allProducts.forEach(product => {
-      if (!product?.name) return;
-      nameCounts.set(product.name, (nameCounts.get(product.name) || 0) + 1);
-    });
-
-    const productSuggestions = [...nameCounts.entries()]
-      .filter(([name]) => {
+    const productSuggestions = productNameSuggestions
+      .filter((suggestion) => {
         if (!query) return true;
-        return productMatchesSearch({ name, category: '' }, searchQuery);
+        return productMatchesSearch(suggestion, deferredSearchQuery, deferredSearchClauses, deferredFuzzyQueryTokens);
       })
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
       .slice(0, query ? 5 : 4)
-      .map(([name, count]) => ({ type: 'product', label: name, meta: `${count} items`, value: name }));
+      .map(({ type, label, meta, value }) => ({ type, label, meta, value }));
 
     const brandSuggestions = SEARCH_BRANDS
       .filter(brand => {
-        if (!query) return nameCounts.has(brand) || allProducts.some(product => normalizeSearchText(product?.name).includes(normalizeSearchText(brand)));
+        if (!query) return searchableProductNames.includes(normalizeSearchText(brand));
         const normalizedBrand = normalizeSearchText(brand);
         const compactBrand = compactSearchText(brand);
         return normalizedBrand.includes(query) || compactBrand.includes(compactQuery);
@@ -459,7 +642,16 @@ export default function Products() {
     return [...productSuggestions, ...brandSuggestions, ...categorySuggestions]
       .filter(item => !recentLabels.has(normalizeSearchText(item.label)))
       .slice(0, 9);
-  }, [allProducts, categories, recentSearchSuggestions, searchQuery, t]);
+  }, [
+    categories,
+    deferredFuzzyQueryTokens,
+    deferredSearchQuery,
+    deferredSearchClauses,
+    productNameSuggestions,
+    recentSearchSuggestions,
+    searchableProductNames,
+    t
+  ]);
 
   const visibleSearchSuggestions = useMemo(() => (
     searchSuggestions.slice(0, searchQuery.trim() ? 5 : 4)
@@ -473,7 +665,7 @@ export default function Products() {
 
   // Disable body scroll when modals are open
   useEffect(() => {
-    if (isFilterModalOpen || agentModalProduct || selectedProduct) {
+    if (isFilterModalOpen || agentModalProduct || selectedProduct || qcModalProduct) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -483,7 +675,7 @@ export default function Products() {
     };
   }, [isFilterModalOpen, agentModalProduct, selectedProduct, qcModalProduct]);
 
-  const openQCModal = async (product) => {
+  const openQCModal = useCallback(async (product) => {
     setQcModalProduct(product);
     setQcLoading(true);
     setQcData(null);
@@ -499,7 +691,7 @@ export default function Products() {
     } finally {
       setQcLoading(false);
     }
-  };
+  }, []);
 
   const closeQCModal = () => {
     setQcModalProduct(null);
@@ -658,8 +850,9 @@ export default function Products() {
       setSelectedCategories([]);
       setSelectedBatch('');
       setPriceRange({ min: '', max: '' });
-      setSearchQuery(suggestion.value);
-      saveRecentSearch(suggestion.value);
+      const nextQuery = suggestion.value?.trim() || suggestion.label?.trim() || '';
+      setSearchQuery(nextQuery);
+      if (nextQuery) saveRecentSearch(nextQuery);
     }
     setIsSearchFocused(false);
     setPage(1);
@@ -698,9 +891,9 @@ export default function Products() {
   const openDescriptionModal = (product) => setSelectedProduct(product);
   const closeDescriptionModal = () => setSelectedProduct(null);
 
-  const openAgentModal = (product) => {
+  const openAgentModal = useCallback((product) => {
     setAgentModalProduct(product);
-  };
+  }, []);
 
   const closeAgentModal = () => {
     setAgentModalProduct(null);
@@ -810,7 +1003,7 @@ export default function Products() {
           </button>
 
           <div className={styles.productCountBadge}>
-            <span className={styles.countNumber}>{allProducts.length}</span>
+            <span className={styles.countNumber}>{filteredProductCount ?? allProducts.length}</span>
             <span className={styles.countText}>{t('products.productsCount')}</span>
           </div>
         </div>
@@ -830,64 +1023,17 @@ export default function Products() {
           </div>
         ) : (
           products.map((product, index) => (
-            <div
+            <ProductCard
               key={product._id}
-              className={styles.productCard}
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <div className={styles.imageWrapper}>
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  width={300}
-                  height={300}
-                  className={styles.productImage}
-                  unoptimized={true}
-                />
-              </div>
-              <div className={styles.cardContent}>
-                <div className={styles.cardTags}>
-                  {product.category && <span className={styles.tagCategory}>{product.category.toUpperCase()}</span>}
-                  {product.batch === 'best' && <span className={styles.tagBest}>BEST BATCH</span>}
-                  {product.batch === 'budget' && <span className={styles.tagBudget}>BUDGET BATCH</span>}
-                </div>
-                
-                <h3 className={styles.productName}>{product.name}</h3>
-                
-                <div className={styles.cardPriceRow}>
-                  <span className={styles.price}>{formatPrice(product.price)}</span>
-                </div>
-
-                <div className={styles.cardActionRow}>
-                  <button
-                    className={styles.qcBtn}
-                    onClick={() => openQCModal(product)}
-                    title="Zobacz zdjęcia QC"
-                  >
-                    <FontAwesomeIcon icon={faCamera} />
-                  </button>
-                  <button
-                    className={styles.viewBtnFull}
-                    onClick={() => openAgentModal(product)}
-                  >
-                    Zobacz agentów
-                  </button>
-                  <button
-                    className={`${styles.quickCopyBtn} ${quickCopiedId === product._id ? styles.quickCopied : ''}`}
-                    onClick={(e) => handleQuickCopy(e, product)}
-                    title="Kopiuj link do agenta"
-                  >
-                    {quickCopiedId === product._id ? (
-                      <FontAwesomeIcon icon={faCheck} className={styles.quickCopyIcon} />
-                    ) : (
-                      <>
-                        <img src={preferredAgentLogo} alt="Agent" className={styles.quickCopyAgentImg} />
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+              product={product}
+              index={index}
+              formatPrice={formatPrice}
+              preferredAgentLogo={preferredAgentLogo}
+              quickCopied={quickCopiedId === product._id}
+              onOpenQC={openQCModal}
+              onOpenAgent={openAgentModal}
+              onQuickCopy={handleQuickCopy}
+            />
           ))
         )}
       </div>
