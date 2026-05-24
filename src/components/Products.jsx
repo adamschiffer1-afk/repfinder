@@ -824,6 +824,7 @@ export default function Products() {
   const handleSearchChange = (e) => {
     const nextQuery = e.target.value;
     setSearchQuery(nextQuery);
+    setIsSearchFocused(true);
     if (nextQuery.trim()) {
       setSelectedCategories([]);
       setSelectedBatch('');
@@ -945,6 +946,7 @@ export default function Products() {
               onChange={handleSearchChange}
               onKeyDown={handleSearchKeyDown}
               onFocus={() => setIsSearchFocused(true)}
+              onClick={() => setIsSearchFocused(true)}
               onBlur={() => {
                 saveRecentSearch(searchQuery);
                 setTimeout(() => setIsSearchFocused(false), 120);
