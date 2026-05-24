@@ -38,6 +38,14 @@ const ProductSchema = new mongoose.Schema({
   imageVector: {
     type: [Number],
     select: false, // Ukryte domyślnie, by nie obciążać zapytań
+  },
+  qcImages: {
+    type: [String],
+    default: [],
+  },
+  pinnedOrder: {
+    type: Number,
+    default: null,
   }
 }, {
   timestamps: true,

@@ -19,8 +19,8 @@ export async function GET(req) {
       query = { name: { $regex: search, $options: 'i' } };
     }
 
-    // Pinowane produkty zawsze na górze, niezależnie od widoku
-    let sort = { isPinned: -1, createdAt: -1 };
+    // Pinowane: kolejność wg pinnedOrder (1,2,3...), reszta wg daty
+    let sort = { isPinned: -1, pinnedOrder: 1, createdAt: -1 };
 
     if (page) {
       const products = await Product.find(query)
