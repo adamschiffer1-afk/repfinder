@@ -337,6 +337,7 @@ export default function Products() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [categories, setCategories] = useState(categoriesData);
   const [suggestionNames, setSuggestionNames] = useState([]);
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
@@ -388,6 +389,10 @@ export default function Products() {
     setPage(1);
   }, [debouncedSearchQuery, selectedCategories, selectedBatch, priceRange.min, priceRange.max, sortField, sortOrder]);
 
+  const categoriesParam = selectedCategories.join(',');
+  const priceMin = priceRange.min;
+  const priceMax = priceRange.max;
+
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -398,11 +403,14 @@ export default function Products() {
       });
 
       if (debouncedSearchQuery) params.set('search', debouncedSearchQuery);
-      if (selectedCategories.length === 1) params.set('category', selectedCategories[0]);
-      else if (selectedCategories.length > 1) params.set('categories', selectedCategories.join(','));
+      if (categoriesParam) {
+        const catArr = categoriesParam.split(',');
+        if (catArr.length === 1) params.set('category', catArr[0]);
+        else params.set('categories', categoriesParam);
+      }
       if (selectedBatch && selectedBatch !== 'random') params.set('batch', selectedBatch);
-      if (priceRange.min) params.set('minPrice', priceRange.min);
-      if (priceRange.max) params.set('maxPrice', priceRange.max);
+      if (priceMin) params.set('minPrice', priceMin);
+      if (priceMax) params.set('maxPrice', priceMax);
 
       const res = await fetch(`/api/products?${params.toString()}`);
       const data = await res.json();
@@ -412,10 +420,9 @@ export default function Products() {
         setTotalPages(data.pages || 1);
         setFilteredProductCount(data.total ?? 0);
         setError({ message: null, type: null });
-        return;
+      } else {
+        throw new Error(data?.error || 'Invalid products response');
       }
-
-      throw new Error(data?.error || 'Invalid products response');
     } catch (error) {
       console.error('Failed to fetch products:', error);
       const start = (page - 1) * limit;
@@ -426,14 +433,16 @@ export default function Products() {
       setError({ message: 'Failed to load products from server, using local data', type: 'warning' });
     } finally {
       setLoading(false);
+      setIsInitialLoad(false);
     }
   }, [
     page,
     limit,
     debouncedSearchQuery,
-    selectedCategories,
+    categoriesParam,
     selectedBatch,
-    priceRange,
+    priceMin,
+    priceMax,
     sortField,
     sortOrder
   ]);
@@ -779,9 +788,9 @@ export default function Products() {
     setSearchQuery(nextQuery);
     setIsSearchFocused(true);
     if (nextQuery.trim()) {
-      setSelectedCategories([]);
-      setSelectedBatch('');
-      setPriceRange({ min: '', max: '' });
+      if (selectedCategories.length > 0) setSelectedCategories([]);
+      if (selectedBatch !== '') setSelectedBatch('');
+      if (priceRange.min !== '' || priceRange.max !== '') setPriceRange({ min: '', max: '' });
     }
     setPage(1);
   };
@@ -860,7 +869,7 @@ export default function Products() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  if (loading) {
+  if (isInitialLoad && loading) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.skeletonGrid}>
@@ -963,10 +972,9 @@ export default function Products() {
       {/* Products Grid */}
       <div className={styles.productsGrid}>
         {loading ? (
-          <div className={styles.loadingState}>
-            <FontAwesomeIcon icon={faSpinner} className={styles.stateIcon} spin />
-            <span className={styles.stateText}>{t('products.loading')}</span>
-          </div>
+          [...Array(8)].map((_, i) => (
+            <div key={i} className={styles.skeletonCard} />
+          ))
         ) : products.length === 0 ? (
           <div className={styles.noResultsState}>
             <FontAwesomeIcon icon={faBoxOpen} className={styles.stateIcon} />
