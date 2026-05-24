@@ -1453,7 +1453,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-3e6700000192a3c6d8640a232357_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1462,7 +1462,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-528000000192a3c6daba0a239383_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1471,7 +1471,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-18a400000192a3c6dd1f0a8115b5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1480,7 +1480,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-608e00000192a3c6df860a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1489,7 +1489,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-6c2900000192a3c6e1f10a210298_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1498,7 +1498,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-3e6f00000192a3c6e3c80a232357_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1507,7 +1507,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4c1d00000192a3c6e65c0a8133b5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1516,7 +1516,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-609800000192a3c6e8a20a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1525,7 +1525,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-18b000000192a3c6eb180a8115b5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1534,7 +1534,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/open1685879877-252808396-609a00000192a3c6ed5b0a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1543,7 +1543,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-243700000193b3cad8d10a210256_240_240.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1552,7 +1552,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-251700000193b3cb03c60a230115_240_240.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1561,7 +1561,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-22b600000193b3cb3d4a0a2304aa_240_240.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1570,7 +1570,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-251e00000193b3cb5f600a23111a_240_240.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1579,7 +1579,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-0ba3000001950c5955210a231316_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1588,7 +1588,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-06b0000001950c5973880a20e284_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1597,7 +1597,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-021b000001950c598c7c0a23038e_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1606,7 +1606,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-0755000001950c5a497e0a2304aa_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1615,7 +1615,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-0a33000001950c5a62060a21146b_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1624,7 +1624,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-0442000001950c5a7abc0a20e2c5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -1633,7 +1633,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 14.56,
     "image": "https://si.geilicdn.com/pcitem901898590714-3bc2000001953bac6b710a20e2c5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512780789&affcode=xfrostyy"
   },
@@ -21595,7 +21595,7 @@ export const productsData = [
     "name": "Denim Tears T-shirts",
     "price": 15.4,
     "image": "https://si.geilicdn.com/pcitem901908505730-17a200000194fde755350a8133cc-unadjust_804_573.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "pants",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7515401830&affcode=xfrostyy"
   },

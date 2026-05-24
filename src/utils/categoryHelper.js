@@ -15,7 +15,7 @@ const CATEGORY_MAP = {
     'pants', 'jeans', 'joggers', 'trousers', 'denim', 'cargo', 'sweatpants', 'tracksuit bottoms'
   ],
   hoodies: [
-    'hoodie', 'sweater', 'sweatshirt', 'zip', 'cardigan', 'fleece', 'crewneck', 'jumper',
+    'hoodie', 'sweater', 'zip', 'cardigan', 'fleece', 'crewneck', 'jumper',
     'tech fleece', 'nocta tech'
   ],
   't-shirts': [
@@ -42,7 +42,18 @@ const ACCESSORY_PRIORITY = [
   'hat', 'cap', 'balaclava', 'beanie', 'bag', 'backpack', 'wallet', 'belt', 'glasses', 'sunglasses'
 ];
 
-const CLOTHING_CATEGORY_ORDER = ['sets', 'shoes', 'jackets', 'shorts', 'hoodies', 't-shirts', 'pants'];
+export const PRODUCT_CATEGORIES = [
+  'shoes',
+  'hoodies',
+  't-shirts',
+  'pants',
+  'shorts',
+  'jackets',
+  'sets',
+  'accessories'
+];
+
+const CLOTHING_CATEGORY_ORDER = ['sets', 'shoes', 'jackets', 'hoodies', 'shorts', 'pants', 't-shirts'];
 
 const matchesKeyword = (name, keyword, category) => {
   if (keyword === 'track') {
@@ -96,32 +107,9 @@ const matchesCategory = (name, category) => {
  * @param {string} name - The product name.
  * @returns {string} - The detected category.
  */
-export const PRODUCT_CATEGORIES = [
-  'shoes',
-  'hoodies',
-  't-shirts',
-  'pants',
-  'shorts',
-  'jackets',
-  'sets',
-  'accessories'
-];
-
 export function detectCategory(name) {
   if (!name) return 't-shirts';
   const low = name.toLowerCase();
-
-  if (/\bshorts\b/.test(low) || (/\bshort\b/.test(low) && !low.includes('short sleeve'))) {
-    return 'shorts';
-  }
-
-  if (
-    low.includes('hoodie')
-    || low.includes('sweatshirt')
-    || (low.includes('sweater') && !low.includes('t-shirt'))
-  ) {
-    return 'hoodies';
-  }
 
   if ((low.includes('hoodie') && low.includes('pants')) || low.includes('tracksuit') || low.includes('track suit')) {
     return 'sets';
@@ -132,6 +120,14 @@ export function detectCategory(name) {
   }
 
   if (low.includes('nocta') && low.includes('tech') && !low.includes('hotstep')) {
+    return 'hoodies';
+  }
+
+  if (/\bshorts\b/.test(low) || low.includes('swim shorts')) {
+    return 'shorts';
+  }
+
+  if (/\b(hoodie|hoody|sweatshirt)\b/.test(low)) {
     return 'hoodies';
   }
 
