@@ -347,7 +347,7 @@ export default function Products() {
   const [selectedBatch, setSelectedBatch] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const [sortField, setSortField] = useState('random');
+  const [sortField, setSortField] = useState('price');
   const [sortOrder, setSortOrder] = useState('asc');
 
   // UI States
@@ -1056,23 +1056,16 @@ export default function Products() {
                 <div className={styles.filterRow}>
                   <select
                     className={styles.filterSelect}
-                    value={sortField}
-                    onChange={(e) => setSortField(e.target.value)}
+                    value={`${sortField}_${sortOrder}`}
+                    onChange={(e) => {
+                      const [field, order] = e.target.value.split('_');
+                      setSortField(field);
+                      setSortOrder(order);
+                    }}
                   >
-                    <option value="random">{t('products.sortRandom')}</option>
-                    <option value="price">{t('products.sortPrice')}</option>
-                    <option value="name">{t('products.sortName')}</option>
+                    <option value="price_asc">{t('products.sortPriceAsc')}</option>
+                    <option value="price_desc">{t('products.sortPriceDesc')}</option>
                   </select>
-                  {sortField !== 'random' && (
-                    <select
-                      className={styles.filterSelect}
-                      value={sortOrder}
-                      onChange={(e) => setSortOrder(e.target.value)}
-                    >
-                      <option value="asc">{t('products.sortAsc')}</option>
-                      <option value="desc">{t('products.sortDesc')}</option>
-                    </select>
-                  )}
                 </div>
               </div>
 
