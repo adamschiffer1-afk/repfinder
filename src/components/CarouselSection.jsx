@@ -22,12 +22,34 @@ export default function CarouselSection() {
   const { formatPrice } = useCurrency();
   const { t } = useLanguage();
 
+  const fisherYatesShuffle = (arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
   useEffect(() => {
-    // Wybierz 6 losowych produktów z lokalnej bazy danych
-    const shuffled = [...productsData].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 8);
-    setCarouselItems(selected);
-    setLoading(false);
+    // Fetch random products from API, fallback to local data
+    const loadItems = async () => {
+      try {
+        const res = await fetch('/api/products?page=1&limit=20&sort=random');
+        if (!res.ok) throw new Error('API error');
+        const data = await res.json();
+        if (data?.products?.length) {
+          setCarouselItems(fisherYatesShuffle(data.products).slice(0, 8));
+          setLoading(false);
+          return;
+        }
+      } catch (e) {
+        // fallback to local
+      }
+      setCarouselItems(fisherYatesShuffle(productsData).slice(0, 8));
+      setLoading(false);
+    };
+    loadItems();
   }, []);
 
   if (loading) return <p className="text-center text-light">{t('products.loading')}</p>;

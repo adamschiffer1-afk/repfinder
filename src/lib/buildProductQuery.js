@@ -13,7 +13,7 @@ export function buildSearchFilter(search) {
   const normalized = normalizeSearchText(search);
   if (!normalized) return null;
 
-  const tokens = normalized.split(' ').filter(token => token.length >= 2);
+  const tokens = normalized.split(' ').filter(token => token.length >= 2 || /^\d+$/.test(token));
   if (!tokens.length) {
     return { name: { $regex: escapeRegex(search.trim()), $options: 'i' } };
   }

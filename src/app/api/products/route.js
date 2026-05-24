@@ -35,6 +35,25 @@ export async function GET(req) {
     }
 
     const query = buildProductFilter(searchParams);
+
+    // Handle random sort using $sample aggregation for true randomness
+    if (sortParam === 'random' && page && !Number.isNaN(page)) {
+      const matchStage = Object.keys(query).length ? [{ $match: query }] : [];
+      const total = await Product.countDocuments(query);
+      const [products] = await Promise.all([
+        Product.aggregate([
+          ...matchStage,
+          { $sample: { size: limit } }
+        ])
+      ]);
+      return NextResponse.json({
+        products,
+        total,
+        page,
+        pages: Math.ceil(total / limit) || 1
+      });
+    }
+
     const sort = admin
       ? { isPinned: -1, pinnedOrder: 1, createdAt: -1 }
       : buildProductSort(sortParam, {

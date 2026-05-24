@@ -263,11 +263,7 @@ const shuffleArray = (items = []) => {
   return arr;
 };
 
-const buildApiSortParam = (sortField, sortOrder) => {
-  if (sortField === 'price') return sortOrder === 'asc' ? 'price_asc' : 'price_desc';
-  if (sortField === 'name') return sortOrder === 'asc' ? 'name_asc' : 'name_desc';
-  return 'newest';
-};
+const buildApiSortParam = () => 'random';
 
 const ProductCard = memo(function ProductCard({
   product,
@@ -347,8 +343,7 @@ export default function Products() {
   const [selectedBatch, setSelectedBatch] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const [sortField, setSortField] = useState('price');
-  const [sortOrder, setSortOrder] = useState('asc');
+
 
   // UI States
   const [page, setPage] = useState(1);
@@ -387,7 +382,7 @@ export default function Products() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearchQuery, selectedCategories, selectedBatch, priceRange.min, priceRange.max, sortField, sortOrder]);
+  }, [debouncedSearchQuery, selectedCategories, selectedBatch, priceRange.min, priceRange.max]);
 
   const categoriesParam = selectedCategories.join(',');
   const priceMin = priceRange.min;
@@ -399,7 +394,7 @@ export default function Products() {
       const params = new URLSearchParams({
         page: String(page),
         limit: String(limit),
-        sort: buildApiSortParam(sortField, sortOrder)
+        sort: buildApiSortParam()
       });
 
       if (debouncedSearchQuery) params.set('search', debouncedSearchQuery);
@@ -416,7 +411,7 @@ export default function Products() {
       const data = await res.json();
 
       if (data?.products) {
-        setProducts(sortField === 'random' ? shuffleArray(data.products) : data.products);
+        setProducts(shuffleArray(data.products));
         setTotalPages(data.pages || 1);
         setFilteredProductCount(data.total ?? 0);
         setError({ message: null, type: null });
@@ -443,8 +438,6 @@ export default function Products() {
     selectedBatch,
     priceMin,
     priceMax,
-    sortField,
-    sortOrder
   ]);
 
   useEffect(() => {
@@ -1051,23 +1044,7 @@ export default function Products() {
                 </div>
               </div>
 
-              <div className={styles.filterSection}>
-                <h4 className={styles.filterSectionTitle}>{t('products.sortBy')}</h4>
-                <div className={styles.filterRow}>
-                  <select
-                    className={styles.filterSelect}
-                    value={`${sortField}_${sortOrder}`}
-                    onChange={(e) => {
-                      const [field, order] = e.target.value.split('_');
-                      setSortField(field);
-                      setSortOrder(order);
-                    }}
-                  >
-                    <option value="price_asc">{t('products.sortPriceAsc')}</option>
-                    <option value="price_desc">{t('products.sortPriceDesc')}</option>
-                  </select>
-                </div>
-              </div>
+
 
               <div className={styles.filterSection}>
                 <h4 className={styles.filterSectionTitle}>{t('products.priceRange')}</h4>
