@@ -6,7 +6,8 @@ const CATEGORY_MAP = {
     'bracelet', 'necklace', 'earring', 'glasses', 'sunglasses', 'belt', 'socks',
     'case', 'jbl', 'airpods', 'pencil', 'watch', 'perfume', 'redbull',
     'batterypack', 'boxer', 'underwear', 'briefs', 'ring', 'jewelry', 'chain',
-    'pendant', 'pad', 'iphone', 'samsung', 'charging'
+    'pendant', 'pad', 'iphone', 'samsung', 'charging',
+    'rolex', 'submariner', 'omega', 'patek', 'hublot', 'cartier', 'casio', 'seiko', 'citizen', 'audemars', 'ap', 'g-shock', 'zegarek'
   ],
   shorts: [
     'shorts', 'swim shorts', 'mesh shorts', 'ee shorts'
