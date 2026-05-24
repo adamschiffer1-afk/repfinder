@@ -2,6 +2,7 @@
 
 import { memo, useCallback, useEffect, useState } from 'react';
 import styles from '@/styles/Admin.module.css';
+import { detectCategory, PRODUCT_CATEGORIES } from '@/utils/categoryHelper';
 
 const ProductTable = memo(function ProductTable({ products, onEdit, onDelete }) {
   return (
@@ -236,7 +237,14 @@ export default function ManageProducts() {
                 type="text" 
                 placeholder="Name" 
                 value={formData.name} 
-                onChange={(e) => setFormData({...formData, name: e.target.value})} 
+                onChange={(e) => {
+                  const name = e.target.value;
+                  setFormData({
+                    ...formData,
+                    name,
+                    category: detectCategory(name)
+                  });
+                }} 
                 required 
               />
               <input 
@@ -265,14 +273,11 @@ export default function ManageProducts() {
                 value={formData.category} 
                 onChange={(e) => setFormData({...formData, category: e.target.value})}
               >
-                <option value="shoes">Shoes</option>
-                <option value="hoodies">Hoodies</option>
-                <option value="t-shirts">T-shirts</option>
-                <option value="pants">Pants</option>
-                <option value="shorts">Shorts</option>
-                <option value="jackets">Jackets</option>
-                <option value="sets">Sets (Komplety)</option>
-                <option value="accessories">Accessories</option>
+                {PRODUCT_CATEGORIES.map(category => (
+                  <option key={category} value={category}>
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </option>
+                ))}
               </select>
               <select 
                 value={formData.batch} 

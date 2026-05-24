@@ -15,7 +15,7 @@ const CATEGORY_MAP = {
     'pants', 'jeans', 'joggers', 'trousers', 'denim', 'cargo', 'sweatpants', 'tracksuit bottoms'
   ],
   hoodies: [
-    'hoodie', 'sweater', 'zip', 'cardigan', 'fleece', 'crewneck', 'jumper',
+    'hoodie', 'sweater', 'sweatshirt', 'zip', 'cardigan', 'fleece', 'crewneck', 'jumper',
     'tech fleece', 'nocta tech'
   ],
   't-shirts': [
@@ -42,7 +42,7 @@ const ACCESSORY_PRIORITY = [
   'hat', 'cap', 'balaclava', 'beanie', 'bag', 'backpack', 'wallet', 'belt', 'glasses', 'sunglasses'
 ];
 
-const CLOTHING_CATEGORY_ORDER = ['sets', 'shoes', 'jackets', 'hoodies', 't-shirts', 'shorts', 'pants'];
+const CLOTHING_CATEGORY_ORDER = ['sets', 'shoes', 'jackets', 'shorts', 'hoodies', 't-shirts', 'pants'];
 
 const matchesKeyword = (name, keyword, category) => {
   if (keyword === 'track') {
@@ -96,9 +96,32 @@ const matchesCategory = (name, category) => {
  * @param {string} name - The product name.
  * @returns {string} - The detected category.
  */
+export const PRODUCT_CATEGORIES = [
+  'shoes',
+  'hoodies',
+  't-shirts',
+  'pants',
+  'shorts',
+  'jackets',
+  'sets',
+  'accessories'
+];
+
 export function detectCategory(name) {
   if (!name) return 't-shirts';
   const low = name.toLowerCase();
+
+  if (/\bshorts\b/.test(low) || (/\bshort\b/.test(low) && !low.includes('short sleeve'))) {
+    return 'shorts';
+  }
+
+  if (
+    low.includes('hoodie')
+    || low.includes('sweatshirt')
+    || (low.includes('sweater') && !low.includes('t-shirt'))
+  ) {
+    return 'hoodies';
+  }
 
   if ((low.includes('hoodie') && low.includes('pants')) || low.includes('tracksuit') || low.includes('track suit')) {
     return 'sets';
@@ -139,5 +162,5 @@ export function detectCategory(name) {
 
 // For use in CommonJS environments (scrapers)
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { detectCategory, CATEGORY_MAP };
+  module.exports = { detectCategory, CATEGORY_MAP, PRODUCT_CATEGORIES };
 }

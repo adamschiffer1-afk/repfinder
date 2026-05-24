@@ -249,14 +249,15 @@ export async function GET(request, { params }) {
 
         if (isDePackage) {
             data = await fetchFrom17TrackOfficial(trimmedCode, 190416); // 190416 = HSD Express
-            if (!data) data = await fetchFromCainiao(trimmedCode);
-            if (!data) data = await fastIpServersRace(trimmedCode);
         } else {
-            // Najpierw szybki wyścig po serwerach IP!
-            data = await fastIpServersRace(trimmedCode);
-            if (!data) data = await fetchFromCainiao(trimmedCode);
-            if (!data) data = await fetchFromParcelsApp(trimmedCode);
+            // Najpierw 17track z autodetekcją (0), najpewniejsze i najszybsze źródło
+            data = await fetchFrom17TrackOfficial(trimmedCode, 0);
         }
+
+        // Fallbacki jeśli 17track nic nie znajdzie lub rzuci błędem
+        if (!data) data = await fetchFromCainiao(trimmedCode);
+        if (!data) data = await fastIpServersRace(trimmedCode);
+        if (!data) data = await fetchFromParcelsApp(trimmedCode);
 
         if (data && data.trackingInfo.length > 0) {
             const finalPayload = {

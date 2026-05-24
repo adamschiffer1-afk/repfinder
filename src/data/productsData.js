@@ -6718,7 +6718,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-44ca00000193b86aedf10a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6727,7 +6727,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-197000000193b86aefd50a232357_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6736,7 +6736,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4efd00000193b86af1f40a210298_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6745,7 +6745,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-413400000193b86af3f50aa08290_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6754,7 +6754,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-601600000193b86af6080aa0834c_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6763,7 +6763,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-44cc00000193b86af8480a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6772,7 +6772,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-2ce100000193b86afa970a8133b5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6781,7 +6781,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-7a1700000193b86afcee0a8115b5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6790,7 +6790,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-4f0100000193b86aff020a210298_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6799,7 +6799,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-327800000193b86b011f0a239383_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6808,7 +6808,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-413a00000193b86b03150aa08290_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6817,7 +6817,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-197400000193b86b05500a232357_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6826,7 +6826,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-44d000000193b86b07750a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6835,7 +6835,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-44d200000193b86b09860a22d234_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6844,7 +6844,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-413c00000193b86b0b4a0aa08290_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6853,7 +6853,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-56b200000193b86b0d180a210559_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6862,7 +6862,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-413e00000193b86b0f7a0aa08290_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6871,7 +6871,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/open1685879877-252808396-601e00000193b86b11d20aa0834c_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6880,7 +6880,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-241100000193b87922780a210139_960_960.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6889,7 +6889,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1f6300000193b87a33600a23111a_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6898,7 +6898,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-239600000193b87a4e790a231316_960_1003.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6907,7 +6907,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-20ff00000193b87a647d0a2395d6_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6916,7 +6916,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-221700000193b87a868a0a811411_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6925,7 +6925,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1f3c00000193b87a9cfb0a210256_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6934,7 +6934,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-221d00000193b87ab21c0a811411_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6943,7 +6943,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1c9600000193b87acf580a2102c5_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6952,7 +6952,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1b3f00000193b87ae8720a239646_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6961,7 +6961,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1bd800000193b87b031d0a20e273_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6970,7 +6970,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1b3b00000193b87b1b010a2301b4_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6979,7 +6979,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1f5100000193b87b33720a2396f4_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6988,7 +6988,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-211500000193b87b4c750a23057e_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -6997,7 +6997,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1ee200000193b87b779f0a23037f_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -7006,7 +7006,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1f9700000193b87b62fa0a8133cc_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -7015,7 +7015,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1b8a00000193b87b8c940a20e672_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -7024,7 +7024,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-1e2f00000193b87ba7350a23047e_960_1280.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -7033,7 +7033,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-223a00000193b87bbeda0a811411_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -7042,7 +7042,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-219f00000193b87bd42a0a239846_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -7051,7 +7051,7 @@ export const productsData = [
     "name": "Off-White Sweatshirt",
     "price": 27.3,
     "image": "https://si.geilicdn.com/pcitem901898590714-210200000193b87bf26a0a2303ee_800_800.jpg?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508332148&affcode=xfrostyy"
   },
@@ -25384,7 +25384,7 @@ export const productsData = [
     "name": "Stone Island Sweatshirt",
     "price": 37.8,
     "image": "https://si.geilicdn.com/pcitem901862111834-2a3c000001927aa0bee20a2315ef-unadjust_904_902.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507235237&affcode=xfrostyy"
   },
@@ -25393,7 +25393,7 @@ export const productsData = [
     "name": "Stone Island Sweatshirt",
     "price": 37.8,
     "image": "https://si.geilicdn.com/pcitem901862111834-2bc2000001927aa0bd9a0a210256-unadjust_908_910.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507235237&affcode=xfrostyy"
   },
@@ -25402,7 +25402,7 @@ export const productsData = [
     "name": "Stone Island Sweatshirt",
     "price": 37.8,
     "image": "https://si.geilicdn.com/pcitem901862111834-2b75000001927aa0ec040a20e284-unadjust_906_908.png?w=400&h=400",
-    "category": "t-shirts",
+    "category": "hoodies",
     "batch": "best",
     "link": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507235237&affcode=xfrostyy"
   },

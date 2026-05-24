@@ -519,6 +519,33 @@
   gap: 10px;
 }
 
+.filterRow {
+  display: flex;
+  gap: 10px;
+}
+
+.filterSelect,
+.filterInput {
+  flex: 1;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+
+.filterSelect:focus,
+.filterInput:focus {
+  outline: none;
+  border-color: rgba(167, 139, 250, 0.45);
+}
+
+.filterInput::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
 /* Filter Sections */
 .filterSectionTitle {
   font-size: 0.7rem;

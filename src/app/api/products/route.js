@@ -2,46 +2,64 @@ import dbConnect from "@/lib/mongodb";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import {
+  buildProductFilter,
+  buildProductSort,
+  buildSearchFilter,
+  hasActiveStorefrontFilters
+} from "@/lib/buildProductQuery";
 
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get('page'));
-    const limit = parseInt(searchParams.get('limit')) || 50;
+    const suggest = searchParams.get('suggest');
+    const page = parseInt(searchParams.get('page'), 10);
+    const limit = parseInt(searchParams.get('limit'), 10) || 24;
     const admin = searchParams.get('admin') === 'true';
-    const search = searchParams.get('search');
-    const skip = (page - 1) * limit;
+    const search = searchParams.get('search')?.trim() || '';
+    const sortParam = searchParams.get('sort') || 'newest';
 
     await dbConnect();
-    
-    let query = {};
-    if (search) {
-      query = { name: { $regex: search, $options: 'i' } };
+
+    if (suggest === 'names') {
+      const match = buildSearchFilter(search) || {};
+      const pipeline = [
+        ...(Object.keys(match).length ? [{ $match: match }] : []),
+        { $group: { _id: '$name', count: { $sum: 1 } } },
+        { $sort: { count: -1, _id: 1 } },
+        { $limit: 15 },
+        { $project: { _id: 0, name: '$_id', count: 1 } }
+      ];
+      const names = await Product.aggregate(pipeline);
+      return NextResponse.json(names);
     }
 
-    // Pinowane: kolejność wg pinnedOrder (1,2,3...), reszta wg daty
-    let sort = { isPinned: -1, pinnedOrder: 1, createdAt: -1 };
+    const query = buildProductFilter(searchParams);
+    const sort = admin
+      ? { isPinned: -1, pinnedOrder: 1, createdAt: -1 }
+      : buildProductSort(sortParam, {
+          pinnedFirst: !hasActiveStorefrontFilters(searchParams)
+        });
 
-    if (page) {
-      const products = await Product.find(query)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit);
-      
-      const total = await Product.countDocuments(query);
-      
+    if (page && !Number.isNaN(page)) {
+      const skip = (page - 1) * limit;
+      const [products, total] = await Promise.all([
+        Product.find(query).sort(sort).skip(skip).limit(limit).lean(),
+        Product.countDocuments(query)
+      ]);
+
       return NextResponse.json({
         products,
         total,
         page,
-        pages: Math.ceil(total / limit)
+        pages: Math.ceil(total / limit) || 1
       });
     }
 
-    // Default: return all products (backward compatibility)
-    const products = await Product.find(query).sort(sort);
+    const products = await Product.find(query).sort(sort).lean();
     return NextResponse.json(products);
   } catch (error) {
+    console.error('Products API error:', error);
     return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
   }
 }

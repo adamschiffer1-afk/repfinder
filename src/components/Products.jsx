@@ -4,7 +4,6 @@ import { memo, useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
-import { PINNED_PRODUCT_IDS as pinnedIds } from '@/config/pinnedProducts';
 import { useAuth } from '@/context/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -255,6 +254,21 @@ const productMatchesSearch = (
   return matchesClauses || fuzzyMatch;
 };
 
+const shuffleArray = (items = []) => {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
+const buildApiSortParam = (sortField, sortOrder) => {
+  if (sortField === 'price') return sortOrder === 'asc' ? 'price_asc' : 'price_desc';
+  if (sortField === 'name') return sortOrder === 'asc' ? 'name_asc' : 'name_desc';
+  return 'newest';
+};
+
 const ProductCard = memo(function ProductCard({
   product,
   index,
@@ -321,15 +335,14 @@ export default function Products() {
   const { user, fetchWithAuth } = useAuth();
   const { formatPrice } = useCurrency();
 
-  const [allProducts, setAllProducts] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState(categoriesData);
-  const [seasons, setSeasons] = useState([]);
+  const [suggestionNames, setSuggestionNames] = useState([]);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
 
   // Filter States
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedSeason, setSelectedSeason] = useState('all');
   const [selectedBatch, setSelectedBatch] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
@@ -350,100 +363,111 @@ export default function Products() {
   const [preferredAgentLogo, setPreferredAgentLogo] = useState('/images/kako.png');
   const [quickCopiedId, setQuickCopiedId] = useState(null);
   const [recentSearches, setRecentSearches] = useState([]);
-  const [filteredProductCount, setFilteredProductCount] = useState(null);
-  const searchClauses = useMemo(() => getSearchClauses(searchQuery), [searchQuery]);
-  const searchFuzzyQueryTokens = useMemo(() => getFuzzyQueryTokens(searchQuery), [searchQuery]);
-  const indexedProducts = useMemo(() => allProducts.map(createProductSearchIndex), [allProducts]);
-  const productNameSuggestions = useMemo(() => {
-    const nameCounts = new Map();
-
-    allProducts.forEach(product => {
-      if (!product?.name) return;
-      nameCounts.set(product.name, (nameCounts.get(product.name) || 0) + 1);
-    });
-
-    return [...nameCounts.entries()]
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-      .map(([name, count]) => ({
-        type: 'product',
-        label: name,
-        meta: `${count} items`,
-        value: name,
-        count,
-        ...createSearchIndex(name)
-      }));
-  }, [allProducts]);
-  const searchableProductNames = useMemo(() => (
-    allProducts.map(product => normalizeSearchText(product?.name)).join(' ')
-  ), [allProducts]);
-  const catalogBrands = useMemo(() => {
-    const brands = new Set(SEARCH_BRANDS);
-
-    allProducts.forEach((product) => {
-      const brandToken = product?.name?.trim().split(/\s+/)[0];
-      if (brandToken && brandToken.length > 2) {
-        brands.add(brandToken);
-      }
-    });
-
-    return [...brands].sort((a, b) => a.localeCompare(b));
-  }, [allProducts]);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-        const res = await fetch('/api/products');
-        const data = await res.json();
-        
-        // Ensure data is an array
-        let arr = Array.isArray(data) ? [...data] : [];
-        
-        // Fallback to local data if API fails or returns no products
-        if (arr.length === 0) {
-          console.warn("No products from API, falling back to local data");
-          arr = [...productsData];
-        }
-
-        // Separate pinned and other products
-        const pinned = [];
-        const others = [];
-        const pinnedMap = {};
-
-        arr.forEach(p => {
-          const match = pinnedIds.find(id => p.link && p.link.includes(id));
-          if (match) {
-            pinnedMap[match] = p;
-          } else {
-            others.push(p);
-          }
-        });
-
-        // Add pinned products in the exact order of pinnedIds
-        pinnedIds.forEach(id => {
-          if (pinnedMap[id]) {
-            pinned.push(pinnedMap[id]);
-          }
-        });
-
-        // Shuffle others on client side
-        for (let i = others.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [others[i], others[j]] = [others[j], others[i]];
-        }
-        
-        setAllProducts([...pinned, ...others]);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-        setAllProducts([...productsData]); // Fallback on catch
-        setError({ message: "Failed to load products from server, using local data", type: "warning" });
-      } finally {
-        setLoading(false);
-      }
-    }, [productsData]);
+  const [filteredProductCount, setFilteredProductCount] = useState(0);
+  const productNameSuggestions = useMemo(() => (
+    suggestionNames.map(({ name, count }) => ({
+      type: 'product',
+      label: name,
+      meta: `${count} items`,
+      value: name,
+      count,
+      ...createSearchIndex(name)
+    }))
+  ), [suggestionNames]);
+  const catalogBrands = useMemo(
+    () => [...SEARCH_BRANDS].sort((a, b) => a.localeCompare(b)),
+    []
+  );
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const timeoutId = setTimeout(() => setDebouncedSearchQuery(searchQuery.trim()), 300);
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchQuery, selectedCategories, selectedBatch, priceRange.min, priceRange.max, sortField, sortOrder]);
+
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(limit),
+        sort: buildApiSortParam(sortField, sortOrder)
+      });
+
+      if (debouncedSearchQuery) params.set('search', debouncedSearchQuery);
+      if (selectedCategories.length === 1) params.set('category', selectedCategories[0]);
+      else if (selectedCategories.length > 1) params.set('categories', selectedCategories.join(','));
+      if (selectedBatch && selectedBatch !== 'random') params.set('batch', selectedBatch);
+      if (priceRange.min) params.set('minPrice', priceRange.min);
+      if (priceRange.max) params.set('maxPrice', priceRange.max);
+
+      const res = await fetch(`/api/products?${params.toString()}`);
+      const data = await res.json();
+
+      if (data?.products) {
+        setProducts(sortField === 'random' ? shuffleArray(data.products) : data.products);
+        setTotalPages(data.pages || 1);
+        setFilteredProductCount(data.total ?? 0);
+        setError({ message: null, type: null });
+        return;
+      }
+
+      throw new Error(data?.error || 'Invalid products response');
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+      const start = (page - 1) * limit;
+      const fallback = [...productsData];
+      setProducts(fallback.slice(start, start + limit));
+      setFilteredProductCount(fallback.length);
+      setTotalPages(Math.ceil(fallback.length / limit) || 1);
+      setError({ message: 'Failed to load products from server, using local data', type: 'warning' });
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    page,
+    limit,
+    debouncedSearchQuery,
+    selectedCategories,
+    selectedBatch,
+    priceRange,
+    sortField,
+    sortOrder
+  ]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  useEffect(() => {
+    if (!isSearchFocused) return undefined;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      try {
+        const query = searchQuery.trim();
+        const url = query
+          ? `/api/products?suggest=names&search=${encodeURIComponent(query)}`
+          : '/api/products?suggest=names';
+        const res = await fetch(url, { signal: controller.signal });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (Array.isArray(data)) setSuggestionNames(data);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.warn('Could not load search suggestions:', err);
+        }
+      }
+    }, 200);
+
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [searchQuery, isSearchFocused]);
 
   useEffect(() => {
     try {
@@ -516,76 +540,6 @@ export default function Products() {
     setTimeout(() => setQuickCopiedId(null), 2000);
   }, [preferredAgent, trackStat]);
 
-  const filterAndSortData = useCallback(() => {
-    let filtered = [...indexedProducts];
-
-    // Filter by Category
-    if (selectedCategories && selectedCategories.length > 0) {
-      filtered = filtered.filter(({ product: p }) => {
-        if (!p || !p.category) return false;
-        return selectedCategories.includes(p.category);
-      });
-    }
-    
-    // Search Query (immediate — deferred value lags behind dropdown selections)
-    if (searchQuery.trim()) {
-      filtered = filtered.filter(item => (
-        productMatchesSearch(item, searchQuery, searchClauses, searchFuzzyQueryTokens)
-      ));
-    }
-
-    // Filter by Batch
-    if (selectedBatch && selectedBatch !== 'random') {
-      filtered = filtered.filter(({ product: p }) => p.batch === selectedBatch);
-    }
-
-    // (search already applied above)
-
-    // Price Range
-    if (priceRange.min) filtered = filtered.filter(({ product: p }) => p.price >= parseFloat(priceRange.min));
-    if (priceRange.max) filtered = filtered.filter(({ product: p }) => p.price <= parseFloat(priceRange.max));
-
-    // Sorting
-    filtered.sort((a, b) => {
-      if (sortField === 'price') {
-        return sortOrder === 'asc' ? a.product.price - b.product.price : b.product.price - a.product.price;
-      }
-      if (sortField === 'name') {
-        return sortOrder === 'asc' 
-          ? a.product.name.localeCompare(b.product.name)
-          : b.product.name.localeCompare(a.product.name);
-      }
-      return 0;
-    });
-
-    // Pagination
-    const total = Math.ceil(filtered.length / limit);
-    setTotalPages(total || 1);
-    setFilteredProductCount(filtered.length);
-    
-    const startIndex = (page - 1) * limit;
-    const paginated = filtered.slice(startIndex, startIndex + limit).map(item => item.product);
-
-    setProducts(paginated);
-  }, [
-    indexedProducts,
-    selectedCategories,
-    selectedBatch,
-    searchQuery,
-    searchClauses,
-    searchFuzzyQueryTokens,
-    priceRange,
-    sortField,
-    sortOrder,
-    page,
-    limit
-  ]);
-
-
-  useEffect(() => {
-    filterAndSortData();
-  }, [filterAndSortData]);
-
   const saveRecentSearch = useCallback((value) => {
     const query = value.trim();
     if (query.length < 2) return;
@@ -632,7 +586,7 @@ export default function Products() {
 
     const brandSuggestions = catalogBrands
       .filter(brand => {
-        if (!query) return searchableProductNames.includes(normalizeSearchText(brand));
+        if (!query) return true;
         const normalizedBrand = normalizeSearchText(brand);
         const compactBrand = compactSearchText(brand);
         return (
@@ -664,7 +618,6 @@ export default function Products() {
     categories,
     productNameSuggestions,
     recentSearchSuggestions,
-    searchableProductNames,
     searchQuery,
     t
   ]);
@@ -776,7 +729,7 @@ export default function Products() {
       console.error('Vote error:', err);
       setError({ message: 'Błąd głosowania', type: 'error' });
       // Revert state (simplified: just re-fetch or could implement proper revert)
-      fetchData();
+      fetchProducts();
     }
   };
 
@@ -816,7 +769,7 @@ export default function Products() {
     } catch (err) {
       console.error('Wishlist error:', err);
       setError({ message: 'Błąd ulubionych', type: 'error' });
-      fetchData();
+      fetchProducts();
     }
   };
 
@@ -871,7 +824,6 @@ export default function Products() {
 
   const handleResetFilters = () => {
     setSelectedCategories([]);
-    setSelectedSeason('all');
     setSelectedBatch('');
     setSearchQuery('');
     setPriceRange({ min: '', max: '' });
@@ -1002,7 +954,7 @@ export default function Products() {
           </button>
 
           <div className={styles.productCountBadge}>
-            <span className={styles.countNumber}>{filteredProductCount ?? allProducts.length}</span>
+            <span className={styles.countNumber}>{filteredProductCount}</span>
             <span className={styles.countText}>{t('products.productsCount')}</span>
           </div>
         </div>
@@ -1077,7 +1029,7 @@ export default function Products() {
                     className={`${styles.categoryListItem} ${selectedCategories.length === 0 ? styles.active : ''}`}
                     onClick={() => handleCategoryToggle('all')}
                   >
-                    All
+                    {t('products.allCategories')}
                   </button>
                   {categories.map((category, index) => (
                     <button
@@ -1091,7 +1043,64 @@ export default function Products() {
                 </div>
               </div>
 
+              <div className={styles.filterSection}>
+                <h4 className={styles.filterSectionTitle}>{t('products.sortBy')}</h4>
+                <div className={styles.filterRow}>
+                  <select
+                    className={styles.filterSelect}
+                    value={sortField}
+                    onChange={(e) => setSortField(e.target.value)}
+                  >
+                    <option value="random">{t('products.sortRandom')}</option>
+                    <option value="price">{t('products.sortPrice')}</option>
+                    <option value="name">{t('products.sortName')}</option>
+                  </select>
+                  {sortField !== 'random' && (
+                    <select
+                      className={styles.filterSelect}
+                      value={sortOrder}
+                      onChange={(e) => setSortOrder(e.target.value)}
+                    >
+                      <option value="asc">{t('products.sortAsc')}</option>
+                      <option value="desc">{t('products.sortDesc')}</option>
+                    </select>
+                  )}
+                </div>
+              </div>
 
+              <div className={styles.filterSection}>
+                <h4 className={styles.filterSectionTitle}>{t('products.priceRange')}</h4>
+                <div className={styles.filterRow}>
+                  <input
+                    type="number"
+                    className={styles.filterInput}
+                    placeholder={t('products.priceMin')}
+                    value={priceRange.min}
+                    onChange={(e) => setPriceRange(current => ({ ...current, min: e.target.value }))}
+                  />
+                  <input
+                    type="number"
+                    className={styles.filterInput}
+                    placeholder={t('products.priceMax')}
+                    value={priceRange.max}
+                    onChange={(e) => setPriceRange(current => ({ ...current, max: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.filterSection}>
+                <h4 className={styles.filterSectionTitle}>{t('products.tagsQuality')}</h4>
+                <select
+                  className={styles.filterSelect}
+                  value={selectedBatch}
+                  onChange={(e) => setSelectedBatch(e.target.value)}
+                >
+                  <option value="">{t('products.allTags')}</option>
+                  <option value="best">{t('products.bestBatch')}</option>
+                  <option value="budget">{t('products.budgetBatch')}</option>
+                  <option value="random">{t('products.randomBatch')}</option>
+                </select>
+              </div>
             </div>
 
             <div className={styles.modalFooter}>
