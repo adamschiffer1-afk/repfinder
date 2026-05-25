@@ -10,12 +10,28 @@ export default function HeroSection() {
   const { t, language } = useLanguage();
   const [query, setQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
+  const [animationKey, setAnimationKey] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    // If it is the first visit, the setup modal is open.
+    // We listen to the 'storage' event which is dispatched when the setup modal is saved.
+    const hasSeen = localStorage.getItem('hasSeenSettings');
+    const handleStorageChange = () => {
+      setAnimationKey(prev => prev + 1);
+    };
+
+    if (!hasSeen) {
+      window.addEventListener('storage', handleStorageChange);
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   return (
@@ -26,7 +42,7 @@ export default function HeroSection() {
       <div className={styles.gridOverlay} />
       <div className={styles.bottomFade} />
 
-      <div className={styles.contentContainer}>
+      <div className={styles.contentContainer} key={animationKey}>
         <div className={`${styles.badge} ${styles.animateEntry} ${styles.delay1}`}>
           <span className={styles.badgeText}>{t('hero.badge')}</span>
           <div className={styles.badgeDot} />
