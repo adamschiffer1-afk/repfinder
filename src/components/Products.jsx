@@ -411,7 +411,10 @@ export default function Products() {
       const data = await res.json();
 
       if (data?.products) {
-        setProducts(shuffleArray(data.products));
+        const pinned = data.products.filter(p => p.isPinned);
+        const nonPinned = data.products.filter(p => !p.isPinned);
+        const shuffledNonPinned = shuffleArray(nonPinned);
+        setProducts([...pinned, ...shuffledNonPinned]);
         setTotalPages(data.pages || 1);
         setFilteredProductCount(data.total ?? 0);
         setError({ message: null, type: null });

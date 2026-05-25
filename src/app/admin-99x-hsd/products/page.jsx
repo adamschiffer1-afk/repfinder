@@ -24,7 +24,7 @@ const ProductTable = memo(function ProductTable({ products, onEdit, onDelete }) 
             <td>{product.name}</td>
             <td>${product.price}</td>
             <td>{product.category}</td>
-            <td>{product.isPinned ? 'Yes' : 'No'}</td>
+            <td>{product.isPinned ? `Yes ${product.pinnedOrder !== null && product.pinnedOrder !== undefined ? `(#${product.pinnedOrder})` : ''}` : 'No'}</td>
             <td className={styles.actions}>
               <button onClick={() => onEdit(product)}>Edit</button>
               <button onClick={() => onDelete(product._id)}>Delete</button>
@@ -51,7 +51,9 @@ export default function ManageProducts() {
     image: '',
     category: 'shoes',
     batch: 'best',
-    link: ''
+    link: '',
+    isPinned: false,
+    pinnedOrder: ''
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -136,17 +138,23 @@ export default function ManageProducts() {
     const method = editingProduct ? 'PUT' : 'POST';
     const url = editingProduct ? `/api/products/${editingProduct._id}` : '/api/products';
 
+    const payload = {
+      ...formData,
+      isPinned: formData.isPinned,
+      pinnedOrder: formData.isPinned && formData.pinnedOrder !== '' ? parseInt(formData.pinnedOrder, 10) : null
+    };
+
     const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(payload)
     });
 
     if (res.ok) {
       fetchProducts(currentPage);
       setShowModal(false);
       setEditingProduct(null);
-      setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '' });
+      setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '' });
     }
   };
 
@@ -165,7 +173,9 @@ export default function ManageProducts() {
       image: product.image,
       category: product.category,
       batch: product.batch,
-      link: product.link
+      link: product.link,
+      isPinned: product.isPinned || false,
+      pinnedOrder: product.pinnedOrder !== null && product.pinnedOrder !== undefined ? String(product.pinnedOrder) : ''
     });
     setShowModal(true);
   }, []);
@@ -193,7 +203,11 @@ export default function ManageProducts() {
           <button className={styles.scraperBtn} onClick={() => setShowScraperModal(true)}>
             🚀 Add via Scraper
           </button>
-          <button className={styles.navLink} onClick={() => setShowModal(true)}>
+          <button className={styles.navLink} onClick={() => {
+            setEditingProduct(null);
+            setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '' });
+            setShowModal(true);
+          }}>
             + Add Manually
           </button>
         </div>
@@ -287,9 +301,28 @@ export default function ManageProducts() {
                 <option value="budget">Budget</option>
                 <option value="random">Random</option>
               </select>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 0' }}>
+                <input 
+                  type="checkbox" 
+                  id="isPinned"
+                  checked={formData.isPinned} 
+                  onChange={(e) => setFormData({...formData, isPinned: e.target.checked})}
+                  style={{ width: 'auto', cursor: 'pointer' }}
+                />
+                <label htmlFor="isPinned" style={{ color: 'white', cursor: 'pointer', userSelect: 'none' }}>Pinned Product</label>
+              </div>
+              {formData.isPinned && (
+                <input 
+                  type="number" 
+                  placeholder="Pinned Order (e.g. 1, 2, 3...)" 
+                  value={formData.pinnedOrder} 
+                  onChange={(e) => setFormData({...formData, pinnedOrder: e.target.value})}
+                  style={{ marginTop: '0' }}
+                />
+              )}
               <div className={styles.modalActions}>
                 <button type="submit">Save</button>
-                <button type="button" onClick={() => {setShowModal(false); setEditingProduct(null);}}>Cancel</button>
+                <button type="button" onClick={() => {setShowModal(false); setEditingProduct(null); setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '' });}}>Cancel</button>
               </div>
             </form>
           </div>

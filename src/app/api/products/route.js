@@ -38,20 +38,70 @@ export async function GET(req) {
 
     // Handle random sort using $sample aggregation for true randomness
     if (sortParam === 'random' && page && !Number.isNaN(page)) {
-      const matchStage = Object.keys(query).length ? [{ $match: query }] : [];
-      const total = await Product.countDocuments(query);
-      const [products] = await Promise.all([
-        Product.aggregate([
-          ...matchStage,
-          { $sample: { size: limit } }
-        ])
-      ]);
-      return NextResponse.json({
-        products,
-        total,
-        page,
-        pages: Math.ceil(total / limit) || 1
-      });
+      const showPinnedFirst = !hasActiveStorefrontFilters(searchParams);
+      
+      if (showPinnedFirst) {
+        if (page === 1) {
+          // Fetch pinned products first, ordered by pinnedOrder and createdAt
+          const pinnedProducts = await Product.find({ ...query, isPinned: true }).sort({ pinnedOrder: 1, createdAt: -1 }).lean();
+          
+          const nonPinnedQuery = { ...query, isPinned: { $ne: true } };
+          const totalNonPinned = await Product.countDocuments(nonPinnedQuery);
+          const total = pinnedProducts.length + totalNonPinned;
+          
+          const sampleSize = Math.max(0, limit - pinnedProducts.length);
+          let randomProducts = [];
+          if (sampleSize > 0) {
+            randomProducts = await Product.aggregate([
+              { $match: nonPinnedQuery },
+              { $sample: { size: sampleSize } }
+            ]);
+          }
+          
+          const products = [...pinnedProducts, ...randomProducts];
+          
+          return NextResponse.json({
+            products,
+            total,
+            page,
+            pages: Math.ceil(total / limit) || 1
+          });
+        } else {
+          // For subsequent pages under pinnedFirst mode, only fetch non-pinned products to avoid duplication
+          const nonPinnedQuery = { ...query, isPinned: { $ne: true } };
+          const totalNonPinned = await Product.countDocuments(nonPinnedQuery);
+          const pinnedCount = await Product.countDocuments({ ...query, isPinned: true });
+          const total = pinnedCount + totalNonPinned;
+          
+          const products = await Product.aggregate([
+            { $match: nonPinnedQuery },
+            { $sample: { size: limit } }
+          ]);
+          
+          return NextResponse.json({
+            products,
+            total,
+            page,
+            pages: Math.ceil(total / limit) || 1
+          });
+        }
+      } else {
+        // Standard random sampling for all matching products
+        const matchStage = Object.keys(query).length ? [{ $match: query }] : [];
+        const total = await Product.countDocuments(query);
+        const [products] = await Promise.all([
+          Product.aggregate([
+            ...matchStage,
+            { $sample: { size: limit } }
+          ])
+        ]);
+        return NextResponse.json({
+          products,
+          total,
+          page,
+          pages: Math.ceil(total / limit) || 1
+        });
+      }
     }
 
     const sort = admin
