@@ -360,6 +360,7 @@ export default function Products() {
   const [quickCopiedId, setQuickCopiedId] = useState(null);
   const [recentSearches, setRecentSearches] = useState([]);
   const [filteredProductCount, setFilteredProductCount] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const productNameSuggestions = useMemo(() => (
     suggestionNames.map(({ name, count }) => ({
       type: 'product',
@@ -432,6 +433,7 @@ export default function Products() {
     } finally {
       setLoading(false);
       setIsInitialLoad(false);
+      setIsTransitioning(false);
     }
   }, [
     page,
@@ -839,8 +841,16 @@ export default function Products() {
   };
 
   const handlePageChange = (newPage) => {
-    setPage(newPage);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setPage(newPage);
+      const section = document.getElementById('products');
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 250);
   };
 
   const openDescriptionModal = (product) => setSelectedProduct(product);
@@ -966,7 +976,7 @@ export default function Products() {
       </div>
 
       {/* Products Grid */}
-      <div className={styles.productsGrid}>
+      <div className={`${styles.productsGrid} ${isTransitioning ? styles.productsGridTransitioning : ''}`}>
         {loading ? (
           [...Array(8)].map((_, i) => (
             <div key={i} className={styles.skeletonCard} />
@@ -1002,7 +1012,9 @@ export default function Products() {
           >
             {t('products.prev')}
           </button>
-          <span style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>{page} / {totalPages}</span>
+          <span className={styles.pageCounter}>
+            {t('products.page')} <strong>{page}</strong> {t('products.of')} <strong>{totalPages}</strong>
+          </span>
           <button
             className={styles.pageBtn}
             disabled={page === totalPages}
