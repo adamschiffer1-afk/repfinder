@@ -18,7 +18,7 @@ function isBot(ua) {
     'applebot', 'whatsapp', 'flipboard', 'tumblr', 'bitlybot', 'gsa-crawler', 'skypeuripreview',
     'nuzzel', 'discordbot', 'google page speed', 'qwantify', 'pinterestbot', 'bitrix link preview',
     'xing-content-collector', 'chrome-lighthouse', 'lighthouse', 'telegrambot', 'screaming frog',
-    'seo', 'semrush', 'ahrefs', 'moz', 'mj12bot', 'dotbot', 'uipresence', 'coccocbot'
+    'seo', 'semrush', 'ahrefs', 'mj12bot', 'dotbot', 'uipresence', 'coccocbot'
   ];
 
   if (botKeywords.some(keyword => lowerUa.includes(keyword))) {
@@ -34,7 +34,7 @@ function isBot(ua) {
 }
 
 // Global ex-post bot regex filter for database queries (excluding error logs so we always get errors if any)
-const botExcludeRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|moz|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
+const botExcludeRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
 const cleanFilter = {
   $or: [
     { type: 'error_log' }, // Always keep errors

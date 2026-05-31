@@ -33,7 +33,7 @@ function getBucketInterval(range) {
 }
 
 // Global ex-post bot regex filter (excludes error logs so we always get all error logs)
-const botExcludeRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|moz|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
+const botExcludeRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
 const cleanFilter = {
   $or: [
     { type: 'error_log' }, // Always keep errors
