@@ -36,7 +36,6 @@ export default async function AdminDashboard() {
         { $match: { type: 'product_click', productId: { $ne: null, $ne: "" } } },
         { $group: { _id: "$productId", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
-        { $limit: 10 },
         {
           $addFields: {
             convertedId: {
@@ -58,7 +57,8 @@ export default async function AdminDashboard() {
             as: "productInfo"
           }
         },
-        { $unwind: { path: "$productInfo", preserveNullAndEmptyArrays: true } }
+        { $unwind: { path: "$productInfo", preserveNullAndEmptyArrays: false } },
+        { $limit: 10 }
       ]),
       Stat.aggregate([
         { $match: { type: 'product_click', agent: { $ne: null } } },

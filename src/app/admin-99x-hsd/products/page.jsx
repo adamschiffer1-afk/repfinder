@@ -11,7 +11,8 @@ const ProductTable = memo(function ProductTable({
   selectedIds, 
   onSelectSingle, 
   onSelectAll, 
-  isAllSelected 
+  isAllSelected,
+  onUpdatePinnedOrder
 }) {
   if (products.length === 0) {
     return (
@@ -78,9 +79,17 @@ const ProductTable = memo(function ProductTable({
               <td className={styles.clicksCell}>📊 {product.clicks || 0}</td>
               <td>
                 {product.isPinned ? (
-                  <span className={styles.pinnedBadge}>
-                    📌 Tak {product.pinnedOrder !== null && product.pinnedOrder !== undefined ? `(#${product.pinnedOrder})` : ''}
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span className={styles.pinnedBadge} style={{ padding: '4px 8px' }}>📌</span>
+                    <input 
+                      type="number" 
+                      defaultValue={product.pinnedOrder !== 999999 ? product.pinnedOrder : ''}
+                      onBlur={(e) => onUpdatePinnedOrder(product._id, e.target.value)}
+                      style={{ width: '50px', padding: '2px 4px', fontSize: '12px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', borderRadius: '4px' }}
+                      title="Kolejność (niższy = wyżej)"
+                      placeholder="Auto"
+                    />
+                  </div>
                 ) : (
                   <span className={styles.unpinnedBadge}>Nie</span>
                 )}
@@ -210,6 +219,26 @@ export default function ManageProducts() {
     fetchProducts(1, debouncedSearchTerm, controller.signal);
     return () => controller.abort();
   }, [debouncedSearchTerm, filterCategory, filterBatch, filterPinned, sortBy, fetchProducts]);
+
+  // Handle inline pin order update
+  const handleUpdatePinnedOrder = useCallback(async (id, newValue) => {
+    const val = newValue.trim() === '' ? 999999 : parseInt(newValue, 10);
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pinnedOrder: val })
+      });
+      if (res.ok) {
+        showToast('Zaktualizowano kolejność!', 'success');
+        fetchProducts(currentPage);
+      } else {
+        showToast('Błąd aktualizacji kolejności.', 'error');
+      }
+    } catch (err) {
+      showToast('Błąd połączenia.', 'error');
+    }
+  }, [currentPage, fetchProducts, showToast]);
 
   // Handle single selection toggling
   const handleSelectSingle = useCallback((id) => {
@@ -436,7 +465,7 @@ export default function ManageProducts() {
     const payload = {
       ...formData,
       isPinned: formData.isPinned,
-      pinnedOrder: formData.isPinned && formData.pinnedOrder !== '' ? parseInt(formData.pinnedOrder, 10) : null
+      pinnedOrder: formData.isPinned && formData.pinnedOrder !== '' ? parseInt(formData.pinnedOrder, 10) : 999999
     };
 
     const res = await fetch(url, {
@@ -613,6 +642,7 @@ export default function ManageProducts() {
             onSelectSingle={handleSelectSingle}
             onSelectAll={handleSelectAll}
             isAllSelected={isAllSelected}
+            onUpdatePinnedOrder={handleUpdatePinnedOrder}
           />
         </div>
       )}

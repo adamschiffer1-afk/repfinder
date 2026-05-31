@@ -180,9 +180,13 @@ export async function PATCH(req) {
     for (const key of allowedFields) {
       if (update[key] !== undefined) {
         updateData[key] = update[key];
-        // If unpinning, clear pinnedOrder
-        if (key === "isPinned" && update[key] === false) {
-          updateData.pinnedOrder = null;
+        // If unpinning, clear pinnedOrder. If pinning, set to 999999 to avoid null sorting issues.
+        if (key === "isPinned") {
+          if (update[key] === false) {
+            updateData.pinnedOrder = null;
+          } else {
+            updateData.pinnedOrder = 999999;
+          }
         }
       }
     }

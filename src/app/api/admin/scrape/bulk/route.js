@@ -68,7 +68,8 @@ export async function POST(req) {
         category: detectCategory(finalName),
         batch: 'best',
         link: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=${AFFILIATE_CODE}`,
-        isPinned: true
+        isPinned: true,
+        pinnedOrder: 999999
     };
 
     const newProduct = await Product.create(productData);
