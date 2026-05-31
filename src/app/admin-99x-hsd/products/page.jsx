@@ -504,7 +504,7 @@ export default function ManageProducts() {
             🚀 Add via Scraper
           </button>
           <button className={styles.scraperBtn} style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }} onClick={() => setShowBulkScraperModal(true)}>
-            📦 Bulk Add (Weidian)
+            📦 COLAB LINKS
           </button>
           <button className={styles.navLink} onClick={() => {
             setEditingProduct(null);
