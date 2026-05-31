@@ -864,13 +864,13 @@ export default function ManageProducts() {
         <div className={styles.modalOverlay}>
           <div className={styles.adminModal} style={{ maxWidth: '600px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0 }}>📦 Masowe Dodawanie (Bulk)</h2>
+              <h2 style={{ margin: 0 }}>📦 Collab Links</h2>
               <span style={{ fontSize: '24px', cursor: 'pointer', opacity: bulkLoading ? 0.5 : 1, pointerEvents: bulkLoading ? 'none' : 'auto' }} onClick={() => setShowBulkScraperModal(false)}>&times;</span>
             </div>
             
             <form onSubmit={handleBulkScrape}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '15px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 600, color: '#f59e0b' }}>Wklej linki Weidian (każdy w nowej linii)</label>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Wklej linki Weidian (każdy w nowej linii)</label>
                 <textarea 
                   placeholder="https://weidian.com/item.html?itemID=123&#10;https://weidian.com/item.html?itemID=456" 
                   value={bulkText} 
@@ -890,13 +890,13 @@ export default function ManageProducts() {
                     <span style={{ color: '#ef4444' }}>Błędy: {bulkProgress.failures}</span>
                   </div>
                   <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #f59e0b, #d97706)', transition: 'width 0.3s ease' }} />
+                    <div style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #a78bfa, #7c3aed)', transition: 'width 0.3s ease' }} />
                   </div>
                 </div>
               )}
 
               <div className={styles.modalActions}>
-                <button type="submit" className={styles.scraperBtn} disabled={bulkLoading || !bulkText.trim()} style={{ width: '100%', background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
+                <button type="submit" className={styles.scraperBtn} disabled={bulkLoading || !bulkText.trim()} style={{ width: '100%' }}>
                   {bulkLoading ? (
                     <>
                       <div className={styles.loadingSpinner}></div>
