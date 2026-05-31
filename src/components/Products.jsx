@@ -61,6 +61,7 @@ const SEARCH_BRANDS = [
 
 const RECENT_SEARCHES_KEY = 'repfinder_recent_searches';
 const RECENT_SEARCHES_LIMIT = 6;
+const ANALYTICS_VISITOR_KEY = '__vf_visitor_id';
 
 const normalizeSearchText = (value = '') =>
   value
@@ -264,6 +265,33 @@ const shuffleArray = (items = []) => {
 };
 
 const buildApiSortParam = () => 'random';
+
+const generateAnalyticsVisitorId = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
+    const random = Math.random() * 16 | 0;
+    const value = char === 'x' ? random : (random & 0x3 | 0x8);
+    return value.toString(16);
+  });
+};
+
+const getAnalyticsVisitorId = () => {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    let visitorId = localStorage.getItem(ANALYTICS_VISITOR_KEY);
+    if (!visitorId) {
+      visitorId = generateAnalyticsVisitorId();
+      localStorage.setItem(ANALYTICS_VISITOR_KEY, visitorId);
+    }
+    return visitorId;
+  } catch (err) {
+    return null;
+  }
+};
 
 const ProductCard = memo(function ProductCard({
   product,
@@ -527,6 +555,7 @@ export default function Products() {
 
   const trackStat = useCallback(async (productId, type = 'product_click', agent = null) => {
     try {
+      const visitorId = getAnalyticsVisitorId();
       await fetch('/api/stats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -534,7 +563,9 @@ export default function Products() {
           productId, 
           type, 
           agent,
-          userAgent: navigator.userAgent
+          visitorId,
+          userAgent: navigator.userAgent,
+          path: window.location.pathname + window.location.search
         })
       });
     } catch (err) {
@@ -875,6 +906,10 @@ export default function Products() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const handleAgentLinkClick = (product, agentValue) => {
+    trackStat(product._id, 'product_click', agentValue);
+  };
+
   if (isInitialLoad && loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -1123,6 +1158,7 @@ export default function Products() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.agentMain}
+                    onClick={() => handleAgentLinkClick(agentModalProduct, agent.value)}
                   >
                     <img src={agent.icon} alt={agent.label} className={styles.agentIcon} />
                     <span className={styles.agentName}>{agent.label}</span>
