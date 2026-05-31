@@ -46,7 +46,15 @@ const cleanFilter = {
 
 export async function POST(req) {
   try {
-    let { productId, type, agent, userAgent, path, errorMessage, errorStack } = await req.json();
+    let rawBody = await req.text();
+    if (!rawBody) return NextResponse.json({ success: true });
+    
+    let data = JSON.parse(rawBody);
+    let { 
+      productId, type, agent, userAgent, path, 
+      errorMessage, errorStack, visitorId, referrer, 
+      utmSource, utmCampaign, scrollDepth, timeSpent, breadcrumbs 
+    } = data;
     
     // Normalize type
     if (type === 'click') type = 'product_click';
@@ -67,7 +75,7 @@ export async function POST(req) {
       }
     }
 
-    // 2. Admin Self-Logging Exclusion (only for page views/clicks, let admin error logs pass so we can debug admin page errors!)
+    // 2. Admin Self-Logging Exclusion
     if (type !== 'error_log') {
       const session = await auth();
       if (session && session.user?.email === "kakobuybs209@gmail.com") {
@@ -77,14 +85,15 @@ export async function POST(req) {
 
     await dbConnect();
 
-    // 3. Action Deduplication (15 seconds cooldown for identical non-error events)
-    if (type !== 'error_log') {
+    // 3. Action Deduplication (15 seconds cooldown for identical non-error, non-engagement events)
+    if (type !== 'error_log' && type !== 'engagement') {
       const cooldownTime = new Date(Date.now() - 15000);
       const existingStat = await Stat.findOne({
         type: type || 'product_click',
         productId: productId || null,
         path: path || null,
         userAgent: finalUserAgent,
+        visitorId: visitorId || null,
         timestamp: { $gte: cooldownTime }
       });
 
@@ -97,11 +106,18 @@ export async function POST(req) {
       type: type || 'product_click',
       productId: productId || null,
       agent: agent || null,
+      visitorId: visitorId || null,
       userAgent: finalUserAgent,
       path: path || null,
       country: country || 'PL',
+      referrer: referrer || null,
+      utmSource: utmSource || null,
+      utmCampaign: utmCampaign || null,
+      scrollDepth: scrollDepth || null,
+      timeSpent: timeSpent || null,
       errorMessage: errorMessage || null,
       errorStack: errorStack || null,
+      breadcrumbs: breadcrumbs || null,
     });
 
     return NextResponse.json({ success: true });

@@ -73,10 +73,9 @@ export async function GET(req) {
 
     // --- Top Products ---
     const topProducts = await Stat.aggregate([
-      { $match: { type: "product_click", productId: { $ne: null, $ne: "" }, ...queryWithClean } },
+      { $match: { type: "product_click", productId: { $nin: [null, ""] }, ...queryWithClean } },
       { $group: { _id: "$productId", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
-      { $limit: 15 },
       {
         $addFields: {
           convertedId: {
@@ -96,7 +95,8 @@ export async function GET(req) {
           as: "productInfo"
         }
       },
-      { $unwind: { path: "$productInfo", preserveNullAndEmptyArrays: true } }
+      { $unwind: "$productInfo" },
+      { $limit: 15 }
     ]);
 
     // --- Top Agents ---
@@ -152,6 +152,37 @@ export async function GET(req) {
       .limit(40)
       .lean();
 
+    // --- Enterprise Analytics: Unique Visitors ---
+    const uniqueVisitorsRaw = await Stat.distinct("visitorId", { ...queryWithClean, visitorId: { $ne: null } });
+    const uniqueVisitors = uniqueVisitorsRaw.length;
+
+    // --- Enterprise Analytics: Top Sources ---
+    const topSources = await Stat.aggregate([
+      { $match: { utmSource: { $ne: null, $ne: "" }, ...queryWithClean } },
+      { $group: { _id: "$utmSource", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+
+    const topReferrers = await Stat.aggregate([
+      { $match: { referrer: { $ne: null, $ne: "" }, ...queryWithClean } },
+      { $group: { _id: "$referrer", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+
+    // --- Enterprise Analytics: Engagement ---
+    const engagementStats = await Stat.aggregate([
+      { $match: { type: "engagement", ...queryWithClean } },
+      { $group: { 
+          _id: null, 
+          avgTimeSpent: { $avg: "$timeSpent" }, 
+          avgScrollDepth: { $avg: "$scrollDepth" } 
+        } 
+      }
+    ]);
+    const engagement = engagementStats[0] || { avgTimeSpent: 0, avgScrollDepth: 0 };
+
     // --- Timeline chart data (hourly/daily buckets) ---
     const bucketInfo = getBucketInterval(range);
     let dateGroupExpr;
@@ -171,7 +202,7 @@ export async function GET(req) {
     }
 
     const timelineRaw = await Stat.aggregate([
-      { $match: { type: { $ne: "error_log" }, ...queryWithClean } },
+      { $match: { type: { $nin: ["error_log", "engagement"] }, ...queryWithClean } },
       {
         $group: {
           _id: { type: "$type", date: dateGroupExpr },
@@ -202,6 +233,10 @@ export async function GET(req) {
       from: from.toISOString(),
       to: to.toISOString(),
       totalVisits,
+      uniqueVisitors,
+      engagement,
+      topSources,
+      topReferrers,
       totalClicks,
       totalVisitsAll,
       totalClicksAll,

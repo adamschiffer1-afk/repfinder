@@ -15,12 +15,13 @@ const RANGES = [
 
 const TABS = [
   { id: 'overview',   label: '📊 Przegląd',    icon: '📊' },
+  { id: 'sources',    label: '🎯 Źródła',      icon: '🎯' }, // Newly Added!
   { id: 'products',   label: '🔥 Produkty',     icon: '🔥' },
   { id: 'agents',     label: '📦 Agenci',       icon: '📦' },
   { id: 'pages',      label: '📄 Strony',       icon: '📄' },
-  { id: 'countries',  label: '🌍 Państwa',      icon: '🌍' }, // Newly Added!
+  { id: 'countries',  label: '🌍 Państwa',      icon: '🌍' },
   { id: 'browsers',   label: '🌐 Przeglądarki', icon: '🌐' },
-  { id: 'errors',     label: '⚠️ Błędy',        icon: '⚠️' }, // Newly Added!
+  { id: 'errors',     label: '⚠️ Błędy',        icon: '⚠️' },
   { id: 'activity',   label: '🕒 Aktywność',    icon: '🕒' },
 ];
 
@@ -361,23 +362,21 @@ export default function StatsPage() {
                   <div className={styles.kpiIcon}>👁️</div>
                   <div className={styles.kpiValue}>{(data.totalVisits || 0).toLocaleString()}</div>
                   <div className={styles.kpiLabel}>Wizyty (okres)</div>
-                  <div className={styles.kpiSub}>Łącznie: {(data.totalVisitsAll || 0).toLocaleString()}</div>
+                  <div className={styles.kpiSub} style={{ color: '#a78bfa', fontWeight: 'bold' }}>Unikalni Użytkownicy: {data.uniqueVisitors || 0}</div>
+                </div>
+                <div className={styles.kpiCard}>
+                  <div className={styles.kpiIcon}>⏱️</div>
+                  <div className={styles.kpiValue}>{Math.round(data.engagement?.avgTimeSpent || 0)}s</div>
+                  <div className={styles.kpiLabel}>Średni czas na stronie</div>
+                  <div className={styles.kpiSub}>Średnie przewinięcie: {Math.round(data.engagement?.avgScrollDepth || 0)}%</div>
                 </div>
                 <div className={styles.kpiCard}>
                   <div className={styles.kpiIcon}>🖱️</div>
                   <div className={styles.kpiValue}>{(data.totalClicks || 0).toLocaleString()}</div>
                   <div className={styles.kpiLabel}>Kliknięcia (okres)</div>
-                  <div className={styles.kpiSub}>Łącznie: {(data.totalClicksAll || 0).toLocaleString()}</div>
-                </div>
-                <div className={styles.kpiCard}>
-                  <div className={styles.kpiIcon}>📊</div>
-                  <div className={styles.kpiValue}>
-                    {data.totalVisits > 0
-                       ? ((data.totalClicks / data.totalVisits) * 100).toFixed(1) + '%'
-                      : '0%'}
+                  <div className={styles.kpiSub}>
+                    CTR: {data.totalVisits > 0 ? ((data.totalClicks / data.totalVisits) * 100).toFixed(1) + '%' : '0%'}
                   </div>
-                  <div className={styles.kpiLabel}>CTR (kliknięcia/wizyty)</div>
-                  <div className={styles.kpiSub}>Wskaźnik zaangażowania</div>
                 </div>
                 <div className={styles.kpiCard}>
                   <div className={styles.kpiIcon}>🔥</div>
@@ -415,6 +414,53 @@ export default function StatsPage() {
                       <span className={styles.miniBadge}>{a.count}</span>
                     </div>
                   ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ===== SOURCES ===== */}
+          {tab === 'sources' && (
+            <div>
+              <h2 className={styles.sectionTitle}>🎯 Źródła ruchu (UTM & Referrers)</h2>
+              
+              <div className={styles.overviewGrid}>
+                <div className={styles.overviewCard}>
+                  <h3>🔗 Kampanie UTM (utm_source)</h3>
+                  <BarChart
+                    data={data.topSources || []}
+                    labelKey="_id"
+                    valueKey="count"
+                    color="linear-gradient(90deg, #ec4899, #be185d)"
+                  />
+                  <div className={styles.pagesList}>
+                    {data.topSources?.map((s, i) => (
+                      <div key={i} className={styles.pageRow}>
+                        <span className={styles.pageRank}>#{i + 1}</span>
+                        <span className={styles.pagePath}>{s._id || 'Brak (Bezpośrednio)'}</span>
+                        <span className={styles.pageBadge} style={{ color: '#ec4899', borderColor: 'rgba(236,72,153,0.3)', background: 'rgba(236,72,153,0.1)' }}>{s.count} wizyt</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.overviewCard}>
+                  <h3>🌐 Strony odsyłające (Referrer)</h3>
+                  <BarChart
+                    data={data.topReferrers || []}
+                    labelKey="_id"
+                    valueKey="count"
+                    color="linear-gradient(90deg, #3b82f6, #1d4ed8)"
+                  />
+                  <div className={styles.pagesList}>
+                    {data.topReferrers?.map((r, i) => (
+                      <div key={i} className={styles.pageRow}>
+                        <span className={styles.pageRank}>#{i + 1}</span>
+                        <span className={styles.pagePath}>{r._id || 'Bezpośrednio / Nieznane'}</span>
+                        <span className={styles.pageBadge} style={{ color: '#3b82f6', borderColor: 'rgba(59,130,246,0.3)', background: 'rgba(59,130,246,0.1)' }}>{r.count} wizyt</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -614,6 +660,20 @@ export default function StatsPage() {
                         <div className={styles.activityMeta} style={{ marginBottom: '10px' }}>
                           <span>Podstrona: <code>{err.path || '/'}</code></span>
                         </div>
+
+                        {err.breadcrumbs && err.breadcrumbs.length > 0 && (
+                          <div style={{ marginBottom: '10px', fontSize: '12px', background: 'rgba(0,0,0,0.3)', padding: '8px', borderRadius: '6px' }}>
+                            <div style={{ color: '#a78bfa', marginBottom: '4px', fontWeight: '600' }}>👣 Ostatnie akcje użytkownika (Breadcrumbs):</div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', color: 'rgba(255,255,255,0.6)' }}>
+                              {err.breadcrumbs.map((bc, idx) => (
+                                <span key={idx}>
+                                  <code style={{ background: 'rgba(255,255,255,0.1)', padding: '2px 4px', borderRadius: '4px' }}>{bc}</code>
+                                  {idx < err.breadcrumbs.length - 1 && <span style={{ margin: '0 4px' }}>→</span>}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
                         {err.errorStack && (
                           <details style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
