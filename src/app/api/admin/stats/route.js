@@ -23,7 +23,6 @@ function getRangeDate(range, customFrom, customTo) {
 }
 
 function getBucketInterval(range) {
-  // Returns bucket grouping for chart timeline
   if (range === "6h")  return { unit: "hour", every: 1 };
   if (range === "12h") return { unit: "hour", every: 2 };
   if (range === "24h") return { unit: "hour", every: 4 };
@@ -32,6 +31,16 @@ function getBucketInterval(range) {
   if (range === "30d") return { unit: "day", every: 1 };
   return { unit: "hour", every: 4 };
 }
+
+// Global ex-post bot regex filter for database queries
+const botExcludeRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|moz|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
+const cleanFilter = {
+  $or: [
+    { userAgent: null },
+    { userAgent: "" },
+    { userAgent: { $not: botExcludeRegex } }
+  ]
+};
 
 export async function GET(req) {
   try {
@@ -50,20 +59,23 @@ export async function GET(req) {
     const { from, to } = getRangeDate(range, customFrom, customTo);
     const dateFilter = { timestamp: { $gte: from, $lte: to } };
 
+    // Combine date filter with strict bot filter for clean stats!
+    const queryWithClean = { ...dateFilter, ...cleanFilter };
+
     // --- Core counts ---
     const [totalVisits, totalClicks, totalVisitsAll, totalClicksAll] = await Promise.all([
-      Stat.countDocuments({ type: "page_view", ...dateFilter }),
-      Stat.countDocuments({ type: "product_click", ...dateFilter }),
-      Stat.countDocuments({ type: "page_view" }),
-      Stat.countDocuments({ type: "product_click" }),
+      Stat.countDocuments({ type: "page_view", ...queryWithClean }),
+      Stat.countDocuments({ type: "product_click", ...queryWithClean }),
+      Stat.countDocuments({ type: "page_view", ...cleanFilter }),
+      Stat.countDocuments({ type: "product_click", ...cleanFilter }),
     ]);
 
     // --- Top Products ---
     const topProducts = await Stat.aggregate([
-      { $match: { type: "product_click", productId: { $ne: null, $ne: "" }, ...dateFilter } },
+      { $match: { type: "product_click", productId: { $ne: null, $ne: "" }, ...queryWithClean } },
       { $group: { _id: "$productId", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
-      { $limit: 10 },
+      { $limit: 15 },
       {
         $addFields: {
           convertedId: {
@@ -88,7 +100,7 @@ export async function GET(req) {
 
     // --- Top Agents ---
     const topAgents = await Stat.aggregate([
-      { $match: { type: "product_click", agent: { $ne: null }, ...dateFilter } },
+      { $match: { type: "product_click", agent: { $ne: null }, ...queryWithClean } },
       { $group: { _id: "$agent", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 8 }
@@ -96,24 +108,24 @@ export async function GET(req) {
 
     // --- Top Browsers ---
     const topBrowsers = await Stat.aggregate([
-      { $match: { userAgent: { $ne: null }, ...dateFilter } },
+      { $match: { userAgent: { $ne: null, $ne: "" }, ...queryWithClean } },
       { $group: { _id: "$userAgent", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
-      { $limit: 10 }
+      { $limit: 15 }
     ]);
 
     // --- Top Pages ---
     const topPages = await Stat.aggregate([
-      { $match: { type: "page_view", path: { $ne: null }, ...dateFilter } },
+      { $match: { type: "page_view", path: { $ne: null }, ...queryWithClean } },
       { $group: { _id: "$path", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
-      { $limit: 10 }
+      { $limit: 12 }
     ]);
 
     // --- Recent Activity ---
-    const recentActivityRaw = await Stat.find({ ...dateFilter })
+    const recentActivityRaw = await Stat.find(queryWithClean)
       .sort({ timestamp: -1 })
-      .limit(30)
+      .limit(40)
       .lean();
 
     const recentActivity = await Promise.all(
@@ -144,7 +156,7 @@ export async function GET(req) {
     }
 
     const timelineRaw = await Stat.aggregate([
-      { $match: { ...dateFilter } },
+      { $match: queryWithClean },
       {
         $group: {
           _id: { type: "$type", date: dateGroupExpr },
