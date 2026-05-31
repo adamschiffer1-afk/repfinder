@@ -32,10 +32,11 @@ function getBucketInterval(range) {
   return { unit: "hour", every: 4 };
 }
 
-// Global ex-post bot regex filter for database queries
+// Global ex-post bot regex filter (excludes error logs so we always get all error logs)
 const botExcludeRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|moz|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
 const cleanFilter = {
   $or: [
+    { type: 'error_log' }, // Always keep errors
     { userAgent: null },
     { userAgent: "" },
     { userAgent: { $not: botExcludeRegex } }
@@ -62,7 +63,7 @@ export async function GET(req) {
     // Combine date filter with strict bot filter for clean stats!
     const queryWithClean = { ...dateFilter, ...cleanFilter };
 
-    // --- Core counts ---
+    // --- Core counts (exclude error_log counts from visits and clicks to keep dashboard KPIs strictly accurate) ---
     const [totalVisits, totalClicks, totalVisitsAll, totalClicksAll] = await Promise.all([
       Stat.countDocuments({ type: "page_view", ...queryWithClean }),
       Stat.countDocuments({ type: "product_click", ...queryWithClean }),
@@ -108,7 +109,7 @@ export async function GET(req) {
 
     // --- Top Browsers ---
     const topBrowsers = await Stat.aggregate([
-      { $match: { userAgent: { $ne: null, $ne: "" }, ...queryWithClean } },
+      { $match: { userAgent: { $ne: null, $ne: "" }, type: { $ne: "error_log" }, ...queryWithClean } },
       { $group: { _id: "$userAgent", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 15 }
@@ -123,7 +124,7 @@ export async function GET(req) {
     ]);
 
     // --- Recent Activity ---
-    const recentActivityRaw = await Stat.find(queryWithClean)
+    const recentActivityRaw = await Stat.find({ type: { $ne: "error_log" }, ...queryWithClean })
       .sort({ timestamp: -1 })
       .limit(40)
       .lean();
@@ -136,6 +137,20 @@ export async function GET(req) {
         return act;
       })
     );
+
+    // --- Top Countries ---
+    const topCountries = await Stat.aggregate([
+      { $match: { country: { $ne: null, $ne: "" }, ...queryWithClean } },
+      { $group: { _id: "$country", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 15 }
+    ]);
+
+    // --- Recent Error Logs ---
+    const recentErrors = await Stat.find({ type: "error_log", ...dateFilter })
+      .sort({ timestamp: -1 })
+      .limit(40)
+      .lean();
 
     // --- Timeline chart data (hourly/daily buckets) ---
     const bucketInfo = getBucketInterval(range);
@@ -156,7 +171,7 @@ export async function GET(req) {
     }
 
     const timelineRaw = await Stat.aggregate([
-      { $match: queryWithClean },
+      { $match: { type: { $ne: "error_log" }, ...queryWithClean } },
       {
         $group: {
           _id: { type: "$type", date: dateGroupExpr },
@@ -195,6 +210,8 @@ export async function GET(req) {
       topBrowsers,
       topPages,
       recentActivity,
+      topCountries,
+      recentErrors,
       timeline
     });
   } catch (error) {

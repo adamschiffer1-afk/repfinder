@@ -25,7 +25,6 @@ function isBot(ua) {
     return true;
   }
 
-  // Developer automated clients and headless libraries
   const libRegex = /(?:curl|wget|python|requests|urllib|axios|fetch|go-http-client|postman|playwright|puppeteer|selenium|headless|phantomjs|client)/i;
   if (libRegex.test(lowerUa)) {
     return true;
@@ -34,10 +33,11 @@ function isBot(ua) {
   return false;
 }
 
-// Global ex-post bot regex filter for database queries
+// Global ex-post bot regex filter for database queries (excluding error logs so we always get errors if any)
 const botExcludeRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|moz|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
 const cleanFilter = {
   $or: [
+    { type: 'error_log' }, // Always keep errors
     { userAgent: null },
     { userAgent: "" },
     { userAgent: { $not: botExcludeRegex } }
@@ -46,7 +46,7 @@ const cleanFilter = {
 
 export async function POST(req) {
   try {
-    let { productId, type, agent, userAgent, path } = await req.json();
+    let { productId, type, agent, userAgent, path, errorMessage, errorStack } = await req.json();
     
     // Normalize type
     if (type === 'click') type = 'product_click';
@@ -56,34 +56,41 @@ export async function POST(req) {
       return NextResponse.json({ success: true, message: 'Skipped admin path' });
     }
 
-    // Resolve userAgent from headers if client did not supply it
+    // Resolve userAgent and country headers
     const finalUserAgent = userAgent || req.headers.get('user-agent') || '';
+    const country = req.headers.get('x-vercel-ip-country') || req.headers.get('cf-ipcountry') || 'PL';
 
-    // 1. Strict Bot Filtering
-    if (!finalUserAgent || finalUserAgent.length < 15 || isBot(finalUserAgent)) {
-      return NextResponse.json({ success: true, message: 'Skipped automated bot/junk traffic' });
+    // 1. Strict Bot Filtering (only for regular traffic to prevent clogging, let errors bypass unless heavy bot)
+    if (type !== 'error_log') {
+      if (!finalUserAgent || finalUserAgent.length < 15 || isBot(finalUserAgent)) {
+        return NextResponse.json({ success: true, message: 'Skipped automated bot/junk traffic' });
+      }
     }
 
-    // 2. Admin Self-Logging Exclusion
-    const session = await auth();
-    if (session && session.user?.email === "kakobuybs209@gmail.com") {
-      return NextResponse.json({ success: true, message: 'Skipped administrator test activity' });
+    // 2. Admin Self-Logging Exclusion (only for page views/clicks, let admin error logs pass so we can debug admin page errors!)
+    if (type !== 'error_log') {
+      const session = await auth();
+      if (session && session.user?.email === "kakobuybs209@gmail.com") {
+        return NextResponse.json({ success: true, message: 'Skipped administrator test activity' });
+      }
     }
 
     await dbConnect();
 
-    // 3. Action Deduplication (15 seconds cooldown for identical event)
-    const cooldownTime = new Date(Date.now() - 15000);
-    const existingStat = await Stat.findOne({
-      type: type || 'product_click',
-      productId: productId || null,
-      path: path || null,
-      userAgent: finalUserAgent,
-      timestamp: { $gte: cooldownTime }
-    });
+    // 3. Action Deduplication (15 seconds cooldown for identical non-error events)
+    if (type !== 'error_log') {
+      const cooldownTime = new Date(Date.now() - 15000);
+      const existingStat = await Stat.findOne({
+        type: type || 'product_click',
+        productId: productId || null,
+        path: path || null,
+        userAgent: finalUserAgent,
+        timestamp: { $gte: cooldownTime }
+      });
 
-    if (existingStat) {
-      return NextResponse.json({ success: true, message: 'Skipped duplicate event (cooldown)' });
+      if (existingStat) {
+        return NextResponse.json({ success: true, message: 'Skipped duplicate event (cooldown)' });
+      }
     }
 
     await Stat.create({
@@ -92,6 +99,9 @@ export async function POST(req) {
       agent: agent || null,
       userAgent: finalUserAgent,
       path: path || null,
+      country: country || 'PL',
+      errorMessage: errorMessage || null,
+      errorStack: errorStack || null,
     });
 
     return NextResponse.json({ success: true });
@@ -163,7 +173,7 @@ export async function GET() {
     ]);
 
     // 6. Recent Activity
-    const recentActivityRaw = await Stat.find(cleanFilter)
+    const recentActivityRaw = await Stat.find({ type: { $ne: 'error_log' }, ...cleanFilter })
       .sort({ timestamp: -1 })
       .limit(10)
       .lean();
@@ -175,13 +185,29 @@ export async function GET() {
       return act;
     }));
 
+    // 7. Top Countries
+    const topCountries = await Stat.aggregate([
+      { $match: { country: { $ne: null, $ne: "" }, ...cleanFilter } },
+      { $group: { _id: "$country", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+
+    // 8. Recent Errors
+    const recentErrors = await Stat.find({ type: 'error_log' })
+      .sort({ timestamp: -1 })
+      .limit(10)
+      .lean();
+
     return NextResponse.json({
       totalVisits,
       totalClicks,
       topProducts,
       topAgents,
       topBrowsers,
-      recentActivity
+      recentActivity,
+      topCountries,
+      recentErrors
     });
   } catch (error) {
     console.error("Fetch stats error:", error);

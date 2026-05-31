@@ -18,9 +18,47 @@ const TABS = [
   { id: 'products',   label: '🔥 Produkty',     icon: '🔥' },
   { id: 'agents',     label: '📦 Agenci',       icon: '📦' },
   { id: 'pages',      label: '📄 Strony',       icon: '📄' },
+  { id: 'countries',  label: '🌍 Państwa',      icon: '🌍' }, // Newly Added!
   { id: 'browsers',   label: '🌐 Przeglądarki', icon: '🌐' },
+  { id: 'errors',     label: '⚠️ Błędy',        icon: '⚠️' }, // Newly Added!
   { id: 'activity',   label: '🕒 Aktywność',    icon: '🕒' },
 ];
+
+const COUNTRY_NAMES = {
+  PL: 'Polska',
+  US: 'Stany Zjednoczone',
+  DE: 'Niemcy',
+  GB: 'Wielka Brytania',
+  FR: 'Francja',
+  NL: 'Holandia',
+  CN: 'Chiny',
+  IT: 'Włochy',
+  ES: 'Hiszpania',
+  CA: 'Kanada',
+  AU: 'Australia',
+  UA: 'Ukraina',
+  SE: 'Szwecja',
+  NO: 'Norwegia',
+  FI: 'Finlandia',
+  DK: 'Dania',
+  CH: 'Szwajcaria',
+  BE: 'Belgia',
+  AT: 'Austria',
+  IE: 'Irlandia'
+};
+
+function getFlagEmoji(countryCode) {
+  if (!countryCode || countryCode === 'Unknown') return '🏳️';
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0));
+  try {
+    return String.fromCodePoint(...codePoints);
+  } catch (e) {
+    return '🏳️';
+  }
+}
 
 function parseUA(ua) {
   if (!ua) return 'Nieznany';
@@ -47,7 +85,7 @@ function getBrowser(ua) {
 function LineChart({ data, height = 200 }) {
   const containerRef = useRef(null);
   const [width, setWidth] = useState(600);
-  const [tooltip, setTooltip] = useState(null); // must be before any early returns
+  const [tooltip, setTooltip] = useState(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -75,14 +113,10 @@ function LineChart({ data, height = 200 }) {
   const viewsPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xScale(i)},${yScale(d.views || 0)}`).join(' ');
   const clicksPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xScale(i)},${yScale(d.clicks || 0)}`).join(' ');
 
-  // Area fills
   const viewsArea = viewsPath + ` L${xScale(data.length - 1)},${chartH} L0,${chartH} Z`;
   const clicksArea = clicksPath + ` L${xScale(data.length - 1)},${chartH} L0,${chartH} Z`;
 
-  // Y-axis ticks
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map(f => Math.round(maxVal * f));
-
-  // X-axis labels (show max ~6)
   const step = Math.max(1, Math.floor(data.length / 6));
 
   return (
@@ -108,7 +142,6 @@ function LineChart({ data, height = 200 }) {
         </defs>
 
         <g transform={`translate(${padding.left}, ${padding.top})`}>
-          {/* Grid lines */}
           {yTicks.map((tick) => (
             <g key={tick}>
               <line
@@ -126,15 +159,12 @@ function LineChart({ data, height = 200 }) {
             </g>
           ))}
 
-          {/* Area fills */}
           <path d={viewsArea} fill="url(#viewsGrad)" />
           <path d={clicksArea} fill="url(#clicksGrad)" />
 
-          {/* Lines */}
           <path d={viewsPath} fill="none" stroke="#a78bfa" strokeWidth={2.5} strokeLinejoin="round" />
           <path d={clicksPath} fill="none" stroke="#34d399" strokeWidth={2.5} strokeLinejoin="round" />
 
-          {/* Dots & hover zones */}
           {data.map((d, i) => (
             <g key={i}>
               <rect
@@ -143,14 +173,13 @@ function LineChart({ data, height = 200 }) {
                 width={40}
                 height={chartH}
                 fill="transparent"
-                onMouseEnter={(e) => setTooltip({ i, x: xScale(i), d })}
+                onMouseEnter={() => setTooltip({ i, x: xScale(i), d })}
               />
               <circle cx={xScale(i)} cy={yScale(d.views || 0)} r={3} fill="#a78bfa" />
               <circle cx={xScale(i)} cy={yScale(d.clicks || 0)} r={3} fill="#34d399" />
             </g>
           ))}
 
-          {/* Tooltip */}
           {tooltip && (() => {
             const tx = Math.min(tooltip.x, chartW - 100);
             return (
@@ -164,7 +193,6 @@ function LineChart({ data, height = 200 }) {
             );
           })()}
 
-          {/* X-axis labels */}
           {data.map((d, i) => (
             i % step === 0 || i === data.length - 1 ? (
               <text
@@ -185,14 +213,14 @@ function LineChart({ data, height = 200 }) {
   );
 }
 
-function BarChart({ data, labelKey = '_id', valueKey = 'count', color = '#a78bfa' }) {
+function BarChart({ data, labelKey = '_id', valueKey = 'count', color = '#a78bfa', formatLabel = (val) => val }) {
   if (!data || data.length === 0) return <div className={styles.noData}>Brak danych</div>;
   const max = Math.max(...data.map(d => d[valueKey] || 0), 1);
   return (
     <div className={styles.barChart}>
       {data.map((d, i) => (
         <div key={i} className={styles.barRow}>
-          <span className={styles.barLabel}>{d[labelKey] || 'N/A'}</span>
+          <span className={styles.barLabel}>{formatLabel(d[labelKey])}</span>
           <div className={styles.barTrack}>
             <div
               className={styles.barFill}
@@ -345,7 +373,7 @@ export default function StatsPage() {
                   <div className={styles.kpiIcon}>📊</div>
                   <div className={styles.kpiValue}>
                     {data.totalVisits > 0
-                      ? ((data.totalClicks / data.totalVisits) * 100).toFixed(1) + '%'
+                       ? ((data.totalClicks / data.totalVisits) * 100).toFixed(1) + '%'
                       : '0%'}
                   </div>
                   <div className={styles.kpiLabel}>CTR (kliknięcia/wizyty)</div>
@@ -463,23 +491,49 @@ export default function StatsPage() {
             </div>
           )}
 
+          {/* ===== COUNTRIES ===== */}
+          {tab === 'countries' && (
+            <div>
+              <h2 className={styles.sectionTitle}>🌍 Podział geograficzny użytkowników</h2>
+              <BarChart
+                data={data.topCountries || []}
+                labelKey="_id"
+                valueKey="count"
+                color="linear-gradient(90deg, #34d399, #10b981)"
+                formatLabel={(code) => `${getFlagEmoji(code)} ${COUNTRY_NAMES[code] || code}`}
+              />
+              <div className={styles.pagesList} style={{ marginTop: '20px' }}>
+                {data.topCountries?.map((c, i) => (
+                  <div key={i} className={styles.pageRow}>
+                    <span className={styles.pageRank}>#{i + 1}</span>
+                    <span style={{ fontSize: '20px', marginRight: '8px' }}>{getFlagEmoji(c._id)}</span>
+                    <span className={styles.pagePath} style={{ fontFamily: 'inherit', fontWeight: '600' }}>
+                      {COUNTRY_NAMES[c._id] || `Kod: ${c._id}`}
+                    </span>
+                    <span className={styles.pageBadge} style={{ borderColor: 'rgba(52, 211, 153, 0.2)', color: '#34d399', background: 'rgba(52, 211, 153, 0.1)' }}>
+                      {c.count} zdarzeń
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* ===== BROWSERS ===== */}
           {tab === 'browsers' && (
             <div>
               <h2 className={styles.sectionTitle}>🌐 Przeglądarki i urządzenia</h2>
               <div className={styles.browserGrid}>
-                {/* Grouped by browser */}
                 {(() => {
                   const grouped = {};
                   (data.topBrowsers || []).forEach(b => {
                     const browser = getBrowser(b._id);
-                    const device = parseUA(b._id);
-                    if (!grouped[browser]) grouped[browser] = { count: 0, device };
+                    if (!grouped[browser]) grouped[browser] = { count: 0 };
                     grouped[browser].count += b.count;
                   });
                   const sorted = Object.entries(grouped).sort(([,a],[,b]) => b.count - a.count);
                   const total = sorted.reduce((sum, [,v]) => sum + v.count, 0);
-                  return sorted.map(([browser, { count, device }], i) => (
+                  return sorted.map(([browser, { count }], i) => (
                     <div key={i} className={styles.browserCard}>
                       <div className={styles.browserIcon}>
                         {browser === 'Chrome' ? '🟡' : browser === 'Firefox' ? '🦊' : browser === 'Safari' ? '🧭' : browser === 'Edge' ? '🔵' : '🌐'}
@@ -520,6 +574,71 @@ export default function StatsPage() {
             </div>
           )}
 
+          {/* ===== CLIENT SIDE ERRORS ===== */}
+          {tab === 'errors' && (
+            <div>
+              <h2 className={styles.sectionTitle}>⚠️ Ostatnio zarejestrowane błędy klientów</h2>
+              <div className={styles.activityFeed}>
+                {data.recentErrors?.length > 0 ? data.recentErrors.map((err, i) => {
+                  const isImageLoad = err.errorMessage?.includes('obrazka') || err.errorStack?.includes('IMG');
+                  return (
+                    <div key={i} className={styles.activityCard} style={{ borderLeft: '4px solid #ef4444', background: 'rgba(239, 68, 68, 0.02)' }}>
+                      <div className={styles.activityDot} style={{ background: '#ef4444', color: '#ef4444' }} />
+                      <div className={styles.activityBody}>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '6px' }}>
+                          <span 
+                            style={{ 
+                              background: isImageLoad ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)', 
+                              color: isImageLoad ? '#f59e0b' : '#ef4444',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              fontWeight: '700',
+                              textTransform: 'uppercase'
+                            }}
+                          >
+                            {isImageLoad ? '🖼️ Dead Link' : '💥 Błąd JS'}
+                          </span>
+                          <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+                            {getFlagEmoji(err.country)} {COUNTRY_NAMES[err.country] || err.country}
+                          </span>
+                          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }}>
+                            {parseUA(err.userAgent)}
+                          </span>
+                        </div>
+
+                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#fca5a5', marginBottom: '8px', wordBreak: 'break-all' }}>
+                          {err.errorMessage}
+                        </div>
+
+                        <div className={styles.activityMeta} style={{ marginBottom: '10px' }}>
+                          <span>Podstrona: <code>{err.path || '/'}</code></span>
+                        </div>
+
+                        {err.errorStack && (
+                          <details style={{ background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.04)' }}>
+                            <summary style={{ fontSize: '12px', color: '#a78bfa', cursor: 'pointer', userSelect: 'none', fontWeight: '600' }}>
+                              Rozwiń ślad stosu (Stack Trace)
+                            </summary>
+                            <pre style={{ marginTop: '10px', fontSize: '11px', color: '#fda4af', overflowX: 'auto', whiteSpace: 'pre-wrap', fontFamily: 'monospace', lineHeight: '1.4' }}>
+                              {err.errorStack}
+                            </pre>
+                          </details>
+                        )}
+                      </div>
+                      <div className={styles.activityTime}>
+                        {new Date(err.timestamp).toLocaleString('pl-PL', {
+                          day: '2-digit', month: '2-digit',
+                          hour: '2-digit', minute: '2-digit', second: '2-digit'
+                        })}
+                      </div>
+                    </div>
+                  );
+                }) : <div className={styles.noData} style={{ color: '#34d399', fontStyle: 'normal' }}>🎉 Wszystko w porządku! Nie odnotowano żadnych błędów.</div>}
+              </div>
+            </div>
+          )}
+
           {/* ===== ACTIVITY ===== */}
           {tab === 'activity' && (
             <div>
@@ -533,7 +652,7 @@ export default function StatsPage() {
                         {act.type === 'page_view' ? '👀 Wizyta na stronie' : '🖱️ Kliknięcie produktu'}
                       </div>
                       <div className={styles.activityMeta}>
-                        <span>{act.path || '/'}</span>
+                        <span>{getFlagEmoji(act.country)} {act.path || '/'}</span>
                         <span>•</span>
                         <span>{parseUA(act.userAgent)}</span>
                         {act.agent && <><span>•</span><span className={styles.agentTag}>{act.agent}</span></>}
