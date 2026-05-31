@@ -6,6 +6,7 @@ import Product from "@/models/Product";
 import Stat from "@/models/Stat";
 import Link from "next/link";
 import { parseUA } from "@/utils/uaParser";
+import mongoose from "mongoose";
 
 export default async function AdminDashboard() {
   const session = await auth();

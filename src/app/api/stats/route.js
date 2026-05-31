@@ -75,15 +75,21 @@ export async function POST(req) {
       }
     }
 
-    // 2. Admin Self-Logging Exclusion
+    // Connect to DB first (needed for dedup check and session checks)
+    await dbConnect();
+
+    // 2. Admin Self-Logging Exclusion (wrap in try-catch so auth errors don't kill tracking)
     if (type !== 'error_log') {
-      const session = await auth();
-      if (session && session.user?.email === "kakobuybs209@gmail.com") {
-        return NextResponse.json({ success: true, message: 'Skipped administrator test activity' });
+      try {
+        const session = await auth();
+        if (session && session.user?.email === "kakobuybs209@gmail.com") {
+          return NextResponse.json({ success: true, message: 'Skipped administrator test activity' });
+        }
+      } catch (authErr) {
+        // Auth error - don't block tracking, just log and continue
+        console.warn('Auth check failed during stats tracking (continuing):', authErr?.message);
       }
     }
-
-    await dbConnect();
 
     // 3. Action Deduplication (15 seconds cooldown for identical non-error, non-engagement events)
     if (type !== 'error_log' && type !== 'engagement') {
