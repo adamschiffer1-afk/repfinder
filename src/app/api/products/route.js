@@ -2,12 +2,25 @@ import dbConnect from "@/lib/mongodb";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import mongoose from "mongoose";
 import {
   buildProductFilter,
   buildProductSort,
   buildSearchFilter,
   hasActiveStorefrontFilters
 } from "@/lib/buildProductQuery";
+
+function getPinnedOrderSortStages() {
+  return [
+    {
+      $addFields: {
+        __pinnedOrderSort: { $ifNull: ["$pinnedOrder", 999999] }
+      }
+    },
+    { $sort: { isPinned: -1, __pinnedOrderSort: 1, createdAt: -1 } },
+    { $project: { __pinnedOrderSort: 0 } }
+  ];
+}
 
 export async function GET(req) {
   try {
@@ -17,7 +30,7 @@ export async function GET(req) {
     const limit = parseInt(searchParams.get('limit'), 10) || 24;
     const admin = searchParams.get('admin') === 'true';
     const search = searchParams.get('search')?.trim() || '';
-    const sortParam = searchParams.get('sort') || 'newest';
+    const sortParam = searchParams.get('sort') || (admin ? 'pinned_order' : 'newest');
 
     await dbConnect();
 
@@ -51,11 +64,12 @@ export async function GET(req) {
         let pinnedProducts = [];
         if (skip < pinnedCount) {
           const pinnedOnPage = Math.min(limit, pinnedCount - skip);
-          pinnedProducts = await Product.find({ ...query, isPinned: true })
-            .sort({ pinnedOrder: 1, createdAt: -1 })
-            .skip(skip)
-            .limit(pinnedOnPage)
-            .lean();
+          pinnedProducts = await Product.aggregate([
+            { $match: { ...query, isPinned: true } },
+            ...getPinnedOrderSortStages(),
+            { $skip: skip },
+            { $limit: pinnedOnPage }
+          ]);
         }
         
         const sampleSize = Math.max(0, limit - pinnedProducts.length);
@@ -94,14 +108,32 @@ export async function GET(req) {
       }
     }
 
-    const sort = admin && !sortParam
-      ? { isPinned: -1, pinnedOrder: 1, createdAt: -1 }
-      : buildProductSort(sortParam, {
-          pinnedFirst: admin ? false : !hasActiveStorefrontFilters(searchParams)
-        });
-
     if (page && !Number.isNaN(page)) {
       const skip = (page - 1) * limit;
+
+      if (sortParam === 'pinned_order') {
+        const [products, total] = await Promise.all([
+          Product.aggregate([
+            { $match: query },
+            ...getPinnedOrderSortStages(),
+            { $skip: skip },
+            { $limit: limit }
+          ]),
+          Product.countDocuments(query)
+        ]);
+
+        return NextResponse.json({
+          products,
+          total,
+          page,
+          pages: Math.ceil(total / limit) || 1
+        });
+      }
+
+      const sort = buildProductSort(sortParam, {
+        pinnedFirst: !admin && !hasActiveStorefrontFilters(searchParams)
+      });
+
       const [products, total] = await Promise.all([
         Product.find(query).sort(sort).skip(skip).limit(limit).lean(),
         Product.countDocuments(query)
@@ -115,6 +147,17 @@ export async function GET(req) {
       });
     }
 
+    if (sortParam === 'pinned_order') {
+      const products = await Product.aggregate([
+        { $match: query },
+        ...getPinnedOrderSortStages()
+      ]);
+      return NextResponse.json(products);
+    }
+
+    const sort = buildProductSort(sortParam, {
+      pinnedFirst: !admin && !hasActiveStorefrontFilters(searchParams)
+    });
     const products = await Product.find(query).sort(sort).lean();
     return NextResponse.json(products);
   } catch (error) {
@@ -167,7 +210,36 @@ export async function PATCH(req) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { ids, update } = await req.json();
+    const { ids, update, reorder } = await req.json();
+
+    if (Array.isArray(reorder)) {
+      const operations = reorder
+        .map((item) => ({
+          id: item?.id,
+          pinnedOrder: Number.parseInt(item?.pinnedOrder, 10)
+        }))
+        .filter((item) => mongoose.Types.ObjectId.isValid(item.id) && Number.isFinite(item.pinnedOrder));
+
+      if (operations.length === 0 || operations.length !== reorder.length) {
+        return NextResponse.json({ error: "Invalid reorder payload" }, { status: 400 });
+      }
+
+      await dbConnect();
+      const result = await Product.bulkWrite(
+        operations.map((item) => ({
+          updateOne: {
+            filter: { _id: item.id },
+            update: { $set: { isPinned: true, pinnedOrder: item.pinnedOrder } }
+          }
+        }))
+      );
+
+      return NextResponse.json({
+        message: "Pinned order updated",
+        modifiedCount: result.modifiedCount
+      });
+    }
+
     if (!Array.isArray(ids) || ids.length === 0 || !update) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }

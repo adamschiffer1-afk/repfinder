@@ -44,6 +44,11 @@ const cleanFilter = {
   ]
 };
 
+const duplicateCooldownByType = {
+  product_click: 60 * 1000,
+  page_view: 15 * 1000,
+};
+
 export async function POST(req) {
   try {
     let rawBody = await req.text();
@@ -91,12 +96,15 @@ export async function POST(req) {
       }
     }
 
-    // 3. Action Deduplication (15 seconds cooldown for identical non-error, non-engagement events)
+    // 3. Action Deduplication for identical non-error, non-engagement events
     if (type !== 'error_log' && type !== 'engagement') {
-      const cooldownTime = new Date(Date.now() - 15000);
+      const eventType = type || 'product_click';
+      const cooldownMs = duplicateCooldownByType[eventType] || 15000;
+      const cooldownTime = new Date(Date.now() - cooldownMs);
       const existingStat = await Stat.findOne({
-        type: type || 'product_click',
+        type: eventType,
         productId: productId || null,
+        agent: agent || null,
         path: path || null,
         userAgent: finalUserAgent,
         visitorId: visitorId || null,

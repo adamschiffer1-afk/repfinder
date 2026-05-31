@@ -87,6 +87,9 @@ export function hasActiveStorefrontFilters(searchParams) {
 export function buildProductSort(sortParam, { pinnedFirst = false } = {}) {
   let baseSort = {};
   switch (sortParam) {
+    case 'pinned_order':
+      baseSort = { isPinned: -1, pinnedOrder: 1, createdAt: -1 };
+      break;
     case 'price_asc':
       baseSort = { price: 1, createdAt: -1 };
       break;

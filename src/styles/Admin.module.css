@@ -576,6 +576,48 @@
   background: rgba(255, 255, 255, 0.02) !important;
 }
 
+.draggableRow {
+  cursor: default;
+}
+
+.draggingRow {
+  opacity: 0.45;
+  background: rgba(167, 139, 250, 0.1) !important;
+}
+
+.dragOverRow {
+  background: rgba(52, 211, 153, 0.08) !important;
+  box-shadow: inset 0 2px 0 rgba(52, 211, 153, 0.65);
+}
+
+.dragHandle {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 800;
+  line-height: 1;
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.dragHandle:hover:not(:disabled) {
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.45);
+  background: rgba(167, 139, 250, 0.1);
+}
+
+.dragHandle:active:not(:disabled) {
+  cursor: grabbing;
+}
+
+.dragHandle:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
 .selectedRow {
   background: rgba(167, 139, 250, 0.06) !important;
   border-left: 3px solid #a78bfa;

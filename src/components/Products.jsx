@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useState, useEffect, useCallback, useMemo } from 'react';
+import { memo, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
@@ -62,6 +62,7 @@ const SEARCH_BRANDS = [
 const RECENT_SEARCHES_KEY = 'repfinder_recent_searches';
 const RECENT_SEARCHES_LIMIT = 6;
 const ANALYTICS_VISITOR_KEY = '__vf_visitor_id';
+const CLICK_TRACK_COOLDOWN_MS = 60 * 1000;
 
 const normalizeSearchText = (value = '') =>
   value
@@ -358,6 +359,7 @@ export default function Products() {
   const { t } = useLanguage();
   const { user, fetchWithAuth } = useAuth();
   const { formatPrice } = useCurrency();
+  const recentTrackedClicksRef = useRef(new Map());
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -556,6 +558,17 @@ export default function Products() {
   const trackStat = useCallback(async (productId, type = 'product_click', agent = null) => {
     try {
       const visitorId = getAnalyticsVisitorId();
+
+      if (type === 'product_click') {
+        const now = Date.now();
+        const clickKey = [productId || 'unknown-product', agent || 'unknown-agent', visitorId || 'anonymous'].join(':');
+        const lastTrackedAt = recentTrackedClicksRef.current.get(clickKey);
+        if (lastTrackedAt && now - lastTrackedAt < CLICK_TRACK_COOLDOWN_MS) {
+          return;
+        }
+        recentTrackedClicksRef.current.set(clickKey, now);
+      }
+
       await fetch('/api/stats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

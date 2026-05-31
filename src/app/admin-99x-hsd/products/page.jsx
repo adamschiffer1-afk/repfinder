@@ -12,8 +12,56 @@ const ProductTable = memo(function ProductTable({
   onSelectSingle, 
   onSelectAll, 
   isAllSelected,
-  onUpdatePinnedOrder
+  onUpdatePinnedOrder,
+  onReorderPinned,
+  isReordering
 }) {
+  const [draggingId, setDraggingId] = useState(null);
+  const [dragOverId, setDragOverId] = useState(null);
+
+  const handleDragStart = useCallback((event, product) => {
+    if (!product.isPinned || isReordering) {
+      event.preventDefault();
+      return;
+    }
+
+    setDraggingId(product._id);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', product._id);
+  }, [isReordering]);
+
+  const handleDragOver = useCallback((event, product) => {
+    if (!draggingId || !product.isPinned || draggingId === product._id) return;
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    setDragOverId(product._id);
+  }, [draggingId]);
+
+  const handleDrop = useCallback((event, targetProduct) => {
+    event.preventDefault();
+
+    const draggedId = event.dataTransfer.getData('text/plain') || draggingId;
+    setDraggingId(null);
+    setDragOverId(null);
+
+    if (!draggedId || !targetProduct.isPinned || draggedId === targetProduct._id) return;
+
+    const fromIndex = products.findIndex(product => product._id === draggedId);
+    const toIndex = products.findIndex(product => product._id === targetProduct._id);
+    if (fromIndex < 0 || toIndex < 0) return;
+
+    const reorderedProducts = [...products];
+    const [draggedProduct] = reorderedProducts.splice(fromIndex, 1);
+    reorderedProducts.splice(toIndex, 0, draggedProduct);
+    onReorderPinned(reorderedProducts);
+  }, [draggingId, onReorderPinned, products]);
+
+  const handleDragEnd = useCallback(() => {
+    setDraggingId(null);
+    setDragOverId(null);
+  }, []);
+
   if (products.length === 0) {
     return (
       <div className={styles.noProductsPlaceholder}>
@@ -26,6 +74,7 @@ const ProductTable = memo(function ProductTable({
     <table className={styles.adminTable}>
       <thead>
         <tr>
+          <th style={{ width: '36px', textAlign: 'center' }}></th>
           <th style={{ width: '40px', textAlign: 'center' }}>
             <label className={styles.checkboxContainer}>
               <input 
@@ -49,8 +98,35 @@ const ProductTable = memo(function ProductTable({
       <tbody>
         {products.map(product => {
           const isSelected = selectedIds.includes(product._id);
+          const canDrag = product.isPinned && !isReordering;
+          const rowClasses = [
+            isSelected ? styles.selectedRow : '',
+            canDrag ? styles.draggableRow : '',
+            draggingId === product._id ? styles.draggingRow : '',
+            dragOverId === product._id ? styles.dragOverRow : ''
+          ].filter(Boolean).join(' ');
+
           return (
-            <tr key={product._id} className={isSelected ? styles.selectedRow : ''}>
+            <tr
+              key={product._id}
+              className={rowClasses}
+              onDragOver={(event) => handleDragOver(event, product)}
+              onDrop={(event) => handleDrop(event, product)}
+              onDragLeave={() => setDragOverId(current => current === product._id ? null : current)}
+            >
+              <td style={{ textAlign: 'center' }}>
+                <button
+                  type="button"
+                  className={styles.dragHandle}
+                  draggable={canDrag}
+                  disabled={!canDrag}
+                  onDragStart={(event) => handleDragStart(event, product)}
+                  onDragEnd={handleDragEnd}
+                  title={product.isPinned ? "Drag to reorder" : "Pin the product first"}
+                >
+                  ::
+                </button>
+              </td>
               <td style={{ textAlign: 'center' }}>
                 <label className={styles.checkboxContainer}>
                   <input 
@@ -144,7 +220,8 @@ export default function ManageProducts() {
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterBatch, setFilterBatch] = useState('all');
   const [filterPinned, setFilterPinned] = useState('all');
-  const [sortBy, setSortBy] = useState('newest');
+  const [sortBy, setSortBy] = useState('pinned_order');
+  const [isReordering, setIsReordering] = useState(false);
 
   // Bulk actions selection
   const [selectedIds, setSelectedIds] = useState([]);
@@ -237,6 +314,40 @@ export default function ManageProducts() {
       }
     } catch (err) {
       showToast('Błąd połączenia.', 'error');
+    }
+  }, [currentPage, fetchProducts, showToast]);
+
+  const handleReorderPinned = useCallback(async (reorderedProducts) => {
+    const pinnedProducts = reorderedProducts.filter(product => product.isPinned);
+    if (pinnedProducts.length < 2) return;
+
+    setProducts(reorderedProducts);
+    setIsReordering(true);
+
+    try {
+      const res = await fetch('/api/products', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reorder: pinnedProducts.map((product, index) => ({
+            id: product._id,
+            pinnedOrder: index + 1
+          }))
+        })
+      });
+
+      if (res.ok) {
+        showToast('Zaktualizowano kolejnoĹ›Ä‡ przypiÄ™tych produktĂłw!', 'success');
+        fetchProducts(currentPage);
+      } else {
+        showToast('BĹ‚Ä…d zapisu kolejnoĹ›ci.', 'error');
+        fetchProducts(currentPage);
+      }
+    } catch (err) {
+      showToast('BĹ‚Ä…d poĹ‚Ä…czenia przy zapisie kolejnoĹ›ci.', 'error');
+      fetchProducts(currentPage);
+    } finally {
+      setIsReordering(false);
     }
   }, [currentPage, fetchProducts, showToast]);
 
@@ -610,6 +721,7 @@ export default function ManageProducts() {
               onChange={(e) => setSortBy(e.target.value)}
               className={styles.sortSelect}
             >
+              <option value="pinned_order">Kolejnosc przypietych</option>
               <option value="newest">Najnowsze</option>
               <option value="oldest">Najstarsze</option>
               <option value="price_asc">Cena: rosnąco</option>
@@ -643,6 +755,8 @@ export default function ManageProducts() {
             onSelectAll={handleSelectAll}
             isAllSelected={isAllSelected}
             onUpdatePinnedOrder={handleUpdatePinnedOrder}
+            onReorderPinned={handleReorderPinned}
+            isReordering={isReordering}
           />
         </div>
       )}
