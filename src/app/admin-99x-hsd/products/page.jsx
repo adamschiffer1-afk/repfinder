@@ -4,33 +4,94 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import styles from '@/styles/Admin.module.css';
 import { detectCategory, PRODUCT_CATEGORIES } from '@/utils/categoryHelper';
 
-const ProductTable = memo(function ProductTable({ products, onEdit, onDelete }) {
+const ProductTable = memo(function ProductTable({ 
+  products, 
+  onEdit, 
+  onDelete, 
+  selectedIds, 
+  onSelectSingle, 
+  onSelectAll, 
+  isAllSelected 
+}) {
+  if (products.length === 0) {
+    return (
+      <div className={styles.noProductsPlaceholder}>
+        📭 Brak produktów spełniających podane kryteria.
+      </div>
+    );
+  }
+
   return (
     <table className={styles.adminTable}>
       <thead>
         <tr>
-          <th>Image</th>
-          <th>Name</th>
-          <th>Price</th>
-          <th>Category</th>
-          <th>Pinned</th>
-          <th>Actions</th>
+          <th style={{ width: '40px', textAlign: 'center' }}>
+            <label className={styles.checkboxContainer}>
+              <input 
+                type="checkbox" 
+                checked={isAllSelected} 
+                onChange={onSelectAll} 
+              />
+              <span className={styles.checkboxCustom}></span>
+            </label>
+          </th>
+          <th>Zdjęcie</th>
+          <th>Nazwa</th>
+          <th>Cena</th>
+          <th>Kategoria</th>
+          <th>Batch</th>
+          <th>Kliknięcia</th>
+          <th>Przypięty</th>
+          <th>Akcje</th>
         </tr>
       </thead>
       <tbody>
-        {products.map(product => (
-          <tr key={product._id}>
-            <td><img src={product.image} alt="" className={styles.tableImg} /></td>
-            <td>{product.name}</td>
-            <td>${product.price}</td>
-            <td>{product.category}</td>
-            <td>{product.isPinned ? `Yes ${product.pinnedOrder !== null && product.pinnedOrder !== undefined ? `(#${product.pinnedOrder})` : ''}` : 'No'}</td>
-            <td className={styles.actions}>
-              <button onClick={() => onEdit(product)}>Edit</button>
-              <button onClick={() => onDelete(product._id)}>Delete</button>
-            </td>
-          </tr>
-        ))}
+        {products.map(product => {
+          const isSelected = selectedIds.includes(product._id);
+          return (
+            <tr key={product._id} className={isSelected ? styles.selectedRow : ''}>
+              <td style={{ textAlign: 'center' }}>
+                <label className={styles.checkboxContainer}>
+                  <input 
+                    type="checkbox" 
+                    checked={isSelected} 
+                    onChange={() => onSelectSingle(product._id)} 
+                  />
+                  <span className={styles.checkboxCustom}></span>
+                </label>
+              </td>
+              <td>
+                <div className={styles.tableImgContainer}>
+                  <img src={product.image} alt="" className={styles.tableImg} />
+                </div>
+              </td>
+              <td className={styles.productNameCell} title={product.name}>{product.name}</td>
+              <td className={styles.priceCell}>${product.price}</td>
+              <td>
+                <span className={`${styles.badge} ${styles.categoryBadge}`}>{product.category}</span>
+              </td>
+              <td>
+                <span className={`${styles.badge} ${styles.batchBadge} ${styles[`batchBadge_${product.batch}`]}`}>
+                  {product.batch}
+                </span>
+              </td>
+              <td className={styles.clicksCell}>📊 {product.clicks || 0}</td>
+              <td>
+                {product.isPinned ? (
+                  <span className={styles.pinnedBadge}>
+                    📌 Tak {product.pinnedOrder !== null && product.pinnedOrder !== undefined ? `(#${product.pinnedOrder})` : ''}
+                  </span>
+                ) : (
+                  <span className={styles.unpinnedBadge}>Nie</span>
+                )}
+              </td>
+              <td className={styles.actions}>
+                <button className={styles.editBtn} onClick={() => onEdit(product)}>Edit</button>
+                <button className={styles.deleteBtn} onClick={() => onDelete(product._id)}>Delete</button>
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
@@ -55,11 +116,47 @@ export default function ManageProducts() {
     isPinned: false,
     pinnedOrder: ''
   });
+  
+  // Custom alerts and confirmations
+  const [toasts, setToasts] = useState([]);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
+
+  // Pagination, search & advanced filters
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [totalProducts, setTotalProducts] = useState(0);
+  
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterBatch, setFilterBatch] = useState('all');
+  const [filterPinned, setFilterPinned] = useState('all');
+  const [sortBy, setSortBy] = useState('newest');
+
+  // Bulk actions selection
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  // Toast Helper
+  const showToast = useCallback((message, type = 'success') => {
+    const id = Date.now() + Math.random().toString(36).substr(2, 9);
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4000);
+  }, []);
+
+  // Confirmation dialog helper
+  const askConfirmation = useCallback((title, message, onConfirm) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      onConfirm: () => {
+        onConfirm();
+        setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null });
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -73,7 +170,14 @@ export default function ManageProducts() {
     try {
       setLoading(true);
       const searchParam = search.trim();
-      const url = `/api/products?page=${page}&limit=50&admin=true${searchParam ? `&search=${encodeURIComponent(searchParam)}` : ''}`;
+      let url = `/api/products?page=${page}&limit=50&admin=true`;
+      
+      if (searchParam) url += `&search=${encodeURIComponent(searchParam)}`;
+      if (filterCategory !== 'all') url += `&category=${encodeURIComponent(filterCategory)}`;
+      if (filterBatch !== 'all') url += `&batch=${encodeURIComponent(filterBatch)}`;
+      if (filterPinned !== 'all') url += `&pinned=${encodeURIComponent(filterPinned)}`;
+      if (sortBy) url += `&sort=${encodeURIComponent(sortBy)}`;
+
       const res = await fetch(url, { signal });
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json();
@@ -86,23 +190,152 @@ export default function ManageProducts() {
         setCurrentPage(data.page);
         setTotalProducts(data.total);
       } else {
-        // Fallback for all products
         setProducts(data);
       }
     } catch (err) {
       if (err.name === 'AbortError') return;
       console.error(err);
-      alert("Błąd pobierania produktów. Sprawdź połączenie z bazą.");
+      showToast("Błąd pobierania produktów. Sprawdź połączenie z bazą.", "error");
     } finally {
       if (!signal?.aborted) setLoading(false);
     }
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, filterCategory, filterBatch, filterPinned, sortBy, showToast]);
 
   useEffect(() => {
     const controller = new AbortController();
     fetchProducts(1, debouncedSearchTerm, controller.signal);
     return () => controller.abort();
-  }, [debouncedSearchTerm, fetchProducts]);
+  }, [debouncedSearchTerm, filterCategory, filterBatch, filterPinned, sortBy, fetchProducts]);
+
+  // Handle single selection toggling
+  const handleSelectSingle = useCallback((id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  }, []);
+
+  // Handle select all toggling on current page
+  const isAllSelected = products.length > 0 && products.every(p => selectedIds.includes(p._id));
+  
+  const handleSelectAll = useCallback(() => {
+    const pageIds = products.map(p => p._id);
+    if (isAllSelected) {
+      setSelectedIds(prev => prev.filter(id => !pageIds.includes(id)));
+    } else {
+      setSelectedIds(prev => {
+        const union = [...prev];
+        pageIds.forEach(id => {
+          if (!union.includes(id)) union.push(id);
+        });
+        return union;
+      });
+    }
+  }, [products, isAllSelected]);
+
+  // Bulk actions API calls
+  const handleBulkDelete = useCallback(() => {
+    askConfirmation(
+      'Potwierdź masowe usunięcie',
+      `Czy na pewno chcesz trwale usunąć ${selectedIds.length} zaznaczonych produktów? Tej operacji nie można cofnąć!`,
+      async () => {
+        try {
+          const res = await fetch('/api/products', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selectedIds })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showToast(`Pomyślnie usunięto ${data.deletedCount} produktów!`, 'success');
+            setSelectedIds([]);
+            fetchProducts(currentPage);
+          } else {
+            showToast(data.error || 'Wystąpił błąd podczas usuwania.', 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia z serwerem.', 'error');
+        }
+      }
+    );
+  }, [selectedIds, currentPage, fetchProducts, showToast, askConfirmation]);
+
+  const handleBulkCategoryChange = useCallback((category) => {
+    askConfirmation(
+      'Zmień kategorię dla wielu produktów',
+      `Czy na pewno chcesz zmienić kategorię dla ${selectedIds.length} produktów na "${category}"?`,
+      async () => {
+        try {
+          const res = await fetch('/api/products', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selectedIds, update: { category } })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showToast(`Pomyślnie zmieniono kategorię dla ${data.modifiedCount} produktów!`, 'success');
+            setSelectedIds([]);
+            fetchProducts(currentPage);
+          } else {
+            showToast(data.error || 'Wystąpił błąd podczas aktualizacji.', 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia z serwerem.', 'error');
+        }
+      }
+    );
+  }, [selectedIds, currentPage, fetchProducts, showToast, askConfirmation]);
+
+  const handleBulkBatchChange = useCallback((batch) => {
+    askConfirmation(
+      'Zmień batch dla wielu produktów',
+      `Czy na pewno chcesz zmienić batch dla ${selectedIds.length} produktów na "${batch}"?`,
+      async () => {
+        try {
+          const res = await fetch('/api/products', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selectedIds, update: { batch } })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showToast(`Pomyślnie zmieniono tag batch dla ${data.modifiedCount} produktów!`, 'success');
+            setSelectedIds([]);
+            fetchProducts(currentPage);
+          } else {
+            showToast(data.error || 'Wystąpił błąd podczas aktualizacji.', 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia z serwerem.', 'error');
+        }
+      }
+    );
+  }, [selectedIds, currentPage, fetchProducts, showToast, askConfirmation]);
+
+  const handleBulkPinChange = useCallback((isPinned) => {
+    askConfirmation(
+      isPinned ? 'Masowe przypinanie' : 'Masowe odpinanie',
+      `Czy chcesz ${isPinned ? 'przypiąć' : 'odpiąć'} ${selectedIds.length} zaznaczonych produktów?`,
+      async () => {
+        try {
+          const res = await fetch('/api/products', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selectedIds, update: { isPinned } })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showToast(`Pomyślnie ${isPinned ? 'przypięto' : 'odpięto'} ${data.modifiedCount} produktów!`, 'success');
+            setSelectedIds([]);
+            fetchProducts(currentPage);
+          } else {
+            showToast(data.error || 'Wystąpił błąd podczas aktualizacji.', 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia z serwerem.', 'error');
+        }
+      }
+    );
+  }, [selectedIds, currentPage, fetchProducts, showToast, askConfirmation]);
 
   const handleScrape = async (e) => {
     e.preventDefault();
@@ -121,6 +354,7 @@ export default function ManageProducts() {
       if (res.ok) {
         setScraperStatus({ type: 'success', message: data.message });
         setScraperData({ name: '', url: '' });
+        showToast('Dodano produkt ze scrapowania!', 'success');
         fetchProducts(currentPage);
         setTimeout(() => setShowScraperModal(false), 2000);
       } else {
@@ -151,19 +385,32 @@ export default function ManageProducts() {
     });
 
     if (res.ok) {
+      showToast(editingProduct ? 'Produkt został pomyślnie zaktualizowany!' : 'Nowy produkt został dodany!', 'success');
       fetchProducts(currentPage);
       setShowModal(false);
       setEditingProduct(null);
       setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '' });
+    } else {
+      showToast('Coś poszło nie tak podczas zapisywania produktu.', 'error');
     }
   };
 
-  const handleDelete = useCallback(async (id) => {
-    if (confirm('Are you sure?')) {
-      const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
-      if (res.ok) fetchProducts(currentPage);
-    }
-  }, [currentPage, fetchProducts]);
+  const handleDelete = useCallback((id) => {
+    askConfirmation(
+      'Usuwanie produktu',
+      'Czy na pewno chcesz usunąć ten produkt? Tej akcji nie można cofnąć.',
+      async () => {
+        const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Produkt został pomyślnie usunięty.', 'success');
+          setSelectedIds(prev => prev.filter(x => x !== id));
+          fetchProducts(currentPage);
+        } else {
+          showToast('Wystąpił błąd przy usuwaniu produktu.', 'error');
+        }
+      }
+    );
+  }, [currentPage, fetchProducts, showToast, askConfirmation]);
 
   const openEdit = useCallback((product) => {
     setEditingProduct(product);
@@ -187,18 +434,10 @@ export default function ManageProducts() {
         <div className={styles.adminNav}>
           <input 
             type="text" 
-            placeholder="Search products..." 
+            placeholder="Szukaj produktów..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={styles.adminSearch}
-            style={{ 
-              padding: '8px 15px', 
-              borderRadius: '8px', 
-              border: '1px solid rgba(255,255,255,0.1)', 
-              background: 'rgba(0,0,0,0.2)', 
-              color: 'white',
-              marginRight: '15px'
-            }}
           />
           <button className={styles.scraperBtn} onClick={() => setShowScraperModal(true)}>
             🚀 Add via Scraper
@@ -213,12 +452,105 @@ export default function ManageProducts() {
         </div>
       </header>
 
-      <div style={{ marginBottom: '15px', opacity: 0.6, fontSize: '14px' }}>
-        Total products: {totalProducts}
+      {/* Advanced Filters Section */}
+      <div className={styles.advancedFiltersCard}>
+        <div className={styles.filterSection}>
+          <span className={styles.filterLabel}>Kategoria:</span>
+          <div className={styles.filterPills}>
+            <button 
+              className={`${styles.filterPill} ${filterCategory === 'all' ? styles.filterPillActive : ''}`} 
+              onClick={() => setFilterCategory('all')}
+            >
+              Wszystkie
+            </button>
+            {PRODUCT_CATEGORIES.map(cat => (
+              <button 
+                key={cat} 
+                className={`${styles.filterPill} ${filterCategory === cat ? styles.filterPillActive : ''}`} 
+                onClick={() => setFilterCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.filterSection}>
+          <span className={styles.filterLabel}>Batch tag:</span>
+          <div className={styles.filterPills}>
+            {['all', 'best', 'budget', 'random'].map(batch => (
+              <button 
+                key={batch} 
+                className={`${styles.filterPill} ${filterBatch === batch ? styles.filterPillActive : ''}`} 
+                onClick={() => setFilterBatch(batch)}
+              >
+                {batch === 'all' ? 'Wszystkie' : batch}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.filtersBottomRow}>
+          <div className={styles.filterSectionInline}>
+            <span className={styles.filterLabel}>Status:</span>
+            <div className={styles.filterPills}>
+              {[
+                { label: 'Wszystkie', value: 'all' },
+                { label: '📌 Przypięte', value: 'true' },
+                { label: '📍 Zwykłe', value: 'false' }
+              ].map(opt => (
+                <button 
+                  key={opt.value} 
+                  className={`${styles.filterPill} ${filterPinned === opt.value ? styles.filterPillActive : ''}`} 
+                  onClick={() => setFilterPinned(opt.value)}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.filterSectionInline}>
+            <span className={styles.filterLabel}>Sortowanie:</span>
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className={styles.sortSelect}
+            >
+              <option value="newest">Najnowsze</option>
+              <option value="oldest">Najstarsze</option>
+              <option value="price_asc">Cena: rosnąco</option>
+              <option value="price_desc">Cena: malejąco</option>
+              <option value="clicks_desc">Najpopularniejsze (kliknięcia)</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      {loading ? <p>Loading...</p> : (
-        <ProductTable products={products} onEdit={openEdit} onDelete={handleDelete} />
+      <div style={{ marginBottom: '20px', opacity: 0.8, fontSize: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>Znaleziono produktów: <strong>{totalProducts}</strong></span>
+        {selectedIds.length > 0 && (
+          <span style={{ color: '#a78bfa' }}>Zaznaczono: <strong>{selectedIds.length}</strong></span>
+        )}
+      </div>
+
+      {loading ? (
+        <div className={styles.spinnerContainer}>
+          <div className={styles.loadingSpinner}></div>
+          <p style={{ marginTop: '10px' }}>Wczytywanie...</p>
+        </div>
+      ) : (
+        <div className={styles.tableWrapper}>
+          <ProductTable 
+            products={products} 
+            onEdit={openEdit} 
+            onDelete={handleDelete}
+            selectedIds={selectedIds}
+            onSelectSingle={handleSelectSingle}
+            onSelectAll={handleSelectAll}
+            isAllSelected={isAllSelected}
+          />
+        </div>
       )}
 
       {!loading && totalPages > 1 && (
@@ -228,16 +560,94 @@ export default function ManageProducts() {
             disabled={currentPage === 1}
             style={{ padding: '8px 15px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
           >
-            Previous
+            Poprzednia
           </button>
-          <span style={{ color: 'white' }}>Page {currentPage} of {totalPages}</span>
+          <span style={{ color: 'white' }}>Strona {currentPage} z {totalPages}</span>
           <button 
             onClick={() => fetchProducts(currentPage + 1)} 
             disabled={currentPage === totalPages}
             style={{ padding: '8px 15px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
           >
-            Next
+            Następna
           </button>
+        </div>
+      )}
+
+      {/* Floating Bulk Actions Bar */}
+      {selectedIds.length > 0 && (
+        <div className={styles.bulkBar}>
+          <div className={styles.bulkBarInner}>
+            <div className={styles.bulkCount}>
+              <span>⚡ Wybrano <strong>{selectedIds.length}</strong> produktów</span>
+            </div>
+            
+            <div className={styles.bulkActions}>
+              <div className={styles.bulkActionGroup}>
+                <select 
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleBulkCategoryChange(e.target.value);
+                      e.target.value = '';
+                    }
+                  }}
+                  defaultValue=""
+                  className={styles.bulkSelect}
+                >
+                  <option value="" disabled>Zmień kategorię...</option>
+                  {PRODUCT_CATEGORIES.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.bulkActionGroup}>
+                <select 
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleBulkBatchChange(e.target.value);
+                      e.target.value = '';
+                    }
+                  }}
+                  defaultValue=""
+                  className={styles.bulkSelect}
+                >
+                  <option value="" disabled>Zmień batch...</option>
+                  <option value="best">Best</option>
+                  <option value="budget">Budget</option>
+                  <option value="random">Random</option>
+                </select>
+              </div>
+
+              <div className={styles.bulkActionGroup}>
+                <button 
+                  className={styles.bulkPinBtn} 
+                  onClick={() => handleBulkPinChange(true)}
+                >
+                  📌 Przypnij
+                </button>
+                <button 
+                  className={styles.bulkUnpinBtn} 
+                  onClick={() => handleBulkPinChange(false)}
+                >
+                  📍 Odepnij
+                </button>
+              </div>
+
+              <button 
+                className={styles.bulkDeleteBtn} 
+                onClick={handleBulkDelete}
+              >
+                🗑️ Usuń zaznaczone
+              </button>
+              
+              <button 
+                className={styles.bulkCancelBtn} 
+                onClick={() => setSelectedIds([])}
+              >
+                Anuluj
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -381,6 +791,44 @@ export default function ManageProducts() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification Containers */}
+      <div className={styles.toastContainer}>
+        {toasts.map(toast => (
+          <div key={toast.id} className={`${styles.toast} ${toast.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
+            <span className={styles.toastIcon}>
+              {toast.type === 'success' ? '⚡' : '⚠️'}
+            </span>
+            <span className={styles.toastMessage}>{toast.message}</span>
+            <button className={styles.toastClose} onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}>&times;</button>
+          </div>
+        ))}
+      </div>
+
+      {/* Confirmation Modal */}
+      {confirmModal.isOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={`${styles.adminModal} ${styles.confirmModal}`}>
+            <h2>{confirmModal.title}</h2>
+            <p>{confirmModal.message}</p>
+            <div className={styles.modalActions}>
+              <button 
+                onClick={confirmModal.onConfirm}
+                className={styles.confirmModalBtn}
+              >
+                Tak, wykonaj
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null })}
+                className={styles.cancelModalBtn}
+              >
+                Anuluj
+              </button>
+            </div>
           </div>
         </div>
       )}

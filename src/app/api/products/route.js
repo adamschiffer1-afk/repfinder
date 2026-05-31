@@ -94,10 +94,10 @@ export async function GET(req) {
       }
     }
 
-    const sort = admin
+    const sort = admin && !sortParam
       ? { isPinned: -1, pinnedOrder: 1, createdAt: -1 }
       : buildProductSort(sortParam, {
-          pinnedFirst: !hasActiveStorefrontFilters(searchParams)
+          pinnedFirst: admin ? false : !hasActiveStorefrontFilters(searchParams)
         });
 
     if (page && !Number.isNaN(page)) {
@@ -136,5 +136,69 @@ export async function POST(req) {
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req) {
+  try {
+    const session = await auth();
+    if (!session || session.user.email !== "kakobuybs209@gmail.com") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { ids } = await req.json();
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json({ error: "Invalid product IDs" }, { status: 400 });
+    }
+
+    await dbConnect();
+    const result = await Product.deleteMany({ _id: { $in: ids } });
+    return NextResponse.json({ message: `Successfully deleted ${result.deletedCount} products`, deletedCount: result.deletedCount });
+  } catch (error) {
+    console.error("Bulk delete error:", error);
+    return NextResponse.json({ error: "Failed to delete products" }, { status: 500 });
+  }
+}
+
+export async function PATCH(req) {
+  try {
+    const session = await auth();
+    if (!session || session.user.email !== "kakobuybs209@gmail.com") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { ids, update } = await req.json();
+    if (!Array.isArray(ids) || ids.length === 0 || !update) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    }
+
+    await dbConnect();
+    
+    // Allowed fields for bulk update
+    const allowedFields = ["category", "batch", "isPinned"];
+    const updateData = {};
+    for (const key of allowedFields) {
+      if (update[key] !== undefined) {
+        updateData[key] = update[key];
+        // If unpinning, clear pinnedOrder
+        if (key === "isPinned" && update[key] === false) {
+          updateData.pinnedOrder = null;
+        }
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+    }
+
+    const result = await Product.updateMany(
+      { _id: { $in: ids } },
+      { $set: updateData }
+    );
+
+    return NextResponse.json({ message: `Successfully updated ${result.modifiedCount} products`, modifiedCount: result.modifiedCount });
+  } catch (error) {
+    console.error("Bulk update error:", error);
+    return NextResponse.json({ error: "Failed to update products" }, { status: 500 });
   }
 }

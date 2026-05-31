@@ -377,13 +377,18 @@ export default function Products() {
   );
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => setDebouncedSearchQuery(searchQuery.trim()), 300);
+    const timeoutId = setTimeout(() => {
+      const trimmed = searchQuery.trim();
+      setDebouncedSearchQuery(trimmed);
+      // Reset page only once, together with query update
+      setPage(1);
+    }, 300);
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearchQuery, selectedCategories, selectedBatch, priceRange.min, priceRange.max]);
+  }, [selectedCategories, selectedBatch, priceRange.min, priceRange.max]);
 
   const categoriesParam = selectedCategories.join(',');
   const priceMin = priceRange.min;
@@ -785,12 +790,7 @@ export default function Products() {
     const nextQuery = e.target.value;
     setSearchQuery(nextQuery);
     setIsSearchFocused(true);
-    if (nextQuery.trim()) {
-      if (selectedCategories.length > 0) setSelectedCategories([]);
-      if (selectedBatch !== '') setSelectedBatch('');
-      if (priceRange.min !== '' || priceRange.max !== '') setPriceRange({ min: '', max: '' });
-    }
-    setPage(1);
+    // Filters and page reset happen inside debounced useEffect — no immediate state storm
   };
 
   const handleSearchKeyDown = (e) => {

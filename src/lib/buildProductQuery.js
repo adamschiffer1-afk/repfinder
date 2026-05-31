@@ -33,8 +33,9 @@ export function buildProductFilter(searchParams) {
   const minPrice = searchParams.get('minPrice');
   const maxPrice = searchParams.get('maxPrice');
   const search = searchParams.get('search')?.trim();
+  const pinned = searchParams.get('pinned');
 
-  if (category) {
+  if (category && category !== 'all') {
     filters.push({ category });
   } else if (categories) {
     const list = categories.split(',').map(item => item.trim()).filter(Boolean);
@@ -43,7 +44,7 @@ export function buildProductFilter(searchParams) {
     }
   }
 
-  if (batch && batch !== 'random') {
+  if (batch && batch !== 'all' && batch !== 'random') {
     filters.push({ batch });
   }
 
@@ -55,6 +56,12 @@ export function buildProductFilter(searchParams) {
   if (maxPrice) {
     const max = parseFloat(maxPrice);
     if (!Number.isNaN(max)) filters.push({ price: { $lte: max } });
+  }
+
+  if (pinned === 'true') {
+    filters.push({ isPinned: true });
+  } else if (pinned === 'false') {
+    filters.push({ isPinned: { $ne: true } });
   }
 
   const searchFilter = buildSearchFilter(search);
@@ -73,24 +80,39 @@ export function hasActiveStorefrontFilters(searchParams) {
     || (searchParams.get('batch') && searchParams.get('batch') !== 'random')
     || searchParams.get('minPrice')
     || searchParams.get('maxPrice')
+    || searchParams.get('pinned')
   );
 }
 
 export function buildProductSort(sortParam, { pinnedFirst = false } = {}) {
-  if (pinnedFirst && (!sortParam || sortParam === 'newest')) {
-    return { isPinned: -1, pinnedOrder: 1, createdAt: -1 };
-  }
-
+  let baseSort = {};
   switch (sortParam) {
     case 'price_asc':
-      return { price: 1, createdAt: -1 };
+      baseSort = { price: 1, createdAt: -1 };
+      break;
     case 'price_desc':
-      return { price: -1, createdAt: -1 };
+      baseSort = { price: -1, createdAt: -1 };
+      break;
     case 'name_asc':
-      return { name: 1, createdAt: -1 };
+      baseSort = { name: 1, createdAt: -1 };
+      break;
     case 'name_desc':
-      return { name: -1, createdAt: -1 };
+      baseSort = { name: -1, createdAt: -1 };
+      break;
+    case 'clicks_desc':
+      baseSort = { clicks: -1, createdAt: -1 };
+      break;
+    case 'oldest':
+      baseSort = { createdAt: 1 };
+      break;
+    case 'newest':
     default:
-      return { createdAt: -1 };
+      baseSort = { createdAt: -1 };
+      break;
   }
+
+  if (pinnedFirst) {
+    return { isPinned: -1, pinnedOrder: 1, ...baseSort };
+  }
+  return baseSort;
 }
