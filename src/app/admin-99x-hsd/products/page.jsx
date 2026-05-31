@@ -105,6 +105,10 @@ export default function ManageProducts() {
   const [scraperLoading, setScraperLoading] = useState(false);
   const [scraperStatus, setScraperStatus] = useState({ type: '', message: '' });
   const [scraperData, setScraperData] = useState({ name: '', url: '' });
+  const [showBulkScraperModal, setShowBulkScraperModal] = useState(false);
+  const [bulkText, setBulkText] = useState('');
+  const [bulkLoading, setBulkLoading] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState({ total: 0, current: 0, successes: 0, failures: 0, logs: [] });
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -367,6 +371,63 @@ export default function ManageProducts() {
     }
   };
 
+  const handleBulkScrape = async (e) => {
+    e.preventDefault();
+    if (!bulkText.trim()) return;
+
+    const lines = bulkText.split('\n').map(l => l.trim()).filter(l => l.includes('weidian.com'));
+    if (lines.length === 0) {
+      showToast('Nie znaleziono prawidłowych linków do Weidian w tekście.', 'error');
+      return;
+    }
+
+    const urlsToProcess = [...lines].reverse();
+
+    setBulkLoading(true);
+    setBulkProgress({ total: urlsToProcess.length, current: 0, successes: 0, failures: 0, logs: [] });
+
+    let successes = 0;
+    let failures = 0;
+    let currentLogs = [];
+
+    for (let i = 0; i < urlsToProcess.length; i++) {
+      const url = urlsToProcess[i];
+      try {
+        const res = await fetch('/api/admin/scrape/bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          successes++;
+          currentLogs.push({ url, status: 'success', message: data.message });
+        } else {
+          failures++;
+          currentLogs.push({ url, status: 'error', message: data.error || 'Błąd API' });
+        }
+      } catch (err) {
+        failures++;
+        currentLogs.push({ url, status: 'error', message: 'Błąd połączenia' });
+      }
+
+      setBulkProgress({
+        total: urlsToProcess.length,
+        current: i + 1,
+        successes,
+        failures,
+        logs: currentLogs
+      });
+    }
+
+    setBulkLoading(false);
+    showToast(`Zakończono masowe dodawanie. Sukces: ${successes}, Błędy: ${failures}`, successes > 0 ? 'success' : 'error');
+    if (successes > 0) {
+      fetchProducts(1);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const method = editingProduct ? 'PUT' : 'POST';
@@ -441,6 +502,9 @@ export default function ManageProducts() {
           />
           <button className={styles.scraperBtn} onClick={() => setShowScraperModal(true)}>
             🚀 Add via Scraper
+          </button>
+          <button className={styles.scraperBtn} style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }} onClick={() => setShowBulkScraperModal(true)}>
+            📦 Bulk Add (Weidian)
           </button>
           <button className={styles.navLink} onClick={() => {
             setEditingProduct(null);
@@ -788,6 +852,57 @@ export default function ManageProducts() {
                       Scraping...
                     </>
                   ) : '🚀 Start Scraping'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Scraper Modal */}
+      {showBulkScraperModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.adminModal} style={{ maxWidth: '600px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0 }}>📦 Masowe Dodawanie (Bulk)</h2>
+              <span style={{ fontSize: '24px', cursor: 'pointer', opacity: bulkLoading ? 0.5 : 1, pointerEvents: bulkLoading ? 'none' : 'auto' }} onClick={() => setShowBulkScraperModal(false)}>&times;</span>
+            </div>
+            
+            <form onSubmit={handleBulkScrape}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '15px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#f59e0b' }}>Wklej linki Weidian (każdy w nowej linii)</label>
+                <textarea 
+                  placeholder="https://weidian.com/item.html?itemID=123&#10;https://weidian.com/item.html?itemID=456" 
+                  value={bulkText} 
+                  onChange={(e) => setBulkText(e.target.value)} 
+                  required 
+                  disabled={bulkLoading}
+                  style={{ height: '200px', padding: '12px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', resize: 'vertical' }}
+                />
+                <span className={styles.scraperHint}>Każdy link zostanie pobrany jako 1 przypięty produkt (kolejność zachowana).</span>
+              </div>
+
+              {bulkProgress.total > 0 && (
+                <div style={{ marginBottom: '20px', padding: '15px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>
+                    <span>Przetwarzanie: {bulkProgress.current} / {bulkProgress.total}</span>
+                    <span style={{ color: '#34d399' }}>Sukces: {bulkProgress.successes}</span>
+                    <span style={{ color: '#ef4444' }}>Błędy: {bulkProgress.failures}</span>
+                  </div>
+                  <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #f59e0b, #d97706)', transition: 'width 0.3s ease' }} />
+                  </div>
+                </div>
+              )}
+
+              <div className={styles.modalActions}>
+                <button type="submit" className={styles.scraperBtn} disabled={bulkLoading || !bulkText.trim()} style={{ width: '100%', background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
+                  {bulkLoading ? (
+                    <>
+                      <div className={styles.loadingSpinner}></div>
+                      Dodawanie...
+                    </>
+                  ) : '⚡ Rozpocznij pobieranie'}
                 </button>
               </div>
             </form>
