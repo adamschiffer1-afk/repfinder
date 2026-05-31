@@ -503,8 +503,8 @@ export default function ManageProducts() {
           <button className={styles.scraperBtn} onClick={() => setShowScraperModal(true)}>
             🚀 Add via Scraper
           </button>
-          <button className={styles.scraperBtn} style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }} onClick={() => setShowBulkScraperModal(true)}>
-            📦 COLAB LINKS
+          <button className={styles.scraperBtn} onClick={() => setShowBulkScraperModal(true)}>
+            📦 Collab Links
           </button>
           <button className={styles.navLink} onClick={() => {
             setEditingProduct(null);
