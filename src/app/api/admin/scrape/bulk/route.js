@@ -16,7 +16,7 @@ export async function POST(req) {
   }
 
   try {
-    const { url } = await req.json();
+    const { url, pinnedOrder } = await req.json();
 
     if (!url) {
       return NextResponse.json({ error: "URL is required" }, { status: 400 });
@@ -61,6 +61,8 @@ export async function POST(req) {
 
     await dbConnect();
 
+    const parsedPinnedOrder = Number.parseInt(pinnedOrder, 10);
+
     const productData = {
         name: finalName,
         price: parseFloat(priceUSD),
@@ -69,7 +71,7 @@ export async function POST(req) {
         batch: 'best',
         link: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=${AFFILIATE_CODE}`,
         isPinned: true,
-        pinnedOrder: 999999
+        pinnedOrder: Number.isFinite(parsedPinnedOrder) && parsedPinnedOrder > 0 ? parsedPinnedOrder : 999999
     };
 
     const newProduct = await Product.create(productData);

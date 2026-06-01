@@ -189,7 +189,21 @@ export async function DELETE(req) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { ids } = await req.json();
+    const { ids, deletePinned, confirm } = await req.json();
+
+    if (deletePinned === true) {
+      if (confirm !== "DELETE_PINNED") {
+        return NextResponse.json({ error: "Missing delete confirmation" }, { status: 400 });
+      }
+
+      await dbConnect();
+      const result = await Product.deleteMany({ isPinned: true });
+      return NextResponse.json({
+        message: `Successfully deleted ${result.deletedCount} pinned products`,
+        deletedCount: result.deletedCount
+      });
+    }
+
     if (!Array.isArray(ids) || ids.length === 0) {
       return NextResponse.json({ error: "Invalid product IDs" }, { status: 400 });
     }
