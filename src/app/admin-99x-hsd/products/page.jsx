@@ -1,8 +1,43 @@
 'use client';
 
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import styles from '@/styles/Admin.module.css';
 import { detectCategory, PRODUCT_CATEGORIES } from '@/utils/categoryHelper';
+
+const REPLACE_CONFIRM_TEXT = 'PODMIEN';
+
+function decodeRepeated(value) {
+  let output = String(value || '');
+
+  for (let i = 0; i < 3; i++) {
+    try {
+      const decoded = decodeURIComponent(output);
+      if (decoded === output) break;
+      output = decoded;
+    } catch {
+      break;
+    }
+  }
+
+  return output;
+}
+
+function extractWeidianUrls(text) {
+  const uniqueItemIds = new Set();
+  const variants = [String(text || ''), decodeRepeated(text)];
+
+  for (const value of variants) {
+    const regex = /(?:itemID=|itemID%3D|\/item\/)(\d+)/gi;
+    let match = regex.exec(value);
+
+    while (match) {
+      uniqueItemIds.add(match[1]);
+      match = regex.exec(value);
+    }
+  }
+
+  return Array.from(uniqueItemIds).map((itemId) => `https://weidian.com/item.html?itemID=${itemId}`);
+}
 
 const ProductTable = memo(function ProductTable({ 
   products, 
@@ -194,7 +229,8 @@ export default function ManageProducts() {
   const [bulkText, setBulkText] = useState('');
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkProgress, setBulkProgress] = useState({ total: 0, current: 0, successes: 0, failures: 0, logs: [] });
-  const [replacePinnedBeforeBulk, setReplacePinnedBeforeBulk] = useState(false);
+  const [bulkReplaceMode, setBulkReplaceMode] = useState('none');
+  const [bulkBatch, setBulkBatch] = useState('best');
   const [replacePinnedConfirm, setReplacePinnedConfirm] = useState('');
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
@@ -227,6 +263,8 @@ export default function ManageProducts() {
 
   // Bulk actions selection
   const [selectedIds, setSelectedIds] = useState([]);
+  const bulkUrls = useMemo(() => extractWeidianUrls(bulkText), [bulkText]);
+  const requiresBulkConfirm = bulkReplaceMode !== 'none';
 
   // Toast Helper
   const showToast = useCallback((message, type = 'success') => {
@@ -517,92 +555,70 @@ export default function ManageProducts() {
     e.preventDefault();
     if (!bulkText.trim()) return;
 
-    const uniqueUrls = [];
-    const seenItemIds = new Set();
-
-    for (const line of bulkText.split('\n').map(l => l.trim()).filter(Boolean)) {
-      const itemId = (line.match(/itemID=(\d+)/) || line.match(/item\/(\d+)/))?.[1];
-      if (!itemId || seenItemIds.has(itemId)) continue;
-      seenItemIds.add(itemId);
-      uniqueUrls.push(line);
-    }
-    if (uniqueUrls.length === 0) {
+    if (bulkUrls.length === 0) {
       showToast('Nie znaleziono prawidłowych linków do Weidian w tekście.', 'error');
       return;
     }
 
-    if (replacePinnedBeforeBulk && replacePinnedConfirm !== 'PODMIEN') {
-      showToast('Wpisz PODMIEN, zeby potwierdzic podmiane przypietych produktow.', 'error');
+    if (requiresBulkConfirm && replacePinnedConfirm !== REPLACE_CONFIRM_TEXT) {
+      showToast('Wpisz PODMIEN, zeby potwierdzic podmiane produktow.', 'error');
       return;
     }
 
-    const urlsToProcess = uniqueUrls;
-
     setBulkLoading(true);
-    setBulkProgress({ total: urlsToProcess.length, current: 0, successes: 0, failures: 0, logs: [] });
+    setBulkProgress({ total: bulkUrls.length, current: 0, successes: 0, failures: 0, logs: [] });
 
-    let successes = 0;
-    let failures = 0;
-    let currentLogs = [];
-
-    if (replacePinnedBeforeBulk) {
-      try {
-        const deleteRes = await fetch('/api/products', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ deletePinned: true, confirm: 'DELETE_PINNED' })
-        });
-        const deleteData = await deleteRes.json();
-
-        if (!deleteRes.ok) {
-          throw new Error(deleteData.error || 'Delete failed');
-        }
-
-        showToast(`Usunieto ${deleteData.deletedCount || 0} przypietych produktow. Dodaje nowe...`, 'success');
-        setSelectedIds([]);
-      } catch (err) {
-        setBulkLoading(false);
-        showToast('Nie udalo sie usunac starych przypietych produktow.', 'error');
-        return;
-      }
-    }
-
-    for (let i = 0; i < urlsToProcess.length; i++) {
-      const url = urlsToProcess[i];
-      try {
-        const res = await fetch('/api/admin/scrape/bulk', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, pinnedOrder: i + 1 })
-        });
-        const data = await res.json();
-        
-        if (res.ok) {
-          successes++;
-          currentLogs.push({ url, status: 'success', message: data.message });
-        } else {
-          failures++;
-          currentLogs.push({ url, status: 'error', message: data.error || 'Błąd API' });
-        }
-      } catch (err) {
-        failures++;
-        currentLogs.push({ url, status: 'error', message: 'Błąd połączenia' });
-      }
+    try {
+      const res = await fetch('/api/admin/scrape/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          urls: bulkUrls,
+          replaceMode: bulkReplaceMode,
+          confirm: requiresBulkConfirm ? REPLACE_CONFIRM_TEXT : undefined,
+          batch: bulkBatch,
+          pin: true,
+          startOrder: 1,
+          concurrency: 4
+        })
+      });
+      const data = await res.json();
+      const logs = Array.isArray(data.results) ? data.results : [];
 
       setBulkProgress({
-        total: urlsToProcess.length,
-        current: i + 1,
-        successes,
-        failures,
-        logs: currentLogs
+        total: data.total || bulkUrls.length,
+        current: logs.length || bulkUrls.length,
+        successes: data.successes || 0,
+        failures: data.failures || 0,
+        logs
       });
-    }
 
-    setBulkLoading(false);
-    showToast(`Zakończono masowe dodawanie. Sukces: ${successes}, Błędy: ${failures}`, successes > 0 ? 'success' : 'error');
-    if (successes > 0) {
-      setSortBy('pinned_order');
-      fetchProducts(1);
+      if (!res.ok) {
+        showToast(data.error || 'Nie udalo sie wykonac importu.', 'error');
+        return;
+      }
+
+      const deletedMessage = data.deletedCount ? ` Usunieto: ${data.deletedCount}.` : '';
+      showToast(
+        `Import zakonczony. Dodano: ${data.created || 0}, odswiezono: ${data.updated || 0}, bledy: ${data.failures || 0}.${deletedMessage}`,
+        data.failures > 0 ? 'error' : 'success'
+      );
+
+      if ((data.successes || 0) > 0 || data.deletedCount > 0) {
+        setSelectedIds([]);
+        setSortBy('pinned_order');
+        fetchProducts(1);
+      }
+    } catch (err) {
+      setBulkProgress((prev) => ({
+        ...prev,
+        current: prev.total,
+        failures: prev.total,
+        logs: [{ status: 'error', message: 'Blad polaczenia z serwerem' }]
+      }));
+      showToast('Blad polaczenia z serwerem podczas importu.', 'error');
+    } finally {
+      setBulkLoading(false);
     }
   };
 
@@ -681,8 +697,11 @@ export default function ManageProducts() {
           <button className={styles.scraperBtn} onClick={() => setShowScraperModal(true)}>
             🚀 Add via Scraper
           </button>
-          <button className={styles.scraperBtn} onClick={() => setShowBulkScraperModal(true)}>
-            📦 Collab Links
+          <button className={styles.scraperBtn} onClick={() => {
+            setBulkProgress({ total: 0, current: 0, successes: 0, failures: 0, logs: [] });
+            setShowBulkScraperModal(true);
+          }}>
+            Bulk Import
           </button>
           <button className={styles.navLink} onClick={() => {
             setEditingProduct(null);
@@ -1044,15 +1063,15 @@ export default function ManageProducts() {
       {/* Bulk Scraper Modal */}
       {showBulkScraperModal && (
         <div className={styles.modalOverlay}>
-          <div className={styles.adminModal} style={{ maxWidth: '600px' }}>
+          <div className={styles.adminModal} style={{ maxWidth: '680px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0 }}>📦 Collab Links</h2>
+              <h2 style={{ margin: 0 }}>Bulk import</h2>
               <span style={{ fontSize: '24px', cursor: 'pointer', opacity: bulkLoading ? 0.5 : 1, pointerEvents: bulkLoading ? 'none' : 'auto' }} onClick={() => setShowBulkScraperModal(false)}>&times;</span>
             </div>
             
             <form onSubmit={handleBulkScrape}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '15px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Wklej linki Weidian (każdy w nowej linii)</label>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Linki Weidian / agent linki</label>
                 <textarea 
                   placeholder="https://weidian.com/item.html?itemID=123&#10;https://weidian.com/item.html?itemID=456" 
                   value={bulkText} 
@@ -1061,35 +1080,66 @@ export default function ManageProducts() {
                   disabled={bulkLoading}
                   style={{ height: '200px', padding: '12px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', resize: 'vertical' }}
                 />
-                <span className={styles.scraperHint}>Każdy link zostanie pobrany jako 1 przypięty produkt (kolejność zachowana).</span>
+                <span className={styles.scraperHint}>
+                  {bulkUrls.length > 0 ? `Wykryto ${bulkUrls.length} unikalnych itemow.` : 'Wklej dowolny tekst z linkami zawierajacymi itemID.'}
+                </span>
               </div>
 
-              <div style={{ marginBottom: '15px', padding: '12px', background: replacePinnedBeforeBulk ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.04)', border: `1px solid ${replacePinnedBeforeBulk ? 'rgba(239,68,68,0.25)' : 'rgba(255,255,255,0.08)'}`, borderRadius: '8px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: bulkLoading ? 'not-allowed' : 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={replacePinnedBeforeBulk}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '15px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Tryb</label>
+                  <select
+                    value={bulkReplaceMode}
                     disabled={bulkLoading}
-                    onChange={(e) => setReplacePinnedBeforeBulk(e.target.checked)}
-                    style={{ width: 'auto' }}
+                    onChange={(e) => {
+                      setBulkReplaceMode(e.target.value);
+                      setReplacePinnedConfirm('');
+                    }}
+                    className={styles.bulkSelect}
+                    style={{ width: '100%', padding: '11px 12px' }}
+                  >
+                    <option value="none">Dopisz / odswiez</option>
+                    <option value="pinned">Podmien przypiete</option>
+                    <option value="all">Podmien caly katalog</option>
+                  </select>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Batch</label>
+                  <select
+                    value={bulkBatch}
+                    disabled={bulkLoading}
+                    onChange={(e) => setBulkBatch(e.target.value)}
+                    className={styles.bulkSelect}
+                    style={{ width: '100%', padding: '11px 12px' }}
+                  >
+                    <option value="best">Best</option>
+                    <option value="budget">Budget</option>
+                    <option value="random">Random</option>
+                  </select>
+                </div>
+              </div>
+
+              {requiresBulkConfirm && (
+                <div style={{ marginBottom: '15px', padding: '12px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: '8px' }}>
+                  <span style={{ display: 'block', color: '#fca5a5', fontSize: '12px', marginBottom: '8px' }}>
+                    {bulkReplaceMode === 'all'
+                      ? 'To usunie wszystkie obecne produkty po poprawnym pobraniu calej nowej listy.'
+                      : 'To usunie obecne przypiete produkty po poprawnym pobraniu calej nowej listy.'}
+                  </span>
+                  <input
+                    type="text"
+                    value={replacePinnedConfirm}
+                    disabled={bulkLoading}
+                    onChange={(e) => setReplacePinnedConfirm(e.target.value)}
+                    placeholder="Wpisz PODMIEN"
+                    style={{ padding: '8px 10px', background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(239,68,68,0.35)', color: 'white', borderRadius: '6px', width: '100%' }}
                   />
-                  Podmien obecne przypiete produkty przed importem
-                </label>
-                {replacePinnedBeforeBulk && (
-                  <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <span style={{ color: '#fca5a5', fontSize: '12px' }}>
-                      To usunie wszystkie aktualnie przypiete produkty, a potem doda nowa liste w kolejnosci z textarea.
-                    </span>
-                    <input
-                      type="text"
-                      value={replacePinnedConfirm}
-                      disabled={bulkLoading}
-                      onChange={(e) => setReplacePinnedConfirm(e.target.value)}
-                      placeholder="Wpisz PODMIEN"
-                      style={{ padding: '8px 10px', background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(239,68,68,0.35)', color: 'white', borderRadius: '6px' }}
-                    />
-                  </div>
-                )}
+                </div>
+              )}
+
+              <div style={{ marginBottom: '15px', padding: '10px 12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', color: 'rgba(255,255,255,0.72)', fontSize: '12px' }}>
+                Kazdy link dziala jak zwykly scraper: warianty z osobnymi zdjeciami wejda jako osobne produkty i beda przypiete w kolejnosci z listy.
               </div>
 
               {bulkProgress.total > 0 && (
@@ -1102,17 +1152,36 @@ export default function ManageProducts() {
                   <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #a78bfa, #7c3aed)', transition: 'width 0.3s ease' }} />
                   </div>
+                  {bulkProgress.logs.length > 0 && (
+                    <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '150px', overflow: 'auto' }}>
+                      {bulkProgress.logs.slice(0, 8).map((log, index) => (
+                        <div key={`${log.itemId || index}-${index}`} style={{ display: 'grid', gridTemplateColumns: '82px minmax(0, 1fr)', gap: '8px', fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}>
+                          <span style={{ color: log.status === 'success' ? '#34d399' : log.status === 'error' ? '#ef4444' : '#fbbf24', fontWeight: 700 }}>
+                            {log.status === 'success' ? (log.action || 'ok') : log.status}
+                          </span>
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {log.name || log.message || log.url}
+                          </span>
+                        </div>
+                      ))}
+                      {bulkProgress.logs.length > 8 && (
+                        <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>
+                          +{bulkProgress.logs.length - 8} kolejnych wynikow
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
               <div className={styles.modalActions}>
-                <button type="submit" className={styles.scraperBtn} disabled={bulkLoading || !bulkText.trim() || (replacePinnedBeforeBulk && replacePinnedConfirm !== 'PODMIEN')} style={{ width: '100%' }}>
+                <button type="submit" className={styles.scraperBtn} disabled={bulkLoading || bulkUrls.length === 0 || (requiresBulkConfirm && replacePinnedConfirm !== REPLACE_CONFIRM_TEXT)} style={{ width: '100%' }}>
                   {bulkLoading ? (
                     <>
                       <div className={styles.loadingSpinner}></div>
                       Dodawanie...
                     </>
-                  ) : '⚡ Rozpocznij pobieranie'}
+                  ) : 'Rozpocznij import'}
                 </button>
               </div>
             </form>
