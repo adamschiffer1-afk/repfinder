@@ -308,7 +308,11 @@ const ProductCard = memo(function ProductCard({
       className={styles.productCard}
       style={{ animationDelay: `${index * 0.05}s` }}
     >
-      <div className={styles.imageWrapper}>
+      <div 
+        className={styles.imageWrapper}
+        onClick={() => onOpenAgent(product)}
+        style={{ cursor: 'pointer' }}
+      >
         <Image
           src={product.image}
           alt={product.name}
@@ -325,7 +329,13 @@ const ProductCard = memo(function ProductCard({
           {product.batch === 'budget' && <span className={styles.tagBudget}>BUDGET BATCH</span>}
         </div>
 
-        <h3 className={styles.productName}>{product.name}</h3>
+        <h3 
+          className={styles.productName}
+          onClick={() => onOpenAgent(product)}
+          style={{ cursor: 'pointer' }}
+        >
+          {product.name}
+        </h3>
 
         <div className={styles.cardPriceRow}>
           <span className={styles.price}>{formatPrice(product.price)}</span>
@@ -381,6 +391,10 @@ export default function Products() {
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState({ message: null, type: null });
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [productDetails, setProductDetails] = useState(null);
+  const [galleryImage, setGalleryImage] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
   const [agentModalProduct, setAgentModalProduct] = useState(null);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -419,6 +433,36 @@ export default function Products() {
   useEffect(() => {
     setPage(1);
   }, [selectedCategories, selectedBatch, priceRange.min, priceRange.max]);
+
+  useEffect(() => {
+    if (!selectedProduct) {
+      setProductDetails(null);
+      setGalleryImage(null);
+      setSelectedSize(null);
+      return;
+    }
+
+    const fetchDetail = async () => {
+      setDetailLoading(true);
+      try {
+        const res = await fetch(`/api/products/${selectedProduct._id}`);
+        const data = await res.json();
+        if (data.success) {
+          setProductDetails(data);
+          setGalleryImage(data.product.image);
+          if (data.sizes && data.sizes.length > 0) {
+            setSelectedSize(data.sizes[0]);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch product details:", err);
+      } finally {
+        setDetailLoading(false);
+      }
+    };
+
+    fetchDetail();
+  }, [selectedProduct]);
 
   const categoriesParam = selectedCategories.join(',');
   const priceMin = priceRange.min;
@@ -898,10 +942,15 @@ export default function Products() {
   };
 
   const openDescriptionModal = (product) => setSelectedProduct(product);
-  const closeDescriptionModal = () => setSelectedProduct(null);
+  const closeDescriptionModal = () => {
+    setSelectedProduct(null);
+    setProductDetails(null);
+    setGalleryImage(null);
+    setSelectedSize(null);
+  };
 
   const openAgentModal = useCallback((product) => {
-    setAgentModalProduct(product);
+    setSelectedProduct(product);
   }, []);
 
   const closeAgentModal = () => {
@@ -1187,6 +1236,249 @@ export default function Products() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Premium Product Details Modal */}
+      {selectedProduct && (
+        <div className={styles.descModalOverlay} onClick={closeDescriptionModal}>
+          <div className={styles.descModalContent} onClick={e => e.stopPropagation()}>
+            
+            {/* Header: Back to Gallery & Close */}
+            <div className={styles.descModalHeaderRow}>
+              <button className={styles.backToGalleryBtn} onClick={closeDescriptionModal}>
+                <FontAwesomeIcon icon={faChevronRight} style={{ transform: 'rotate(180deg)', marginRight: '8px' }} />
+                Wróć do Galerii
+              </button>
+              <button className={styles.closeDescModalBtn} onClick={closeDescriptionModal}>
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
+
+            {detailLoading ? (
+              /* Beautiful premium loading skeleton */
+              <div className={styles.skeletonDetailLayout}>
+                <div className={styles.skeletonDetailLeft}>
+                  <div className={styles.skeletonDetailBigImage}></div>
+                  <div className={styles.skeletonDetailThumbnails}>
+                    {[...Array(4)].map((_, i) => <div key={i} className={styles.skeletonDetailThumb}></div>)}
+                  </div>
+                </div>
+                <div className={styles.skeletonDetailRight}>
+                  <div className={styles.skeletonDetailTitle}></div>
+                  <div className={styles.skeletonDetailPrice}></div>
+                  <div className={styles.skeletonDetailSection}></div>
+                  <div className={styles.skeletonDetailSection}></div>
+                </div>
+              </div>
+            ) : productDetails && (
+              <div className={styles.modalProductLayoutNew}>
+                
+                {/* Left Column: Media & Order */}
+                <div className={styles.modalProductLeftColumn}>
+                  
+                  {/* Gallery Viewport */}
+                  <div className={styles.mainImageContainerNew}>
+                    <img 
+                      src={galleryImage || productDetails.product.image} 
+                      alt={productDetails.product.name} 
+                      className={styles.mainGalleryImageNew} 
+                    />
+                  </div>
+
+                  {/* Gallery Thumbnails */}
+                  {(() => {
+                    const thumbnails = Array.from(new Set([
+                      productDetails.product.image,
+                      ...productDetails.variants.map(v => v.image),
+                      ...productDetails.qcImages
+                    ].filter(Boolean)));
+
+                    if (thumbnails.length <= 1) return null;
+
+                    return (
+                      <div className={styles.thumbnailsStripNew}>
+                        {thumbnails.map((img, idx) => (
+                          <button
+                            key={idx}
+                            className={`${styles.thumbnailBtnNew} ${galleryImage === img ? styles.activeThumbnailNew : ''}`}
+                            onClick={() => setGalleryImage(img)}
+                          >
+                            <img src={img} alt={`Miniatura ${idx + 1}`} className={styles.thumbnailImgNew} />
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()}
+
+                  {/* Order Button Box */}
+                  <div className={styles.orderActionsContainer}>
+                    <a
+                      href={convertLink(productDetails.product.link, preferredAgent)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.orderButtonPremiumNew}
+                      onClick={() => trackStat(productDetails.product._id, 'product_click', preferredAgent)}
+                    >
+                      <img src={preferredAgentLogo} alt={preferredAgent} className={styles.orderAgentLogoNew} />
+                      <span>Zamów Produkt</span>
+                    </a>
+                    <button
+                      className={`${styles.detailCopyBtnNew} ${copiedId === 'main' ? styles.copiedNew : ''}`}
+                      onClick={(e) => {
+                        const link = convertLink(productDetails.product.link, preferredAgent);
+                        navigator.clipboard.writeText(link);
+                        setCopiedId('main');
+                        trackStat(productDetails.product._id, 'product_click', preferredAgent);
+                        setTimeout(() => setCopiedId(null), 2000);
+                      }}
+                      title="Kopiuj link"
+                    >
+                      <FontAwesomeIcon icon={copiedId === 'main' ? faCheck : faCopy} />
+                    </button>
+                  </div>
+
+                  {/* Alternative Agents Section */}
+                  <div className={styles.altAgentsSectionNew}>
+                    <div className={styles.altAgentsTitleNew}>Inni agenci:</div>
+                    <div className={styles.altAgentsGridNew}>
+                      {SUPPORTED_AGENTS.filter(a => a.value !== preferredAgent).map((agent) => (
+                        <a
+                          key={agent.value}
+                          href={convertLink(productDetails.product.link, agent.value)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.altAgentChipNew}
+                          onClick={() => trackStat(productDetails.product._id, 'product_click', agent.value)}
+                          title={agent.label}
+                        >
+                          <img src={agent.icon} alt={agent.label} className={styles.altAgentIconNew} />
+                          <span>{agent.label}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Product Metadata Details Grid */}
+                  <div className={styles.detailsBoxNew}>
+                    <h4 className={styles.detailsBoxTitleNew}>Szczegóły Produktu</h4>
+                    <div className={styles.detailsGridNew}>
+                      <div className={styles.detailRowNew}>
+                        <span className={styles.detailLabelNew}>Platforma</span>
+                        <span className={`${styles.detailValNew} ${styles.badgePlatformNew}`}>
+                          {productDetails.details.platform.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className={styles.detailRowNew}>
+                        <span className={styles.detailLabelNew}>Kategoria</span>
+                        <span className={`${styles.detailValNew} ${styles.badgeCategoryNew}`}>
+                          {productDetails.product.category.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className={styles.detailRowNew}>
+                        <span className={styles.detailLabelNew}>Waga</span>
+                        <span className={styles.detailValNew}>{productDetails.details.weight || 'N/A'}</span>
+                      </div>
+                      <div className={styles.detailRowNew}>
+                        <span className={styles.detailLabelNew}>Dostawa</span>
+                        <span className={styles.detailValNew}>{productDetails.details.delivery || 'N/A'}</span>
+                      </div>
+                      <div className={styles.detailRowNew}>
+                        <span className={styles.detailLabelNew}>Sprzedaż</span>
+                        <span className={styles.detailValNew}>{productDetails.details.sales || '0'}</span>
+                      </div>
+                      <div className={styles.detailRowNew}>
+                        <span className={styles.detailLabelNew}>Kliknięcia</span>
+                        <span className={styles.detailValNew}>{productDetails.product.clicks || '0'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* Right Column: Info & Options */}
+                <div className={styles.modalProductRightColumn}>
+                  
+                  {/* Shop & Wishlist */}
+                  <div className={styles.shopRowNew}>
+                    <span className={styles.shopLabelNew}>Sklep: {productDetails.product.batch === 'best' ? 'Best Batch' : 'Premium Shop'}</span>
+                    <button
+                      className={`${styles.wishlistBtnNew} ${productDetails.product.isFavorited ? styles.wishlistActiveNew : ''}`}
+                      onClick={() => handleAddToWishlist(productDetails.product._id)}
+                      title="Dodaj do ulubionych"
+                    >
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                  </div>
+
+                  {/* Title */}
+                  <h2 className={styles.productTitleNew}>{productDetails.product.name}</h2>
+
+                  {/* Price */}
+                  <div className={styles.productPriceNew}>
+                    {formatPrice(productDetails.product.price)}
+                  </div>
+
+                  {/* Real-time views & likes stats */}
+                  <div className={styles.productStatsNew}>
+                    <span>{productDetails.details.views} wyświetleń</span>
+                    <span className={styles.statsSeparatorNew}>•</span>
+                    <span>{productDetails.details.favorites} polubień</span>
+                  </div>
+
+                  {/* Variant Styles Selector */}
+                  {productDetails.variants && productDetails.variants.length > 0 && (
+                    <div className={styles.variantsSectionNew}>
+                      <h4 className={styles.sectionLabelNew}>Warianty kolorystyczne</h4>
+                      <div className={styles.variantsGridNew}>
+                        {productDetails.variants.map((v) => {
+                          // Extract display label from parentheses if present
+                          let label = v.name;
+                          if (v.name.includes('(')) {
+                            label = v.name.split('(').pop().replace(')', '').trim();
+                          }
+                          return (
+                            <button
+                              key={v._id}
+                              className={`${styles.variantChipNew} ${productDetails.product._id === v._id ? styles.activeVariantNew : ''}`}
+                              onClick={() => {
+                                setSelectedProduct(v);
+                              }}
+                              title={v.name}
+                            >
+                              <img src={v.image} alt={v.name} className={styles.variantChipImgNew} />
+                              <span className={styles.variantChipTextNew}>{label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Size Selector */}
+                  {productDetails.sizes && productDetails.sizes.length > 0 && (
+                    <div className={styles.sizesSectionNew}>
+                      <h4 className={styles.sectionLabelNew}>Dostępne Rozmiary</h4>
+                      <div className={styles.sizesGridNew}>
+                        {productDetails.sizes.map((sz) => (
+                          <button
+                            key={sz}
+                            className={`${styles.sizeChipNew} ${selectedSize === sz ? styles.activeSizeNew : ''}`}
+                            onClick={() => setSelectedSize(sz)}
+                          >
+                            {sz}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                </div>
+
+              </div>
+            )}
+
           </div>
         </div>
       )}
