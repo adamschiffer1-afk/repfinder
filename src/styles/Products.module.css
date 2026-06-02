@@ -2202,8 +2202,8 @@
 
 @media (max-width: 480px) {
   .detailsGridNew {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
   }
 }
 
@@ -2244,6 +2244,17 @@
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+.estimatedBadgeNew {
+  background: rgba(139, 92, 246, 0.1);
+  color: #a78bfa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 /* Right Column Styling */

@@ -4,10 +4,16 @@ import ProductDetail from "@/components/ProductDetail";
 import PopupModal from "@/components/PopupModal";
 
 export async function generateMetadata({ params }) {
-  const { id } = await params;
+  const { slug } = await params;
   try {
     await dbConnect();
-    const product = await Product.findById(id).lean();
+    let product;
+    if (slug.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(slug).lean();
+    }
+    if (!product) {
+      product = await Product.findOne({ slug }).lean();
+    }
     if (!product) {
       return {
         title: 'Nie znaleziono produktu | RepFinder',
@@ -28,10 +34,20 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ProductDetailPage({ params }) {
-  const { id } = await params;
+  const { slug } = await params;
+  
+  await dbConnect();
+  let productId = slug;
+  if (!slug.match(/^[0-9a-fA-F]{24}$/)) {
+    const product = await Product.findOne({ slug }).select('_id').lean();
+    if (product) {
+      productId = product._id.toString();
+    }
+  }
+
   return (
     <>
-      <ProductDetail productId={id} />
+      <ProductDetail productId={productId} />
       <PopupModal />
     </>
   );

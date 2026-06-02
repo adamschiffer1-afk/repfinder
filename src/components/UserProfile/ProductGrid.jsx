@@ -24,7 +24,7 @@ export default function ProductGrid({ products, type, onRemove, isOwner }) {
         <div className={styles.productsGrid}>
             {products.map((product) => (
                 <div key={product._id || product.id} className={styles.productCard}>
-                    <Link href={`/products/${product._id || product.id}`} className={styles.imageWrapper}>
+                    <Link href={`/products/${product.slug || product._id || product.id}`} className={styles.imageWrapper}>
                         <LazyLoadImage
                             src={product.image || '/default-product.png'}
                             alt={product.name}

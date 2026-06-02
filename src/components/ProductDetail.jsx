@@ -46,6 +46,19 @@ const getAnalyticsVisitorId = () => {
   }
 };
 
+const getEstimatedWeight = (category) => {
+  const cat = (category || '').toLowerCase();
+  if (cat.includes('shoe') || cat.includes('buty')) return '~1200g';
+  if (cat.includes('hoodie') || cat.includes('bluza')) return '~800g';
+  if (cat.includes('t-shirt') || cat.includes('koszulka')) return '~300g';
+  if (cat.includes('jacket') || cat.includes('kurtka')) return '~1000g';
+  if (cat.includes('pants') || cat.includes('spodnie') || cat.includes('jeans')) return '~600g';
+  if (cat.includes('bag') || cat.includes('torba')) return '~700g';
+  if (cat.includes('cap') || cat.includes('czapka') || cat.includes('hat')) return '~150g';
+  if (cat.includes('socks') || cat.includes('skarpetki')) return '~100g';
+  return '~500g';
+};
+
 export default function ProductDetail({ productId }) {
   const router = useRouter();
   const { t } = useLanguage();
@@ -361,7 +374,17 @@ export default function ProductDetail({ productId }) {
                   </div>
                   <div className={styles.detailRowNew}>
                     <span className={styles.detailLabelNew}>Waga</span>
-                    <span className={styles.detailValNew}>{productDetails.details.weight || 'N/A'}</span>
+                    <span className={styles.detailValNew}>
+                      {productDetails.details.weight && productDetails.details.weight !== 'N/A' 
+                        ? productDetails.details.weight 
+                        : (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              {getEstimatedWeight(productDetails.product.category)}
+                              <span className={styles.estimatedBadgeNew}>Szacowana</span>
+                            </span>
+                          )
+                      }
+                    </span>
                   </div>
                   <div className={styles.detailRowNew}>
                     <span className={styles.detailLabelNew}>Dostawa</span>
@@ -385,7 +408,7 @@ export default function ProductDetail({ productId }) {
               
               {/* Brand Shop & Favorite */}
               <div className={styles.shopRowNew}>
-                <span className={styles.shopLabelNew}>Sklep: {productDetails.product.batch === 'best' ? 'Best Batch' : 'Premium Shop'}</span>
+                <span className={styles.shopLabelNew}>Best Batch</span>
                 <button
                   className={`${styles.wishlistBtnNew} ${productDetails.product.isFavorited ? styles.wishlistActiveNew : ''}`}
                   onClick={() => handleAddToWishlist(productDetails.product._id)}
