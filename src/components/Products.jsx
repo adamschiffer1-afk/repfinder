@@ -942,7 +942,7 @@ export default function Products() {
   };
 
   const openDescriptionModal = (product) => {
-    window.open(`/products/${product._id}`, '_blank');
+    window.open(`/products/${product.slug || product._id}`, '_blank');
   };
   const closeDescriptionModal = () => {
     setSelectedProduct(null);
@@ -952,7 +952,7 @@ export default function Products() {
   };
 
   const openAgentModal = useCallback((product) => {
-    window.open(`/products/${product._id}`, '_blank');
+    window.open(`/products/${product.slug || product._id}`, '_blank');
   }, []);
 
   const closeAgentModal = () => {
