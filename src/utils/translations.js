@@ -63,7 +63,9 @@ export const translations = {
       priceRange: "ZAKRES CEN (USD)",
       priceMin: "Min $",
       priceMax: "Max $",
-      allCategories: "Wszystkie"
+      allCategories: "Wszystkie",
+      availableSizes: "Dostępne Rozmiary (EU)",
+      colorways: "Warianty kolorystyczne"
     },
     features: {
       title: "WIĘCEJ",
@@ -267,7 +269,9 @@ export const translations = {
       priceRange: "PRICE RANGE (USD)",
       priceMin: "Min $",
       priceMax: "Max $",
-      allCategories: "All"
+      allCategories: "All",
+      availableSizes: "Available Sizes (EU)",
+      colorways: "Colorways"
     },
     features: {
       title: "MORE",
@@ -471,7 +475,9 @@ export const translations = {
       priceRange: "价格范围 (USD)",
       priceMin: "最低 $",
       priceMax: "最高 $",
-      allCategories: "全部"
+      allCategories: "全部",
+      availableSizes: "可用尺寸 (EU)",
+      colorways: "配色"
     },
     features: {
       title: "更多",
@@ -671,7 +677,9 @@ export const translations = {
       priceRange: "PREIS (USD)",
       priceMin: "Min $",
       priceMax: "Max $",
-      allCategories: "Alle"
+      allCategories: "Alle",
+      availableSizes: "Verfügbare Größen (EU)",
+      colorways: "Farbvarianten"
     },
     features: {
       title: "MEHR",
@@ -871,7 +879,9 @@ export const translations = {
       priceRange: "PRECIO (USD)",
       priceMin: "Mín $",
       priceMax: "Máx $",
-      allCategories: "Todos"
+      allCategories: "Todos",
+      availableSizes: "Tallas disponibles (EU)",
+      colorways: "Variantes de color"
     },
     features: {
       title: "MÁS",

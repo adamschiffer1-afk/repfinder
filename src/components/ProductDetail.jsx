@@ -434,7 +434,7 @@ export default function ProductDetail({ productId }) {
               {/* Colorways / Variant Selector */}
               {productDetails.colors && productDetails.colors.length > 0 && (
                 <div className={styles.variantsSectionNew}>
-                  <h4 className={styles.sectionLabelNew}>Warianty kolorystyczne</h4>
+                  <h4 className={styles.sectionLabelNew}>{t('products.colorways') || 'Warianty kolorystyczne'}</h4>
                   <div className={styles.variantsGridNew}>
                     {productDetails.colors.map((c, idx) => (
                       <button
@@ -454,7 +454,7 @@ export default function ProductDetail({ productId }) {
               {/* Size Selector */}
               {productDetails.sizes && productDetails.sizes.length > 0 && (
                 <div className={styles.sizesSectionNew}>
-                  <h4 className={styles.sectionLabelNew}>Dostępne Rozmiary</h4>
+                  <h4 className={styles.sectionLabelNew}>{t('products.availableSizes') || 'Dostępne Rozmiary'}</h4>
                   <div className={styles.sizesGridNew}>
                     {productDetails.sizes.map((sz) => (
                       <button
@@ -462,7 +462,7 @@ export default function ProductDetail({ productId }) {
                         className={`${styles.sizeChipNew} ${selectedSize === sz ? styles.activeSizeNew : ''}`}
                         onClick={() => setSelectedSize(sz)}
                       >
-                        {sz}
+                        {sz.replace(/^FR\s*/i, '')}
                       </button>
                     ))}
                   </div>
