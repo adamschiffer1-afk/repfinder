@@ -941,7 +941,9 @@ export default function Products() {
     }, 250);
   };
 
-  const openDescriptionModal = (product) => setSelectedProduct(product);
+  const openDescriptionModal = (product) => {
+    window.open(`/products/${product._id}`, '_blank');
+  };
   const closeDescriptionModal = () => {
     setSelectedProduct(null);
     setProductDetails(null);
@@ -950,7 +952,7 @@ export default function Products() {
   };
 
   const openAgentModal = useCallback((product) => {
-    setSelectedProduct(product);
+    window.open(`/products/${product._id}`, '_blank');
   }, []);
 
   const closeAgentModal = () => {

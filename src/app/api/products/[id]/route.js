@@ -41,7 +41,7 @@ export async function GET(req, { params }) {
 
     // Default metadata
     let liveDetails = {
-      sales: product.clicks * 4 + 12, // Elegant fake stats base or real
+      sales: product.clicks * 4 + 12,
       views: product.clicks * 18 + 42,
       favorites: Math.round(product.clicks * 1.5 + 4),
       weight: "N/A",
@@ -50,8 +50,9 @@ export async function GET(req, { params }) {
     };
 
     let sizes = [];
+    let scrapedColors = [];
 
-    // Optional Live Weidian Scraper for accurate sizes and metadata
+    // Optional Live Weidian Scraper for accurate sizes, colors, and metadata
     if (itemId && liveDetails.platform === "weidian") {
       try {
         const weidianUrl = `https://weidian.com/item.html?itemID=${itemId}`;
@@ -78,7 +79,6 @@ export async function GET(req, { params }) {
               if (itemInfo.fav_count || itemInfo.favorite) {
                 liveDetails.favorites = itemInfo.fav_count || itemInfo.favorite;
               }
-              // If Weidian provides other details
               if (itemInfo.weight) liveDetails.weight = itemInfo.weight;
               if (itemInfo.delivery_desc || itemInfo.delivery) {
                 liveDetails.delivery = itemInfo.delivery_desc || itemInfo.delivery;
@@ -86,12 +86,40 @@ export async function GET(req, { params }) {
             }
 
             if (skuProperties && skuProperties.attr_list) {
+              // Extract sizes
               const sizeAttr = skuProperties.attr_list.find(attr => {
                 const name = (attr.attr_name || attr.name || '').toLowerCase();
                 return name.includes('尺码') || name.includes('size') || name.includes('rozmiar') || name.includes('eur');
               });
               if (sizeAttr && sizeAttr.attr_values) {
                 sizes = sizeAttr.attr_values.map(v => v.attr_name || v.name || '').filter(Boolean);
+              }
+
+              // Extract colorways (kolorystyki)
+              let colorAttr = skuProperties.attr_list.find(attr => {
+                return attr.attr_values && attr.attr_values.some(v => v.img);
+              });
+              if (!colorAttr) {
+                colorAttr = skuProperties.attr_list.find(attr => {
+                  const name = (attr.attr_name || attr.name || '').toLowerCase();
+                  return name.includes('颜色') || name.includes('color') || name.includes('style') || name.includes('款式') || name.includes('kolor');
+                });
+              }
+              if (colorAttr && colorAttr.attr_values) {
+                scrapedColors = colorAttr.attr_values.map(v => {
+                  let imgUrl = v.img || '';
+                  if (imgUrl && !imgUrl.startsWith('http')) {
+                    imgUrl = `https:${imgUrl}`;
+                  }
+                  if (imgUrl) {
+                    const separator = imgUrl.includes("?") ? "&" : "?";
+                    imgUrl = `${imgUrl}${separator}w=400&h=400`;
+                  }
+                  return {
+                    name: v.attr_name || v.name || '',
+                    image: imgUrl || null
+                  };
+                }).filter(c => c.name);
               }
             }
           }
@@ -113,14 +141,43 @@ export async function GET(req, { params }) {
       }
     }
 
+    // Fallback colorways generation if scraper didn't return any
+    let colors = [];
+    if (scrapedColors.length > 0) {
+      colors = scrapedColors;
+    } else if (variants.length > 0) {
+      colors = variants.map(v => {
+        let name = v.name;
+        if (v.name.includes('(')) {
+          name = v.name.split('(').pop().replace(')', '').trim();
+        } else if (v.name.includes('-')) {
+          name = v.name.split('-').pop().trim();
+        }
+        return {
+          name,
+          image: v.image,
+          productId: v._id.toString()
+        };
+      });
+    } else {
+      colors = [{
+        name: 'Default Style',
+        image: product.image,
+        productId: product._id.toString()
+      }];
+    }
+
     return NextResponse.json({
       success: true,
       product,
       variants,
       sizes,
+      colors,
       qcImages: localQcImages,
       details: liveDetails
     });
+
+
 
   } catch (error) {
     console.error("GET product details error:", error);
