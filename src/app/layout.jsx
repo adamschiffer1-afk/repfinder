@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
+import PageTransition from '@/components/PageTransition';
+import TopLoadingBar from '@/components/TopLoadingBar';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { AuthProvider } from '@/context/AuthContext';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
@@ -56,11 +58,14 @@ export default function RootLayout({ children }) {
           <Suspense fallback={null}>
             <AnalyticsTracker />
           </Suspense>
+          <TopLoadingBar />
           <LanguageProvider>
             <Navbar />
-            <main>
-              {children}
-            </main>
+            <PageTransition>
+              <main>
+                {children}
+              </main>
+            </PageTransition>
             <Footer />
           </LanguageProvider>
         </AuthProvider>

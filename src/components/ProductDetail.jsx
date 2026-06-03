@@ -46,17 +46,109 @@ const getAnalyticsVisitorId = () => {
   }
 };
 
-const getEstimatedWeight = (category) => {
+const getEstimatedWeight = (category, productName = '') => {
   const cat = (category || '').toLowerCase();
-  if (cat.includes('shoe') || cat.includes('buty')) return '~1200g';
-  if (cat.includes('hoodie') || cat.includes('bluza')) return '~800g';
-  if (cat.includes('t-shirt') || cat.includes('koszulka')) return '~300g';
-  if (cat.includes('jacket') || cat.includes('kurtka')) return '~1000g';
-  if (cat.includes('pants') || cat.includes('spodnie') || cat.includes('jeans')) return '~600g';
-  if (cat.includes('bag') || cat.includes('torba')) return '~700g';
-  if (cat.includes('cap') || cat.includes('czapka') || cat.includes('hat')) return '~150g';
-  if (cat.includes('socks') || cat.includes('skarpetki')) return '~100g';
-  return '~500g';
+  const name = (productName || '').toLowerCase();
+  
+  // SHOES - różne wagi w zależności od typu
+  if (cat.includes('shoe') || cat.includes('buty')) {
+    if (name.includes('slide') || name.includes('slidy') || name.includes('foam runner') || name.includes('crocs')) return '400g';
+    if (name.includes('jordan') || name.includes('dunk') || name.includes('air force')) return '1300g';
+    if (name.includes('yeezy 350') || name.includes('yeezy boost')) return '900g';
+    if (name.includes('yeezy 700')) return '1100g';
+    if (name.includes('new balance') || name.includes('nb 9060') || name.includes('2002r')) return '950g';
+    if (name.includes('air max') || name.includes('tn')) return '1050g';
+    if (name.includes('balenciaga') || name.includes('track')) return '1400g';
+    if (name.includes('salomon') || name.includes('xt-6')) return '850g';
+    if (name.includes('converse') || name.includes('vans')) return '700g';
+    if (name.includes('rick owens') || name.includes('ramones')) return '1200g';
+    return '1100g'; // default dla butów
+  }
+  
+  // SHORTS - różne wagi
+  if (cat.includes('shorts') || cat.includes('spodenki')) {
+    if (name.includes('essentials') || name.includes('mesh')) return '200g';
+    if (name.includes('jordan') || name.includes('nike tech')) return '350g';
+    if (name.includes('trapstar') || name.includes('corteiz')) return '380g';
+    if (name.includes('cargo')) return '420g';
+    if (name.includes('stussy') || name.includes('gallery dept')) return '280g';
+    return '300g'; // default dla szortów
+  }
+  
+  // HOODIES
+  if (cat.includes('hoodie') || cat.includes('bluza')) {
+    if (name.includes('essentials') && name.includes('oversized')) return '950g';
+    if (name.includes('essentials')) return '750g';
+    if (name.includes('trapstar') || name.includes('tech fleece')) return '650g';
+    if (name.includes('chrome hearts') || name.includes('heavyweight')) return '1100g';
+    if (name.includes('gallery dept') || name.includes('vintage')) return '850g';
+    if (name.includes('zip') || name.includes('full zip')) return '900g';
+    if (name.includes('stussy') || name.includes('carhartt')) return '800g';
+    return '800g'; // default dla bluz
+  }
+  
+  // T-SHIRTS
+  if (cat.includes('t-shirt') || cat.includes('koszulka')) {
+    if (name.includes('essentials') && name.includes('oversized')) return '350g';
+    if (name.includes('essentials')) return '250g';
+    if (name.includes('vintage') || name.includes('heavy')) return '400g';
+    if (name.includes('chrome hearts') || name.includes('heavyweight')) return '450g';
+    if (name.includes('polo') || name.includes('lacoste')) return '320g';
+    if (name.includes('tech') || name.includes('performance')) return '200g';
+    return '280g'; // default dla koszulek
+  }
+  
+  // JACKETS
+  if (cat.includes('jacket') || cat.includes('kurtka')) {
+    if (name.includes('moncler') || name.includes('maya') || name.includes('puffer')) return '1400g';
+    if (name.includes('north face') && name.includes('nuptse')) return '1300g';
+    if (name.includes('canada goose')) return '1600g';
+    if (name.includes('stone island') && name.includes('soft shell')) return '900g';
+    if (name.includes('arcteryx') || name.includes('beta')) return '850g';
+    if (name.includes('windbreaker') || name.includes('coach')) return '550g';
+    if (name.includes('bomber')) return '950g';
+    if (name.includes('denim') || name.includes('trucker')) return '1000g';
+    if (name.includes('leather') || name.includes('biker')) return '1800g';
+    return '1000g'; // default dla kurtek
+  }
+  
+  // PANTS
+  if (cat.includes('pants') || cat.includes('spodnie')) {
+    if (name.includes('cargo') || name.includes('military')) return '650g';
+    if (name.includes('jeans') || name.includes('denim')) return '750g';
+    if (name.includes('essentials') || name.includes('sweatpants')) return '500g';
+    if (name.includes('tech fleece')) return '480g';
+    if (name.includes('corduroy')) return '700g';
+    if (name.includes('trapstar') || name.includes('corteiz')) return '550g';
+    return '600g'; // default dla spodni
+  }
+  
+  // SETS
+  if (cat.includes('sets') || cat.includes('tracksuit')) {
+    if (name.includes('tech fleece')) return '1100g';
+    if (name.includes('essentials')) return '1200g';
+    if (name.includes('trapstar') || name.includes('corteiz')) return '1300g';
+    return '1250g'; // default dla setów
+  }
+  
+  // ACCESSORIES
+  if (cat.includes('accessories') || cat.includes('bag') || cat.includes('torba')) {
+    if (name.includes('backpack') || name.includes('plecak')) return '650g';
+    if (name.includes('duffle') || name.includes('travel bag')) return '900g';
+    if (name.includes('shoulder bag') || name.includes('crossbody')) return '450g';
+    if (name.includes('tote')) return '350g';
+    if (name.includes('wallet') || name.includes('portfel')) return '150g';
+    if (name.includes('cap') || name.includes('hat') || name.includes('czapka')) return '120g';
+    if (name.includes('beanie') || name.includes('balaclava')) return '80g';
+    if (name.includes('belt') || name.includes('pasek')) return '200g';
+    if (name.includes('socks') || name.includes('skarpetki')) return '60g';
+    if (name.includes('watch') || name.includes('zegarek')) return '180g';
+    if (name.includes('sunglasses') || name.includes('glasses')) return '100g';
+    if (name.includes('jewelry') || name.includes('chain') || name.includes('necklace')) return '120g';
+    return '300g'; // default dla akcesoriów
+  }
+  
+  return '500g'; // universal fallback
 };
 
 export default function ProductDetail({ productId, initialData = null }) {
@@ -390,7 +482,7 @@ export default function ProductDetail({ productId, initialData = null }) {
                         ? productDetails.details.weight 
                         : (
                             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              {getEstimatedWeight(productDetails.product.category)}
+                              {getEstimatedWeight(productDetails.product.category, productDetails.product.name)}
                               <span className={styles.estimatedBadgeNew}>{t('products.estimated') || 'Szacowana'}</span>
                             </span>
                           )

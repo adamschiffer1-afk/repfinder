@@ -5,13 +5,32 @@ import { translations } from '@/utils/translations';
 
 const LanguageContext = createContext();
 
+// Map browser locale to supported language code
+function detectBrowserLanguage() {
+  if (typeof navigator === 'undefined') return 'pl';
+  const supported = Object.keys(translations); // ['pl', 'en', 'cn', 'de', 'es']
+  const browserLangs = navigator.languages || [navigator.language || 'pl'];
+
+  for (const lang of browserLangs) {
+    const code = lang.toLowerCase().split('-')[0]; // 'de-DE' → 'de'
+    // Map zh/zh-hans/zh-hant → cn
+    const mapped = code === 'zh' ? 'cn' : code;
+    if (supported.includes(mapped)) return mapped;
+  }
+  return 'en'; // International fallback
+}
+
 export function LanguageProvider({ children }) {
-  const [language, setLanguage] = useState('pl'); // Default to Polish
+  const [language, setLanguage] = useState('pl'); // SSR safe default
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('repfinder_lang');
     if (savedLanguage && translations[savedLanguage]) {
       setLanguage(savedLanguage);
+    } else {
+      // First visit — auto-detect from browser
+      const detected = detectBrowserLanguage();
+      setLanguage(detected);
     }
   }, []);
 

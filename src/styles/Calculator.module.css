@@ -1443,3 +1443,106 @@
     padding: 80px 10px 30px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   SYSTEM ZWROTÓW (RETURNS SECTION)
+   ═══════════════════════════════════════════════════════════════ */
+
+.returnsSection {
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.returnsSection:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.returnsSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.returnsIcon {
+  font-size: 20px;
+}
+
+.returnsLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.returnsInputRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.returnsInput {
+  flex: 1;
+  background: rgba(15, 10, 25, 0.6);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.returnsInput:focus {
+  outline: none;
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(15, 10, 25, 0.8);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.returnsUnit {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.returnsClearBtn {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.returnsClearBtn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+  transform: scale(1.05);
+}
+
+.returnsInfo {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.returnsInfoIcon {
+  color: #ef4444;
+  font-size: 14px;
+}

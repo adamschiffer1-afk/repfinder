@@ -16,7 +16,12 @@ const ESTIMATED_WEIGHTS = {
   'essentials hoodie': 850,
   'essentials pants': 550,
   'yeezy slide': 400,
-  'jordan shorts': 280,
+  // Jordan shorts — mesh/siateczkowe są lekkie (~160g), nie 280g
+  'jordan mesh shorts': 160,
+  'jordan flight shorts': 160,
+  'jordan dri-fit shorts': 160,
+  'jordan sport shorts': 160,
+  'jordan shorts': 190,
   'jordan 13': 1100,
   'jordan 11': 1000,
   'jordan 4': 1250,
@@ -49,9 +54,33 @@ const ESTIMATED_WEIGHTS = {
   'prada bag': 750,
   'dior bag': 800,
   'stussy bag': 400,
+  // Nike Tech Fleece
+  'tech fleece shorts': 320,
+  'tech fleece pants': 500,
+  'tech fleece hoodie': 750,
+  // Cargo shorts — cięższe bo kieszenie
+  'cargo shorts': 350,
+  // Nike/Adidas sport items
+  'nike shorts': 170,
+  'adidas shorts': 170,
+  'nba shorts': 180,
+  // Tracksuits
+  'nocta tech fleece': 750,
   
   // ── Medium specific ──
   'ee shorts': 150,
+  // Mesh/siateczkowe shorts — bardzo lekkie
+  'mesh shorts': 150,
+  'dri-fit shorts': 155,
+  'athletic shorts': 160,
+  'sport shorts': 160,
+  'running shorts': 140,
+  'swim shorts': 200,
+  'basketball shorts': 180,
+  // Fleece/grubsze shorts
+  'fleece shorts': 280,
+  'sweat shorts': 260,
+  'french terry shorts': 250,
   'air max': 900,
   'special': 700,
   'samba': 650,
@@ -75,8 +104,8 @@ const ESTIMATED_WEIGHTS = {
   'spodnie': 500,
   'bluza': 850,
   'hoodie': 850,
-  'spodenki': 300,
-  'shorts': 300,
+  'spodenki': 200,  // ogólny fallback — mesh ~150g, fleece ~280g, środek 200g
+  'shorts': 200,    // ogólny fallback
   'jordan': 1000, // fallback for other Jordans
   'yeezy': 900,   // fallback for other Yeezys
   'shoes': 950,
@@ -307,7 +336,15 @@ export async function POST(req) {
         baseWeight = 250;
         found = true;
       } else if (MULTILINGUAL_KEYWORDS.shorts.some(kw => nameLower.includes(kw))) {
-        baseWeight = 300;
+        // Rozróżnienie mesh (lekkie) vs fleece (ciężkie)
+        const isMesh = nameLower.includes('mesh') || nameLower.includes('dri-fit') || nameLower.includes('dri fit') ||
+          nameLower.includes('sport') || nameLower.includes('athletic') || nameLower.includes('running') ||
+          nameLower.includes('basketball') || nameLower.includes('flight') || nameLower.includes('siatecz');
+        const isFleece = nameLower.includes('fleece') || nameLower.includes('sweat') || nameLower.includes('french terry') ||
+          nameLower.includes('french-terry') || nameLower.includes('terry');
+        if (isMesh) baseWeight = 160;
+        else if (isFleece) baseWeight = 270;
+        else baseWeight = 200;
         found = true;
       } else if (MULTILINGUAL_KEYWORDS.pants.some(kw => nameLower.includes(kw))) {
         baseWeight = 600;

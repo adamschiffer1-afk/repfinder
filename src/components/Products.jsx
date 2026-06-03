@@ -301,7 +301,9 @@ const ProductCard = memo(function ProductCard({
   preferredAgentLogo,
   quickCopied,
   onOpenAgent,
-  onQuickCopy
+  onQuickCopy,
+  viewAgentsLabel,
+  copyLinkLabel,
 }) {
   return (
     <div
@@ -346,12 +348,12 @@ const ProductCard = memo(function ProductCard({
             className={styles.viewBtnFull}
             onClick={() => onOpenAgent(product)}
           >
-            Zobacz agentow
+            {viewAgentsLabel}
           </button>
           <button
             className={`${styles.quickCopyBtn} ${quickCopied ? styles.quickCopied : ''}`}
             onClick={(event) => onQuickCopy(event, product)}
-            title="Kopiuj link do agenta"
+            title={copyLinkLabel}
           >
             {quickCopied ? (
               <FontAwesomeIcon icon={faCheck} className={styles.quickCopyIcon} />
@@ -385,10 +387,13 @@ export default function Products() {
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
 
 
-  // UI States
+  // UI States - Infinite Scroll
   const [page, setPage] = useState(1);
   const [limit] = useState(24);
   const [totalPages, setTotalPages] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreRef = useRef(null);
   const [error, setError] = useState({ message: null, type: null });
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -468,11 +473,16 @@ export default function Products() {
   const priceMin = priceRange.min;
   const priceMax = priceRange.max;
 
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
+  const fetchProducts = useCallback(async (pageNum = 1, append = false) => {
+    if (append) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+    }
+    
     try {
       const params = new URLSearchParams({
-        page: String(page),
+        page: String(pageNum),
         limit: String(limit),
         sort: buildApiSortParam()
       });
@@ -494,8 +504,16 @@ export default function Products() {
         const pinned = data.products.filter(p => p.isPinned);
         const nonPinned = data.products.filter(p => !p.isPinned);
         const shuffledNonPinned = shuffleArray(nonPinned);
-        setProducts([...pinned, ...shuffledNonPinned]);
+        const newProducts = [...pinned, ...shuffledNonPinned];
+        
+        if (append) {
+          setProducts(prev => [...prev, ...newProducts]);
+        } else {
+          setProducts(newProducts);
+        }
+        
         setTotalPages(data.pages || 1);
+        setHasMore(pageNum < (data.pages || 1));
         setFilteredProductCount(data.total ?? 0);
         setError({ message: null, type: null });
       } else {
@@ -503,19 +521,22 @@ export default function Products() {
       }
     } catch (error) {
       console.error('Failed to fetch products:', error);
-      const start = (page - 1) * limit;
-      const fallback = [...productsData];
-      setProducts(fallback.slice(start, start + limit));
-      setFilteredProductCount(fallback.length);
-      setTotalPages(Math.ceil(fallback.length / limit) || 1);
+      if (!append) {
+        const start = (pageNum - 1) * limit;
+        const fallback = [...productsData];
+        setProducts(fallback.slice(start, start + limit));
+        setFilteredProductCount(fallback.length);
+        setTotalPages(Math.ceil(fallback.length / limit) || 1);
+        setHasMore(false);
+      }
       setError({ message: 'Failed to load products from server, using local data', type: 'warning' });
     } finally {
       setLoading(false);
+      setLoadingMore(false);
       setIsInitialLoad(false);
       setIsTransitioning(false);
     }
   }, [
-    page,
     limit,
     debouncedSearchQuery,
     categoriesParam,
@@ -525,8 +546,30 @@ export default function Products() {
   ]);
 
   useEffect(() => {
-    fetchProducts();
+    setPage(1);
+    setProducts([]);
+    setHasMore(true);
+    fetchProducts(1, false);
   }, [fetchProducts]);
+
+  // Infinite Scroll Observer
+  useEffect(() => {
+    if (!loadMoreRef.current || !hasMore || loadingMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          const nextPage = page + 1;
+          setPage(nextPage);
+          fetchProducts(nextPage, true);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, page, fetchProducts]);
 
   useEffect(() => {
     if (!isSearchFocused) return undefined;
@@ -753,7 +796,7 @@ export default function Products() {
   // Interaction Handlers
   const handleVote = async (productId, voteType) => {
     if (!user) {
-      setError({ message: 'Musisz być zalogowany, aby polubiać produkty!', type: 'error' });
+      setError({ message: t('products.mustBeLoggedVote') || 'Musisz być zalogowany, aby polubiać produkty!', type: 'error' });
       return;
     }
 
@@ -821,9 +864,9 @@ export default function Products() {
       if (!res.ok) throw new Error('Vote failed');
 
       if (action === 'DELETE') {
-        setError({ message: voteType === 'like' ? 'Cofnięto polubienie' : 'Cofnięto dislike', type: 'success' });
+        setError({ message: voteType === 'like' ? (t('products.likeRevoked') || 'Cofnięto polubienie') : (t('products.dislikeRevoked') || 'Cofnięto dislike'), type: 'success' });
       } else {
-        setError({ message: voteType === 'like' ? 'Polubiono produkt!' : 'Zostawiono dislike', type: 'success' });
+        setError({ message: voteType === 'like' ? (t('products.liked') || 'Polubiono produkt!') : (t('products.disliked') || 'Zostawiono dislike'), type: 'success' });
       }
     } catch (err) {
       console.error('Vote error:', err);
@@ -922,9 +965,9 @@ export default function Products() {
     setSelectedBatch('');
     setSearchQuery('');
     setPriceRange({ min: '', max: '' });
-    setSortField('price');
-    setSortOrder('asc');
     setPage(1);
+    setProducts([]);
+    setHasMore(true);
     setIsFilterModalOpen(false);
   };
 
@@ -942,7 +985,7 @@ export default function Products() {
   };
 
   const openDescriptionModal = (product) => {
-    window.open(`/products/${product.slug || product._id}`, '_blank');
+    router.push(`/products/${product.slug || product._id}`);
   };
   const closeDescriptionModal = () => {
     setSelectedProduct(null);
@@ -952,8 +995,8 @@ export default function Products() {
   };
 
   const openAgentModal = useCallback((product) => {
-    window.open(`/products/${product.slug || product._id}`, '_blank');
-  }, []);
+    router.push(`/products/${product.slug || product._id}`);
+  }, [router]);
 
   const closeAgentModal = () => {
     setAgentModalProduct(null);
@@ -1076,7 +1119,7 @@ export default function Products() {
 
       {/* Products Grid */}
       <div className={`${styles.productsGrid} ${isTransitioning ? styles.productsGridTransitioning : ''}`}>
-        {loading ? (
+        {loading && products.length === 0 ? (
           [...Array(8)].map((_, i) => (
             <div key={i} className={styles.skeletonCard} />
           ))
@@ -1088,7 +1131,7 @@ export default function Products() {
         ) : (
           products.map((product, index) => (
             <ProductCard
-              key={product._id}
+              key={`${product._id}-${index}`}
               product={product}
               index={index}
               formatPrice={formatPrice}
@@ -1096,31 +1139,30 @@ export default function Products() {
               quickCopied={quickCopiedId === product._id}
               onOpenAgent={openAgentModal}
               onQuickCopy={handleQuickCopy}
+              viewAgentsLabel={t('products.viewAgents') || 'Zobacz agentów'}
+              copyLinkLabel={t('products.copyLink') || 'Kopiuj link do agenta'}
             />
           ))
         )}
       </div>
 
-      {/* Pagination */}
-      {!loading && products.length > 0 && (
-        <div className={styles.pagination}>
-          <button
-            className={styles.pageBtn}
-            disabled={page === 1}
-            onClick={() => handlePageChange(page - 1)}
-          >
-            {t('products.prev')}
-          </button>
-          <span className={styles.pageCounter}>
-            {t('products.page')} <strong>{page}</strong> {t('products.of')} <strong>{totalPages}</strong>
-          </span>
-          <button
-            className={styles.pageBtn}
-            disabled={page === totalPages}
-            onClick={() => handlePageChange(page + 1)}
-          >
-            {t('products.next')}
-          </button>
+      {/* Infinite Scroll Loader */}
+      {loadingMore && (
+        <div className={styles.infiniteLoader}>
+          <FontAwesomeIcon icon={faSpinner} spin className={styles.loaderIcon} />
+          <span>{t('products.loadingMore') || 'Ładowanie...'}</span>
+        </div>
+      )}
+
+      {/* Intersection Observer Target */}
+      {hasMore && !loadingMore && products.length > 0 && (
+        <div ref={loadMoreRef} className={styles.loadMoreTrigger} />
+      )}
+
+      {/* End of Results */}
+      {!hasMore && products.length > 0 && (
+        <div className={styles.endOfResults}>
+          <span>{t('products.endOfResults') || 'To wszystkie produkty!'}</span>
         </div>
       )}
 

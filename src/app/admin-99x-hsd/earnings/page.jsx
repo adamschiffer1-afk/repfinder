@@ -48,9 +48,12 @@ function KpiCard({ icon, value, label, sub, color = '#a78bfa', accent }) {
 
 export default function EarningsPage() {
   const [entries, setEntries]           = useState([]);
+  const [returns, setReturns]           = useState([]);
   const [loading, setLoading]           = useState(true);
   const [showModal, setShowModal]       = useState(false);
+  const [showReturnModal, setShowReturnModal] = useState(false);
   const [editEntry, setEditEntry]       = useState(null);
+  const [editReturn, setEditReturn]     = useState(null);
   const [toasts, setToasts]             = useState([]);
   const [confirmModal, setConfirmModal] = useState({ open: false });
   const [rates, setRates]               = useState({ CNY_TO_PLN: null, CNY_TO_USD: null });
@@ -58,7 +61,9 @@ export default function EarningsPage() {
   const [ratesFallback, setRatesFallback] = useState(false);
   const [convCNY, setConvCNY]           = useState('');
   const emptyForm = { date: '', saleCNY: '', commissionRate: 30, note: '' };
+  const emptyReturnForm = { date: '', returnAmountCNY: '', productRef: '', reason: '' };
   const [form, setForm]                 = useState(emptyForm);
+  const [returnForm, setReturnForm]     = useState(emptyReturnForm);
 
   const showToast = useCallback((msg, type = 'success') => {
     const id = Date.now() + Math.random().toString(36).slice(2, 8);
@@ -100,7 +105,18 @@ export default function EarningsPage() {
     }
   }, [showToast]);
 
-  useEffect(() => { fetchEntries(); }, [fetchEntries]);
+  const fetchReturns = useCallback(async () => {
+    try {
+      const res = await fetch('/api/earnings/returns');
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setReturns(data.returns || []);
+    } catch {
+      showToast('Błąd pobierania zwrotów.', 'error');
+    }
+  }, [showToast]);
+
+  useEffect(() => { fetchEntries(); fetchReturns(); }, [fetchEntries, fetchReturns]);
 
   const handleSubmit = async (ev) => {
     ev.preventDefault();
@@ -151,6 +167,55 @@ export default function EarningsPage() {
   }, []);
 
   const closeModal = () => { setShowModal(false); setEditEntry(null); setForm(emptyForm); };
+  const closeReturnModal = () => { setShowReturnModal(false); setEditReturn(null); setReturnForm(emptyReturnForm); };
+
+  const handleReturnSubmit = async (ev) => {
+    ev.preventDefault();
+    const method = editReturn ? 'PUT' : 'POST';
+    const url    = editReturn ? `/api/earnings/returns/${editReturn._id}` : '/api/earnings/returns';
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: returnForm.date,
+          returnAmountCNY: Number(returnForm.returnAmountCNY) || 0,
+          productRef: returnForm.productRef,
+          reason: returnForm.reason,
+        }),
+      });
+      if (!res.ok) throw new Error();
+      showToast(editReturn ? 'Zaktualizowano zwrot!' : 'Dodano zwrot!');
+      fetchReturns();
+      closeReturnModal();
+    } catch {
+      showToast('Błąd zapisu zwrotu.', 'error');
+    }
+  };
+
+  const handleDeleteReturn = useCallback((id) => {
+    askConfirm('Usuń zwrot', 'Na pewno usunąć ten zwrot?', async () => {
+      try {
+        const res = await fetch(`/api/earnings/returns/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error();
+        showToast('Usunięto zwrot.');
+        fetchReturns();
+      } catch {
+        showToast('Błąd usuwania zwrotu.', 'error');
+      }
+    });
+  }, [askConfirm, showToast, fetchReturns]);
+
+  const openEditReturn = useCallback((returnEntry) => {
+    setEditReturn(returnEntry);
+    setReturnForm({
+      date: returnEntry.date ? new Date(returnEntry.date).toISOString().split('T')[0] : '',
+      returnAmountCNY: returnEntry.returnAmountCNY ?? '',
+      productRef: returnEntry.productRef ?? '',
+      reason: returnEntry.reason ?? '',
+    });
+    setShowReturnModal(true);
+  }, []);
 
   const sorted   = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date));
   const enriched = sorted.map(en => {
@@ -162,8 +227,12 @@ export default function EarningsPage() {
 
   const totalSaleCNY = enriched.reduce((s, en) => s + (en.saleCNY || 0), 0);
   const totalCommCNY = enriched.reduce((s, en) => s + (en.commCNY || 0), 0);
+  const totalReturnsCNY = returns.reduce((s, ret) => s + (ret.returnAmountCNY || 0), 0);
+  const netCommCNY = totalCommCNY - totalReturnsCNY;
   const totalCommPLN = rates.CNY_TO_PLN != null ? totalCommCNY * rates.CNY_TO_PLN : null;
   const totalCommUSD = rates.CNY_TO_USD != null ? totalCommCNY * rates.CNY_TO_USD : null;
+  const netCommPLN = rates.CNY_TO_PLN != null ? netCommCNY * rates.CNY_TO_PLN : null;
+  const netCommUSD = rates.CNY_TO_USD != null ? netCommCNY * rates.CNY_TO_USD : null;
   const avgCommRate  = enriched.length ? (enriched.reduce((s, en) => s + (en.commissionRate ?? 30), 0) / enriched.length).toFixed(1) : 30;
 
   const convNum = parseFloat(convCNY) || 0;
@@ -189,12 +258,13 @@ export default function EarningsPage() {
       {/* ── KPI strip ── */}
       <div className={e.kpiGrid}>
         <KpiCard icon="🏪" value={`¥${fmt(totalSaleCNY)}`} label="Łączna sprzedaż (CNY)" color="#f59e0b" accent="#f59e0b" />
-        <KpiCard icon="💴" value={`¥${fmt(totalCommCNY)}`} label="Twoja prowizja (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#a78bfa" accent="#a78bfa" />
-        <KpiCard icon="🇵🇱" value={totalCommPLN != null ? `${fmt(totalCommPLN)} zł` : '—'}
-          label="Prowizja (PLN)" sub={rates.CNY_TO_PLN ? `1 CNY = ${rates.CNY_TO_PLN.toFixed(4)} PLN` : null} color="#34d399" accent="#34d399" />
-        <KpiCard icon="🇺🇸" value={totalCommUSD != null ? `$${fmt(totalCommUSD)}` : '—'}
-          label="Prowizja (USD)" sub={rates.CNY_TO_USD ? `1 CNY = ${rates.CNY_TO_USD.toFixed(4)} USD` : null} color="#60a5fa" accent="#60a5fa" />
-        <KpiCard icon="📝" value={entries.length} label="Liczba wpisów" color="rgba(255,255,255,0.7)" />
+        <KpiCard icon="💴" value={`¥${fmt(totalCommCNY)}`} label="Prowizja brutto (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#a78bfa" accent="#a78bfa" />
+        <KpiCard icon="🔴" value={`¥${fmt(totalReturnsCNY)}`} label="Zwroty (CNY)" sub={`${returns.length} zwrotów`} color="#ef4444" accent="#ef4444" />
+        <KpiCard icon="✅" value={`¥${fmt(netCommCNY)}`} label="Prowizja netto (CNY)" sub="Po odliczeniu zwrotów" color="#10b981" accent="#10b981" />
+        <KpiCard icon="🇵🇱" value={netCommPLN != null ? `${fmt(netCommPLN)} zł` : '—'}
+          label="Prowizja netto (PLN)" sub={rates.CNY_TO_PLN ? `1 CNY = ${rates.CNY_TO_PLN.toFixed(4)} PLN` : null} color="#34d399" accent="#34d399" />
+        <KpiCard icon="🇺🇸" value={netCommUSD != null ? `$${fmt(netCommUSD)}` : '—'}
+          label="Prowizja netto (USD)" sub={rates.CNY_TO_USD ? `1 CNY = ${rates.CNY_TO_USD.toFixed(4)} USD` : null} color="#60a5fa" accent="#60a5fa" />
       </div>
 
       {/* ── Live converter ── */}
@@ -259,16 +329,24 @@ export default function EarningsPage() {
               <span className={e.summaryLineVal} style={{ color: '#f59e0b' }}>¥{fmt(totalSaleCNY)}</span>
             </div>
             <div className={e.summaryLine}>
-              <span className={e.summaryLineKey}>Prowizja (CNY)</span>
+              <span className={e.summaryLineKey}>Prowizja brutto (CNY)</span>
               <span className={e.summaryLineVal} style={{ color: '#a78bfa' }}>¥{fmt(totalCommCNY)}</span>
             </div>
             <div className={e.summaryLine}>
-              <span className={e.summaryLineKey}>Prowizja (PLN)</span>
-              <span className={e.summaryLineVal} style={{ color: '#34d399' }}>{totalCommPLN != null ? `${fmt(totalCommPLN)} zł` : '—'}</span>
+              <span className={e.summaryLineKey}>Zwroty (CNY)</span>
+              <span className={e.summaryLineVal} style={{ color: '#ef4444' }}>-¥{fmt(totalReturnsCNY)}</span>
             </div>
             <div className={e.summaryLine}>
-              <span className={e.summaryLineKey}>Prowizja (USD)</span>
-              <span className={e.summaryLineVal} style={{ color: '#60a5fa' }}>{totalCommUSD != null ? `$${fmt(totalCommUSD)}` : '—'}</span>
+              <span className={e.summaryLineKey}>Prowizja netto (CNY)</span>
+              <span className={e.summaryLineVal} style={{ color: '#10b981' }}>¥{fmt(netCommCNY)}</span>
+            </div>
+            <div className={e.summaryLine}>
+              <span className={e.summaryLineKey}>Prowizja netto (PLN)</span>
+              <span className={e.summaryLineVal} style={{ color: '#34d399' }}>{netCommPLN != null ? `${fmt(netCommPLN)} zł` : '—'}</span>
+            </div>
+            <div className={e.summaryLine}>
+              <span className={e.summaryLineKey}>Prowizja netto (USD)</span>
+              <span className={e.summaryLineVal} style={{ color: '#60a5fa' }}>{netCommUSD != null ? `$${fmt(netCommUSD)}` : '—'}</span>
             </div>
           </div>
           <div className={e.summaryCard}>
@@ -317,6 +395,51 @@ export default function EarningsPage() {
                     <td className={styles.actions}>
                       <button className={styles.editBtn} onClick={() => openEdit(en)}>Edytuj</button>
                       <button className={styles.deleteBtn} onClick={() => handleDelete(en._id)}>Usuń</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* ── Returns Section ── */}
+      <div className={e.tableSection} style={{ marginTop: 40 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <h2 style={{ fontSize: 18, color: 'rgba(255,255,255,0.8)' }}>🔴 Zwroty produktów</h2>
+          <button 
+            className={styles.scraperBtn} 
+            onClick={() => { setEditReturn(null); setReturnForm(emptyReturnForm); setShowReturnModal(true); }}
+            style={{ background: '#ef4444' }}
+          >
+            + Dodaj zwrot
+          </button>
+        </div>
+        {returns.length === 0 ? (
+          <div className={styles.noProductsPlaceholder}>📭 Brak zwrotów.</div>
+        ) : (
+          <div className={styles.tableWrapper}>
+            <table className={styles.adminTable}>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Kwota zwrotu (CNY)</th>
+                  <th>Produkt/Zamówienie</th>
+                  <th>Powód</th>
+                  <th>Akcje</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...returns].reverse().map((ret) => (
+                  <tr key={ret._id}>
+                    <td style={{ fontWeight: 700, color: '#ef4444' }}>{fmtDate(ret.date)}</td>
+                    <td><span className={e.numBadge} style={{ '--c': '#ef4444' }}>-¥{fmt(ret.returnAmountCNY)}</span></td>
+                    <td style={{ color: 'rgba(255,255,255,0.7)' }}>{ret.productRef || '—'}</td>
+                    <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>{ret.reason || '—'}</td>
+                    <td className={styles.actions}>
+                      <button className={styles.editBtn} onClick={() => openEditReturn(ret)}>Edytuj</button>
+                      <button className={styles.deleteBtn} onClick={() => handleDeleteReturn(ret._id)}>Usuń</button>
                     </td>
                   </tr>
                 ))}
@@ -390,6 +513,58 @@ export default function EarningsPage() {
               <button onClick={confirmModal.onConfirm} className={styles.confirmModalBtn}>Tak, usuń</button>
               <button type="button" onClick={() => setConfirmModal({ open: false })} className={styles.cancelModalBtn}>Anuluj</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Return Modal ── */}
+      {showReturnModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.adminModal} style={{ maxWidth: 480 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h2 style={{ margin: 0 }}>{editReturn ? '✏️ Edytuj zwrot' : '🔴 Nowy zwrot'}</h2>
+              <span style={{ fontSize: 24, cursor: 'pointer', opacity: 0.4 }} onClick={closeReturnModal}>&times;</span>
+            </div>
+            <form onSubmit={handleReturnSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label className={e.formLabel}>📅 Data zwrotu</label>
+                <input type="date" value={returnForm.date} required onChange={ev => setReturnForm({ ...returnForm, date: ev.target.value })}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff', colorScheme: 'dark' }} />
+              </div>
+              <div>
+                <label className={e.formLabel}>💸 Kwota zwrotu (CNY ¥)</label>
+                <input type="number" min="0" step="0.01" placeholder="0.00" value={returnForm.returnAmountCNY} required
+                  onChange={ev => setReturnForm({ ...returnForm, returnAmountCNY: ev.target.value })}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff' }} />
+                {returnForm.returnAmountCNY > 0 && (
+                  <div style={{ marginTop: 8, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                    <span>Odliczenie: <strong style={{ color: '#ef4444' }}>-¥{fmt(returnForm.returnAmountCNY)}</strong></span>
+                    {rates.CNY_TO_PLN && <span>= <strong style={{ color: '#ef4444' }}>-{fmt(returnForm.returnAmountCNY * rates.CNY_TO_PLN)} zł</strong></span>}
+                    {rates.CNY_TO_USD && <span>= <strong style={{ color: '#ef4444' }}>-${fmt(returnForm.returnAmountCNY * rates.CNY_TO_USD)}</strong></span>}
+                  </div>
+                )}
+              </div>
+              <div>
+                <label className={e.formLabel}>📦 Produkt / Numer zamówienia</label>
+                <input type="text" placeholder="np. Zamówienie #12345 lub Yeezy 350" value={returnForm.productRef}
+                  onChange={ev => setReturnForm({ ...returnForm, productRef: ev.target.value })}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff' }} />
+              </div>
+              <div>
+                <label className={e.formLabel}>📝 Powód zwrotu</label>
+                <textarea placeholder="Opcjonalny powód zwrotu..." value={returnForm.reason}
+                  onChange={ev => setReturnForm({ ...returnForm, reason: ev.target.value })} rows={2}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff', resize: 'vertical', font: 'inherit' }} />
+              </div>
+              <div className={styles.modalActions}>
+                <button type="submit" style={{ background: '#ef4444', color: '#fff', padding: 12, borderRadius: 8, border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
+                  {editReturn ? 'Zapisz zmiany' : 'Dodaj zwrot'}
+                </button>
+                <button type="button" onClick={closeReturnModal} style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: 12, borderRadius: 8, border: 'none', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                  Anuluj
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
