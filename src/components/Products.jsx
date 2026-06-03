@@ -935,16 +935,9 @@ export default function Products() {
   };
 
   const handlePageChange = (newPage) => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setPage(newPage);
-      const section = document.getElementById('products');
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, 250);
+    setPage(newPage);
+    fetchProducts(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const openDescriptionModal = (product) => {
