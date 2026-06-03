@@ -44,6 +44,8 @@ export default async function AdminLayout({ children }) {
         <Link href="/admin-99x-hsd">🏠 Dashboard</Link>
         <Link href="/admin-99x-hsd/products">📦 Produkty</Link>
         <Link href="/admin-99x-hsd/stats">📈 Statystyki</Link>
+        <Link href="/admin-99x-hsd/kakobuy">🛒 Kakobuy</Link>
+        <Link href="/admin-99x-hsd/earnings">💰 Zarobki</Link>
         <form action="/api/auth/signout" method="POST" style={{ marginTop: 'auto' }}>
           <button type="submit" className={styles.logoutBtn}>Wyloguj</button>
         </form>
