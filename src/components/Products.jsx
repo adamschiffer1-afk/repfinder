@@ -1110,17 +1110,17 @@ export default function Products() {
             disabled={page === 1}
             className={styles.paginationBtn}
           >
-            {t('products.previousPage') || 'Poprzednia'}
+            Poprzednia
           </button>
           <span className={styles.pageInfo}>
-            {t('products.pageInfo') ? t('products.pageInfo').replace('{page}', page).replace('{totalPages}', totalPages) : `Strona ${page} z ${totalPages}`}
+            Strona {page} z {totalPages}
           </span>
           <button
             onClick={() => handlePageChange(page + 1)}
             disabled={page >= totalPages}
             className={styles.paginationBtn}
           >
-            {t('products.nextPage') || 'Następna'}
+            Następna
           </button>
         </div>
       )}
