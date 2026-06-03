@@ -259,7 +259,7 @@ export default function ProductDetail({ productId, initialData = null }) {
         <div className={styles.descModalHeaderRow}>
           <button className={styles.backToGalleryBtn} onClick={() => router.push('/products')}>
             <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '8px' }} />
-            Wróć do Galerii
+            {t('products.backToGallery') || 'Wróć do Galerii'}
           </button>
         </div>
 
@@ -329,7 +329,7 @@ export default function ProductDetail({ productId, initialData = null }) {
                   onClick={() => trackStat(productDetails.product._id, 'product_click', preferredAgent)}
                 >
                   <img src={preferredAgentLogo} alt={preferredAgent} className={styles.orderAgentLogoNew} />
-                  <span>Zamów Produkt</span>
+                  <span>{t('products.orderProduct') || 'Zamów Produkt'}</span>
                 </a>
                 <button
                   className={`${styles.detailCopyBtnNew} ${copiedId === 'main' ? styles.copiedNew : ''}`}
@@ -348,7 +348,7 @@ export default function ProductDetail({ productId, initialData = null }) {
 
               {/* Alternative Agents Selection */}
               <div className={styles.altAgentsSectionNew}>
-                <div className={styles.altAgentsTitleNew}>Inni agenci:</div>
+                <div className={styles.altAgentsTitleNew}>{t('products.otherAgents') || 'Inni agenci:'}</div>
                 <div className={styles.altAgentsGridNew}>
                   {SUPPORTED_AGENTS.filter(a => a.value !== preferredAgent).map((agent) => (
                     <a
@@ -369,44 +369,44 @@ export default function ProductDetail({ productId, initialData = null }) {
 
               {/* Product details table */}
               <div className={styles.detailsBoxNew}>
-                <h4 className={styles.detailsBoxTitleNew}>Szczegóły Produktu</h4>
+                <h4 className={styles.detailsBoxTitleNew}>{t('products.productDetails') || 'Szczegóły Produktu'}</h4>
                 <div className={styles.detailsGridNew}>
                   <div className={styles.detailRowNew}>
-                    <span className={styles.detailLabelNew}>Platforma</span>
+                    <span className={styles.detailLabelNew}>{t('products.platform') || 'Platforma'}</span>
                     <span className={`${styles.detailValNew} ${styles.badgePlatformNew}`}>
                       {productDetails.details.platform.toUpperCase()}
                     </span>
                   </div>
                   <div className={styles.detailRowNew}>
-                    <span className={styles.detailLabelNew}>Kategoria</span>
+                    <span className={styles.detailLabelNew}>{t('products.category') || 'Kategoria'}</span>
                     <span className={`${styles.detailValNew} ${styles.badgeCategoryNew}`}>
                       {productDetails.product.category.toUpperCase()}
                     </span>
                   </div>
                   <div className={styles.detailRowNew}>
-                    <span className={styles.detailLabelNew}>Waga</span>
+                    <span className={styles.detailLabelNew}>{t('products.weight') || 'Waga'}</span>
                     <span className={styles.detailValNew}>
                       {productDetails.details.weight && productDetails.details.weight !== 'N/A' 
                         ? productDetails.details.weight 
                         : (
                             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                               {getEstimatedWeight(productDetails.product.category)}
-                              <span className={styles.estimatedBadgeNew}>Szacowana</span>
+                              <span className={styles.estimatedBadgeNew}>{t('products.estimated') || 'Szacowana'}</span>
                             </span>
                           )
                       }
                     </span>
                   </div>
                   <div className={styles.detailRowNew}>
-                    <span className={styles.detailLabelNew}>Dostawa</span>
+                    <span className={styles.detailLabelNew}>{t('products.delivery') || 'Dostawa'}</span>
                     <span className={styles.detailValNew}>{productDetails.details.delivery || 'N/A'}</span>
                   </div>
                   <div className={styles.detailRowNew}>
-                    <span className={styles.detailLabelNew}>Sprzedaż</span>
+                    <span className={styles.detailLabelNew}>{t('products.sales') || 'Sprzedaż'}</span>
                     <span className={styles.detailValNew}>{productDetails.details.sales || '0'}</span>
                   </div>
                   <div className={styles.detailRowNew}>
-                    <span className={styles.detailLabelNew}>Kliknięcia</span>
+                    <span className={styles.detailLabelNew}>{t('products.clicks') || 'Kliknięcia'}</span>
                     <span className={styles.detailValNew}>{productDetails.product.clicks || '0'}</span>
                   </div>
                 </div>
@@ -419,7 +419,7 @@ export default function ProductDetail({ productId, initialData = null }) {
               
               {/* Brand Shop & Favorite */}
               <div className={styles.shopRowNew}>
-                <span className={styles.shopLabelNew}>Best Batch</span>
+                <span className={styles.shopLabelNew}>{t('products.bestBatchLabel') || 'Best Batch'}</span>
                 <button
                   className={`${styles.wishlistBtnNew} ${productDetails.product.isFavorited ? styles.wishlistActiveNew : ''}`}
                   onClick={() => handleAddToWishlist(productDetails.product._id)}
@@ -437,9 +437,9 @@ export default function ProductDetail({ productId, initialData = null }) {
 
               {/* Real-time stats */}
               <div className={styles.productStatsNew}>
-                <span>{productDetails.details.views} wyświetleń</span>
+                <span>{productDetails.details.views} {t('products.views') || 'wyświetleń'}</span>
                 <span className={styles.statsSeparatorNew}>•</span>
-                <span>{productDetails.details.favorites} polubień</span>
+                <span>{productDetails.details.favorites} {t('products.likes') || 'polubień'}</span>
               </div>
 
               {/* Colorways / Variant Selector */}
