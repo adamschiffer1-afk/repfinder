@@ -370,6 +370,7 @@ const ProductCard = memo(function ProductCard({
 export default function Products() {
   const { t } = useLanguage();
   const { user, fetchWithAuth } = useAuth();
+  const router = useRouter();
   const { formatPrice } = useCurrency();
   const recentTrackedClicksRef = useRef(new Map());
 

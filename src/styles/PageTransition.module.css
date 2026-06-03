@@ -18,8 +18,3 @@
     transform: translateY(0);
   }
 }
-
-/* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
