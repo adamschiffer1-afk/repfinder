@@ -226,9 +226,10 @@ export default function EarningsPage() {
   });
 
   const totalSaleCNY = enriched.reduce((s, en) => s + (en.saleCNY || 0), 0);
-  const totalCommCNY = enriched.reduce((s, en) => s + (en.commCNY || 0), 0);
   const totalReturnsCNY = returns.reduce((s, ret) => s + (ret.returnAmountCNY || 0), 0);
-  const netCommCNY = totalCommCNY - totalReturnsCNY;
+  const netSaleCNY = totalSaleCNY - totalReturnsCNY;
+  const totalCommCNY = enriched.reduce((s, en) => s + (en.commCNY || 0), 0);
+  const netCommCNY = (netSaleCNY * (enriched.length > 0 ? (enriched.reduce((s, en) => s + (en.commissionRate ?? 30), 0) / enriched.length) : 30)) / 100;
   const totalCommPLN = rates.CNY_TO_PLN != null ? totalCommCNY * rates.CNY_TO_PLN : null;
   const totalCommUSD = rates.CNY_TO_USD != null ? totalCommCNY * rates.CNY_TO_USD : null;
   const netCommPLN = rates.CNY_TO_PLN != null ? netCommCNY * rates.CNY_TO_PLN : null;
@@ -257,10 +258,10 @@ export default function EarningsPage() {
 
       {/* ── KPI strip ── */}
       <div className={e.kpiGrid}>
-        <KpiCard icon="🏪" value={`¥${fmt(totalSaleCNY)}`} label="Łączna sprzedaż (CNY)" color="#f59e0b" accent="#f59e0b" />
-        <KpiCard icon="💴" value={`¥${fmt(totalCommCNY)}`} label="Prowizja brutto (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#a78bfa" accent="#a78bfa" />
+        <KpiCard icon="🏪" value={`¥${fmt(totalSaleCNY)}`} label="Sprzedaż brutto (CNY)" color="#f59e0b" accent="#f59e0b" />
         <KpiCard icon="🔴" value={`¥${fmt(totalReturnsCNY)}`} label="Zwroty (CNY)" sub={`${returns.length} zwrotów`} color="#ef4444" accent="#ef4444" />
-        <KpiCard icon="✅" value={`¥${fmt(netCommCNY)}`} label="Prowizja netto (CNY)" sub="Po odliczeniu zwrotów" color="#10b981" accent="#10b981" />
+        <KpiCard icon="✅" value={`¥${fmt(netSaleCNY)}`} label="Sprzedaż netto (CNY)" sub="Po odliczeniu zwrotów" color="#10b981" accent="#10b981" />
+        <KpiCard icon="💴" value={`¥${fmt(netCommCNY)}`} label="Prowizja netto (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#a78bfa" accent="#a78bfa" />
         <KpiCard icon="🇵🇱" value={netCommPLN != null ? `${fmt(netCommPLN)} zł` : '—'}
           label="Prowizja netto (PLN)" sub={rates.CNY_TO_PLN ? `1 CNY = ${rates.CNY_TO_PLN.toFixed(4)} PLN` : null} color="#34d399" accent="#34d399" />
         <KpiCard icon="🇺🇸" value={netCommUSD != null ? `$${fmt(netCommUSD)}` : '—'}
@@ -325,20 +326,20 @@ export default function EarningsPage() {
           <div className={e.summaryCard}>
             <h4>📊 Podsumowanie łączne</h4>
             <div className={e.summaryLine}>
-              <span className={e.summaryLineKey}>Sprzedaż (CNY)</span>
+              <span className={e.summaryLineKey}>Sprzedaż brutto (CNY)</span>
               <span className={e.summaryLineVal} style={{ color: '#f59e0b' }}>¥{fmt(totalSaleCNY)}</span>
-            </div>
-            <div className={e.summaryLine}>
-              <span className={e.summaryLineKey}>Prowizja brutto (CNY)</span>
-              <span className={e.summaryLineVal} style={{ color: '#a78bfa' }}>¥{fmt(totalCommCNY)}</span>
             </div>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Zwroty (CNY)</span>
               <span className={e.summaryLineVal} style={{ color: '#ef4444' }}>-¥{fmt(totalReturnsCNY)}</span>
             </div>
             <div className={e.summaryLine}>
+              <span className={e.summaryLineKey}>Sprzedaż netto (CNY)</span>
+              <span className={e.summaryLineVal} style={{ color: '#10b981' }}>¥{fmt(netSaleCNY)}</span>
+            </div>
+            <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Prowizja netto (CNY)</span>
-              <span className={e.summaryLineVal} style={{ color: '#10b981' }}>¥{fmt(netCommCNY)}</span>
+              <span className={e.summaryLineVal} style={{ color: '#a78bfa' }}>¥{fmt(netCommCNY)}</span>
             </div>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Prowizja netto (PLN)</span>
