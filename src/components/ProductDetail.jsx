@@ -59,16 +59,16 @@ const getEstimatedWeight = (category) => {
   return '~500g';
 };
 
-export default function ProductDetail({ productId }) {
+export default function ProductDetail({ productId, initialData = null }) {
   const router = useRouter();
   const { t } = useLanguage();
   const { user, fetchWithAuth } = useAuth();
   const { formatPrice } = useCurrency();
   const recentTrackedClicksRef = useRef(new Map());
 
-  // UI States
-  const [detailLoading, setDetailLoading] = useState(true);
-  const [productDetails, setProductDetails] = useState(null);
+  // UI States — if we got SSR data, start ready immediately
+  const [detailLoading, setDetailLoading] = useState(initialData == null);
+  const [productDetails, setProductDetails] = useState(initialData);
   const [galleryImage, setGalleryImage] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
@@ -108,9 +108,23 @@ export default function ProductDetail({ productId }) {
     }
   }, []);
 
-  // Fetch product data
+  // Seed gallery/selection from initialData on first render
+  useEffect(() => {
+    if (!initialData) return;
+    setGalleryImage(initialData.product.image);
+    if (initialData.sizes?.length > 0) setSelectedSize(initialData.sizes[0]);
+    if (initialData.colors?.length > 0) {
+      const match = initialData.colors.find(c => c.productId === productId) || initialData.colors[0];
+      setSelectedColor(match.name);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Fetch product data — only when no initialData provided (e.g. colour-variant navigation)
   useEffect(() => {
     if (!productId) return;
+    // If we already have data for this product, skip the fetch
+    if (productDetails?.product?._id?.toString() === productId) return;
 
     const fetchDetail = async () => {
       setDetailLoading(true);
@@ -121,11 +135,8 @@ export default function ProductDetail({ productId }) {
         if (data.success) {
           setProductDetails(data);
           setGalleryImage(data.product.image);
-          if (data.sizes && data.sizes.length > 0) {
-            setSelectedSize(data.sizes[0]);
-          }
-          if (data.colors && data.colors.length > 0) {
-            // Find current colorway in list
+          if (data.sizes?.length > 0) setSelectedSize(data.sizes[0]);
+          if (data.colors?.length > 0) {
             const currentMatch = data.colors.find(c => c.productId === productId) || data.colors[0];
             setSelectedColor(currentMatch.name);
           }

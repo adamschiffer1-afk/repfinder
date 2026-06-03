@@ -31,6 +31,7 @@ const ProductSchema = new mongoose.Schema({
   link: {
     type: String,
     required: [true, 'Please provide a product link.'],
+    index: true,
   },
   clicks: {
     type: Number,
