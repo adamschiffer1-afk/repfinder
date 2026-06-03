@@ -473,7 +473,7 @@ export default function ProductDetail({ productId, initialData = null }) {
                         className={`${styles.sizeChipNew} ${selectedSize === sz ? styles.activeSizeNew : ''}`}
                         onClick={() => setSelectedSize(sz)}
                       >
-                        {sz.replace(/^FR\s*/i, '')}
+                        {sz}
                       </button>
                     ))}
                   </div>

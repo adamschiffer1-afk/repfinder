@@ -133,7 +133,7 @@ export async function GET(req, { params }) {
     if (sizes.length === 0) {
       const cat = (product.category || "").toLowerCase();
       if (cat.includes("shoes") || cat.includes("buty") || cat.includes("sneakers") || cat.includes("footwear")) {
-        sizes = ['FR36', 'FR36 2/3', 'FR37 1/3', 'FR38', 'FR38 2/3', 'FR39 1/3', 'FR40', 'FR40 2/3', 'FR41 1/3', 'FR42', 'FR42 2/3', 'FR43 1/3', 'FR44', 'FR44 2/3', 'FR45 1/3', 'FR46', 'FR47 1/3', 'FR48'];
+        sizes = ['36','36.5','37','37.5','38','38.5','39','39.5','40','40.5','41','41.5','42','42.5','43','43.5','44','44.5','45','45.5','46','46.5','47','47.5','48'];
       } else if (cat.includes("hoodies") || cat.includes("pants") || cat.includes("shorts") || cat.includes("t-shirts") || cat.includes("jackets") || cat.includes("sweaters") || cat.includes("clothing") || cat.includes("tee")) {
         sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
       } else {
