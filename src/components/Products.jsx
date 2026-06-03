@@ -388,13 +388,10 @@ export default function Products() {
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
 
 
-  // UI States - Infinite Scroll
+  // UI States - Pagination
   const [page, setPage] = useState(1);
   const [limit] = useState(24);
   const [totalPages, setTotalPages] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const loadMoreRef = useRef(null);
   const [error, setError] = useState({ message: null, type: null });
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -474,12 +471,8 @@ export default function Products() {
   const priceMin = priceRange.min;
   const priceMax = priceRange.max;
 
-  const fetchProducts = useCallback(async (pageNum = 1, append = false) => {
-    if (append) {
-      setLoadingMore(true);
-    } else {
-      setLoading(true);
-    }
+  const fetchProducts = useCallback(async (pageNum = 1) => {
+    setLoading(true);
     
     try {
       const params = new URLSearchParams({
@@ -507,14 +500,9 @@ export default function Products() {
         const shuffledNonPinned = shuffleArray(nonPinned);
         const newProducts = [...pinned, ...shuffledNonPinned];
         
-        if (append) {
-          setProducts(prev => [...prev, ...newProducts]);
-        } else {
-          setProducts(newProducts);
-        }
+        setProducts(newProducts);
         
         setTotalPages(data.pages || 1);
-        setHasMore(pageNum < (data.pages || 1));
         setFilteredProductCount(data.total ?? 0);
         setError({ message: null, type: null });
       } else {
@@ -522,20 +510,15 @@ export default function Products() {
       }
     } catch (error) {
       console.error('Failed to fetch products:', error);
-      if (!append) {
-        const start = (pageNum - 1) * limit;
-        const fallback = [...productsData];
-        setProducts(fallback.slice(start, start + limit));
-        setFilteredProductCount(fallback.length);
-        setTotalPages(Math.ceil(fallback.length / limit) || 1);
-        setHasMore(false);
-      }
+      const start = (pageNum - 1) * limit;
+      const fallback = [...productsData];
+      setProducts(fallback.slice(start, start + limit));
+      setFilteredProductCount(fallback.length);
+      setTotalPages(Math.ceil(fallback.length / limit) || 1);
       setError({ message: 'Failed to load products from server, using local data', type: 'warning' });
     } finally {
       setLoading(false);
-      setLoadingMore(false);
       setIsInitialLoad(false);
-      setIsTransitioning(false);
     }
   }, [
     limit,
@@ -549,28 +532,8 @@ export default function Products() {
   useEffect(() => {
     setPage(1);
     setProducts([]);
-    setHasMore(true);
-    fetchProducts(1, false);
+    fetchProducts(1);
   }, [fetchProducts]);
-
-  // Infinite Scroll Observer
-  useEffect(() => {
-    if (!loadMoreRef.current || !hasMore || loadingMore) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loadingMore) {
-          const nextPage = page + 1;
-          setPage(nextPage);
-          fetchProducts(nextPage, true);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    observer.observe(loadMoreRef.current);
-    return () => observer.disconnect();
-  }, [hasMore, loadingMore, page, fetchProducts]);
 
   useEffect(() => {
     if (!isSearchFocused) return undefined;
@@ -968,7 +931,6 @@ export default function Products() {
     setPriceRange({ min: '', max: '' });
     setPage(1);
     setProducts([]);
-    setHasMore(true);
     setIsFilterModalOpen(false);
   };
 
@@ -1147,23 +1109,26 @@ export default function Products() {
         )}
       </div>
 
-      {/* Infinite Scroll Loader */}
-      {loadingMore && (
-        <div className={styles.infiniteLoader}>
-          <FontAwesomeIcon icon={faSpinner} spin className={styles.loaderIcon} />
-          <span>{t('products.loadingMore') || 'Ładowanie...'}</span>
-        </div>
-      )}
-
-      {/* Intersection Observer Target */}
-      {hasMore && !loadingMore && products.length > 0 && (
-        <div ref={loadMoreRef} className={styles.loadMoreTrigger} />
-      )}
-
-      {/* End of Results */}
-      {!hasMore && products.length > 0 && (
-        <div className={styles.endOfResults}>
-          <span>{t('products.endOfResults') || 'To wszystkie produkty!'}</span>
+      {/* Pagination */}
+      {!loading && products.length > 0 && totalPages > 1 && (
+        <div className={styles.paginationContainer}>
+          <button
+            onClick={() => handlePageChange(page - 1)}
+            disabled={page === 1}
+            className={styles.paginationBtn}
+          >
+            {t('products.previousPage') || 'Poprzednia'}
+          </button>
+          <span className={styles.pageInfo}>
+            {t('products.pageInfo') ? t('products.pageInfo').replace('{page}', page).replace('{totalPages}', totalPages) : `Strona ${page} z ${totalPages}`}
+          </span>
+          <button
+            onClick={() => handlePageChange(page + 1)}
+            disabled={page >= totalPages}
+            className={styles.paginationBtn}
+          >
+            {t('products.nextPage') || 'Następna'}
+          </button>
         </div>
       )}
 
