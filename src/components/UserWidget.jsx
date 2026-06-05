@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faSignOutAlt, faChevronUp } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +10,16 @@ export default function UserWidget() {
   const { data: session, status } = useSession();
   const { t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Save user to database after login
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      fetch('/api/auth/save-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      }).catch(err => console.error('Failed to save user:', err));
+    }
+  }, [status, session]);
 
   if (status === 'loading' || !session?.user) {
     return null;
