@@ -3,6 +3,8 @@ import { auth } from '@/auth';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 
+export const runtime = 'nodejs'; // Force Node.js runtime instead of Edge
+
 const ADMIN_EMAIL = "kakobuybs209@gmail.com";
 
 export async function GET(request) {
