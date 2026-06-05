@@ -3,20 +3,24 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faCog, faExternalLinkAlt, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faCog, faExternalLinkAlt, faBars, faTimes, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 import styles from '@/styles/Navbar.module.css';
 import SettingsModal from '@/components/SettingsModal';
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function Navbar() {
   const { language, changeLanguage, t } = useLanguage();
   const pathname = usePathname();
+  const { data: session, status } = useSession();
   if (pathname?.startsWith('/admin-99x-hsd')) return null;
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isInitial, setIsInitial] = useState(false);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -66,6 +70,17 @@ export default function Navbar() {
 
   const currentLang = languages.find(l => l.code === language) || languages[0];
 
+  const handleLogin = () => {
+    signIn('discord', { callbackUrl: '/' });
+  };
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' });
+  };
+
+  const isAdmin = session?.user?.isAdmin === true;
+  const userRole = isAdmin ? 'Administrator' : 'Użytkownik';
+
   return (
     <>
       <nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : ''} ${!visible ? styles.navbarHidden : ''}`}>
@@ -109,6 +124,52 @@ export default function Navbar() {
           </div>
 
           <div className={styles.navRight}>
+            {/* User Menu / Login */}
+            {status === 'loading' ? (
+              <div className={styles.userLoading}>...</div>
+            ) : session?.user ? (
+              <div 
+                className={styles.userMenuWrapper}
+                onMouseEnter={() => setIsUserMenuOpen(true)}
+                onMouseLeave={() => setIsUserMenuOpen(false)}
+              >
+                <button className={styles.userBtn}>
+                  {session.user.image ? (
+                    <img src={session.user.image} alt={session.user.name} className={styles.userAvatar} />
+                  ) : (
+                    <div className={styles.userAvatarPlaceholder}>
+                      <FontAwesomeIcon icon={faUser} />
+                    </div>
+                  )}
+                  <span className={styles.userName}>{session.user.name || 'User'}</span>
+                  <span className={`${styles.userBadge} ${session.user.isAdmin ? styles.adminBadge : styles.regularBadge}`}>
+                    {session.user.isAdmin ? 'Administrator' : 'Użytkownik'}
+                  </span>
+                  <FontAwesomeIcon icon={faChevronDown} className={styles.userChevron} />
+                </button>
+                
+                {isUserMenuOpen && (
+                  <div className={styles.userDropdown}>
+                    <button 
+                      className={styles.userDropdownItem}
+                      onClick={() => signOut({ callbackUrl: '/' })}
+                    >
+                      <FontAwesomeIcon icon={faSignOutAlt} />
+                      Wyloguj się
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button 
+                className={styles.loginBtn}
+                onClick={() => signIn('discord', { callbackUrl: '/' })}
+              >
+                <FontAwesomeIcon icon={faDiscord} />
+                Zaloguj się
+              </button>
+            )}
+
             {/* Language Switcher */}
             <div 
               className={styles.langWrapper}

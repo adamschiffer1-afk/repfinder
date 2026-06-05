@@ -9,6 +9,7 @@ import PageTransition from '@/components/PageTransition';
 import TopLoadingBar from '@/components/TopLoadingBar';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { AuthProvider } from '@/context/AuthContext';
+import SessionProviderWrapper from '@/components/SessionProviderWrapper';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 
 config.autoAddCss = false;
@@ -54,21 +55,23 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/images/rf-logo-removebg-preview.png" type="image/png" />
       </head>
       <body>
-        <AuthProvider>
-          <Suspense fallback={null}>
-            <AnalyticsTracker />
-          </Suspense>
-          <TopLoadingBar />
-          <LanguageProvider>
-            <Navbar />
-            <PageTransition>
-              <main>
-                {children}
-              </main>
-            </PageTransition>
-            <Footer />
-          </LanguageProvider>
-        </AuthProvider>
+        <SessionProviderWrapper>
+          <AuthProvider>
+            <Suspense fallback={null}>
+              <AnalyticsTracker />
+            </Suspense>
+            <TopLoadingBar />
+            <LanguageProvider>
+              <Navbar />
+              <PageTransition>
+                <main>
+                  {children}
+                </main>
+              </PageTransition>
+              <Footer />
+            </LanguageProvider>
+          </AuthProvider>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
