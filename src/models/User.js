@@ -37,6 +37,22 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  ipAddress: {
+    type: String,
+    default: '',
+  },
+  country: {
+    type: String,
+    default: '',
+  },
+  countryCode: {
+    type: String,
+    default: '',
+  },
+  city: {
+    type: String,
+    default: '',
+  },
 }, {
   timestamps: true, // Automatically adds createdAt and updatedAt
 });

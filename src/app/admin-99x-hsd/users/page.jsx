@@ -91,6 +91,22 @@ export default function UsersPage() {
           <span className={styles.infoLabel}>Ostatnie logowanie:</span>
           <span className={styles.infoValue}>{formatDate(user.lastLogin)}</span>
         </div>
+        {user.country && (
+          <div className={styles.infoRow}>
+            <span className={styles.infoLabel}>Lokalizacja:</span>
+            <span className={styles.infoValue}>
+              {user.countryCode && (
+                <img 
+                  src={`https://flagcdn.com/w20/${user.countryCode.toLowerCase()}.png`} 
+                  alt={user.country}
+                  className={styles.countryFlag}
+                />
+              )}
+              {user.country}
+              {user.city && `, ${user.city}`}
+            </span>
+          </div>
+        )}
         {user.discordId && (
           <div className={styles.infoRow}>
             <span className={styles.infoLabel}>Discord ID:</span>
