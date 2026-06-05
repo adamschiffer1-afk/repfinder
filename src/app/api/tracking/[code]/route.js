@@ -45,13 +45,17 @@ async function fetchFrom17TrackOfficial(trackingCode, carrierCode = 0) {
         const data = result.data.accepted[0];
         const trackInfoRaw = data.track_info;
         
+        // Check if status is NotFound
+        if (trackInfoRaw?.latest_status?.status === 'NotFound') return null;
+        
         if (!trackInfoRaw?.tracking?.providers) return null;
 
         const allEvents = [];
         trackInfoRaw.tracking.providers.forEach(p => {
-            if (p.events) allEvents.push(...p.events);
+            if (p.events && Array.isArray(p.events)) allEvents.push(...p.events);
         });
 
+        // No events means no tracking data
         if (!allEvents.length) return null;
 
         const trackingInfo = allEvents
@@ -169,7 +173,7 @@ async function fetchFromApi(apiUrl, trackingCode) {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: requestData,
-            signal: AbortSignal.timeout(5000)
+            signal: AbortSignal.timeout(8000) // Increased from 5000 to 8000ms
         });
 
         if (!response.ok) return null;
@@ -199,7 +203,7 @@ async function fetchFromApi(apiUrl, trackingCode) {
             if (index === 5) mainInfo['Odbiorca'] = text;
         });
 
-        return trackingInfo.length > 0 ? { mainInfo, trackingInfo, source_api: apiUrl } : null;
+        return trackingInfo.length > 0 ? { mainInfo, trackingInfo, source_api: 'Legacy IP Server' } : null;
     } catch (error) {
         return null;
     }
@@ -246,20 +250,59 @@ export async function GET(request, { params }) {
 
         const isDePackage = trimmedCode.endsWith('DE') && /^[A-Z]{2}\d+[A-Z]{2}$/.test(trimmedCode);
         let data = null;
+        const errors = [];
 
+        // Try all sources in parallel for DE packages, waterfall for others
         if (isDePackage) {
-            data = await fetchFrom17TrackOfficial(trimmedCode, 190416); // 190416 = HSD Express
+            // For DE packages, try all sources simultaneously since they're often not in 17track
+            const sources = [
+                fetchFrom17TrackOfficial(trimmedCode, 190416).catch(e => { errors.push('17track: ' + e.message); return null; }),
+                fetchFromCainiao(trimmedCode).catch(e => { errors.push('Cainiao: ' + e.message); return null; }),
+                fastIpServersRace(trimmedCode).catch(e => { errors.push('IP servers: ' + e.message); return null; }),
+                fetchFromParcelsApp(trimmedCode).catch(e => { errors.push('ParcelsApp: ' + e.message); return null; })
+            ];
+            
+            const results = await Promise.all(sources);
+            data = results.find(result => result && result.trackingInfo && result.trackingInfo.length > 0);
         } else {
-            // Najpierw 17track z autodetekcją (0), najpewniejsze i najszybsze źródło
-            data = await fetchFrom17TrackOfficial(trimmedCode, 0);
+            // Standard waterfall with proper error handling
+            try {
+                data = await fetchFrom17TrackOfficial(trimmedCode, 0);
+                if (data && data.trackingInfo && data.trackingInfo.length > 0) {
+                    // Found in 17track, use it
+                } else {
+                    data = null;
+                }
+            } catch (e) {
+                errors.push('17track: ' + e.message);
+            }
+
+            if (!data || !data.trackingInfo || data.trackingInfo.length === 0) {
+                try {
+                    data = await fetchFromCainiao(trimmedCode);
+                } catch (e) {
+                    errors.push('Cainiao: ' + e.message);
+                }
+            }
+
+            if (!data || !data.trackingInfo || data.trackingInfo.length === 0) {
+                try {
+                    data = await fastIpServersRace(trimmedCode);
+                } catch (e) {
+                    errors.push('IP servers: ' + e.message);
+                }
+            }
+
+            if (!data || !data.trackingInfo || data.trackingInfo.length === 0) {
+                try {
+                    data = await fetchFromParcelsApp(trimmedCode);
+                } catch (e) {
+                    errors.push('ParcelsApp: ' + e.message);
+                }
+            }
         }
 
-        // Fallbacki jeśli 17track nic nie znajdzie lub rzuci błędem
-        if (!data) data = await fetchFromCainiao(trimmedCode);
-        if (!data) data = await fastIpServersRace(trimmedCode);
-        if (!data) data = await fetchFromParcelsApp(trimmedCode);
-
-        if (data && data.trackingInfo.length > 0) {
+        if (data && data.trackingInfo && data.trackingInfo.length > 0) {
             const finalPayload = {
                 Informacje_główne: data.mainInfo,
                 Szczegóły_przesyłki: data.trackingInfo,
@@ -274,8 +317,20 @@ export async function GET(request, { params }) {
             }, { status: 200, headers: { 'Cache-Control': 'no-store' }});
         }
 
-        return NextResponse.json({ success: false, message: 'Tracking not found' }, { status: 404 });
+        // Log errors for debugging but don't expose to user
+        if (errors.length > 0) {
+            console.error(`Tracking ${trimmedCode} failed from all sources:`, errors);
+        }
+
+        return NextResponse.json({ 
+            success: false, 
+            message: 'Nie znaleziono informacji o przesyłce. Spróbuj ponownie później.' 
+        }, { status: 404 });
     } catch (error) {
-        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+        console.error('Tracking API error:', error);
+        return NextResponse.json({ 
+            success: false, 
+            message: 'Błąd serwera. Spróbuj ponownie za chwilę.' 
+        }, { status: 500 });
     }
 }
