@@ -14,6 +14,7 @@ export default function UserWidget() {
   }
 
   const isAdmin = session.user.isAdmin === true;
+  const userRole = isAdmin ? 'Administrator' : 'User';
 
   return (
     <div className={styles.widgetContainer}>
@@ -22,16 +23,9 @@ export default function UserWidget() {
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
       >
-        {/* Badge na górze */}
-        <div className={styles.badgeWrapper}>
-          <span className={`${styles.roleBadge} ${isAdmin ? styles.adminBadge : styles.userBadge}`}>
-            {isAdmin ? 'Administrator' : 'Użytkownik'}
-          </span>
-        </div>
-
-        {/* Avatar i nazwa */}
-        <div className={styles.userContent}>
-          <div className={styles.avatarWrapper}>
+        <div className={styles.userProfile}>
+          {/* Avatar po lewej */}
+          <div className={styles.avatarSection}>
             {session.user.image ? (
               <img 
                 src={session.user.image} 
@@ -43,13 +37,25 @@ export default function UserWidget() {
                 <FontAwesomeIcon icon={faUser} />
               </div>
             )}
+            {/* Online status indicator */}
+            <div className={styles.statusDot}></div>
           </div>
-          <div className={styles.userName}>
-            {session.user.name || 'User'}
+
+          {/* Info po prawej */}
+          <div className={styles.userInfo}>
+            <div className={styles.userName}>
+              {session.user.name || 'User'}
+            </div>
+            <div className={styles.userEmail}>
+              {session.user.email || 'No email'}
+            </div>
+            <div className={`${styles.roleBadge} ${isAdmin ? styles.adminBadge : styles.userBadge}`}>
+              {userRole}
+            </div>
           </div>
         </div>
 
-        {/* Expanded menu */}
+        {/* Expanded menu on hover */}
         {isExpanded && (
           <div className={styles.expandedMenu}>
             <button 

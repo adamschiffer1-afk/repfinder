@@ -38,10 +38,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Zapisz Discord ID, username i avatar do tokena
       if (account?.provider === "discord" && profile) {
         token.discordId = account.providerAccountId;
-        token.discordUsername = profile.username || profile.global_name;
-        token.discordAvatar = profile.image_url || profile.avatar 
-          ? `https://cdn.discordapp.com/avatars/${account.providerAccountId}/${profile.avatar}.png`
-          : null;
+        token.discordUsername = profile.username || profile.global_name || profile.name;
+        
+        // Discord avatar - próbujemy różne źródła
+        if (profile.image) {
+          // NextAuth automatycznie pobiera avatar
+          token.discordAvatar = profile.image;
+        } else if (profile.avatar) {
+          // Budujemy URL z hash avatara
+          token.discordAvatar = `https://cdn.discordapp.com/avatars/${account.providerAccountId}/${profile.avatar}.png`;
+        } else {
+          // Domyślny avatar Discord (używamy discriminatora)
+          const defaultAvatarNumber = parseInt(account.providerAccountId) % 5;
+          token.discordAvatar = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`;
+        }
       }
       return token;
     },
