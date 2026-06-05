@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faShieldAlt, faDiscord, faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faCrown, faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { faDiscord, faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { faUser, faShieldAlt, faCrown, faRefresh } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/styles/AdminUsers.module.css';
 
 export default function UsersPage() {
