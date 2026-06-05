@@ -174,7 +174,9 @@ async function scrapeProductsForItem(item, options) {
   const priceCny = Number.parseFloat(itemInfo.origin_price);
   const priceUsd = Number.isFinite(priceCny) ? Number((priceCny * 0.14).toFixed(2)) : 0;
   const affiliateLink = getAffiliateLink(item.weidianUrl);
-  const productDataList = [];
+  
+  // Get only ONE image - prefer variant image, fallback to main image
+  let image = formatImageUrl(itemInfo.item_head);
   const skuProperties = data?.result?.default_model?.sku_properties;
 
   if (skuProperties?.attr_list) {
@@ -182,53 +184,30 @@ async function scrapeProductsForItem(item, options) {
       attr.attr_values?.some((value) => value.img)
     );
 
-    if (imageAttr?.attr_values) {
-      for (const value of imageAttr.attr_values) {
-        if (!value.img) continue;
-
-        const variantLabel = (value.attr_name || value.name || "").toLowerCase();
-        const name = cleanName(adjustProductName(baseName, variantLabel));
-        const image = formatImageUrl(value.img);
-
-        if (!image) continue;
-
-        productDataList.push({
-          name,
-          price: priceUsd,
-          image,
-          category: detectCategory(name),
-          batch: options.batch,
-          link: affiliateLink,
-          isPinned: options.pin,
-          pinnedOrder: null
-        });
-      }
+    if (imageAttr?.attr_values && imageAttr.attr_values[0]?.img) {
+      image = formatImageUrl(imageAttr.attr_values[0].img);
     }
   }
 
-  if (productDataList.length === 0) {
-    const image = formatImageUrl(itemInfo.item_head);
-    if (image) {
-      productDataList.push({
-        name: baseName,
-        price: priceUsd,
-        image,
-        category: detectCategory(baseName),
-        batch: options.batch,
-        link: affiliateLink,
-        isPinned: options.pin,
-        pinnedOrder: null
-      });
-    }
-  }
-
-  if (productDataList.length === 0) {
+  if (!image) {
     throw new Error("Product is missing a main image.");
   }
 
+  // Create only ONE product
+  const productDataList = [{
+    name: baseName,
+    price: priceUsd,
+    image,
+    category: detectCategory(baseName),
+    batch: options.batch,
+    link: affiliateLink,
+    isPinned: options.pin,
+    pinnedOrder: null
+  }];
+
   return {
     ...item,
-    name: productDataList.length > 1 ? `${baseName} (${productDataList.length} variants)` : baseName,
+    name: baseName,
     productDataList
   };
 }
