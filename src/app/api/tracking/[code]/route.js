@@ -254,6 +254,7 @@ export async function GET(request, { params }) {
 
         // Try all sources in parallel for DE packages, waterfall for others
         if (isDePackage) {
+            console.log(`[TRACKING] DE package detected: ${trimmedCode}, trying all sources in parallel`);
             // For DE packages, try all sources simultaneously since they're often not in 17track
             const sources = [
                 fetchFrom17TrackOfficial(trimmedCode, 190416).catch(e => { errors.push('17track: ' + e.message); return null; }),
@@ -263,6 +264,7 @@ export async function GET(request, { params }) {
             ];
             
             const results = await Promise.all(sources);
+            console.log(`[TRACKING] DE package ${trimmedCode} - Results:`, results.map((r, i) => r ? 'FOUND' : 'null').join(', '));
             data = results.find(result => result && result.trackingInfo && result.trackingInfo.length > 0);
         } else {
             // Standard waterfall with proper error handling
@@ -319,7 +321,9 @@ export async function GET(request, { params }) {
 
         // Log errors for debugging but don't expose to user
         if (errors.length > 0) {
-            console.error(`Tracking ${trimmedCode} failed from all sources:`, errors);
+            console.error(`[TRACKING] ${trimmedCode} failed from all sources:`, errors);
+        } else {
+            console.warn(`[TRACKING] ${trimmedCode} - No data found and no errors captured`);
         }
 
         return NextResponse.json({ 
