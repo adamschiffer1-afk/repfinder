@@ -20,7 +20,6 @@ export default function Navbar() {
   const [isInitial, setIsInitial] = useState(false);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [visible, setVisible] = useState(true);
@@ -124,52 +123,6 @@ export default function Navbar() {
           </div>
 
           <div className={styles.navRight}>
-            {/* User Menu / Login */}
-            {status === 'loading' ? (
-              <div className={styles.userLoading}>...</div>
-            ) : session?.user ? (
-              <div 
-                className={styles.userMenuWrapper}
-                onMouseEnter={() => setIsUserMenuOpen(true)}
-                onMouseLeave={() => setIsUserMenuOpen(false)}
-              >
-                <button className={styles.userBtn}>
-                  {session.user.image ? (
-                    <img src={session.user.image} alt={session.user.name} className={styles.userAvatar} />
-                  ) : (
-                    <div className={styles.userAvatarPlaceholder}>
-                      <FontAwesomeIcon icon={faUser} />
-                    </div>
-                  )}
-                  <span className={styles.userName}>{session.user.name || 'User'}</span>
-                  <span className={`${styles.userBadge} ${session.user.isAdmin ? styles.adminBadge : styles.regularBadge}`}>
-                    {session.user.isAdmin ? 'Administrator' : 'Użytkownik'}
-                  </span>
-                  <FontAwesomeIcon icon={faChevronDown} className={styles.userChevron} />
-                </button>
-                
-                {isUserMenuOpen && (
-                  <div className={styles.userDropdown}>
-                    <button 
-                      className={styles.userDropdownItem}
-                      onClick={() => signOut({ callbackUrl: '/' })}
-                    >
-                      <FontAwesomeIcon icon={faSignOutAlt} />
-                      Wyloguj się
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button 
-                className={styles.loginBtn}
-                onClick={() => signIn('discord', { callbackUrl: '/' })}
-              >
-                <FontAwesomeIcon icon={faDiscord} />
-                Zaloguj się
-              </button>
-            )}
-
             {/* Language Switcher */}
             <div 
               className={styles.langWrapper}
@@ -207,6 +160,18 @@ export default function Navbar() {
             >
               <FontAwesomeIcon icon={faCog} className={styles.settingsIcon} />
             </button>
+
+            {/* Simple Login Button */}
+            {status !== 'loading' && !session?.user && (
+              <button 
+                className={styles.discordLoginBtn}
+                onClick={() => signIn('discord', { callbackUrl: '/' })}
+              >
+                <FontAwesomeIcon icon={faDiscord} className={styles.discordIcon} />
+                Zaloguj się
+              </button>
+            )}
+            
             <button 
               className={styles.hamburgerBtn}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

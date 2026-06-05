@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import PageTransition from '@/components/PageTransition';
 import TopLoadingBar from '@/components/TopLoadingBar';
+import UserWidget from '@/components/UserWidget';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { AuthProvider } from '@/context/AuthContext';
 import SessionProviderWrapper from '@/components/SessionProviderWrapper';
@@ -63,6 +64,7 @@ export default function RootLayout({ children }) {
             <TopLoadingBar />
             <LanguageProvider>
               <Navbar />
+              <UserWidget />
               <PageTransition>
                 <main>
                   {children}

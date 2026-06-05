@@ -528,18 +528,7 @@
 
 
 /* USER AUTH SECTION */
-.userLoading {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.loginBtn {
+.discordLoginBtn {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -553,9 +542,10 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
+  height: 48px;
 }
 
-.loginBtn:hover {
+.discordLoginBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5);
   background: linear-gradient(135deg, #4752c4 0%, #5b6eae 100%);
@@ -565,158 +555,20 @@
   font-size: 18px;
 }
 
-/* USER MENU */
-.userMenuWrapper {
-  position: relative;
-}
-
-.userBtn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 6px 16px 6px 6px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  height: 48px;
-}
-
-.userBtn:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-.userAvatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(139, 92, 246, 0.3);
-}
-
-.userAvatarPlaceholder {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(139, 92, 246, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #8b5cf6;
-  font-size: 16px;
-}
-
-.userName {
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.userBadge {
-  padding: 4px 12px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.adminBadge {
-  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
-}
-
-.regularBadge {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.userChevron {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
-  transition: transform 0.3s ease;
-  margin-left: auto;
-}
-
-.userMenuWrapper:hover .userChevron {
-  transform: rotate(180deg);
-}
-
-.userDropdown {
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-  width: 200px;
-  background: #12141d;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 8px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  animation: slideInRight 0.3s ease;
-  z-index: 1001;
-}
-
-.userDropdown::before {
-  content: '';
-  position: absolute;
-  top: -15px;
-  left: 0;
-  right: 0;
-  height: 15px;
-  background: transparent;
-}
-
-.userDropdownItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: transparent;
-  border: none;
-  border-radius: 10px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-  text-align: left;
-}
-
-.userDropdownItem:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-}
-
 @media (max-width: 768px) {
-  .userName {
-    display: none;
-  }
-  
-  .userBadge {
-    font-size: 10px;
-    padding: 3px 8px;
-  }
-  
-  .userBtn {
-    padding: 6px 12px 6px 6px;
-  }
-}
-
-@media (max-width: 480px) {
-  .loginBtn {
+  .discordLoginBtn {
     padding: 8px 16px;
     font-size: 13px;
   }
   
   .discordIcon {
     font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .discordLoginBtn {
+    padding: 8px 14px;
+    font-size: 12px;
   }
 }
