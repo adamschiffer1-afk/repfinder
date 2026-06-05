@@ -238,9 +238,9 @@ export async function GET(request, { params }) {
     try {
         const trimmedCode = code.trim().toUpperCase();
         
-        // Inteligentny klucz cache (czyste dane)
+        // Inteligentny klucz cache (czyste dane) - DISABLED FOR DEBUG
         const cacheKey = `tracking_raw_${trimmedCode}`;
-        const cachedData = cache.get(cacheKey);
+        const cachedData = null; // cache.get(cacheKey); // TEMPORARILY DISABLED
         if (cachedData) {
             return NextResponse.json({
                 success: true,
@@ -254,24 +254,24 @@ export async function GET(request, { params }) {
 
         // Try all sources in parallel for DE packages, waterfall for others
         if (isDePackage) {
-            console.log(`[TRACKING] DE package detected: ${trimmedCode}, trying all sources in parallel`);
-            // For DE packages, try all sources simultaneously since they're often not in 17track
+            console.log(`[TRACKING] DE package detected: ${trimmedCode}, trying HTTPS sources only (Vercel blocks HTTP)`);
+            // For DE packages, try HTTPS sources only (Vercel blocks HTTP to Chinese IP servers)
             const sources = [
                 fetchFrom17TrackOfficial(trimmedCode, 190416).catch(e => { errors.push('17track: ' + e.message); return null; }),
                 fetchFromCainiao(trimmedCode).catch(e => { errors.push('Cainiao: ' + e.message); return null; }),
-                fastIpServersRace(trimmedCode).catch(e => { errors.push('IP servers: ' + e.message); return null; }),
                 fetchFromParcelsApp(trimmedCode).catch(e => { errors.push('ParcelsApp: ' + e.message); return null; })
             ];
             
             const results = await Promise.all(sources);
-            console.log(`[TRACKING] DE package ${trimmedCode} - Results:`, results.map((r, i) => r ? 'FOUND' : 'null').join(', '));
+            console.log(`[TRACKING] DE package ${trimmedCode} - HTTPS Results:`, results.map((r, i) => r ? `FOUND(${r.source_api})` : 'null').join(', '));
             data = results.find(result => result && result.trackingInfo && result.trackingInfo.length > 0);
         } else {
-            // Standard waterfall with proper error handling
+            // Standard waterfall with proper error handling (HTTPS only - Vercel blocks HTTP)
+            console.log(`[TRACKING] Standard package: ${trimmedCode}, trying HTTPS sources`);
             try {
                 data = await fetchFrom17TrackOfficial(trimmedCode, 0);
                 if (data && data.trackingInfo && data.trackingInfo.length > 0) {
-                    // Found in 17track, use it
+                    console.log(`[TRACKING] ${trimmedCode} - Found in 17track`);
                 } else {
                     data = null;
                 }
@@ -282,6 +282,7 @@ export async function GET(request, { params }) {
             if (!data || !data.trackingInfo || data.trackingInfo.length === 0) {
                 try {
                     data = await fetchFromCainiao(trimmedCode);
+                    if (data) console.log(`[TRACKING] ${trimmedCode} - Found in Cainiao`);
                 } catch (e) {
                     errors.push('Cainiao: ' + e.message);
                 }
@@ -289,15 +290,8 @@ export async function GET(request, { params }) {
 
             if (!data || !data.trackingInfo || data.trackingInfo.length === 0) {
                 try {
-                    data = await fastIpServersRace(trimmedCode);
-                } catch (e) {
-                    errors.push('IP servers: ' + e.message);
-                }
-            }
-
-            if (!data || !data.trackingInfo || data.trackingInfo.length === 0) {
-                try {
                     data = await fetchFromParcelsApp(trimmedCode);
+                    if (data) console.log(`[TRACKING] ${trimmedCode} - Found in ParcelsApp`);
                 } catch (e) {
                     errors.push('ParcelsApp: ' + e.message);
                 }
