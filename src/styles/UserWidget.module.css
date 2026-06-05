@@ -11,12 +11,12 @@
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 16px;
-  min-width: 280px;
+  border-radius: 16px;
+  padding: 12px;
+  min-width: 240px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: all;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
@@ -33,7 +33,7 @@
 .userProfile {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 /* Avatar Section (Left) */
@@ -43,11 +43,11 @@
 }
 
 .avatar {
-  width: 72px;
-  height: 72px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid rgba(139, 92, 246, 0.4);
+  border: 2px solid rgba(139, 92, 246, 0.4);
   transition: all 0.3s ease;
 }
 
@@ -57,27 +57,27 @@
 }
 
 .avatarPlaceholder {
-  width: 72px;
-  height: 72px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: linear-gradient(135deg, #5865f2 0%, #7289da 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 32px;
-  border: 3px solid rgba(88, 101, 242, 0.4);
+  font-size: 26px;
+  border: 2px solid rgba(88, 101, 242, 0.4);
 }
 
 .statusDot {
   position: absolute;
-  bottom: 4px;
-  right: 4px;
-  width: 16px;
-  height: 16px;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
   background: #43b581;
   border-radius: 50%;
-  border: 3px solid rgba(13, 15, 23, 0.9);
+  border: 2px solid rgba(13, 15, 23, 0.9);
   box-shadow: 0 0 10px rgba(67, 181, 129, 0.6);
 }
 
@@ -86,13 +86,13 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
 }
 
 .userName {
   color: #fff;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -101,7 +101,7 @@
 
 .userEmail {
   color: rgba(255, 255, 255, 0.5);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -110,9 +110,9 @@
 
 .roleBadge {
   display: inline-block;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;

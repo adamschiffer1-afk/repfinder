@@ -10,6 +10,12 @@ export const translations = {
       login: "Zaloguj się",
       soon: "(Wkrótce)"
     },
+    auth: {
+      login: "Zaloguj się",
+      logout: "Wyloguj się",
+      administrator: "Administrator",
+      user: "Użytkownik"
+    },
     hero: {
       badge: "Najlepsze findsy w sieci",
       title: "Twoje centrum",
@@ -336,6 +342,12 @@ export const translations = {
       login: "Login",
       soon: "(Soon)"
     },
+    auth: {
+      login: "Login",
+      logout: "Logout",
+      administrator: "Administrator",
+      user: "User"
+    },
     hero: {
       badge: "Best finds on the web",
       title: "Your center for",
@@ -608,6 +620,12 @@ export const translations = {
       login: "登录",
       soon: "(即将推出)"
     },
+    auth: {
+      login: "登录",
+      logout: "退出登录",
+      administrator: "管理员",
+      user: "用户"
+    },
     hero: {
       badge: "网络上的最佳发现",
       title: "你的中心",
@@ -876,6 +894,12 @@ export const translations = {
       login: "Anmelden",
       soon: "(Bald)"
     },
+    auth: {
+      login: "Anmelden",
+      logout: "Abmelden",
+      administrator: "Administrator",
+      user: "Benutzer"
+    },
     hero: {
       badge: "Beste Funde im Netz",
       title: "Dein Zentrum für",
@@ -1092,6 +1116,12 @@ export const translations = {
       qualityCheck: "Quality Check",
       login: "Iniciar sesión",
       soon: "(Pronto)"
+    },
+    auth: {
+      login: "Iniciar sesión",
+      logout: "Cerrar sesión",
+      administrator: "Administrador",
+      user: "Usuario"
     },
     hero: {
       badge: "Los mejores hallazgos en la red",

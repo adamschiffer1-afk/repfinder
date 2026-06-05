@@ -4,9 +4,11 @@ import { useSession, signOut } from 'next-auth/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faSignOutAlt, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/styles/UserWidget.module.css';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function UserWidget() {
   const { data: session, status } = useSession();
+  const { t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (status === 'loading' || !session?.user) {
@@ -14,7 +16,7 @@ export default function UserWidget() {
   }
 
   const isAdmin = session.user.isAdmin === true;
-  const userRole = isAdmin ? 'Administrator' : 'User';
+  const userRole = isAdmin ? t('auth.administrator') : t('auth.user');
 
   return (
     <div className={styles.widgetContainer}>
@@ -63,7 +65,7 @@ export default function UserWidget() {
               onClick={() => signOut({ callbackUrl: '/' })}
             >
               <FontAwesomeIcon icon={faSignOutAlt} />
-              Wyloguj się
+              {t('auth.logout')}
             </button>
           </div>
         )}

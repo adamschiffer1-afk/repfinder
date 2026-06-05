@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import Discord from "next-auth/providers/discord";
+import dbConnect from "@/lib/mongodb";
+import User from "@/models/User";
 
 const ADMIN_EMAIL = "kakobuybs209@gmail.com";
 const ADMIN_DISCORD_ID = "1464343590586290287"; // frostyy | frostyyreps
@@ -15,9 +17,50 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      // Wszyscy użytkownicy mogą się zalogować (zarówno Google jak i Discord)
-      return true;
+    async signIn({ user, account, profile }) {
+      try {
+        await dbConnect();
+
+        const email = user.email || profile?.email;
+        const isAdmin = email === ADMIN_EMAIL || account?.providerAccountId === ADMIN_DISCORD_ID;
+
+        // Prepare user data based on provider
+        const userData = {
+          email,
+          name: user.name || profile?.username || profile?.global_name || profile?.name || '',
+          image: user.image || profile?.image || '',
+          isAdmin,
+          provider: account?.provider,
+          lastLogin: new Date(),
+        };
+
+        // Add provider-specific IDs
+        if (account?.provider === 'discord') {
+          userData.discordId = account.providerAccountId;
+          
+          // Build Discord avatar URL if needed
+          if (profile?.avatar && account?.providerAccountId) {
+            userData.image = `https://cdn.discordapp.com/avatars/${account.providerAccountId}/${profile.avatar}.png`;
+          } else if (!userData.image) {
+            const defaultAvatarNumber = parseInt(account.providerAccountId) % 5;
+            userData.image = `https://cdn.discordapp.com/embed/avatars/${defaultAvatarNumber}.png`;
+          }
+        } else if (account?.provider === 'google') {
+          userData.googleId = account.providerAccountId;
+        }
+
+        // Upsert user (update if exists, create if doesn't)
+        await User.findOneAndUpdate(
+          { email },
+          userData,
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+
+        return true;
+      } catch (error) {
+        console.error('Error saving user to database:', error);
+        return true; // Still allow login even if DB save fails
+      }
     },
     async session({ session, token, user }) {
       if (session.user) {

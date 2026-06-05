@@ -168,7 +168,7 @@ export default function Navbar() {
                 onClick={() => signIn('discord', { callbackUrl: '/' })}
               >
                 <FontAwesomeIcon icon={faDiscord} className={styles.discordIcon} />
-                Zaloguj się
+                {t('auth.login')}
               </button>
             )}
             
