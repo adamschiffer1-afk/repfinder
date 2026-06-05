@@ -300,6 +300,7 @@ const ProductCard = memo(function ProductCard({
   formatPrice,
   preferredAgentLogo,
   quickCopied,
+  isNavigating,
   onOpenAgent,
   onQuickCopy,
   viewAgentsLabel,
@@ -347,8 +348,15 @@ const ProductCard = memo(function ProductCard({
           <button
             className={styles.viewBtnFull}
             onClick={() => onOpenAgent(product)}
+            disabled={isNavigating}
           >
-            {viewAgentsLabel}
+            {isNavigating ? (
+              <>
+                <FontAwesomeIcon icon={faSpinner} spin /> Ładowanie...
+              </>
+            ) : (
+              viewAgentsLabel
+            )}
           </button>
           <button
             className={`${styles.quickCopyBtn} ${quickCopied ? styles.quickCopied : ''}`}
@@ -408,6 +416,7 @@ export default function Products() {
   const [recentSearches, setRecentSearches] = useState([]);
   const [filteredProductCount, setFilteredProductCount] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [navigatingProductId, setNavigatingProductId] = useState(null);
   const productNameSuggestions = useMemo(() => (
     suggestionNames.map(({ name, count }) => ({
       type: 'product',
@@ -951,6 +960,7 @@ export default function Products() {
   };
 
   const openAgentModal = useCallback((product) => {
+    setNavigatingProductId(product._id);
     router.push(`/products/${product.slug || product._id}`);
   }, [router]);
 
@@ -1093,6 +1103,7 @@ export default function Products() {
               formatPrice={formatPrice}
               preferredAgentLogo={preferredAgentLogo}
               quickCopied={quickCopiedId === product._id}
+              isNavigating={navigatingProductId === product._id}
               onOpenAgent={openAgentModal}
               onQuickCopy={handleQuickCopy}
               viewAgentsLabel={t('products.viewAgents') || 'Zobacz agentów'}
