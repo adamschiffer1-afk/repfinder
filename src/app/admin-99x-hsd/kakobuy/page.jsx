@@ -51,6 +51,8 @@ export default function KakobuyPage() {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showGoalModal, setShowGoalModal] = useState(false);
+  const [goalValue, setGoalValue] = useState(0);
   const [editingEntry, setEditingEntry] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
@@ -81,6 +83,9 @@ export default function KakobuyPage() {
       if (!res.ok) throw new Error('fetch failed');
       const data = await res.json();
       setEntries(data.entries || []);
+      // Load goal from latest entry or default to 0
+      const sorted = [...(data.entries || [])].sort((a, b) => new Date(b.date) - new Date(a.date));
+      setGoalValue(sorted[0]?.predictedMembers || 0);
     } catch {
       showToast('Błąd pobierania danych.', 'error');
     } finally {
@@ -149,7 +154,7 @@ export default function KakobuyPage() {
   // Calculate TOTALS (sum of all entries)
   const totalRegistrations = entries.reduce((sum, e) => sum + (e.registrations || 0), 0);
   const activeNow = entries.reduce((sum, e) => sum + (e.activeMembers || 0), 0);
-  const predicted = entries.reduce((sum, e) => sum + (e.predictedMembers || 0), 0);
+  const predicted = goalValue || entries.reduce((sum, e) => sum + (e.predictedMembers || 0), 0);
   
   // Automatic revenue calculation: $200 per (50 registrations + 5 active)
   // Take the minimum of both ratios to find complete "packages"
@@ -172,9 +177,18 @@ export default function KakobuyPage() {
             Śledź rejestracje, aktywnych członków i prognozy
           </p>
         </div>
-        <button className={styles.scraperBtn} onClick={() => { setEditingEntry(null); setFormData(emptyForm); setShowModal(true); }}>
-          + Dodaj wpis
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button 
+            className={styles.scraperBtn} 
+            onClick={() => setShowGoalModal(true)}
+            style={{ background: 'rgba(96, 165, 250, 0.2)', border: '1px solid #60a5fa' }}
+          >
+            🎯 Ustaw cel
+          </button>
+          <button className={styles.scraperBtn} onClick={() => { setEditingEntry(null); setFormData(emptyForm); setShowModal(true); }}>
+            + Dodaj wpis
+          </button>
+        </div>
       </header>
 
       <div className={kakoStyles.kpiGrid}>
@@ -351,6 +365,45 @@ export default function KakobuyPage() {
               <button onClick={confirmModal.onConfirm} className={styles.confirmModalBtn}>Tak, usuń</button>
               <button type="button" onClick={() => setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null })} className={styles.cancelModalBtn}>Anuluj</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showGoalModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.adminModal} style={{ maxWidth: '400px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0 }}>🎯 Ustaw cel</h2>
+              <span style={{ fontSize: '24px', cursor: 'pointer', opacity: 0.5 }} onClick={() => setShowGoalModal(false)}>&times;</span>
+            </div>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              setShowGoalModal(false);
+              showToast('Cel zaktualizowany!', 'success');
+            }} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label className={kakoStyles.formLabel}>🔮 Cel aktywnych członków</label>
+                <input 
+                  type="number" 
+                  min="0" 
+                  placeholder="0" 
+                  value={goalValue}
+                  onChange={e => setGoalValue(Number(e.target.value))}
+                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff', fontSize: '18px', fontWeight: '700' }} 
+                />
+                <p style={{ marginTop: '8px', fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+                  Aktualnie: {activeNow.toLocaleString()} / {goalValue.toLocaleString()} członków
+                </p>
+              </div>
+              <div className={styles.modalActions}>
+                <button type="submit" style={{ background: '#60a5fa', color: '#000', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
+                  Zapisz cel
+                </button>
+                <button type="button" onClick={() => setShowGoalModal(false)} style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                  Anuluj
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
