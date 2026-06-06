@@ -10,7 +10,8 @@ import {
   faChevronRight,
   faCopy,
   faHeart,
-  faArrowLeft
+  faArrowLeft,
+  faShare
 } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/styles/Products.module.css';
 import { useAuth } from '@/context/AuthContext';
@@ -571,6 +572,21 @@ export default function ProductDetail({ productId, initialData = null }) {
                   </div>
                 </div>
               )}
+
+              {/* Share Button - always visible */}
+              <button
+                className={`${styles.shareButtonGray} ${copiedId === 'share' ? styles.shareButtonCopied : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const shareLink = `${window.location.origin}/products/${productDetails.product.slug || productDetails.product._id}`;
+                  navigator.clipboard.writeText(shareLink);
+                  setCopiedId('share');
+                  setTimeout(() => setCopiedId(null), 2000);
+                }}
+              >
+                <FontAwesomeIcon icon={copiedId === 'share' ? faCheck : faShare} />
+                <span>{copiedId === 'share' ? 'Skopiowano!' : 'Udostępnij'}</span>
+              </button>
 
             </div>
 
