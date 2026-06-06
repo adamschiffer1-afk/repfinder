@@ -1468,22 +1468,22 @@ export default function Products() {
                           );
                         })}
                       </div>
-                      
-                      {/* Share Button - placed under variants */}
-                      <button
-                        className={`${styles.shareButtonGray} ${copiedId === 'share' ? styles.shareButtonCopied : ''}`}
-                        onClick={(e) => {
-                          const shareLink = `${window.location.origin}/products/${productDetails.product.slug || productDetails.product._id}`;
-                          navigator.clipboard.writeText(shareLink);
-                          setCopiedId('share');
-                          setTimeout(() => setCopiedId(null), 2000);
-                        }}
-                      >
-                        <FontAwesomeIcon icon={copiedId === 'share' ? faCheck : faShare} />
-                        <span>{copiedId === 'share' ? 'Skopiowano!' : 'Udostępnij'}</span>
-                      </button>
                     </div>
                   )}
+
+                  {/* Share Button - always visible */}
+                  <button
+                    className={`${styles.shareButtonGray} ${copiedId === 'share' ? styles.shareButtonCopied : ''}`}
+                    onClick={(e) => {
+                      const shareLink = `${window.location.origin}/products/${productDetails.product.slug || productDetails.product._id}`;
+                      navigator.clipboard.writeText(shareLink);
+                      setCopiedId('share');
+                      setTimeout(() => setCopiedId(null), 2000);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={copiedId === 'share' ? faCheck : faShare} />
+                    <span>{copiedId === 'share' ? 'Skopiowano!' : 'Udostępnij'}</span>
+                  </button>
 
                   {/* Size Selector */}
                   {productDetails.sizes && productDetails.sizes.length > 0 && (
