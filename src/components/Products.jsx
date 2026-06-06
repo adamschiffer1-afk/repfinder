@@ -1251,6 +1251,21 @@ export default function Products() {
                 </div>
               ))}
             </div>
+
+            {/* Share Button in Agent Modal */}
+            <button
+              className={`${styles.shareButtonGray} ${copiedId === 'share' ? styles.shareButtonCopied : ''}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                const shareLink = `${window.location.origin}/products/${agentModalProduct.slug || agentModalProduct._id}`;
+                navigator.clipboard.writeText(shareLink);
+                setCopiedId('share');
+                setTimeout(() => setCopiedId(null), 2000);
+              }}
+            >
+              <FontAwesomeIcon icon={copiedId === 'share' ? faCheck : faShare} />
+              <span>{copiedId === 'share' ? 'Skopiowano!' : 'Udostępnij'}</span>
+            </button>
           </div>
         </div>
       )}
