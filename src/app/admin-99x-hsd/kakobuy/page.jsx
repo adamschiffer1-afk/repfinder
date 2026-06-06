@@ -151,10 +151,12 @@ export default function KakobuyPage() {
   const activeNow = entries.reduce((sum, e) => sum + (e.activeMembers || 0), 0);
   const predicted = entries.reduce((sum, e) => sum + (e.predictedMembers || 0), 0);
   
-  // Automatic revenue calculation: $40 per 5 active users + $4 per registration
-  const revenueFromActive = (activeNow / 5) * 40;
-  const revenueFromRegistrations = totalRegistrations * 4;
-  const revenue = Math.round(revenueFromActive + revenueFromRegistrations);
+  // Automatic revenue calculation: $200 per (50 registrations + 5 active)
+  // Take the minimum of both ratios to find complete "packages"
+  const packagesFromRegistrations = totalRegistrations / 50;
+  const packagesFromActive = activeNow / 5;
+  const completePackages = Math.min(packagesFromRegistrations, packagesFromActive);
+  const revenue = Math.floor(completePackages * 200);
   
   const growth = calcGrowthRate(sorted);
   const conversionRate = totalRegistrations > 0
