@@ -1347,9 +1347,21 @@ export default function Products() {
                         trackStat(productDetails.product._id, 'product_click', preferredAgent);
                         setTimeout(() => setCopiedId(null), 2000);
                       }}
-                      title="Kopiuj link"
+                      title="Kopiuj link agenta"
                     >
                       <FontAwesomeIcon icon={copiedId === 'main' ? faCheck : faCopy} />
+                    </button>
+                    <button
+                      className={`${styles.detailShareBtnNew} ${copiedId === 'share' ? styles.copiedNew : ''}`}
+                      onClick={(e) => {
+                        const shareLink = `${window.location.origin}/products/${productDetails.product.slug || productDetails.product._id}`;
+                        navigator.clipboard.writeText(shareLink);
+                        setCopiedId('share');
+                        setTimeout(() => setCopiedId(null), 2000);
+                      }}
+                      title="Udostępnij produkt"
+                    >
+                      <FontAwesomeIcon icon={copiedId === 'share' ? faCheck : faArrowRight} />
                     </button>
                   </div>
 
