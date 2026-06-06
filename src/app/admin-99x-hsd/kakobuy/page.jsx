@@ -55,7 +55,7 @@ export default function KakobuyPage() {
   const [toasts, setToasts] = useState([]);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
 
-  const emptyForm = { date: '', registrations: '', activeMembers: '', predictedMembers: '', revenue: '', notes: '' };
+  const emptyForm = { date: '', registrations: '', activeMembers: '', predictedMembers: '', notes: '' };
   const [formData, setFormData] = useState(emptyForm);
 
   const showToast = useCallback((message, type = 'success') => {
@@ -99,7 +99,7 @@ export default function KakobuyPage() {
       registrations: Number(formData.registrations) || 0,
       activeMembers: Number(formData.activeMembers) || 0,
       predictedMembers: Number(formData.predictedMembers) || 0,
-      revenue: Number(formData.revenue) || 0,
+      revenue: 0, // Auto-calculated on backend or client
       notes: formData.notes,
     };
     try {
@@ -133,7 +133,6 @@ export default function KakobuyPage() {
       registrations: entry.registrations ?? '',
       activeMembers: entry.activeMembers ?? '',
       predictedMembers: entry.predictedMembers ?? '',
-      revenue: entry.revenue ?? '',
       notes: entry.notes ?? '',
     });
     setShowModal(true);
@@ -146,11 +145,17 @@ export default function KakobuyPage() {
   };
 
   const sorted = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date));
-  const latest = sorted[sorted.length - 1] || null;
-  const totalRegistrations = latest?.registrations || 0;
-  const activeNow = latest?.activeMembers || 0;
-  const predicted = latest?.predictedMembers || 0;
-  const revenue = latest?.revenue || 0;
+  
+  // Calculate TOTALS (sum of all entries)
+  const totalRegistrations = entries.reduce((sum, e) => sum + (e.registrations || 0), 0);
+  const activeNow = entries.reduce((sum, e) => sum + (e.activeMembers || 0), 0);
+  const predicted = entries.reduce((sum, e) => sum + (e.predictedMembers || 0), 0);
+  
+  // Automatic revenue calculation: $40 per 5 active users + $4 per registration
+  const revenueFromActive = (activeNow / 5) * 40;
+  const revenueFromRegistrations = totalRegistrations * 4;
+  const revenue = Math.round(revenueFromActive + revenueFromRegistrations);
+  
   const growth = calcGrowthRate(sorted);
   const conversionRate = totalRegistrations > 0
     ? ((activeNow / totalRegistrations) * 100).toFixed(1)
@@ -178,7 +183,7 @@ export default function KakobuyPage() {
         <KpiCard icon="🔮" value={predicted.toLocaleString()} label="Przewidywani członkowie"
           sub="Cel / prognoza" color="#60a5fa" />
         <KpiCard icon="💰" value={`$${revenue.toLocaleString()}`} label="Szacowany przychód"
-          sub="Ostatni wpis" color="#fbbf24" />
+          sub="Automatycznie obliczony" color="#fbbf24" />
       </div>
 
       {sorted.length > 1 && (
@@ -210,7 +215,7 @@ export default function KakobuyPage() {
             <span>100%</span>
           </div>
         </div>
-        {latest && (
+        {predicted > 0 && (
           <div className={kakoStyles.gaugeCard}>
             <h3>🎯 Postęp do celu</h3>
             <div className={kakoStyles.gaugeTrack}>
@@ -219,9 +224,9 @@ export default function KakobuyPage() {
             <div className={kakoStyles.gaugeLabels}>
               <span>0</span>
               <span style={{ color: '#60a5fa', fontWeight: 700 }}>
-                {activeNow} / {predicted} ({predicted > 0 ? Math.min(((activeNow / predicted) * 100), 100).toFixed(1) : 0}%)
+                {activeNow.toLocaleString()} / {predicted.toLocaleString()} ({predicted > 0 ? Math.min(((activeNow / predicted) * 100), 100).toFixed(1) : 0}%)
               </span>
-              <span>{predicted}</span>
+              <span>{predicted.toLocaleString()}</span>
             </div>
           </div>
         )}
@@ -313,12 +318,6 @@ export default function KakobuyPage() {
                   <label className={kakoStyles.formLabel}>🔮 Przewidywani członkowie</label>
                   <input type="number" min="0" placeholder="0" value={formData.predictedMembers}
                     onChange={e => setFormData({ ...formData, predictedMembers: e.target.value })}
-                    style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff' }} />
-                </div>
-                <div>
-                  <label className={kakoStyles.formLabel}>💰 Szacowany przychód ($)</label>
-                  <input type="number" min="0" step="0.01" placeholder="0.00" value={formData.revenue}
-                    onChange={e => setFormData({ ...formData, revenue: e.target.value })}
                     style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff' }} />
                 </div>
               </div>
