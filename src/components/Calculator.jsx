@@ -45,9 +45,6 @@ export default function Calculator() {
   const [savedPackages, setSavedPackages] = useState([]);
   const [saveFlash, setSaveFlash] = useState(false);
 
-  // Returns system
-  const [returnWeight, setReturnWeight] = useState(0);
-
   // Live Shipping Estimation API states
   const [liveShippingLines, setLiveShippingLines] = useState([]);
   const [isLoadingLive, setIsLoadingLive] = useState(false);
@@ -204,8 +201,7 @@ export default function Calculator() {
     return sum;
   }, 0);
   const packagingWeight = masterBoxWeight + itemBoxesWeight;
-  const totalWeightBeforeReturns = totalItemWeight + masterBoxWeight;
-  const totalWeight = Math.max(0, totalWeightBeforeReturns - (parseFloat(returnWeight) || 0));
+  const totalWeight = totalItemWeight + masterBoxWeight;
 
   // Fallback DHL base rules
   const getDhlPrice = (weightInGrams) => {
@@ -505,49 +501,6 @@ export default function Calculator() {
                   </div>
                 )}
               </div>
-
-              {/* System Zwrotów */}
-              {totalItemWeight > 0 && (
-                <div className={styles.returnsSection}>
-                  <div className={styles.returnsSectionHeader}>
-                    <span className={styles.returnsIcon}>↩️</span>
-                    <span className={styles.returnsLabel}>
-                      {language === 'pl' ? 'Zwroty (odjęcie wagi):' : 'Returns (subtract weight):'}
-                    </span>
-                  </div>
-                  <div className={styles.returnsInputRow}>
-                    <input
-                      type="number"
-                      value={returnWeight}
-                      onChange={(e) => setReturnWeight(e.target.value)}
-                      placeholder="0"
-                      className={styles.returnsInput}
-                      min="0"
-                      max={totalWeightBeforeReturns}
-                    />
-                    <span className={styles.returnsUnit}>g</span>
-                    {returnWeight > 0 && (
-                      <button
-                        className={styles.returnsClearBtn}
-                        onClick={() => setReturnWeight(0)}
-                        title={language === 'pl' ? 'Wyczyść zwrot' : 'Clear return'}
-                      >
-                        <FontAwesomeIcon icon={faTimes} />
-                      </button>
-                    )}
-                  </div>
-                  {returnWeight > 0 && (
-                    <div className={styles.returnsInfo}>
-                      <FontAwesomeIcon icon={faInfoCircle} className={styles.returnsInfoIcon} />
-                      <span>
-                        {language === 'pl' 
-                          ? `Odjęto ${returnWeight}g ze zwrotów. Nowa waga: ${totalWeight}g`
-                          : `Subtracted ${returnWeight}g from returns. New weight: ${totalWeight}g`}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
 
               <div className={styles.dividerLine} />
 
