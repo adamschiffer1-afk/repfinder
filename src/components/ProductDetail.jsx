@@ -396,7 +396,6 @@ export default function ProductDetail({ productId, initialData = null }) {
                 const thumbnails = Array.from(new Set([
                   productDetails.product.image,
                   ...productDetails.colors.map(c => c.image),
-                  ...productDetails.qcImages
                 ].filter(Boolean)));
 
                 if (thumbnails.length <= 1) return null;
