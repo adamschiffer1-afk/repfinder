@@ -168,9 +168,10 @@ export default function ProductDetail({ productId, initialData = null }) {
   const [copiedId, setCopiedId] = useState(null);
   const [error, setError] = useState({ message: null, type: null });
 
-  // QC Gallery States
-  const [selectedQcColorway, setSelectedQcColorway] = useState('Wszystkie');
-  const [currentQcIndex, setCurrentQcIndex] = useState(0);
+  // QC Gallery States (auto-fetched from API)
+  const [qcAlbums, setQcAlbums] = useState([]);
+  const [qcCardIndex, setQcCardIndex] = useState({});
+  const [qcLoading, setQcLoading] = useState(false);
 
   // Preferred agent configurations
   const [preferredAgent, setPreferredAgent] = useState('kakobuy');
@@ -248,6 +249,21 @@ export default function ProductDetail({ productId, initialData = null }) {
 
     fetchDetail();
   }, [productId]);
+
+  // Auto-fetch QC photos from picks.ly when product loads
+  useEffect(() => {
+    const link = productDetails?.product?.link;
+    if (!link) return;
+    setQcAlbums([]);
+    setQcLoading(true);
+    fetch(`/api/qc?url=${encodeURIComponent(link)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data?.albums?.length > 0) setQcAlbums(data.albums);
+      })
+      .catch(() => {})
+      .finally(() => setQcLoading(false));
+  }, [productDetails?.product?.link]);
 
   // Track click stats
   const trackStat = useCallback(async (productId, type = 'product_click', agent = null) => {
@@ -591,91 +607,51 @@ export default function ProductDetail({ productId, initialData = null }) {
                 <span>{copiedId === 'share' ? 'Skopiowano!' : 'Udostępnij'}</span>
               </button>
 
-              {/* QC Gallery Section */}
-              {productDetails?.product?.qcImages && productDetails.product.qcImages.length > 0 && (() => {
-                const qcImages = productDetails.product.qcImages;
-                const qcColorways = ['Wszystkie', ...new Set(qcImages.map(img => img.colorway || 'Default'))];
-                const filteredQcImages = selectedQcColorway === 'Wszystkie' 
-                  ? qcImages 
-                  : qcImages.filter(img => (img.colorway || 'Default') === selectedQcColorway);
-
-                return (
-                  <div style={{ marginTop: '20px', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <h3 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#fff', fontWeight: '600' }}>{t('products.qcImages') || 'Zdjęcia QC'}</h3>
-                    
-                    {/* Tabs */}
-                    <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', marginBottom: '12px', paddingBottom: '4px' }}>
-                      {qcColorways.map(cw => (
-                        <button
-                          key={cw}
-                          onClick={() => { setSelectedQcColorway(cw); setCurrentQcIndex(0); }}
-                          style={{
-                            padding: '4px 12px',
-                            background: selectedQcColorway === cw ? 'rgba(167, 139, 250, 0.2)' : 'rgba(255,255,255,0.05)',
-                            color: selectedQcColorway === cw ? '#a78bfa' : 'rgba(255,255,255,0.7)',
-                            border: `1px solid ${selectedQcColorway === cw ? 'rgba(167, 139, 250, 0.4)' : 'transparent'}`,
-                            borderRadius: '16px',
-                            cursor: 'pointer',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          {cw}
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Main Viewer */}
-                    {filteredQcImages.length > 0 && (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-                        <div style={{ position: 'relative', width: '100%', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                          <img 
-                            src={filteredQcImages[currentQcIndex]?.url} 
-                            alt="QC" 
-                            style={{ maxWidth: '100%', maxHeight: '250px', objectFit: 'contain' }} 
-                          />
-                          
-                          {filteredQcImages.length > 1 && (
-                            <>
-                              <button 
-                                onClick={() => setCurrentQcIndex(prev => prev > 0 ? prev - 1 : filteredQcImages.length - 1)}
-                                style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.6)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '12px' }}
-                              >
-                                &#10094;
-                              </button>
-                              <button 
-                                onClick={() => setCurrentQcIndex(prev => prev < filteredQcImages.length - 1 ? prev + 1 : 0)}
-                                style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(0,0,0,0.6)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '12px' }}
-                              >
-                                &#10095;
-                              </button>
-                            </>
-                          )}
+              {/* QC Gallery Section - auto-fetched from API */}
+              {qcLoading && (
+                <div style={{ marginTop: '16px', padding: '12px 16px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
+                  ⏳ Ładowanie zdjęć QC...
+                </div>
+              )}
+              {!qcLoading && qcAlbums.length > 0 && (
+                <div style={{ marginTop: '16px' }}>
+                  <h3 style={{ margin: '0 0 10px 0', fontSize: '13px', color: 'rgba(255,255,255,0.6)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Zdjęcia QC</h3>
+                  <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '6px' }}>
+                    {qcAlbums.map((album, albumIdx) => {
+                      const imgs = album.images || [];
+                      const idx = qcCardIndex[albumIdx] || 0;
+                      if (!imgs.length) return null;
+                      return (
+                        <div key={albumIdx} style={{ flexShrink: 0, width: '120px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
+                          <div style={{ position: 'relative', width: '120px', height: '120px', background: '#000' }}>
+                            <img
+                              src={imgs[idx]}
+                              alt="QC"
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                              onError={e => e.target.src = '/placeholder.png'}
+                            />
+                            {imgs.length > 1 && (
+                              <>
+                                <button
+                                  onClick={() => setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx > 0 ? idx - 1 : imgs.length - 1 }))}
+                                  style={{ position: 'absolute', left: '4px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                >&#10094;</button>
+                                <button
+                                  onClick={() => setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx < imgs.length - 1 ? idx + 1 : 0 }))}
+                                  style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                >&#10095;</button>
+                                <div style={{ position: 'absolute', bottom: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '9px', padding: '1px 5px', borderRadius: '8px' }}>
+                                  {idx + 1} / {imgs.length}
+                                </div>
+                              </>
+                            )}
+                          </div>
                         </div>
-
-                        {/* Thumbnails */}
-                        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', maxWidth: '100%', paddingBottom: '6px', alignSelf: 'flex-start' }}>
-                          {filteredQcImages.map((img, idx) => (
-                            <div 
-                              key={idx} 
-                              onClick={() => setCurrentQcIndex(idx)}
-                              style={{ 
-                                width: '48px', height: '48px', flexShrink: 0, borderRadius: '6px', overflow: 'hidden', cursor: 'pointer',
-                                border: currentQcIndex === idx ? '2px solid #a78bfa' : '2px solid transparent',
-                                opacity: currentQcIndex === idx ? 1 : 0.5,
-                                transition: 'all 0.2s'
-                              }}
-                            >
-                              <img src={img.url} alt="QC thumbnail" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                      );
+                    })}
                   </div>
-                );
-              })()}
+                </div>
+              )}
 
             </div>
 
