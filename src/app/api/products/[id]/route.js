@@ -20,24 +20,103 @@ export async function GET(req, { params }) {
 
     const itemId = extractItemId(product.link);
     let variants = [];
-    let localQcImages = product.qcImages || [];
+    let localQcImages = [];
 
+    // Fetch all related products in the database that share the same itemId in their link
+    // OR have QC photos explicitly tagged with our current product's itemId
+    let allRelatedProducts = [];
     if (itemId) {
-      // Find all sibling variants in DB
-      variants = await Product.find({
-        link: { $regex: itemId }
+      allRelatedProducts = await Product.find({
+        $or: [
+          { link: { $regex: itemId } },
+          { "qcImages.colorway": itemId }
+        ]
       }).lean();
+      
+      // Filter out variants that match the itemId
+      variants = allRelatedProducts.filter(relProduct => 
+        relProduct.link && relProduct.link.includes(itemId)
+      );
+    }
 
-      // Consolidate local QC images from all variants if our current one has none
-      if (localQcImages.length === 0) {
-        for (const variant of variants) {
-          if (variant.qcImages && variant.qcImages.length > 0) {
-            localQcImages = variant.qcImages;
-            break;
+    // Consolidated list of QC images from all related products
+    const seenUrls = new Set();
+    const consolidatedQcImages = [];
+
+    // Helper to extract colorway name
+    const getShortColorwayName = (pName) => {
+      if (!pName) return 'Default';
+      if (pName.includes('(')) {
+        return pName.split('(').pop().replace(')', '').trim();
+      }
+      if (pName.includes('-')) {
+        return pName.split('-').pop().trim();
+      }
+      return pName;
+    };
+
+    // Helper to resolve colorway name (if ID -> product name)
+    const resolvedNamesCache = {};
+    const resolveColorwayName = async (col, sourceProduct) => {
+      const cleanCol = col?.trim() || 'Default';
+      if (cleanCol === 'Default' || cleanCol.toLowerCase() === 'default') {
+        return getShortColorwayName(sourceProduct.name);
+      }
+      // If it is a numeric ID of 9+ digits, let's resolve to product name
+      if (/^\d{9,}$/.test(cleanCol)) {
+        if (resolvedNamesCache[cleanCol]) {
+          return resolvedNamesCache[cleanCol];
+        }
+        const match = await Product.findOne({ link: { $regex: cleanCol } }).lean();
+        if (match) {
+          const resolved = getShortColorwayName(match.name);
+          resolvedNamesCache[cleanCol] = resolved;
+          return resolved;
+        }
+      }
+      return cleanCol;
+    };
+
+    // Process current product's QC photos first
+    const rawQcImages = product.qcImages || [];
+    for (const img of rawQcImages) {
+      const url = typeof img === 'string' ? img : img.url;
+      if (url && !seenUrls.has(url)) {
+        seenUrls.add(url);
+        const resolvedColorway = await resolveColorwayName(img.colorway, product);
+        consolidatedQcImages.push({
+          url,
+          colorway: resolvedColorway,
+          addedAt: img.addedAt || new Date()
+        });
+      }
+    }
+
+    // Process related products' QC photos
+    for (const relProduct of allRelatedProducts) {
+      if (relProduct._id.toString() === product._id.toString()) continue;
+      const relQc = relProduct.qcImages || [];
+      for (const img of relQc) {
+        const url = typeof img === 'string' ? img : img.url;
+        if (url && !seenUrls.has(url)) {
+          const isExplicitlyForUs = img.colorway === itemId;
+          const isSibling = relProduct.link && itemId && relProduct.link.includes(itemId);
+          
+          if (isExplicitlyForUs || isSibling) {
+            seenUrls.add(url);
+            const sourceForName = isExplicitlyForUs ? product : relProduct;
+            const resolvedColorway = await resolveColorwayName(img.colorway, sourceForName);
+            consolidatedQcImages.push({
+              url,
+              colorway: resolvedColorway,
+              addedAt: img.addedAt || new Date()
+            });
           }
         }
       }
     }
+
+    localQcImages = consolidatedQcImages;
 
     // Default metadata
     let liveDetails = {

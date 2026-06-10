@@ -659,25 +659,24 @@ export default function ProductDetail({ productId, initialData = null }) {
               {/* QC Gallery Section */}
               {qcAlbums.length > 0 && (
                 <div style={{ marginTop: '16px' }}>
-                  <h3 style={{ margin: '0 0 10px 0', fontSize: '13px', color: 'rgba(255,255,255,0.6)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Zdjęcia QC</h3>
-                  <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '6px' }}>
+                  <h3 style={{ margin: '0 0 10px 0', fontSize: '13px', color: 'rgba(255,255,255,0.6)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Zdjęcia QC {qcAlbums.length > 1 && <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', fontWeight: '400', textTransform: 'none', letterSpacing: 0 }}>({qcAlbums.length} kolorystyki)</span>}
+                  </h3>
+                  <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '8px' }}>
                     {qcAlbums.map((album, albumIdx) => {
                       const imgs = album.images || [];
                       const idx = qcCardIndex[albumIdx] || 0;
                       if (!imgs.length) return null;
                       return (
-                        <div key={albumIdx} style={{ flexShrink: 0, width: '120px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
-                          <div style={{ position: 'relative', width: '120px', height: '120px', background: '#000' }}>
+                        <div key={albumIdx} style={{ flexShrink: 0, width: '160px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>
+                          <div style={{ position: 'relative', width: '160px', height: '160px', background: '#000' }}>
                             <img
                               src={imgs[idx]}
                               alt={`QC - ${album.colorway}`}
                               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'pointer' }}
                               onError={e => e.target.src = '/placeholder.png'}
                               onClick={() => {
-                                setActiveQcModal({
-                                  albumIdx: albumIdx,
-                                  imageIdx: idx
-                                });
+                                setActiveQcModal({ albumIdx: albumIdx, imageIdx: idx });
                                 setModalZoomLevel(1);
                                 setModalPanPosition({ x: 0, y: 0 });
                               }}
@@ -690,26 +689,25 @@ export default function ProductDetail({ productId, initialData = null }) {
                                     e.stopPropagation();
                                     setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx > 0 ? idx - 1 : imgs.length - 1 }));
                                   }}
-                                  style={{ position: 'absolute', left: '4px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
+                                  style={{ position: 'absolute', left: '5px', top: '50%', transform: 'translateY(-50%)', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.75)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
                                 >&#10094;</button>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx < imgs.length - 1 ? idx + 1 : 0 }));
                                   }}
-                                  style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
+                                  style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.75)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
                                 >&#10095;</button>
-                                <div style={{ position: 'absolute', bottom: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '9px', padding: '1px 5px', borderRadius: '8px', zIndex: 2 }}>
+                                <div style={{ position: 'absolute', bottom: '6px', right: '6px', background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '8px', zIndex: 2 }}>
                                   {idx + 1} / {imgs.length}
                                 </div>
                               </>
                             )}
                           </div>
-                          {album.colorway && album.colorway !== 'Default' && (
-                            <div style={{ padding: '4px 6px', fontSize: '10px', color: 'rgba(255,255,255,0.7)', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                              {album.colorway}
-                            </div>
-                          )}
+                          {/* Always show colorway label */}
+                          <div style={{ padding: '6px 8px', fontSize: '11px', color: 'rgba(255,255,255,0.75)', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.06)', fontWeight: '500' }}>
+                            {album.colorway || 'Default'}
+                          </div>
                         </div>
                       );
                     })}
