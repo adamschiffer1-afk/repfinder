@@ -166,6 +166,31 @@ export async function GET(req) {
   }
 }
 
+async function generateUniqueSlug(name, productId = null) {
+  let baseSlug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+  if (!baseSlug) baseSlug = "product";
+  let slug = baseSlug;
+  let counter = 1;
+  while (true) {
+    const query = { slug };
+    if (productId) {
+      query._id = { $ne: productId };
+    }
+    const exists = await Product.findOne(query).select("_id").lean();
+    if (!exists) break;
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  return slug;
+}
+
 export async function POST(req) {
   try {
     const session = await auth();
@@ -175,9 +200,15 @@ export async function POST(req) {
 
     const data = await req.json();
     await dbConnect();
+    
+    if (data.name) {
+      data.slug = await generateUniqueSlug(data.name);
+    }
+    
     const product = await Product.create(data);
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
+    console.error("Failed to create product:", error);
     return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
   }
 }

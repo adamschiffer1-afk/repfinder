@@ -8,14 +8,45 @@ import * as cheerio from "cheerio";
 
 const USER_AGENT = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1";
 
+async function generateUniqueSlug(name, productId = null) {
+  let baseSlug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+  if (!baseSlug) baseSlug = "product";
+  let slug = baseSlug;
+  let counter = 1;
+  while (true) {
+    const query = { slug };
+    if (productId) {
+      query._id = { $ne: productId };
+    }
+    const exists = await Product.findOne(query).select("_id").lean();
+    if (!exists) break;
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  return slug;
+}
+
 export async function GET(req, { params }) {
   try {
     const { id } = params;
     await dbConnect();
     
-    const product = await Product.findById(id).lean();
+    let product = await Product.findById(id).lean();
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    if (!product.slug && product.name) {
+      const generatedSlug = await generateUniqueSlug(product.name, product._id);
+      await Product.updateOne({ _id: product._id }, { $set: { slug: generatedSlug } });
+      product.slug = generatedSlug;
     }
 
     const itemId = extractItemId(product.link);
@@ -290,6 +321,17 @@ export async function PUT(req, { params }) {
     const { id } = params;
     const data = await req.json();
     await dbConnect();
+    
+    // Automatically generate slug if missing or ensure slug is unique if provided
+    if (data.slug) {
+      data.slug = await generateUniqueSlug(data.slug, id);
+    } else if (data.name) {
+      const existing = await Product.findById(id).select("slug").lean();
+      if (!existing || !existing.slug) {
+        data.slug = await generateUniqueSlug(data.name, id);
+      }
+    }
+
     const product = await Product.findByIdAndUpdate(id, data, { new: true });
     return NextResponse.json(product);
   } catch (error) {

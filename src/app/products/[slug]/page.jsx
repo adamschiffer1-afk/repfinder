@@ -1,4 +1,5 @@
 import { unstable_cache } from 'next/cache';
+import { redirect } from 'next/navigation';
 import dbConnect from "@/lib/mongodb";
 import Product from "@/models/Product";
 import ProductDetail from "@/components/ProductDetail";
@@ -232,15 +233,54 @@ export async function generateMetadata({ params }) {
   }
 }
 
+async function generateUniqueSlug(name, productId = null) {
+  let baseSlug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+  if (!baseSlug) baseSlug = "product";
+  let slug = baseSlug;
+  let counter = 1;
+  while (true) {
+    const query = { slug };
+    if (productId) {
+      query._id = { $ne: productId };
+    }
+    const exists = await Product.findOne(query).select("_id").lean();
+    if (!exists) break;
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  return slug;
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default async function ProductDetailPage({ params }) {
   const { slug } = await params;
 
   await dbConnect();
 
-  // Resolve slug → productId
+  const isId = slug.match(/^[0-9a-fA-F]{24}$/);
   let productId = slug;
-  if (!slug.match(/^[0-9a-fA-F]{24}$/)) {
+  let productObj = null;
+
+  if (isId) {
+    productObj = await Product.findById(slug);
+    if (productObj) {
+      if (!productObj.slug && productObj.name) {
+        const uniqueSlug = await generateUniqueSlug(productObj.name, productObj._id);
+        productObj.slug = uniqueSlug;
+        await Product.updateOne({ _id: productObj._id }, { $set: { slug: uniqueSlug } });
+      }
+      if (productObj.slug) {
+        redirect(`/products/${productObj.slug}`);
+      }
+    }
+  } else {
     const found = await Product.findOne({ slug }).select("_id").lean();
     if (found) productId = found._id.toString();
   }
