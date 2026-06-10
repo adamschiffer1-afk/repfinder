@@ -247,6 +247,8 @@ export default function ManageProducts() {
   const [qcUploadLoading, setQcUploadLoading] = useState(false);
   const [qcScrapeUrl, setQcScrapeUrl] = useState('');
   const [qcScrapeLoading, setQcScrapeLoading] = useState(false);
+  const [selectedQcIndices, setSelectedQcIndices] = useState([]);
+  const [bulkColorwayText, setBulkColorwayText] = useState('');
   
   // Custom alerts and confirmations
   const [toasts, setToasts] = useState([]);
@@ -674,7 +676,10 @@ export default function ManageProducts() {
       if (res.ok && data.albums?.length > 0) {
         const newImages = [];
         data.albums.forEach(album => {
-          const colorwayName = album.colorway || 'Default';
+          let colorwayName = album.colorway || album.color || album.name || album.title || album.variant || 'Default';
+          if (colorwayName && typeof colorwayName === 'object') {
+            colorwayName = colorwayName.name || colorwayName.title || colorwayName.value || 'Default';
+          }
           const albumImgs = album.images || [];
           albumImgs.forEach(url => {
             newImages.push({
@@ -705,6 +710,30 @@ export default function ManageProducts() {
     }
   };
 
+  const handleBulkAssignColorway = () => {
+    if (selectedQcIndices.length === 0) {
+      showToast('Zaznacz przynajmniej jedno zdjęcie (klikając na nie)', 'error');
+      return;
+    }
+    const text = bulkColorwayText.trim();
+    if (!text) {
+      showToast('Wpisz nazwę kolorystyki', 'error');
+      return;
+    }
+    setFormData(prev => {
+      const newQc = [...prev.qcImages];
+      selectedQcIndices.forEach(idx => {
+        if (newQc[idx]) {
+          newQc[idx] = { ...newQc[idx], colorway: text };
+        }
+      });
+      return { ...prev, qcImages: newQc };
+    });
+    setSelectedQcIndices([]);
+    setBulkColorwayText('');
+    showToast(`Przypisano kolorystykę "${text}" do ${selectedQcIndices.length} zdjęć!`, 'success');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const method = editingProduct ? 'PUT' : 'POST';
@@ -729,6 +758,8 @@ export default function ManageProducts() {
       setEditingProduct(null);
       setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '', qcImages: [] });
       setQcScrapeUrl('');
+      setSelectedQcIndices([]);
+      setBulkColorwayText('');
     } else {
       showToast('Coś poszło nie tak podczas zapisywania produktu.', 'error');
     }
@@ -764,6 +795,8 @@ export default function ManageProducts() {
       pinnedOrder: product.pinnedOrder !== null && product.pinnedOrder !== undefined ? String(product.pinnedOrder) : '',
       qcImages: product.qcImages || []
     });
+    setSelectedQcIndices([]);
+    setBulkColorwayText('');
     setShowModal(true);
   }, []);
 
@@ -791,6 +824,9 @@ export default function ManageProducts() {
           <button className={styles.navLink} onClick={() => {
             setEditingProduct(null);
             setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '', qcImages: [] });
+            setSelectedQcIndices([]);
+            setQcScrapeUrl('');
+            setBulkColorwayText('');
             setShowModal(true);
           }}>
             + Add Manually
@@ -1102,18 +1138,84 @@ export default function ManageProducts() {
                   </button>
                 </div>
 
-                <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', marginBottom: '10px' }}>
-                  {formData.qcImages?.map((qc, i) => (
-                    <div key={i} style={{ position: 'relative', minWidth: '80px' }}>
-                      <img src={qc.url} alt="QC" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '5px' }} />
-                      <button type="button" onClick={() => removeQcImage(i)} style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>&times;</button>
-                      <input type="text" value={qc.colorway} onChange={(e) => {
-                        const newQc = [...formData.qcImages];
-                        newQc[i].colorway = e.target.value;
-                        setFormData({...formData, qcImages: newQc});
-                      }} style={{ width: '100%', fontSize: '11px', padding: '2px 4px', marginTop: '5px' }} placeholder="Kolor" />
+                {/* Bulk Assignment Tool */}
+                {formData.qcImages && formData.qcImages.length > 0 && (
+                  <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '6px', marginBottom: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
+                        Wybrano: <strong style={{ color: '#a78bfa' }}>{selectedQcIndices.length}</strong> / {formData.qcImages.length} zdjęć (kliknij zdjęcie, by zaznaczyć)
+                      </span>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <button 
+                          type="button" 
+                          onClick={() => setSelectedQcIndices(formData.qcImages.map((_, idx) => idx))} 
+                          style={{ padding: '2px 6px', fontSize: '10px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
+                        >
+                          Wszystkie
+                        </button>
+                        <button 
+                          type="button" 
+                          onClick={() => setSelectedQcIndices([])} 
+                          style={{ padding: '2px 6px', fontSize: '10px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
+                        >
+                          Odznacz
+                        </button>
+                      </div>
                     </div>
-                  ))}
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      <input 
+                        type="text" 
+                        placeholder="Nazwa kolorystyki (np. Black Cat)..." 
+                        value={bulkColorwayText} 
+                        onChange={(e) => setBulkColorwayText(e.target.value)} 
+                        style={{ flex: 1, margin: 0, padding: '6px 8px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'white', fontSize: '12px' }}
+                      />
+                      <button 
+                        type="button" 
+                        onClick={handleBulkAssignColorway} 
+                        style={{ padding: '0 12px', background: '#a78bfa', color: 'black', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+                      >
+                        Przypisz
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', marginBottom: '10px', paddingBottom: '5px' }}>
+                  {formData.qcImages?.map((qc, i) => {
+                    const isSelected = selectedQcIndices.includes(i);
+                    return (
+                      <div 
+                        key={i} 
+                        style={{ 
+                          position: 'relative', 
+                          minWidth: '80px', 
+                          padding: '4px', 
+                          borderRadius: '6px', 
+                          background: isSelected ? 'rgba(167, 139, 250, 0.15)' : 'transparent',
+                          border: isSelected ? '2px solid #a78bfa' : '2px solid transparent',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <img 
+                          src={qc.url} 
+                          alt="QC" 
+                          onClick={() => {
+                            setSelectedQcIndices(prev => 
+                              prev.includes(i) ? prev.filter(idx => idx !== i) : [...prev, i]
+                            );
+                          }}
+                          style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '5px', cursor: 'pointer', display: 'block' }} 
+                        />
+                        <button type="button" onClick={() => removeQcImage(i)} style={{ position: 'absolute', top: '-2px', right: '-2px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>&times;</button>
+                        <input type="text" value={qc.colorway} onChange={(e) => {
+                          const newQc = [...formData.qcImages];
+                          newQc[i].colorway = e.target.value;
+                          setFormData({...formData, qcImages: newQc});
+                        }} style={{ width: '100%', fontSize: '11px', padding: '2px 4px', marginTop: '5px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '3px' }} placeholder="Kolor" />
+                      </div>
+                    );
+                  })}
                 </div>
                 <div>
                   <input type="file" accept="image/*" onChange={(e) => handleQcUpload(e.target.files[0])} style={{ display: 'none' }} id="qc-upload" />
