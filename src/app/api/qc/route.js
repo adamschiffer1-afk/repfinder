@@ -17,22 +17,31 @@ export async function GET(request) {
     if (itemId) {
       await dbConnect();
       // Find a product whose purchase link contains this item ID
-      const product = await Product.findOne({
+      // Use raw collection.findOne to avoid Mongoose CastError on old string arrays
+      const product = await Product.collection.findOne({
         link: { $regex: itemId },
         qcImages: { $exists: true, $not: { $size: 0 } }
       });
 
       if (product && product.qcImages && product.qcImages.length > 0) {
         console.log(`✅ Found local Telegram QC images for item ID ${itemId} (Product: ${product.name})`);
-        return NextResponse.json({
-          success: true,
-          local: true,
-          albums: [
-            {
-              images: product.qcImages
-            }
-          ]
-        });
+        
+        // Ensure we always return an array of strings (URLs)
+        const imageUrls = product.qcImages.map(img => 
+          typeof img === 'string' ? img : img.url
+        ).filter(Boolean);
+
+        if (imageUrls.length > 0) {
+          return NextResponse.json({
+            success: true,
+            local: true,
+            albums: [
+              {
+                images: imageUrls
+              }
+            ]
+          });
+        }
       }
     }
   } catch (dbError) {
