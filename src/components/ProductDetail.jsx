@@ -171,6 +171,13 @@ export default function ProductDetail({ productId, initialData = null }) {
   // QC Gallery States
   const [qcCardIndex, setQcCardIndex] = useState({});
 
+  // QC Gallery Full-Screen Modal States
+  const [activeQcModal, setActiveQcModal] = useState(null);
+  const [modalZoomLevel, setModalZoomLevel] = useState(1);
+  const [modalPanPosition, setModalPanPosition] = useState({ x: 0, y: 0 });
+  const [isDraggingModal, setIsDraggingModal] = useState(false);
+  const [dragStartModal, setDragStartModal] = useState({ x: 0, y: 0 });
+
   const qcAlbums = useMemo(() => {
     const images = productDetails?.qcImages || productDetails?.product?.qcImages || [];
     if (!images || images.length === 0) return [];
@@ -193,6 +200,40 @@ export default function ProductDetail({ productId, initialData = null }) {
       images: urls
     }));
   }, [productDetails]);
+
+  // Listen for escape/arrow keys in QC modal
+  useEffect(() => {
+    if (activeQcModal === null) return;
+    
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setActiveQcModal(null);
+      } else if (e.key === 'ArrowRight') {
+        const album = qcAlbums[activeQcModal.albumIdx];
+        if (album && album.images?.length > 1) {
+          setActiveQcModal(prev => ({
+            ...prev,
+            imageIdx: (prev.imageIdx + 1) % album.images.length
+          }));
+          setModalZoomLevel(1);
+          setModalPanPosition({ x: 0, y: 0 });
+        }
+      } else if (e.key === 'ArrowLeft') {
+        const album = qcAlbums[activeQcModal.albumIdx];
+        if (album && album.images?.length > 1) {
+          setActiveQcModal(prev => ({
+            ...prev,
+            imageIdx: (prev.imageIdx - 1 + album.images.length) % album.images.length
+          }));
+          setModalZoomLevel(1);
+          setModalPanPosition({ x: 0, y: 0 });
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeQcModal, qcAlbums]);
 
   // Preferred agent configurations
   const [preferredAgent, setPreferredAgent] = useState('kakobuy');
@@ -632,8 +673,15 @@ export default function ProductDetail({ productId, initialData = null }) {
                               alt={`QC - ${album.colorway}`}
                               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'pointer' }}
                               onError={e => e.target.src = '/placeholder.png'}
-                              onClick={() => window.open(imgs[idx], '_blank')}
-                              title="Kliknij, aby otworzyć w nowej karcie"
+                              onClick={() => {
+                                setActiveQcModal({
+                                  albumIdx: albumIdx,
+                                  imageIdx: idx
+                                });
+                                setModalZoomLevel(1);
+                                setModalPanPosition({ x: 0, y: 0 });
+                              }}
+                              title="Kliknij, aby powiększyć zdjęcie"
                             />
                             {imgs.length > 1 && (
                               <>
@@ -677,6 +725,303 @@ export default function ProductDetail({ productId, initialData = null }) {
         )}
 
       </div>
+
+      {/* Premium Full-Screen QC Image Modal with Zoom and Pan */}
+      {activeQcModal !== null && (() => {
+        const album = qcAlbums[activeQcModal.albumIdx];
+        if (!album) return null;
+        const imgs = album.images || [];
+        const currentImg = imgs[activeQcModal.imageIdx];
+        if (!currentImg) return null;
+
+        const handleNext = (e) => {
+          e?.stopPropagation();
+          setActiveQcModal(prev => ({
+            ...prev,
+            imageIdx: (prev.imageIdx + 1) % imgs.length
+          }));
+          setModalZoomLevel(1);
+          setModalPanPosition({ x: 0, y: 0 });
+        };
+
+        const handlePrev = (e) => {
+          e?.stopPropagation();
+          setActiveQcModal(prev => ({
+            ...prev,
+            imageIdx: (prev.imageIdx - 1 + imgs.length) % imgs.length
+          }));
+          setModalZoomLevel(1);
+          setModalPanPosition({ x: 0, y: 0 });
+        };
+
+        const handleZoomIn = (e) => {
+          e?.stopPropagation();
+          setModalZoomLevel(prev => Math.min(prev + 0.5, 4));
+        };
+        const handleZoomOut = (e) => {
+          e?.stopPropagation();
+          setModalZoomLevel(prev => {
+            const next = Math.max(prev - 0.5, 1);
+            if (next === 1) setModalPanPosition({ x: 0, y: 0 });
+            return next;
+          });
+        };
+
+        // Mouse Drag events for Panning
+        const handleMouseDown = (e) => {
+          if (modalZoomLevel > 1) {
+            setIsDraggingModal(true);
+            setDragStartModal({ x: e.clientX - modalPanPosition.x, y: e.clientY - modalPanPosition.y });
+          }
+        };
+
+        const handleMouseMove = (e) => {
+          if (isDraggingModal && modalZoomLevel > 1) {
+            setModalPanPosition({
+              x: e.clientX - dragStartModal.x,
+              y: e.clientY - dragStartModal.y
+            });
+          }
+        };
+
+        const handleMouseUp = () => setIsDraggingModal(false);
+
+        // Touch Drag events for Panning (mobile support)
+        const handleTouchStart = (e) => {
+          if (e.touches.length === 1 && modalZoomLevel > 1) {
+            const touch = e.touches[0];
+            setIsDraggingModal(true);
+            setDragStartModal({ x: touch.clientX - modalPanPosition.x, y: touch.clientY - modalPanPosition.y });
+          }
+        };
+
+        const handleTouchMove = (e) => {
+          if (isDraggingModal && modalZoomLevel > 1 && e.touches.length === 1) {
+            const touch = e.touches[0];
+            setModalPanPosition({
+              x: touch.clientX - dragStartModal.x,
+              y: touch.clientY - dragStartModal.y
+            });
+          }
+        };
+
+        const handleTouchEnd = () => setIsDraggingModal(false);
+
+        return (
+          <div 
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(0, 0, 0, 0.95)',
+              zIndex: 99999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              userSelect: 'none',
+            }}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onClick={() => setActiveQcModal(null)}
+          >
+            {/* Close Button in top right */}
+            <button
+              onClick={() => setActiveQcModal(null)}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: 'none',
+                color: 'white',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                fontSize: '18px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+                transition: 'background 0.2s',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+
+            {/* Left Nav Arrow */}
+            {imgs.length > 1 && (
+              <button
+                onClick={handlePrev}
+                style={{
+                  position: 'absolute',
+                  left: '30px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: '50px',
+                  height: '50px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 5,
+                  fontSize: '16px',
+                  transition: 'background 0.2s, transform 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+              >
+                &#10094;
+              </button>
+            )}
+
+            {/* Right Nav Arrow */}
+            {imgs.length > 1 && (
+              <button
+                onClick={handleNext}
+                style={{
+                  position: 'absolute',
+                  right: '30px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  borderRadius: '50%',
+                  width: '50px',
+                  height: '50px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 5,
+                  fontSize: '16px',
+                  transition: 'background 0.2s, transform 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}
+              >
+                &#10095;
+              </button>
+            )}
+
+            {/* Image Container */}
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: 'relative',
+                maxWidth: '85%',
+                maxHeight: '80%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                borderRadius: '8px'
+              }}
+            >
+              <img
+                src={currentImg}
+                alt="QC Full View"
+                onMouseDown={handleMouseDown}
+                onTouchStart={handleTouchStart}
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '80vh',
+                  objectFit: 'contain',
+                  transform: `scale(${modalZoomLevel}) translate(${modalPanPosition.x / modalZoomLevel}px, ${modalPanPosition.y / modalZoomLevel}px)`,
+                  cursor: modalZoomLevel > 1 ? 'grab' : 'zoom-in',
+                  transition: isDraggingModal ? 'none' : 'transform 0.15s ease-out',
+                }}
+                draggable={false}
+              />
+
+              {/* Counter Badge in top right corner of image container */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '15px',
+                  right: '15px',
+                  background: 'rgba(0, 0, 0, 0.65)',
+                  color: 'white',
+                  fontSize: '12px',
+                  padding: '4px 10px',
+                  borderRadius: '12px',
+                  fontFamily: 'monospace',
+                  pointerEvents: 'none',
+                }}
+              >
+                {activeQcModal.imageIdx + 1} / {imgs.length}
+              </div>
+            </div>
+
+            {/* Zoom Control Panel at bottom center */}
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                position: 'absolute',
+                bottom: '30px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(0, 0, 0, 0.75)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '6px 16px',
+                borderRadius: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '15px',
+                color: 'white',
+                zIndex: 10,
+              }}
+            >
+              <button
+                onClick={handleZoomOut}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  padding: '0 5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  outline: 'none'
+                }}
+              >
+                -
+              </button>
+              <span style={{ fontSize: '13px', fontFamily: 'monospace', minWidth: '45px', textAlign: 'center' }}>
+                {Math.round(modalZoomLevel * 100)}%
+              </span>
+              <button
+                onClick={handleZoomIn}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  padding: '0 5px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  outline: 'none'
+                }}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
