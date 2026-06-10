@@ -168,10 +168,31 @@ export default function ProductDetail({ productId, initialData = null }) {
   const [copiedId, setCopiedId] = useState(null);
   const [error, setError] = useState({ message: null, type: null });
 
-  // QC Gallery States (auto-fetched from API)
-  const [qcAlbums, setQcAlbums] = useState([]);
+  // QC Gallery States
   const [qcCardIndex, setQcCardIndex] = useState({});
-  const [qcLoading, setQcLoading] = useState(false);
+
+  const qcAlbums = useMemo(() => {
+    const images = productDetails?.qcImages || productDetails?.product?.qcImages || [];
+    if (!images || images.length === 0) return [];
+    
+    const groups = {};
+    images.forEach(img => {
+      if (!img) return;
+      const color = img.colorway || 'Default';
+      if (!groups[color]) {
+        groups[color] = [];
+      }
+      const url = typeof img === 'string' ? img : img.url;
+      if (url) {
+        groups[color].push(url);
+      }
+    });
+
+    return Object.entries(groups).map(([colorway, urls]) => ({
+      colorway,
+      images: urls
+    }));
+  }, [productDetails]);
 
   // Preferred agent configurations
   const [preferredAgent, setPreferredAgent] = useState('kakobuy');
@@ -250,20 +271,7 @@ export default function ProductDetail({ productId, initialData = null }) {
     fetchDetail();
   }, [productId]);
 
-  // Auto-fetch QC photos from picks.ly when product loads
-  useEffect(() => {
-    const link = productDetails?.product?.link;
-    if (!link) return;
-    setQcAlbums([]);
-    setQcLoading(true);
-    fetch(`/api/qc?url=${encodeURIComponent(link)}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data?.albums?.length > 0) setQcAlbums(data.albums);
-      })
-      .catch(() => {})
-      .finally(() => setQcLoading(false));
-  }, [productDetails?.product?.link]);
+
 
   // Track click stats
   const trackStat = useCallback(async (productId, type = 'product_click', agent = null) => {
@@ -607,13 +615,8 @@ export default function ProductDetail({ productId, initialData = null }) {
                 <span>{copiedId === 'share' ? 'Skopiowano!' : 'Udostępnij'}</span>
               </button>
 
-              {/* QC Gallery Section - auto-fetched from API */}
-              {qcLoading && (
-                <div style={{ marginTop: '16px', padding: '12px 16px', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
-                  ⏳ Ładowanie zdjęć QC...
-                </div>
-              )}
-              {!qcLoading && qcAlbums.length > 0 && (
+              {/* QC Gallery Section */}
+              {qcAlbums.length > 0 && (
                 <div style={{ marginTop: '16px' }}>
                   <h3 style={{ margin: '0 0 10px 0', fontSize: '13px', color: 'rgba(255,255,255,0.6)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Zdjęcia QC</h3>
                   <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '6px' }}>
@@ -626,26 +629,39 @@ export default function ProductDetail({ productId, initialData = null }) {
                           <div style={{ position: 'relative', width: '120px', height: '120px', background: '#000' }}>
                             <img
                               src={imgs[idx]}
-                              alt="QC"
-                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                              alt={`QC - ${album.colorway}`}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'pointer' }}
                               onError={e => e.target.src = '/placeholder.png'}
+                              onClick={() => window.open(imgs[idx], '_blank')}
+                              title="Kliknij, aby otworzyć w nowej karcie"
                             />
                             {imgs.length > 1 && (
                               <>
                                 <button
-                                  onClick={() => setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx > 0 ? idx - 1 : imgs.length - 1 }))}
-                                  style={{ position: 'absolute', left: '4px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx > 0 ? idx - 1 : imgs.length - 1 }));
+                                  }}
+                                  style={{ position: 'absolute', left: '4px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
                                 >&#10094;</button>
                                 <button
-                                  onClick={() => setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx < imgs.length - 1 ? idx + 1 : 0 }))}
-                                  style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx < imgs.length - 1 ? idx + 1 : 0 }));
+                                  }}
+                                  style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
                                 >&#10095;</button>
-                                <div style={{ position: 'absolute', bottom: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '9px', padding: '1px 5px', borderRadius: '8px' }}>
+                                <div style={{ position: 'absolute', bottom: '4px', right: '4px', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '9px', padding: '1px 5px', borderRadius: '8px', zIndex: 2 }}>
                                   {idx + 1} / {imgs.length}
                                 </div>
                               </>
                             )}
                           </div>
+                          {album.colorway && album.colorway !== 'Default' && (
+                            <div style={{ padding: '4px 6px', fontSize: '10px', color: 'rgba(255,255,255,0.7)', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                              {album.colorway}
+                            </div>
+                          )}
                         </div>
                       );
                     })}

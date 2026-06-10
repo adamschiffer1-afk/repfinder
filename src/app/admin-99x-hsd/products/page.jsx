@@ -245,6 +245,8 @@ export default function ManageProducts() {
     qcImages: []
   });
   const [qcUploadLoading, setQcUploadLoading] = useState(false);
+  const [qcScrapeUrl, setQcScrapeUrl] = useState('');
+  const [qcScrapeLoading, setQcScrapeLoading] = useState(false);
   
   // Custom alerts and confirmations
   const [toasts, setToasts] = useState([]);
@@ -659,6 +661,50 @@ export default function ManageProducts() {
     });
   };
 
+  const handleQcScrape = async () => {
+    const urlToScrape = qcScrapeUrl.trim() || formData.link?.trim();
+    if (!urlToScrape) {
+      showToast('Wklej link lub wypełnij główny link produktu', 'error');
+      return;
+    }
+    setQcScrapeLoading(true);
+    try {
+      const res = await fetch(`/api/qc?url=${encodeURIComponent(urlToScrape)}`);
+      const data = await res.json();
+      if (res.ok && data.albums?.length > 0) {
+        const newImages = [];
+        data.albums.forEach(album => {
+          const colorwayName = album.colorway || 'Default';
+          const albumImgs = album.images || [];
+          albumImgs.forEach(url => {
+            newImages.push({
+              url,
+              colorway: colorwayName,
+              addedAt: new Date()
+            });
+          });
+        });
+        
+        if (newImages.length > 0) {
+          setFormData(prev => ({
+            ...prev,
+            qcImages: [...(prev.qcImages || []), ...newImages]
+          }));
+          setQcScrapeUrl('');
+          showToast(`Pobrano ${newImages.length} zdjęć QC!`, 'success');
+        } else {
+          showToast('Brak zdjęć w pobranym QC', 'error');
+        }
+      } else {
+        showToast(data.error || 'Nie znaleziono zdjęć QC pod tym linkiem', 'error');
+      }
+    } catch (err) {
+      showToast('Błąd pobierania QC', 'error');
+    } finally {
+      setQcScrapeLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const method = editingProduct ? 'PUT' : 'POST';
@@ -681,7 +727,8 @@ export default function ManageProducts() {
       fetchProducts(currentPage);
       setShowModal(false);
       setEditingProduct(null);
-      setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '' });
+      setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '', qcImages: [] });
+      setQcScrapeUrl('');
     } else {
       showToast('Coś poszło nie tak podczas zapisywania produktu.', 'error');
     }
@@ -1035,6 +1082,26 @@ export default function ManageProducts() {
               )}
               <div style={{ marginTop: '10px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px dashed rgba(255,255,255,0.2)' }}>
                 <h4 style={{ margin: '0 0 10px 0', color: '#a78bfa' }}>Zdjęcia QC</h4>
+                
+                {/* QC Link Scraper Field */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  <input 
+                    type="text" 
+                    placeholder={formData.link ? "🔗 Wklej link lub zostaw puste (użyje linku produktu)..." : "🔗 Wklej link Weidian/Kakobuy..."}
+                    value={qcScrapeUrl} 
+                    onChange={(e) => setQcScrapeUrl(e.target.value)} 
+                    style={{ flex: 1, margin: 0, padding: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '5px', color: 'white', fontSize: '13px' }}
+                  />
+                  <button 
+                    type="button" 
+                    onClick={handleQcScrape} 
+                    disabled={qcScrapeLoading}
+                    style={{ padding: '0 15px', background: '#a78bfa', color: 'black', border: 'none', borderRadius: '5px', cursor: qcScrapeLoading ? 'wait' : 'pointer', fontWeight: 'bold', fontSize: '13px' }}
+                  >
+                    {qcScrapeLoading ? '⏳ Pobieranie...' : 'Pobierz QC'}
+                  </button>
+                </div>
+
                 <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', marginBottom: '10px' }}>
                   {formData.qcImages?.map((qc, i) => (
                     <div key={i} style={{ position: 'relative', minWidth: '80px' }}>
@@ -1057,7 +1124,7 @@ export default function ManageProducts() {
               </div>
               <div className={styles.modalActions}>
                 <button type="submit">Save</button>
-                <button type="button" onClick={() => {setShowModal(false); setEditingProduct(null); setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '' });}}>Cancel</button>
+                <button type="button" onClick={() => {setShowModal(false); setEditingProduct(null); setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '', qcImages: [] }); setQcScrapeUrl('');}}>Cancel</button>
               </div>
             </form>
           </div>
