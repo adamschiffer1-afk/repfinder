@@ -45,10 +45,11 @@ const ProductSchema = new mongoose.Schema({
     type: [Number],
     select: false, // Ukryte domyślnie, by nie obciążać zapytań
   },
-  qcImages: {
-    type: [String],
-    default: [],
-  },
+  qcImages: [{
+    colorway: { type: String, default: 'Default' },
+    url: { type: String, required: true },
+    addedAt: { type: Date, default: Date.now }
+  }],
   pinnedOrder: {
     type: Number,
     default: null,

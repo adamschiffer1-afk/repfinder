@@ -241,8 +241,10 @@ export default function ManageProducts() {
     batch: 'best',
     link: '',
     isPinned: false,
-    pinnedOrder: ''
+    pinnedOrder: '',
+    qcImages: []
   });
+  const [qcUploadLoading, setQcUploadLoading] = useState(false);
   
   // Custom alerts and confirmations
   const [toasts, setToasts] = useState([]);
@@ -622,6 +624,41 @@ export default function ManageProducts() {
     }
   };
 
+  const handleQcUpload = async (file) => {
+    if (!file) return;
+    setQcUploadLoading(true);
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: fd
+      });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        setFormData(prev => ({
+          ...prev,
+          qcImages: [...prev.qcImages, { url: data.url, colorway: 'Default' }]
+        }));
+        showToast('Dodano zdjęcie QC!', 'success');
+      } else {
+        showToast(data.error || 'Błąd wgrywania zdjęcia', 'error');
+      }
+    } catch (err) {
+      showToast('Błąd połączenia z serwerem', 'error');
+    } finally {
+      setQcUploadLoading(false);
+    }
+  };
+
+  const removeQcImage = (index) => {
+    setFormData(prev => {
+      const newQc = [...prev.qcImages];
+      newQc.splice(index, 1);
+      return { ...prev, qcImages: newQc };
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const method = editingProduct ? 'PUT' : 'POST';
@@ -677,7 +714,8 @@ export default function ManageProducts() {
       batch: product.batch,
       link: product.link,
       isPinned: product.isPinned || false,
-      pinnedOrder: product.pinnedOrder !== null && product.pinnedOrder !== undefined ? String(product.pinnedOrder) : ''
+      pinnedOrder: product.pinnedOrder !== null && product.pinnedOrder !== undefined ? String(product.pinnedOrder) : '',
+      qcImages: product.qcImages || []
     });
     setShowModal(true);
   }, []);
@@ -705,7 +743,7 @@ export default function ManageProducts() {
           </button>
           <button className={styles.navLink} onClick={() => {
             setEditingProduct(null);
-            setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '' });
+            setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '', qcImages: [] });
             setShowModal(true);
           }}>
             + Add Manually
@@ -995,6 +1033,28 @@ export default function ManageProducts() {
                   style={{ marginTop: '0' }}
                 />
               )}
+              <div style={{ marginTop: '10px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px dashed rgba(255,255,255,0.2)' }}>
+                <h4 style={{ margin: '0 0 10px 0', color: '#a78bfa' }}>Zdjęcia QC</h4>
+                <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', marginBottom: '10px' }}>
+                  {formData.qcImages?.map((qc, i) => (
+                    <div key={i} style={{ position: 'relative', minWidth: '80px' }}>
+                      <img src={qc.url} alt="QC" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '5px' }} />
+                      <button type="button" onClick={() => removeQcImage(i)} style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>&times;</button>
+                      <input type="text" value={qc.colorway} onChange={(e) => {
+                        const newQc = [...formData.qcImages];
+                        newQc[i].colorway = e.target.value;
+                        setFormData({...formData, qcImages: newQc});
+                      }} style={{ width: '100%', fontSize: '11px', padding: '2px 4px', marginTop: '5px' }} placeholder="Kolor" />
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <input type="file" accept="image/*" onChange={(e) => handleQcUpload(e.target.files[0])} style={{ display: 'none' }} id="qc-upload" />
+                  <label htmlFor="qc-upload" style={{ display: 'block', textAlign: 'center', padding: '10px', background: 'rgba(167, 139, 250, 0.1)', color: '#a78bfa', borderRadius: '5px', cursor: qcUploadLoading ? 'wait' : 'pointer', fontWeight: 'bold' }}>
+                    {qcUploadLoading ? '⏳ Wgrywanie...' : '📸 + Dodaj zdjęcie QC'}
+                  </label>
+                </div>
+              </div>
               <div className={styles.modalActions}>
                 <button type="submit">Save</button>
                 <button type="button" onClick={() => {setShowModal(false); setEditingProduct(null); setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '' });}}>Cancel</button>
