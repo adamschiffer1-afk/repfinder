@@ -2908,3 +2908,13 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+.qcEmptyMessageRight {
+  color: #8c8c8c;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 20px 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}

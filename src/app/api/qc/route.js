@@ -61,8 +61,17 @@ export async function GET(request) {
   }
 
   try {
+    let cleanUrl = url;
+    try {
+      const safe = new URL(url);
+      const nestedUrl = safe.searchParams.get('url');
+      if (nestedUrl) {
+        cleanUrl = nestedUrl;
+      }
+    } catch (e) {}
+
     const response = await fetch(
-      `https://partner.picks.ly/api/qc/search?url=${encodeURIComponent(url)}`,
+      `https://partner.picks.ly/api/qc/search?url=${encodeURIComponent(cleanUrl)}`,
       {
         headers: {
           'X-API-Key': apiKey,
