@@ -7,7 +7,7 @@ const fs = require('fs');
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const AFFILIATE_CODE = 'xfrostyy';
-const CSV_FILE = 'se1-itemexport-1679502043-20260610000353.csv';
+const CSV_FILE = 'se1-itemexport-1679502043-20260619024109.csv';
 
 const ProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -20,7 +20,8 @@ const ProductSchema = new mongoose.Schema({
   isPinned: { type: Boolean, default: false },
   pinnedOrder: { type: Number, default: null },
   qcImages: { type: [String], default: [] },
-  slug: { type: String, unique: true, sparse: true }
+  slug: { type: String, unique: true, sparse: true },
+  itemId: { type: String, unique: true, sparse: true }
 }, { timestamps: true });
 
 const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
@@ -92,7 +93,7 @@ const BRAND_MAP = {
   // Adidas
   'A.d.i.d.a.s': 'Adidas', 'a.d.i.d.a.s': 'Adidas',
   // Yeezy
-  'Y.e.e.z.y': 'Yeezy', 'y.e.e.z.y': 'Yeezy', 'y.z': 'YZ',
+  'Y.e.e.z.y': 'Yeezy', 'y.e.e.z.y': 'Yeezy', 'y.z': 'Yeezy', 'Y.Z': 'Yeezy', 'Yz': 'Yeezy', 'YZ': 'Yeezy',
   // Converse
   'C.o.n.v.e.r.s.e': 'Converse', 'c.o.n.v.e.r.s.e': 'Converse',
   // Vans
@@ -149,11 +150,12 @@ const BRAND_MAP = {
   'm.m.h': 'MMH', 'M.M.H': 'MMH', 'm.o.n': 'Moncler', 'M.O.N': 'Moncler',
   'o.l.o': 'Polo', 'O.L.O': 'Polo', 'p.l.d': 'Prada', 'P.L.D': 'Prada', 'p.d.l': 'PDL', 'P.D.L': 'PDL',
   's.b.r': 'SBR', 'S.B.R': 'SBR', 's.l.l': 'YSL', 'S.L.L': 'YSL', 'sll': 'YSL', 'SLL': 'YSL',
-  's.t.x': 'Stussy', 'S.T.X': 'Stussy', 's.u.p': 'Supreme', 'S.U.P': 'Supreme',
+  's.t.x': 'Stussy', 'S.T.X': 'Stussy', 's.u.p': 'Supreme', 'S.U.P': 'Supreme', 'SUP': 'Supreme',
   't.r.a': 'Trapstar', 'T.R.A': 'Trapstar', 'x.n.e': 'XNE', 'X.N.E': 'XNE',
   'y.s.s': 'YSS', 'Y.S.S': 'YSS', 'j.a.c': 'JAC', 'J.A.C': 'JAC',
   'p.r.a': 'Prada', 'P.R.A': 'Prada', 'p.p': 'PP', 'P.P': 'PP',
   'e.y': 'EY', 'E.Y': 'EY',
+  'l.a.n': 'Lanvin', 'L.A.N': 'Lanvin', 'LAN': 'Lanvin',
   // 2-letter codes (full brand names)
   'Sy': 'Syna World', 'sy': 'Syna World', 'S.Y': 'Syna World', 's.y': 'Syna World',
   'A.J.3': 'Jordan 3', 'a.j.3': 'Jordan 3', 'AJ3': 'Jordan 3', 'aj3': 'Jordan 3',
@@ -167,16 +169,16 @@ const BRAND_MAP = {
   'r.l': 'Ralph Lauren', 'R.L': 'Ralph Lauren', 's.p': 'Supreme', 'S.P': 'Supreme',
   'k.s': 'KS', 'K.S': 'KS', 'h.l': 'Hugo Boss', 'H.L': 'Hugo Boss',
   'b.l': 'Balenciaga', 'B.L': 'Balenciaga', 'b.m': 'The North Face', 'B.M': 'The North Face',
-  'c.k': 'Calvin Klein', 'C.K': 'Calvin Klein', 'd.r': 'Dior', 'D.R': 'Dior',
-  'h': 'Denim Tears', 'H': 'Denim Tears', 'H.': 'Denim Tears',
+  'c.k': 'Calvin Klein', 'C.K': 'Calvin Klein', 'd.r': 'Dior', 'D.R': 'Dior', 'DR': 'Dior',
+  'h': 'Broken Planet', 'H': 'Broken Planet', 'H.': 'Broken Planet',
   't.': 'Timberland', 'T.': 'Timberland', 't.b.l': 'Timberland', 'T.B.L': 'Timberland',
   'l.g': 'LEGO', 'L.G': 'LEGO', 'L.G.': 'LEGO',
   'k.w': 'Converse', 'K.W': 'Converse', 'kw': 'Converse', 'KW': 'Converse',
   'e.y': 'EY', 'E.Y': 'EY', 'q.d': 'QD', 'Q.D': 'QD',
   'd.g': 'Dolce Gabbana', 'D.G': 'Dolce Gabbana', 'd.s': 'Dsquared2', 'D.S': 'Dsquared2',
-  'g.d': 'GD', 'G.D': 'GD', 'u.s': 'US', 'U.S': 'US',
+  'g.d': 'GD', 'G.D': 'GD', 'u.s': 'US', 'U.S': 'US', 'g.u': 'Gucci', 'G.U': 'Gucci', 'GU': 'Gucci',
   'k.c': 'Kate Spade', 'K.C': 'Kate Spade', 'a.s': 'Acne Studios', 'A.S': 'Acne Studios',
-  'u.u': 'Uniqlo', 'U.U': 'Uniqlo', 'p.u': 'Puma', 'P.U': 'Puma',
+  'u.u': 'Uniqlo', 'U.U': 'Uniqlo', 'p.u': 'Purple Brand', 'P.U': 'Purple Brand', 'Pu': 'Purple Brand', 'PU': 'Purple Brand',
   's.y': 'SY', 'S.Y': 'SY', 't.e': 'Tiffany', 'T.E': 'Tiffany',
   'e.s': 'Essentials', 'E.S': 'Essentials', 'g.c': 'Gucci', 'G.C': 'Gucci',
   'z.c': 'Zegna', 'Z.C': 'Zegna', 'o.w': 'Off White', 'O.W': 'Off White',
@@ -202,23 +204,32 @@ function decodeBrandName(name) {
   const sortedEntries = Object.entries(BRAND_MAP).sort((a, b) => b[0].length - a[0].length);
   
   for (const [abbrev, full] of sortedEntries) {
-    const regex = new RegExp('\\b' + abbrev.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'gi');
-    decoded = decoded.replace(regex, full);
+    // For dotted abbreviations, ensure they're followed by space or end of string
+    // This prevents matching "a.s" inside "m.a.s.c.o.t"
+    const escapedAbbrev = abbrev.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp('(?:^|\\s)(' + escapedAbbrev + ')(?=\\s|$)', 'gi');
+    decoded = decoded.replace(regex, (match, p1) => {
+      return match.replace(p1, full);
+    });
   }
   
   // Remove Chinese characters
   decoded = decoded.replace(/[\u4e00-\u9fa5]/g, '');
   
-  // Remove dots from abbreviations in product names (e.g., B.O.S.S → BOSS)
+  // Remove dots from remaining abbreviations (e.g., B.O.S.S → BOSS)
   decoded = decoded.replace(/\b([A-Z]\.){2,}[A-Z]\b/g, (match) => match.replace(/\./g, ''));
   
   // Clean up product type names
   decoded = decoded.toLowerCase();
-  decoded = decoded.replace(/\bshort sleeves?\b/gi, 'T-shirt');
-  decoded = decoded.replace(/\blong sleeves?\b/gi, 'Long Sleeve');
+  decoded = decoded.replace(/\bshort[- ]sleeves?\b/gi, 'T-shirt');
+  decoded = decoded.replace(/\bshort[- ]sleeved\b/gi, 'T-shirt');
+  decoded = decoded.replace(/\blong[- ]sleeves?\b/gi, 'Long Sleeve');
   decoded = decoded.replace(/\bfanny pack\b/gi, 'Bag');
   decoded = decoded.replace(/\bshoulder bag\b/gi, 'Bag');
   decoded = decoded.replace(/\bknitted hat\b/gi, 'Hat');
+  decoded = decoded.replace(/\bbaseball cap\b/gi, 'Hat');
+  decoded = decoded.replace(/\bzipper sweatshirt\b/gi, 'Zip Hoodie');
+  decoded = decoded.replace(/\bzip-up hoodie\b/gi, 'Zip Hoodie');
   
   // Capitalize first letter of each word
   decoded = decoded.replace(/\b\w/g, char => char.toUpperCase());
@@ -277,7 +288,12 @@ function detectCategory(name) {
 function parseCSV(content) {
   const lines = content.split('\n').map(line => line.trim()).filter(line => line);
   if (lines.length === 0) throw new Error('CSV file is empty');
-  const dataLines = lines.slice(1);
+  
+  // Check if first line is a header (contains Chinese characters like 商品ID)
+  const firstLine = lines[0];
+  const hasHeader = firstLine.includes('商品ID') || firstLine.includes('商品标题');
+  const dataLines = hasHeader ? lines.slice(1) : lines;
+  
   const products = [];
   for (let i = 0; i < dataLines.length; i++) {
     const line = dataLines[i];
@@ -296,8 +312,18 @@ function parseCSV(content) {
       }
     }
     fields.push(current.trim());
-    if (fields.length < 6) continue;
-    const [itemId, title, code, type, priceStr, link] = fields;
+    if (fields.length < 5) continue;
+    
+    // Handle both 5-column and 6-column CSV formats
+    let itemId, title, priceStr, link;
+    if (fields.length === 5) {
+      // Format: 商品ID,商品标题,商品编码,商品价格,商品链接
+      [itemId, title, , priceStr, link] = fields;
+    } else {
+      // Format: 商品ID,商品标题,商品编码,商品类型,商品价格,商品链接
+      [itemId, title, , , priceStr, link] = fields;
+    }
+    
     const priceCNY = parseFloat(priceStr) || 0;
     const priceUSD = parseFloat((priceCNY * 0.14).toFixed(2));
     if (priceUSD === 0) continue;

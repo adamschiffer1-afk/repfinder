@@ -178,28 +178,41 @@ export default function ProductDetail({ productId, initialData = null }) {
   const [isDraggingModal, setIsDraggingModal] = useState(false);
   const [dragStartModal, setDragStartModal] = useState({ x: 0, y: 0 });
 
+  // Dynamic QC States
+  const [dynamicQcImages, setDynamicQcImages] = useState(null);
+  const [dynamicQcLoading, setDynamicQcLoading] = useState(false);
+
   const qcAlbums = useMemo(() => {
     const images = productDetails?.qcImages || productDetails?.product?.qcImages || [];
-    if (!images || images.length === 0) return [];
-    
-    const groups = {};
-    images.forEach(img => {
-      if (!img) return;
-      const color = img.colorway || 'Default';
-      if (!groups[color]) {
-        groups[color] = [];
-      }
-      const url = typeof img === 'string' ? img : img.url;
-      if (url) {
-        groups[color].push(url);
-      }
-    });
+    if (images && images.length > 0) {
+      const groups = {};
+      images.forEach(img => {
+        if (!img) return;
+        const color = img.colorway || 'Default';
+        if (!groups[color]) {
+          groups[color] = [];
+        }
+        const url = typeof img === 'string' ? img : img.url;
+        if (url) {
+          groups[color].push(url);
+        }
+      });
 
-    return Object.entries(groups).map(([colorway, urls]) => ({
-      colorway,
-      images: urls
-    }));
-  }, [productDetails]);
+      return Object.entries(groups).map(([colorway, urls]) => ({
+        colorway,
+        images: urls
+      }));
+    }
+
+    if (dynamicQcImages && dynamicQcImages.length > 0) {
+      return dynamicQcImages.map(album => ({
+        colorway: album.colorway || album.name || 'Default Style',
+        images: album.images || []
+      }));
+    }
+
+    return [];
+  }, [productDetails, dynamicQcImages]);
 
   // Listen for escape/arrow keys in QC modal
   useEffect(() => {
@@ -312,7 +325,48 @@ export default function ProductDetail({ productId, initialData = null }) {
     fetchDetail();
   }, [productId]);
 
+  // Fetch dynamic QC photos if local DB has none
+  useEffect(() => {
+    const productLink = productDetails?.product?.link;
+    if (!productLink) return;
 
+    const localImages = productDetails?.qcImages || productDetails?.product?.qcImages || [];
+    if (localImages.length > 0) {
+      setDynamicQcImages(null);
+      return;
+    }
+
+    const fetchDynamicQc = async () => {
+      setDynamicQcLoading(true);
+      setDynamicQcImages(null);
+      try {
+        const encodedUrl = encodeURIComponent(productLink);
+        const res = await fetch(`/api/qc?url=${encodedUrl}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.albums) {
+            const hasImages = data.albums.some(album => album.images && album.images.length > 0);
+            if (hasImages) {
+              setDynamicQcImages(data.albums);
+            } else {
+              setDynamicQcImages([]);
+            }
+          } else {
+            setDynamicQcImages([]);
+          }
+        } else {
+          setDynamicQcImages([]);
+        }
+      } catch (err) {
+        console.error("Error fetching dynamic QC:", err);
+        setDynamicQcImages([]);
+      } finally {
+        setDynamicQcLoading(false);
+      }
+    };
+
+    fetchDynamicQc();
+  }, [productDetails?.product?.link]);
 
   // Track click stats
   const trackStat = useCallback(async (productId, type = 'product_click', agent = null) => {
@@ -442,7 +496,8 @@ export default function ProductDetail({ productId, initialData = null }) {
             </div>
           </div>
         ) : productDetails && (
-          <div className={styles.modalProductLayoutNew}>
+          <>
+            <div className={styles.modalProductLayoutNew}>
             
             {/* Left Column: Image Gallery, Metadata, Order Action */}
             <div className={styles.modalProductLeftColumn}>
@@ -656,71 +711,91 @@ export default function ProductDetail({ productId, initialData = null }) {
                 <span>{copiedId === 'share' ? 'Skopiowano!' : 'Udostępnij'}</span>
               </button>
 
-              {/* QC Gallery Section */}
-              {qcAlbums.length > 0 && (
-                <div style={{ marginTop: '16px' }}>
-                  <h3 style={{ margin: '0 0 10px 0', fontSize: '13px', color: 'rgba(255,255,255,0.6)', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    Zdjęcia QC {qcAlbums.length > 1 && <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', fontWeight: '400', textTransform: 'none', letterSpacing: 0 }}>({qcAlbums.length} kolorystyki)</span>}
-                  </h3>
-                  <div style={{ display: 'flex', gap: '10px', overflowX: 'auto', paddingBottom: '8px' }}>
-                    {qcAlbums.map((album, albumIdx) => {
-                      const imgs = album.images || [];
-                      const idx = qcCardIndex[albumIdx] || 0;
-                      if (!imgs.length) return null;
-                      return (
-                        <div key={albumIdx} style={{ flexShrink: 0, width: '160px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.09)', boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}>
-                          <div style={{ position: 'relative', width: '160px', height: '160px', background: '#000' }}>
-                            <img
-                              src={imgs[idx]}
-                              alt={`QC - ${album.colorway}`}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', cursor: 'pointer' }}
-                              onError={e => e.target.src = '/placeholder.png'}
-                              onClick={() => {
-                                setActiveQcModal({ albumIdx: albumIdx, imageIdx: idx });
-                                setModalZoomLevel(1);
-                                setModalPanPosition({ x: 0, y: 0 });
-                              }}
-                              title="Kliknij, aby powiększyć zdjęcie"
-                            />
-                            {imgs.length > 1 && (
-                              <>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx > 0 ? idx - 1 : imgs.length - 1 }));
-                                  }}
-                                  style={{ position: 'absolute', left: '5px', top: '50%', transform: 'translateY(-50%)', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.75)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
-                                >&#10094;</button>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx < imgs.length - 1 ? idx + 1 : 0 }));
-                                  }}
-                                  style={{ position: 'absolute', right: '5px', top: '50%', transform: 'translateY(-50%)', width: '24px', height: '24px', borderRadius: '50%', background: 'rgba(0,0,0,0.75)', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
-                                >&#10095;</button>
-                                <div style={{ position: 'absolute', bottom: '6px', right: '6px', background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '8px', zIndex: 2 }}>
-                                  {idx + 1} / {imgs.length}
-                                </div>
-                              </>
-                            )}
-                          </div>
-                          {/* Always show colorway label */}
-                          <div style={{ padding: '6px 8px', fontSize: '11px', color: 'rgba(255,255,255,0.75)', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.06)', fontWeight: '500' }}>
-                            {album.colorway || 'Default'}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
             </div>
 
-
-
           </div>
-        )}
+
+          {/* New Full-Width QC Section */}
+          {(qcAlbums.length > 0 || dynamicQcLoading) && (
+            <div className={styles.qcSectionFullWidth}>
+              <h3 className={styles.qcSectionTitleNew}>
+                <span>Quality Check (QC)</span>
+                {qcAlbums.length > 0 && !dynamicQcLoading && (
+                  <span className={styles.qcColorsCountNew}>
+                    ({qcAlbums.length} {qcAlbums.length === 1 ? 'wariant' : qcAlbums.length < 5 ? 'warianty' : 'wariantów'})
+                  </span>
+                )}
+              </h3>
+
+              {dynamicQcLoading ? (
+                /* Shimmer Loader for QC Section */
+                <div className={styles.qcShimmerGrid}>
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className={styles.qcShimmerCard}>
+                      <div className={styles.qcShimmerImage}></div>
+                      <div className={styles.qcShimmerText}></div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.qcGridNew}>
+                  {qcAlbums.map((album, albumIdx) => {
+                    const imgs = album.images || [];
+                    const idx = qcCardIndex[albumIdx] || 0;
+                    if (!imgs.length) return null;
+                    return (
+                      <div key={albumIdx} className={styles.qcCardNew}>
+                        <div className={styles.qcCardImageContainer} onClick={() => {
+                          setActiveQcModal({ albumIdx: albumIdx, imageIdx: idx });
+                          setModalZoomLevel(1);
+                          setModalPanPosition({ x: 0, y: 0 });
+                        }}>
+                          <img
+                            src={imgs[idx]}
+                            alt={`QC - ${album.colorway}`}
+                            className={styles.qcCardImage}
+                            onError={e => e.target.src = '/placeholder.png'}
+                          />
+
+                          {imgs.length > 1 && (
+                            <>
+                              <button
+                                className={`${styles.qcCardArrow} ${styles.qcCardArrowLeft}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx > 0 ? idx - 1 : imgs.length - 1 }));
+                                }}
+                              >
+                                &#10094;
+                              </button>
+                              <button
+                                className={`${styles.qcCardArrow} ${styles.qcCardArrowRight}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setQcCardIndex(prev => ({ ...prev, [albumIdx]: idx < imgs.length - 1 ? idx + 1 : 0 }));
+                                }}
+                              >
+                                &#10095;
+                              </button>
+                              <div className={styles.qcCardCounter}>
+                                {idx + 1} / {imgs.length}
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        <div className={styles.qcCardColorLabel}>
+                          {album.colorway || 'Default Style'}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
 
       </div>
 
