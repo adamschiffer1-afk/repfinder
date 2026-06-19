@@ -86,7 +86,8 @@ export const translations = {
       views: "wyświetleń",
       likes: "polubień",
       bestBatchLabel: "Best Batch",
-      budgetBatchLabel: "Budget Batch"
+      budgetBatchLabel: "Budget Batch",
+      noQcPhotos: "Brak zdjęć QC dla tego produktu."
     },
     features: {
       title: "WIĘCEJ",
@@ -418,7 +419,8 @@ export const translations = {
       views: "views",
       likes: "likes",
       bestBatchLabel: "Best Batch",
-      budgetBatchLabel: "Budget Batch"
+      budgetBatchLabel: "Budget Batch",
+      noQcPhotos: "No QC photos found for this product."
     },
     features: {
       title: "MORE",
@@ -696,7 +698,8 @@ export const translations = {
       views: "浏览",
       likes: "收藏",
       bestBatchLabel: "最佳批次",
-      budgetBatchLabel: "经济批次"
+      budgetBatchLabel: "经济批次",
+      noQcPhotos: "未找到该产品的质量检查照片。"
     },
     features: {
       title: "更多",
@@ -970,7 +973,8 @@ export const translations = {
       views: "Aufrufe",
       likes: "Gefällt mir",
       bestBatchLabel: "Best Batch",
-      budgetBatchLabel: "Budget Batch"
+      budgetBatchLabel: "Budget Batch",
+      noQcPhotos: "Keine QC-Fotos für dieses Produkt gefunden."
     },
     features: {
       title: "MEHR",
@@ -1193,7 +1197,8 @@ export const translations = {
       views: "vistas",
       likes: "me gusta",
       bestBatchLabel: "Best Batch",
-      budgetBatchLabel: "Budget Batch"
+      budgetBatchLabel: "Budget Batch",
+      noQcPhotos: "No se encontraron fotos de control de calidad para este producto."
     },
     features: {
       title: "MÁS",
