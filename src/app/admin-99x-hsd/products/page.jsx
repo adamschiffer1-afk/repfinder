@@ -49,10 +49,15 @@ const ProductTable = memo(function ProductTable({
   isAllSelected,
   onUpdatePinnedOrder,
   onReorderPinned,
-  isReordering
+  isReordering,
+  onImageClick,
+  onNameDoubleClick,
+  onNameSave
 }) {
   const [draggingId, setDraggingId] = useState(null);
   const [dragOverId, setDragOverId] = useState(null);
+  const [editingNameId, setEditingNameId] = useState(null);
+  const [editingNameValue, setEditingNameValue] = useState('');
 
   const handleDragStart = useCallback((event, product) => {
     if (!product.isPinned || isReordering) {
@@ -173,11 +178,55 @@ const ProductTable = memo(function ProductTable({
                 </label>
               </td>
               <td>
-                <div className={styles.tableImgContainer}>
+                <div className={styles.tableImgContainer} onClick={() => onImageClick(product.image)} style={{ cursor: 'pointer' }}>
                   <img src={product.image} alt="" className={styles.tableImg} />
                 </div>
               </td>
-              <td className={styles.productNameCell} title={product.name}>{product.name}</td>
+              <td 
+                className={styles.productNameCell} 
+                title={product.name}
+                onDoubleClick={() => {
+                  setEditingNameId(product._id);
+                  setEditingNameValue(product.name);
+                }}
+                style={{ cursor: editingNameId === product._id ? 'text' : 'default' }}
+              >
+                {editingNameId === product._id ? (
+                  <input
+                    type="text"
+                    value={editingNameValue}
+                    onChange={(e) => setEditingNameValue(e.target.value)}
+                    onBlur={() => {
+                      if (editingNameValue.trim() !== product.name) {
+                        onNameSave(product._id, editingNameValue.trim());
+                      }
+                      setEditingNameId(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        if (editingNameValue.trim() !== product.name) {
+                          onNameSave(product._id, editingNameValue.trim());
+                        }
+                        setEditingNameId(null);
+                      } else if (e.key === 'Escape') {
+                        setEditingNameId(null);
+                      }
+                    }}
+                    autoFocus
+                    style={{
+                      width: '100%',
+                      padding: '4px 8px',
+                      background: 'rgba(255,255,255,0.1)',
+                      border: '1px solid #a78bfa',
+                      borderRadius: '4px',
+                      color: 'white',
+                      fontSize: '13px'
+                    }}
+                  />
+                ) : (
+                  product.name
+                )}
+              </td>
               <td className={styles.priceCell}>${product.price}</td>
               <td>
                 <span className={`${styles.badge} ${styles.categoryBadge}`}>{product.category}</span>
@@ -249,6 +298,9 @@ export default function ManageProducts() {
   const [qcScrapeLoading, setQcScrapeLoading] = useState(false);
   const [selectedQcIndices, setSelectedQcIndices] = useState([]);
   const [bulkColorwayText, setBulkColorwayText] = useState('');
+  
+  // Lightbox state
+  const [lightboxImage, setLightboxImage] = useState(null);
   
   // Custom alerts and confirmations
   const [toasts, setToasts] = useState([]);
@@ -800,6 +852,34 @@ export default function ManageProducts() {
     setShowModal(true);
   }, []);
 
+  const handleImageClick = useCallback((imageUrl) => {
+    setLightboxImage(imageUrl);
+  }, []);
+
+  const handleNameSave = useCallback(async (productId, newName) => {
+    if (!newName.trim()) {
+      showToast('Nazwa nie może być pusta', 'error');
+      return;
+    }
+    
+    try {
+      const res = await fetch(`/api/products/${productId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newName })
+      });
+      
+      if (res.ok) {
+        showToast('Nazwa zaktualizowana!', 'success');
+        fetchProducts(currentPage);
+      } else {
+        showToast('Błąd aktualizacji nazwy.', 'error');
+      }
+    } catch (err) {
+      showToast('Błąd połączenia.', 'error');
+    }
+  }, [currentPage, fetchProducts, showToast]);
+
   return (
     <div className={styles.adminContainer}>
       <header className={styles.adminHeader}>
@@ -935,6 +1015,9 @@ export default function ManageProducts() {
             onUpdatePinnedOrder={handleUpdatePinnedOrder}
             onReorderPinned={handleReorderPinned}
             isReordering={isReordering}
+            onImageClick={handleImageClick}
+            onNameDoubleClick={() => {}}
+            onNameSave={handleNameSave}
           />
         </div>
       )}
@@ -1453,6 +1536,64 @@ export default function ManageProducts() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Image Lightbox */}
+      {lightboxImage && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.95)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000,
+            cursor: 'pointer'
+          }}
+          onClick={() => setLightboxImage(null)}
+        >
+          <button
+            onClick={() => setLightboxImage(null)}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: 'none',
+              color: 'white',
+              fontSize: '32px',
+              width: '50px',
+              height: '50px',
+              borderRadius: '50%',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background 0.2s',
+              zIndex: 10001
+            }}
+            onMouseEnter={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.2)'}
+            onMouseLeave={(e) => e.target.style.background = 'rgba(255, 255, 255, 0.1)'}
+          >
+            ×
+          </button>
+          <img 
+            src={lightboxImage} 
+            alt="Full size preview" 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              objectFit: 'contain',
+              borderRadius: '8px',
+              cursor: 'default'
+            }}
+          />
         </div>
       )}
     </div>
