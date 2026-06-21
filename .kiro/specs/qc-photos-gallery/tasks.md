@@ -17,7 +17,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
 
 ## Tasks
 
-- [ ] 1. Extend database schema and create types
+- [~] 1. Extend database schema and create types
   - Create TypeScript interfaces for QCPhoto, PhotoGroup, ColorVariant, PhotoCategory
   - Extend Product model in `/src/models/Product.js` to include qcPhotos array field
   - Add compound index for efficient variant-based queries
@@ -25,7 +25,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
   - _Requirements: 15.1, 6.1, 7.1_
 
 - [ ] 2. Implement API endpoints for QC photo operations
-  - [ ] 2.1 Create upload endpoint at `/src/app/api/qc-photos/upload/route.js`
+  - [-] 2.1 Create upload endpoint at `/src/app/api/qc-photos/upload/route.js`
     - Implement authentication and admin authorization check
     - Add file type validation (JPEG, PNG, WEBP, GIF)
     - Add file size validation (max 10MB)
@@ -44,7 +44,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - **Property 10: File Size Validation**
     - **Validates: Requirements 12.2**
   
-  - [ ] 2.4 Create GET endpoint at `/src/app/api/qc-photos/route.js`
+  - [-] 2.4 Create GET endpoint at `/src/app/api/qc-photos/route.js`
     - Support query parameters: productId (required), variantId (optional), category (optional)
     - Fetch Product document and filter qcPhotos array based on query params
     - Group photos by variant and return with variant metadata
@@ -59,7 +59,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - **Property 4: Category Filtering Correctness**
     - **Validates: Requirements 1.3, 3.3**
   
-  - [ ] 2.7 Create DELETE endpoint at `/src/app/api/qc-photos/[photoId]/route.js`
+  - [-] 2.7 Create DELETE endpoint at `/src/app/api/qc-photos/[photoId]/route.js`
     - Implement authentication and admin authorization check
     - Find Product and photo entry by photoId
     - Delete files from storage (original and thumbnail)
@@ -90,11 +90,11 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - **Property 11: Category Assignment Persistence**
     - **Validates: Requirements 7.3**
 
-- [ ] 3. Checkpoint - Ensure API tests pass
+- [~] 3. Checkpoint - Ensure API tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 4. Implement frontend gallery components
-  - [ ] 4.1 Create ThumbnailCard component at `/src/components/qc-gallery/ThumbnailCard.jsx`
+  - [~] 4.1 Create ThumbnailCard component at `/src/components/qc-gallery/ThumbnailCard.jsx`
     - Display first photo from photo group as thumbnail using Next.js Image
     - Show color variant label
     - Conditionally render PhotoCountBadge if photo count > 1
@@ -112,7 +112,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - **Property 16: View All Link Visibility**
     - **Validates: Requirements 18.1, 18.3**
   
-  - [ ] 4.4 Create CategoryFilter component at `/src/components/qc-gallery/CategoryFilter.jsx`
+  - [~] 4.4 Create CategoryFilter component at `/src/components/qc-gallery/CategoryFilter.jsx`
     - Render tab-based interface for category selection
     - Always include "All" tab as first tab
     - Display photo count for each category
@@ -122,7 +122,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Add ARIA labels for accessibility
     - _Requirements: 3.1, 3.2, 3.3, 16.3_
   
-  - [ ] 4.5 Create QCPhotosGallery component at `/src/components/qc-gallery/QCPhotosGallery.jsx`
+  - [~] 4.5 Create QCPhotosGallery component at `/src/components/qc-gallery/QCPhotosGallery.jsx`
     - Accept productId, colorVariants, and qcPhotos as props
     - Implement groupPhotosByVariant utility function
     - Implement filterPhotosByCategory utility function
@@ -147,7 +147,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - _Requirements: 1.4, 3.5_
 
 - [ ] 5. Implement carousel viewer components
-  - [ ] 5.1 Create CarouselViewer component at `/src/components/qc-gallery/CarouselViewer.jsx`
+  - [~] 5.1 Create CarouselViewer component at `/src/components/qc-gallery/CarouselViewer.jsx`
     - Accept isOpen, photos, initialIndex, onClose as props
     - Manage currentIndex state for photo navigation
     - Manage zoomLevel state (100-300%)
@@ -163,7 +163,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Add smooth transitions (200-400ms) between photos
     - _Requirements: 4.1, 4.2, 4.8, 4.9, 14.5, 16.2, 16.5, 16.6, 16.7_
   
-  - [ ] 5.2 Create MainPhotoDisplay component at `/src/components/qc-gallery/MainPhotoDisplay.jsx`
+  - [~] 5.2 Create MainPhotoDisplay component at `/src/components/qc-gallery/MainPhotoDisplay.jsx`
     - Display current photo at large size using Next.js Image
     - Implement ZoomControls sub-component with +/- buttons
     - Handle zoom level changes (100% to 300%)
@@ -175,7 +175,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Add alt text for accessibility
     - _Requirements: 4.2, 5.1, 5.2, 5.3, 5.4, 14.2_
   
-  - [ ] 5.3 Create NavigationControls component at `/src/components/qc-gallery/NavigationControls.jsx`
+  - [~] 5.3 Create NavigationControls component at `/src/components/qc-gallery/NavigationControls.jsx`
     - Render Previous button (left arrow)
     - Render Next button (right arrow)
     - Disable/hide Previous button when at first photo
@@ -184,7 +184,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Add ARIA labels for screen readers
     - _Requirements: 4.3, 4.4, 4.5, 16.2_
   
-  - [ ] 5.4 Create ThumbnailStrip component at `/src/components/qc-gallery/ThumbnailStrip.jsx`
+  - [~] 5.4 Create ThumbnailStrip component at `/src/components/qc-gallery/ThumbnailStrip.jsx`
     - Display horizontal scrollable strip of thumbnails
     - Render thumbnail for each photo in current group
     - Highlight currently active thumbnail
@@ -201,7 +201,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - **Property 15: Zoom Level Reset on Navigation**
     - **Validates: Requirements 5.5**
   
-  - [ ] 5.7 Implement touch gesture support for mobile devices
+  - [~] 5.7 Implement touch gesture support for mobile devices
     - Add swipe left/right handlers for photo navigation
     - Add pinch-to-zoom handler using touch events
     - Add double-tap handler for zoom toggle
@@ -217,11 +217,11 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Test focus trap when open
     - _Requirements: 4.1, 4.8, 16.2, 16.6, 16.7_
 
-- [ ] 6. Checkpoint - Ensure frontend component tests pass
+- [~] 6. Checkpoint - Ensure frontend component tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 7. Integrate gallery into product detail page
-  - [ ] 7.1 Update product detail page at `/src/app/products/[slug]/page.jsx`
+  - [~] 7.1 Update product detail page at `/src/app/products/[slug]/page.jsx`
     - Add server-side fetch for QC photos during page generation
     - Pass productId, colorVariants, and qcPhotos to QCPhotosGallery component
     - Import and render QCPhotosGallery component below product details section
@@ -236,7 +236,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - _Requirements: 1.4_
 
 - [ ] 8. Implement admin upload interface
-  - [ ] 8.1 Create admin QC photos page at `/src/app/admin-99x-hsd/products/[id]/qc-photos/page.jsx`
+  - [~] 8.1 Create admin QC photos page at `/src/app/admin-99x-hsd/products/[id]/qc-photos/page.jsx`
     - Implement authentication check (admin only)
     - Fetch product and existing QC photos on page load
     - Display ProductSelector component (if managing multiple products)
@@ -248,7 +248,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Handle variant selection changes
     - _Requirements: 6.1, 6.4, 6.5_
   
-  - [ ] 8.2 Create UploadZone component at `/src/components/admin/qc-photos/UploadZone.jsx`
+  - [~] 8.2 Create UploadZone component at `/src/components/admin/qc-photos/UploadZone.jsx`
     - Implement DragDropHandler for file drag-and-drop
     - Provide visual feedback when drag is active
     - Implement FilePickerButton for click-to-upload
@@ -270,7 +270,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - **Property 17: Error Message Specificity**
     - **Validates: Requirements 12.5, 17.1, 17.2, 17.3, 17.5**
   
-  - [ ] 8.5 Create PhotoManagementGrid component at `/src/components/admin/qc-photos/PhotoManagementGrid.jsx`
+  - [~] 8.5 Create PhotoManagementGrid component at `/src/components/admin/qc-photos/PhotoManagementGrid.jsx`
     - Display existing QC photos grouped by color variant
     - Render PhotoCard component for each photo
     - Support drag-and-drop reordering of photos within variant
@@ -283,7 +283,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - **Property 6: Order Persistence After Reordering**
     - **Validates: Requirements 8.3**
   
-  - [ ] 8.7 Create PhotoCard component at `/src/components/admin/qc-photos/PhotoCard.jsx`
+  - [~] 8.7 Create PhotoCard component at `/src/components/admin/qc-photos/PhotoCard.jsx`
     - Display photo thumbnail
     - Render CategoryDropdown for category assignment
     - Render DragHandle for reordering
@@ -309,7 +309,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - _Requirements: 9.1, 9.3, 10.1, 12.2, 7.5, 11.2, 11.3_
 
 - [ ] 9. Implement responsive design and styling
-  - [ ] 9.1 Create responsive grid styles for QCPhotosGallery
+  - [~] 9.1 Create responsive grid styles for QCPhotosGallery
     - Mobile (<768px): 2 columns, gap 12px
     - Tablet (768-1024px): 3 columns, gap 16px
     - Desktop (>1024px): 4 columns, gap 20px
@@ -318,7 +318,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Adapt layout within 300ms on viewport change
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
   
-  - [ ] 9.2 Create responsive styles for CarouselViewer
+  - [~] 9.2 Create responsive styles for CarouselViewer
     - Full-screen modal on all devices
     - Mobile: Single photo with swipe navigation
     - Tablet: Visible thumbnail strip at bottom
@@ -326,7 +326,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Scrollable thumbnail strip on narrow devices
     - _Requirements: 14.3, 14.4_
   
-  - [ ] 9.3 Implement lazy loading for gallery images
+  - [~] 9.3 Implement lazy loading for gallery images
     - Use Next.js Image component with lazy loading
     - Load images as they enter viewport
     - Show thumbnail while full image loads (progressive loading)
@@ -340,14 +340,14 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - _Requirements: 13.5, 14.3_
 
 - [ ] 10. Implement accessibility features
-  - [ ] 10.1 Add keyboard navigation support
+  - [~] 10.1 Add keyboard navigation support
     - Gallery: Tab through thumbnail cards, Enter to open carousel
     - Carousel: Arrow keys for navigation, Escape to close, Tab through controls
     - Category filter: Arrow keys to switch tabs, Enter to select
     - Admin interface: Full keyboard support for upload and management
     - _Requirements: 16.2, 18.5_
   
-  - [ ] 10.2 Add ARIA labels and semantic HTML
+  - [~] 10.2 Add ARIA labels and semantic HTML
     - Use semantic HTML elements (nav, button, dialog)
     - Add ARIA labels to all interactive controls
     - Add alt text to all images (use photo altText field)
@@ -356,7 +356,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Add aria-live regions for dynamic content updates
     - _Requirements: 16.1, 16.4, 16.5_
   
-  - [ ] 10.3 Implement focus management
+  - [~] 10.3 Implement focus management
     - Add visible focus indicators with 3:1 contrast ratio
     - Implement focus trap in carousel modal
     - Return focus to triggering element on carousel close
@@ -371,7 +371,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - _Requirements: 16.2, 16.3, 16.5_
 
 - [ ] 11. Implement error handling and validation
-  - [ ] 11.1 Add client-side error handling for upload operations
+  - [~] 11.1 Add client-side error handling for upload operations
     - Display toast notifications for transient errors
     - Display inline errors for validation errors
     - Show error list for batch upload failures
@@ -379,7 +379,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Set upload timeout to 30 seconds with timeout error message
     - _Requirements: 17.1, 17.2, 17.3, 17.4_
   
-  - [ ] 11.2 Add server-side error handling for API endpoints
+  - [~] 11.2 Add server-side error handling for API endpoints
     - Return appropriate HTTP status codes (400, 401, 403, 404, 413, 500)
     - Return consistent error response format with success, error, code fields
     - Implement file type validation with magic number verification
@@ -388,7 +388,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Log errors server-side for monitoring
     - _Requirements: 12.4, 17.1, 17.2, 17.3_
   
-  - [ ] 11.3 Add graceful degradation for edge cases
+  - [~] 11.3 Add graceful degradation for edge cases
     - Display placeholder image if photo URL returns 404
     - Show "Unable to load photos" message on API failures
     - Provide refresh button for failed loads
@@ -404,7 +404,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - _Requirements: 17.1, 17.2, 17.3, 17.5_
 
 - [ ] 12. Final checkpoint - Integration testing and verification
-  - [ ] 12.1 Verify complete user workflow on product detail page
+  - [~] 12.1 Verify complete user workflow on product detail page
     - Customer can view QC photos grouped by variant
     - Customer can filter photos by category
     - Customer can open carousel and navigate photos
@@ -412,7 +412,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Gallery works on mobile, tablet, and desktop
     - _Requirements: 1.1, 1.2, 3.1, 4.1, 5.1, 13.1, 13.2, 13.3_
   
-  - [ ] 12.2 Verify complete admin workflow
+  - [~] 12.2 Verify complete admin workflow
     - Admin can access admin QC photos page
     - Admin can select product and variant
     - Admin can upload photos via drag-drop
@@ -422,7 +422,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Admin can delete photos
     - _Requirements: 6.1, 6.2, 7.1, 8.1, 9.1, 10.1, 11.1_
   
-  - [ ] 12.3 Verify data persistence and retrieval
+  - [~] 12.3 Verify data persistence and retrieval
     - Uploaded photos are saved with correct metadata
     - Photos are retrieved grouped by variant
     - Photo order is preserved
@@ -430,7 +430,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Deleted photos are removed from storage and database
     - _Requirements: 7.3, 8.3, 8.4, 11.3, 11.4, 15.1_
   
-  - [ ] 12.4 Verify performance and optimization
+  - [~] 12.4 Verify performance and optimization
     - Product detail page loads with QC photos within 1 second
     - Thumbnails load before full-resolution images
     - Images are properly optimized (Sharp processing)
@@ -439,7 +439,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Carousel transitions are smooth (200-400ms)
     - _Requirements: 3.5, 4.9, 15.2, 15.3, 15.4, 15.5_
   
-  - [ ] 12.5 Verify accessibility compliance
+  - [~] 12.5 Verify accessibility compliance
     - All interactive elements are keyboard accessible
     - Focus indicators are visible
     - Screen reader announcements work
@@ -454,7 +454,7 @@ The implementation follows the existing Next.js patterns, uses TypeScript for ty
     - Test error recovery scenarios
     - _Requirements: All requirements_
 
-- [ ] 13. Final checkpoint - Ensure all tests pass
+- [~] 13. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

@@ -863,14 +863,15 @@ export default function ManageProducts() {
     }
     
     try {
+      const newCategory = detectCategory(newName);
       const res = await fetch(`/api/products/${productId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newName })
+        body: JSON.stringify({ name: newName, category: newCategory })
       });
       
       if (res.ok) {
-        showToast('Nazwa zaktualizowana!', 'success');
+        showToast('Nazwa i kategoria zaktualizowane!', 'success');
         fetchProducts(currentPage);
       } else {
         showToast('Błąd aktualizacji nazwy.', 'error');

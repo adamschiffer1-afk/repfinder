@@ -1,3 +1,4 @@
+// Fix Product Names Script - Updates only product names based on new brand mapping
 require('dotenv').config({ path: '.env.local' });
 const mongoose = require('mongoose');
 
@@ -13,98 +14,98 @@ const ProductSchema = new mongoose.Schema({
   clicks: { type: Number, default: 0 },
   isPinned: { type: Boolean, default: false },
   pinnedOrder: { type: Number, default: null },
-  qcImages: { type: [mongoose.Schema.Types.Mixed], default: [] },
-  slug: { type: String, sparse: true }
+  qcImages: { type: [String], default: [] },
+  slug: { type: String, unique: true, sparse: true },
+  itemId: { type: String, unique: true, sparse: true }
 }, { timestamps: true });
 
 const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
 
-// Usuwa wzorzec kropek z nazwy: "L.o.u.i.s" -> "Louis", "S.K.A.T.E.S" -> "SKATES"
-// Logika: pojedyncze litery oddzielone kropkami (bez spacji) -> sklej w jedno słowo
-function fixName(name) {
-  if (!name) return name;
-
-  // Zastąp wzorzec: pojedyncza litera.litera.litera... (min 2 człony)
-  // np. "L.o.u.i.s" -> "Louis", "S.K.A.T.E.S" -> "SKATES"
-  let fixed = name.replace(/\b([A-Za-z])(?:\.([A-Za-z]))+\.?\b/g, (match) => {
-    // Usuń wszystkie kropki z dopasowania
-    return match.replace(/\./g, '');
-  });
-
-  // Usuń też izolowane kropki które zostały np. " . " -> " "
-  fixed = fixed.replace(/\s*\.\s*/g, ' ').trim();
-
-  // Usuń podwójne spacje
-  fixed = fixed.replace(/\s+/g, ' ').trim();
-
-  return fixed;
-}
+// UPDATED BRAND MAP with fixes
+const BRAND_FIXES = {
+  // Purple Brand fix
+  'Puma': 'Purple Brand',
+  // Gucci variations
+  'G.U': 'Gucci',
+  'GU': 'Gucci',
+  // Yeezy fix
+  'YZ': 'Yeezy',
+  'Yz': 'Yeezy',
+  // Dior variations
+  'DR': 'Dior',
+  'D R': 'Dior',
+  // Supreme variations
+  'SUP': 'Supreme',
+  'S U P': 'Supreme',
+  // Broken Planet (was incorrectly Denim Tears)
+  'Denim Tears': 'Broken Planet',
+  // Lanvin
+  'L.A.N': 'Lanvin',
+  'LAN': 'Lanvin',
+};
 
 async function fixProductNames() {
   try {
     console.log('🔌 Łączenie z MongoDB...');
-
-    if (!MONGODB_URI) {
-      throw new Error('Brak MONGODB_URI w .env.local');
-    }
-
     await mongoose.connect(MONGODB_URI);
     console.log('✅ Połączono z MongoDB\n');
 
-    // Znajdź wszystkie produkty z kropkami w nazwie
-    // Wzorzec: litera, kropka, litera (np. "L.o", "S.K", "m.a")
-    const productsWithDots = await Product.find({
-      name: { $regex: /[A-Za-z]\.[A-Za-z]/ }
+    let fixedCount = 0;
+    let skippedPinned = 0;
+    let totalChecked = 0;
+
+    // Get all products (excluding pinned ones)
+    const products = await Product.find({ 
+      $or: [{ isPinned: false }, { isPinned: { $exists: false } }] 
     });
 
-    console.log(`🔍 Znaleziono ${productsWithDots.length} produktów z kropkami w nazwie\n`);
+    console.log(`📦 Znaleziono ${products.length} produktów do sprawdzenia\n`);
 
-    if (productsWithDots.length === 0) {
-      console.log('✅ Brak produktów do poprawienia!\n');
-      await mongoose.connection.close();
-      process.exit(0);
-    }
+    for (const product of products) {
+      totalChecked++;
+      let needsUpdate = false;
+      let newName = product.name;
 
-    let updatedCount = 0;
-    let skippedCount = 0;
-    const changes = [];
-
-    for (const product of productsWithDots) {
-      const originalName = product.name;
-      const fixedName = fixName(originalName);
-
-      if (fixedName === originalName) {
-        skippedCount++;
-        continue;
+      // Check each brand fix
+      for (const [oldBrand, newBrand] of Object.entries(BRAND_FIXES)) {
+        // Create regex to match the brand name as a whole word
+        const regex = new RegExp(`\\b${oldBrand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+        
+        if (regex.test(newName)) {
+          newName = newName.replace(regex, newBrand);
+          needsUpdate = true;
+        }
       }
 
-      changes.push({ original: originalName, fixed: fixedName });
-
-      await Product.updateOne(
-        { _id: product._id },
-        { $set: { name: fixedName } }
-      );
-      updatedCount++;
+      if (needsUpdate) {
+        await Product.updateOne(
+          { _id: product._id },
+          { $set: { name: newName } }
+        );
+        console.log(`✅ [${totalChecked}/${products.length}] Zaktualizowano: "${product.name}" → "${newName}"`);
+        fixedCount++;
+      } else {
+        if (totalChecked % 100 === 0) {
+          console.log(`⏩ Sprawdzono ${totalChecked}/${products.length} produktów...`);
+        }
+      }
     }
 
-    console.log('📋 Wprowadzone zmiany:');
-    changes.forEach((c, i) => {
-      console.log(`   ${i + 1}. "${c.original}"\n       → "${c.fixed}"`);
-    });
+    // Check pinned products count
+    const pinnedCount = await Product.countDocuments({ isPinned: true });
 
-    console.log(`\n✅ Zaktualizowano nazwy: ${updatedCount} produktów`);
-    if (skippedCount > 0) {
-      console.log(`⏭️  Pominięto (bez zmian): ${skippedCount} produktów`);
-    }
-    console.log('✅ Gotowe!\n');
+    console.log('\n' + '='.repeat(60));
+    console.log(`✅ Zaktualizowano nazwy: ${fixedCount} produktów`);
+    console.log(`⏭️  Pominięto (przypięte): ${pinnedCount} produktów`);
+    console.log(`📊 Sprawdzono łącznie: ${totalChecked} produktów`);
+    console.log('='.repeat(60));
 
     await mongoose.connection.close();
-    console.log('👋 Rozłączono z bazą danych');
+    console.log('\n✅ Gotowe!');
     process.exit(0);
-
   } catch (error) {
     console.error('❌ Błąd:', error.message);
-    try { await mongoose.connection.close(); } catch {}
+    await mongoose.connection.close();
     process.exit(1);
   }
 }
