@@ -1,0 +1,109 @@
+/* src/styles/globals.css */
+body {
+  background: #0f0a15; /* Very dark, slightly purple-tinted black */
+  color: #f4f4f5;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(167, 139, 250, 0.06) 0%, transparent 50%);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+input, textarea, [contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Disable default tap highlight on mobile devices */
+* {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-focus-ring-color: transparent !important;
+}
+
+/* Global focus reset — completely removes outline flash on click/focus/active everywhere */
+*,
+*:focus,
+*:focus-visible,
+*:active {
+  outline: none !important;
+  outline: 0 !important;
+}
+
+/* Disable default focus/active box shadows specifically on buttons, links and clickable elements to prevent ugly browser outlines/glows, without breaking text inputs */
+button:focus,
+button:focus-visible,
+button:active,
+a:focus,
+a:focus-visible,
+a:active,
+[role="button"]:focus,
+[role="button"]:active,
+input[type="button"]:focus,
+input[type="submit"]:focus {
+  box-shadow: none !important;
+}
+
+
+main {
+  min-height: calc(100vh - 100px);
+}
+
+/* Premium Button Utility */
+.btn-premium {
+  background: #ffffff;
+  color: #000000;
+  border-radius: 50px;
+  font-weight: 600;
+  padding: 14px 32px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.15);
+}
+
+.btn-premium:hover {
+  background: #fdfcff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 30px rgba(139, 92, 246, 0.4);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Base adjustments */
+body {
+  padding-top: 0;
+}
+
+main {
+  padding-top: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: none;
+  color: inherit;
+}

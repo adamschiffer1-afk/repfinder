@@ -1,0 +1,115 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, rgba(0, 217, 255, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+.loading {
+  text-align: center;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 40px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 217, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.1);
+}
+
+.spinner {
+  border: 4px solid rgba(0, 217, 255, 0.1);
+  border-top: 4px solid #00d9ff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.2);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingText {
+  font-size: 1.2rem;
+  color: #fff;
+  font-weight: 500;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+.errorAlert {
+  background: rgba(20, 0, 0, 0.8);
+  border: 1px solid rgba(255, 77, 77, 0.3);
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(255, 77, 77, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.errorTitle {
+  color: #ff4d4d;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  text-shadow: 0 0 15px rgba(255, 77, 77, 0.3);
+}
+
+.errorMessage {
+  color: #ddd;
+  font-size: 1rem;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.retryButton {
+  background: linear-gradient(45deg, #00d9ff, #008cff);
+  border: none;
+  border-radius: 50px;
+  padding: 12px 30px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+}
+
+.retryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.4);
+}
+
+.retryButton:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 15px;
+  }
+
+  .loading {
+    padding: 30px 20px;
+  }
+
+  .errorAlert {
+    padding: 20px;
+  }
+
+  .errorTitle {
+    font-size: 1.5rem;
+  }
+}

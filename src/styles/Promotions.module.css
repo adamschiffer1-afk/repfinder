@@ -1,0 +1,566 @@
+/* Main Container */
+.promotionContainer {
+  background: transparent;
+  min-height: 100vh;
+  padding: 20px 10px;
+  /* Reduced padding */
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Header */
+.promotionTitle {
+  font-size: 2rem;
+  /* Reduced from 3rem */
+  font-weight: 800;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 2rem;
+  /* Reduced margin */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
+  animation: slideIn 0.6s ease-out;
+}
+
+.promotionTitleWhite {
+  color: #fff;
+}
+
+.promotionTitleBlue {
+  color: #00d9ff;
+  text-shadow: 0 0 15px rgba(0, 217, 255, 0.6);
+}
+
+/* Grid Layout - Responsive Grid */
+.promotionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  /* Auto-fill with min width */
+  gap: 1.5rem;
+  /* Reduced gap */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+/* Card Style - Glassmorphism */
+.promotionCard {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 15px;
+  /* Reduced radius */
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.4s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.promotionCard:hover {
+  transform: translateY(-5px);
+  /* Subtle lift */
+  border-color: rgba(0, 217, 255, 0.3);
+  box-shadow: 0 15px 30px rgba(0, 217, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Image Wrapper */
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.promotionImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.promotionCard:hover .promotionImage {
+  transform: scale(1.05);
+}
+
+/* Batch Indicators */
+.batchIndicators {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 5px;
+  z-index: 2;
+}
+
+.batchIndicator {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 3px 8px;
+  /* Compact padding */
+  border-radius: 8px;
+  font-size: 0.7rem;
+  /* Smaller font */
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.newIndicator {
+  background: rgba(255, 153, 0, 0.85);
+  border-color: rgba(255, 153, 0, 0.5);
+}
+
+/* Overlay & View Button */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+
+.promotionCard:hover .overlay {
+  opacity: 1;
+}
+
+.viewButton {
+  background: linear-gradient(45deg, #00d9ff, #008cff);
+  border: none;
+  padding: 8px 16px;
+  /* Compact button */
+  border-radius: 20px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.promotionCard:hover .viewButton {
+  transform: translateY(0);
+}
+
+.viewButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+}
+
+/* Card Body */
+.cardBody {
+  padding: 1rem;
+  /* Reduced padding */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  /* Smaller title */
+  color: #fff;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+  height: 2.6em;
+  /* Limit height */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.cardFooter {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cardPrice {
+  font-size: 1.2rem;
+  /* Smaller price */
+  color: #00d9ff;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+}
+
+.cardBatch,
+.cardExpires {
+  font-size: 0.8rem;
+  /* Smaller details */
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Ratings */
+.ratingContainer {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rating,
+.likes,
+.dislikes {
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rating {
+  color: #ffd700;
+}
+
+.likes {
+  color: #00d9ff;
+}
+
+.dislikes {
+  color: #ff4d4d;
+}
+
+/* Description Button */
+.descriptionButton {
+  margin-top: 0.8rem;
+  background: transparent;
+  border: 1px solid rgba(0, 217, 255, 0.5);
+  color: #00d9ff;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.descriptionButton:hover {
+  background: rgba(0, 217, 255, 0.1);
+  border-color: #00d9ff;
+  color: #fff;
+}
+
+/* Modal - Glass Style */
+.descriptionModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+  padding: 20px;
+  /* Padding for mobile safety */
+}
+
+.modalContent {
+  background: rgba(20, 20, 25, 0.95);
+  /* Slightly more opaque for readability */
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  border-radius: 20px;
+  padding: 1.5rem;
+  max-width: 600px;
+  /* Reduced max-width */
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 0 40px rgba(0, 217, 255, 0.1);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalTitle {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+}
+
+.closeModalButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeModalButton:hover {
+  background: rgba(255, 77, 77, 0.3);
+  color: #ff4d4d;
+}
+
+.modalImageWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.modalImage {
+  max-width: 200px;
+  /* Smaller image in modal */
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.modalPrice {
+  font-size: 1.5rem;
+  color: #00d9ff;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.modalDescription {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Comments Section */
+.modalComments {
+  margin-top: 1rem;
+}
+
+.modalCommentsTitle {
+  font-size: 1.1rem;
+  color: #fff;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 5px;
+}
+
+.commentItem {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.commentHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.commentAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.commentUsername {
+  color: #00d9ff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-right: 8px;
+}
+
+.commentDate {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+}
+
+.commentContent {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.loadMoreButton {
+  display: block;
+  margin: 10px auto;
+  background: transparent;
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  color: #00d9ff;
+  font-size: 0.8rem;
+  padding: 5px 15px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.modalViewButton {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(45deg, #00d9ff, #008cff);
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 50px;
+  margin-top: 1.5rem;
+  box-shadow: 0 5px 20px rgba(0, 217, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.modalViewButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 217, 255, 0.5);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.pageButton {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.pageButton:hover:not(:disabled) {
+  background: rgba(0, 217, 255, 0.2);
+  border-color: #00d9ff;
+}
+
+.pageButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.pageInfo {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .promotionContainer {
+    padding: 15px 5px;
+  }
+
+  .promotionTitle {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .promotionGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    /* Simulates 2-col on mobile */
+    gap: 10px;
+  }
+
+
+
+  .cardBody {
+    padding: 0.8rem;
+  }
+
+  .cardTitle {
+    font-size: 0.9rem;
+  }
+
+  .cardPrice {
+    font-size: 1rem;
+  }
+
+  .viewButton {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .modalContent {
+    padding: 1rem;
+    max-height: 90vh;
+  }
+}

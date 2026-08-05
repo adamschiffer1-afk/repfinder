@@ -1,0 +1,23 @@
+import { auth } from "@/auth";
+import { NextResponse } from "next/server";
+
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
+  const isAdminPage = nextUrl.pathname.startsWith("/admin");
+
+  if (isAdminPage) {
+    if (!isLoggedIn) {
+      return NextResponse.redirect(new URL("/api/auth/signin", nextUrl));
+    }
+    if (req.auth.user.email !== "kakobuybs209@gmail.com") {
+      return NextResponse.redirect(new URL("/", nextUrl));
+    }
+  }
+
+  return NextResponse.next();
+});
+
+export const config = {
+  matcher: ["/admin/:path*"],
+};

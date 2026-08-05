@@ -1,0 +1,384 @@
+/* ============================================================
+   AdminEarnings.module.css
+   ============================================================ */
+
+/* ── KPI strip ───────────────────────────────────────────── */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.kpiCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
+  padding: 22px 18px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpiCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: radial-gradient(ellipse at top, var(--accent, transparent) 0%, transparent 70%);
+  opacity: 0.07;
+  pointer-events: none;
+}
+
+.kpiCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+
+.kpiIcon {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.kpiValue {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.kpiLabel {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.kpiSub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 5px;
+}
+
+/* ── Currency converter card ────────────────────────────── */
+.converterCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 24px 20px;
+  margin-bottom: 28px;
+}
+
+.converterCard h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.converterRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.converterInput {
+  flex: 1;
+  min-width: 140px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 16px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.converterInput:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+}
+
+.converterArrow {
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.converterResults {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex: 2;
+}
+
+.converterResult {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.converterResultLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 6px;
+}
+
+.converterResultValue {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.rateInfo {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.rateTag {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.rateRefresh {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rateRefresh:hover {
+  border-color: #a78bfa;
+  color: #a78bfa;
+}
+
+.rateRefresh:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Chart section ─────────────────────────────────────── */
+.chartsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.chartCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px 16px 16px;
+}
+
+.chartCard h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.barChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 100px;
+  padding-bottom: 24px;
+  position: relative;
+}
+
+.barCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  gap: 4px;
+  position: relative;
+  cursor: pointer;
+}
+
+.bar {
+  width: 100%;
+  min-height: 3px;
+  border-radius: 5px 5px 0 0;
+  transition: opacity 0.2s;
+}
+
+.barCol:hover .bar {
+  opacity: 0.75;
+}
+
+.barLabel {
+  position: absolute;
+  bottom: -20px;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+}
+
+/* ── Summary row ────────────────────────────────────────── */
+.summaryRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.summaryCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.summaryCard h4 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 14px;
+}
+
+.summaryLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 13px;
+}
+
+.summaryLine:last-child {
+  border-bottom: none;
+}
+
+.summaryLineKey {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.summaryLineVal {
+  font-weight: 700;
+}
+
+/* ── Table section ──────────────────────────────────────── */
+.tableSection {
+  margin-top: 8px;
+}
+
+.numBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--c, #a78bfa) 15%, transparent);
+  color: var(--c, #a78bfa);
+  border: 1px solid color-mix(in srgb, var(--c, #a78bfa) 30%, transparent);
+}
+
+/* ── Form grid ──────────────────────────────────────────── */
+.formLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #a78bfa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .formGrid { grid-template-columns: 1fr; }
+}
+
+/* ── Commission rate slider ─────────────────────────────── */
+.sliderWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #a78bfa;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
+  transition: box-shadow 0.2s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 14px rgba(167, 139, 250, 0.8);
+}
+
+.sliderValue {
+  min-width: 42px;
+  text-align: right;
+  font-size: 15px;
+  font-weight: 800;
+  color: #a78bfa;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .kpiGrid { grid-template-columns: 1fr 1fr; }
+  .chartsRow { grid-template-columns: 1fr; }
+  .summaryRow { grid-template-columns: 1fr; }
+  .converterRow { flex-direction: column; }
+  .converterResults { flex-direction: column; }
+}
+
+@media (max-width: 480px) {
+  .kpiGrid { grid-template-columns: 1fr; }
+}
