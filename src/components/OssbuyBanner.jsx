@@ -8,6 +8,11 @@ export default function OssbuyBanner() {
   const [showCloseButton, setShowCloseButton] = useState(false);
 
   useEffect(() => {
+    // Only show on /products page
+    if (!window.location.pathname.startsWith('/products')) {
+      return;
+    }
+
     // Check if banner was dismissed today
     const checkBannerStatus = () => {
       try {
@@ -19,16 +24,23 @@ export default function OssbuyBanner() {
             return; // Don't show banner
           }
         }
-        setIsVisible(true);
         
-        // Show close button after 3 seconds
+        // Show banner after 5 seconds
         setTimeout(() => {
-          setShowCloseButton(true);
-        }, 3000);
+          setIsVisible(true);
+          
+          // Show close button 3 seconds after banner appears
+          setTimeout(() => {
+            setShowCloseButton(true);
+          }, 3000);
+        }, 5000);
+        
       } catch (err) {
         // If localStorage fails, show banner but allow immediate close
-        setIsVisible(true);
-        setTimeout(() => setShowCloseButton(true), 3000);
+        setTimeout(() => {
+          setIsVisible(true);
+          setTimeout(() => setShowCloseButton(true), 3000);
+        }, 5000);
       }
     };
 
@@ -70,6 +82,8 @@ export default function OssbuyBanner() {
           className={styles.logo}
         />
         
+        <h1 className={styles.brandName}>RepFinder</h1>
+        
         <div className={styles.promoTag}>
           🔥 SPECJALNA OFERTA 🔥
         </div>
@@ -88,12 +102,6 @@ export default function OssbuyBanner() {
         >
           Zarejestruj się w OssBuy →
         </button>
-        
-        <img 
-          src="/images/ossbuy.png" 
-          alt="Ossbuy" 
-          className={styles.agentLogo}
-        />
       </div>
     </div>
   );

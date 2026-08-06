@@ -85,8 +85,16 @@
 .logo {
   width: 60px;
   height: 60px;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   object-fit: contain;
+}
+
+.brandName {
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
 }
 
 .promoTag {
@@ -102,7 +110,7 @@
 }
 
 .title {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   color: #fff;
   margin-bottom: 16px;
@@ -113,7 +121,7 @@
   background: linear-gradient(90deg, #a855f7 0%, #7c3aed 100%);
   padding: 4px 16px;
   border-radius: 8px;
-  font-size: 36px;
+  font-size: 32px;
   display: inline-block;
 }
 
@@ -138,7 +146,6 @@
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
-  margin-bottom: 24px;
 }
 
 .ctaButton:hover {
@@ -148,14 +155,6 @@
 
 .ctaButton:active {
   transform: translateY(0);
-}
-
-.agentLogo {
-  width: 120px;
-  height: auto;
-  margin-top: 16px;
-  opacity: 0.9;
-  object-fit: contain;
 }
 
 /* Mobile responsive */
@@ -173,12 +172,16 @@
     right: 16px;
   }
 
+  .brandName {
+    font-size: 28px;
+  }
+
   .title {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .discount {
-    font-size: 28px;
+    font-size: 26px;
     padding: 2px 12px;
   }
 
@@ -189,9 +192,5 @@
   .ctaButton {
     font-size: 16px;
     padding: 16px 36px;
-  }
-
-  .agentLogo {
-    width: 100px;
   }
 }
