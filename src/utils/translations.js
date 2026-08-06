@@ -113,9 +113,9 @@ export const translations = {
     },
     promo: {
       badge: "SPECJALNA OFERTA 🔥",
-      title: "Obecnie -15$ oraz -20% na wysyłkę w Kakobuy!",
+      title: "Obecnie -50% na wysyłkę w OssBuy!",
       description: "Zarejestruj się teraz i skorzystaj z tej wyjątkowej okazji przed jej wygaśnięciem.",
-      button: "Zarejestruj się w Kakobuy"
+      button: "Zarejestruj się w OssBuy"
     },
     settings: {
       title: "Ustawienia",
@@ -446,9 +446,9 @@ export const translations = {
     },
     promo: {
       badge: "SPECIAL OFFER 🔥",
-      title: "Currently -15$ and -20% on shipping at Kakobuy!",
+      title: "Currently -50% on shipping at OssBuy!",
       description: "Register now and take advantage of this unique opportunity before it expires.",
-      button: "Register at Kakobuy"
+      button: "Register at OssBuy"
     },
     settings: {
       title: "Settings",
@@ -725,9 +725,9 @@ export const translations = {
     },
     promo: {
       badge: "特别优惠 🔥",
-      title: "目前 Kakobuy 运费减免 15 美元并享受 8 折优惠！",
+      title: "目前 OssBuy 运费享受 5 折优惠！",
       description: "立即注册，在过期前利用这一独特机会。",
-      button: "在 Kakobuy 注册"
+      button: "在 OssBuy 注册"
     },
     settings: {
       title: "设置",
@@ -1000,9 +1000,9 @@ export const translations = {
     },
     promo: {
       badge: "SONDERANGEBOT 🔥",
-      title: "Aktuell -15$ und -20% auf den Versand bei Kakobuy!",
+      title: "Aktuell -50% auf den Versand bei OssBuy!",
       description: "Registriere dich jetzt und nutze diese einmalige Gelegenheit, bevor sie abläuft.",
-      button: "Bei Kakobuy registrieren"
+      button: "Bei OssBuy registrieren"
     },
     settings: {
       title: "Einstellungen",
@@ -1224,9 +1224,9 @@ export const translations = {
     },
     promo: {
       badge: "OFERTA ESPECIAL 🔥",
-      title: "¡Actualmente -15$ y -20% en envíos en Kakobuy!",
+      title: "¡Actualmente -50% en envíos en OssBuy!",
       description: "Regístrate ahora y aprovecha esta oportunidad única antes de que expire.",
-      button: "Registrarse en Kakobuy"
+      button: "Registrarse en OssBuy"
     },
     settings: {
       title: "Ajustes",
