@@ -135,8 +135,8 @@ export async function POST(request) {
     const body = await request.json();
     console.log('Request body parsed:', body);
     
-    const { products, replaceMode, confirm, batch, pin, startOrder } = body;
-    console.log('Extracted params:', { products: products?.length, replaceMode, batch, pin });
+    const { products, replaceMode, confirm, batch, category, pin, startOrder } = body;
+    console.log('Extracted params:', { products: products?.length, replaceMode, batch, category, pin });
 
     if (!products || !Array.isArray(products) || products.length === 0) {
       console.log('No products provided error');
@@ -199,6 +199,9 @@ export async function POST(request) {
         // Use name from spreadsheet (user's custom name)
         const finalName = product.name;
         
+        // Determine category: use manual override if provided, otherwise use scraped/auto-detected
+        const finalCategory = category || scrapedData.category;
+        
         // Get affiliate link
         const affiliateLink = getAffiliateLink(weidianUrl);
         
@@ -212,7 +215,7 @@ export async function POST(request) {
           existingProduct.name = finalName;
           existingProduct.price = scrapedData.price;
           existingProduct.image = scrapedData.image;
-          existingProduct.category = scrapedData.category;
+          existingProduct.category = finalCategory;
           existingProduct.batch = batch || 'best';
           existingProduct.link = affiliateLink;
           
@@ -240,7 +243,7 @@ export async function POST(request) {
             name: finalName,
             price: scrapedData.price,
             image: scrapedData.image,
-            category: scrapedData.category,
+            category: finalCategory,
             batch: batch || 'best',
             link: affiliateLink,
             clicks: 0,

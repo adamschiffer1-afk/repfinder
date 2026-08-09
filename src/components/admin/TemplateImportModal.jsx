@@ -60,6 +60,7 @@ export default function TemplateImportModal({
   const [bulkProgress, setBulkProgress] = useState({ total: 0, current: 0, successes: 0, failures: 0, logs: [] });
   const [bulkReplaceMode, setBulkReplaceMode] = useState('none'); // 'none', 'pinned', 'all'
   const [bulkBatch, setBulkBatch] = useState('best');
+  const [bulkCategory, setBulkCategory] = useState('auto'); // 'auto', 'shoes', 'hoodies', 't-shirts', 'pants', 'shorts', 'jackets', 'sets', 'accessories'
   const [replacePinnedConfirm, setReplacePinnedConfirm] = useState('');
   const [parsedFileData, setParsedFileData] = useState([]);
   const [parsedUrlData, setParsedUrlData] = useState([]);
@@ -175,6 +176,7 @@ export default function TemplateImportModal({
           replaceMode: bulkReplaceMode,
           confirm: requiresBulkConfirm ? REPLACE_CONFIRM_TEXT : undefined,
           batch: bulkBatch,
+          category: bulkCategory !== 'auto' ? bulkCategory : undefined, // Only send category if not auto
           pin: false,
           startOrder: 1,
           concurrency: 4
@@ -536,6 +538,41 @@ export default function TemplateImportModal({
               <option value="random" style={{ background: '#1a1a2e', color: 'white' }}>{t('Random')}</option>
               <option value="popular" style={{ background: '#1a1a2e', color: 'white' }}>{t('Popular')} 🔥</option>
             </select>
+          </div>
+
+          {/* Category Selection */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.8)' }}>
+              {t('Category')} <span style={{ fontSize: '11px', fontWeight: 400, color: 'rgba(255, 255, 255, 0.5)' }}>({t('for all products')})</span>
+            </label>
+            <select 
+              value={bulkCategory} 
+              onChange={(e) => setBulkCategory(e.target.value)} 
+              disabled={bulkLoading} 
+              style={{ 
+                padding: '8px', 
+                background: 'rgba(255,255,255,0.05)', 
+                color: 'white', 
+                border: '1px solid rgba(255,255,255,0.2)', 
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="auto" style={{ background: '#1a1a2e', color: 'white' }}>🤖 {t('Auto-detect (AI)')}</option>
+              <option value="shoes" style={{ background: '#1a1a2e', color: 'white' }}>👟 {t('Shoes')}</option>
+              <option value="hoodies" style={{ background: '#1a1a2e', color: 'white' }}>🧥 {t('Hoodies')}</option>
+              <option value="t-shirts" style={{ background: '#1a1a2e', color: 'white' }}>👕 {t('T-Shirts')}</option>
+              <option value="pants" style={{ background: '#1a1a2e', color: 'white' }}>👖 {t('Pants')}</option>
+              <option value="shorts" style={{ background: '#1a1a2e', color: 'white' }}>🩳 {t('Shorts')}</option>
+              <option value="jackets" style={{ background: '#1a1a2e', color: 'white' }}>🧥 {t('Jackets')}</option>
+              <option value="sets" style={{ background: '#1a1a2e', color: 'white' }}>👔 {t('Sets')}</option>
+              <option value="accessories" style={{ background: '#1a1a2e', color: 'white' }}>⌚ {t('Accessories')}</option>
+            </select>
+            {bulkCategory !== 'auto' && (
+              <div style={{ fontSize: '11px', color: '#60a5fa', fontStyle: 'italic' }}>
+                {t('All imported products will be categorized as')} <strong>{bulkCategory}</strong>
+              </div>
+            )}
           </div>
 
           {/* Confirmation Input for Replace Modes */}

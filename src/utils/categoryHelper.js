@@ -2,32 +2,44 @@
 
 const CATEGORY_MAP = {
   accessories: [
-    'hat', 'cap', 'balaclava', 'beanie', 'bag', 'backpack', 'wallet', 'keychain',
-    'bracelet', 'necklace', 'earring', 'glasses', 'sunglasses', 'belt', 'socks',
-    'case', 'jbl', 'airpods', 'pencil', 'watch', 'perfume', 'redbull',
-    'batterypack', 'boxer', 'underwear', 'briefs', 'ring', 'jewelry', 'chain',
-    'pendant', 'pad', 'iphone', 'samsung', 'charging',
-    'rolex', 'submariner', 'omega', 'patek', 'hublot', 'cartier', 'casio', 'seiko', 'citizen', 'audemars', 'ap', 'g-shock', 'zegarek'
+    // Headwear
+    'hat', 'cap', 'balaclava', 'beanie', 'headband', 'bandana',
+    // Bags & Carriers
+    'bag', 'backpack', 'wallet', 'purse', 'tote', 'messenger bag', 'duffel', 'pouch',
+    // Jewelry & Personal Items
+    'bracelet', 'necklace', 'earring', 'ring', 'jewelry', 'chain', 'pendant', 'brooch', 'pin',
+    // Eyewear
+    'glasses', 'sunglasses', 'eyewear',
+    // Neck & Waist Accessories
+    'belt', 'scarf', 'scarves', 'shawl', 'tie', 'bowtie', 'bow tie', 'bandana',
+    // Electronics & Tech
+    'case', 'jbl', 'airpods', 'pencil', 'charging', 'batterypack', 'pad', 'iphone', 'samsung', 'phone case',
+    // Watches
+    'watch', 'rolex', 'submariner', 'omega', 'patek', 'hublot', 'cartier', 'casio', 'seiko', 'citizen', 'audemars', 'ap', 'g-shock', 'zegarek',
+    // Fragrances & Personal Care
+    'perfume', 'cologne', 'fragrance', 'scent', 'eau de toilette', 'eau de parfum', 'edt', 'edp',
+    // Small Accessories
+    'keychain', 'socks', 'redbull', 'boxer', 'underwear', 'briefs', 'gloves', 'mittens'
   ],
   shorts: [
-    'shorts', 'swim shorts', 'mesh shorts', 'ee shorts'
+    'shorts', 'swim shorts', 'mesh shorts', 'ee shorts', 'basketball shorts', 'athletic shorts'
   ],
   pants: [
-    'pants', 'jeans', 'joggers', 'trousers', 'denim', 'cargo', 'sweatpants', 'tracksuit bottoms'
+    'pants', 'jeans', 'joggers', 'trousers', 'denim', 'cargo', 'sweatpants', 'tracksuit bottoms', 'chinos', 'slacks', 'leggings'
   ],
   hoodies: [
     'hoodie', 'sweater', 'zip', 'cardigan', 'fleece', 'crewneck', 'jumper',
-    'tech fleece', 'nocta tech'
+    'tech fleece', 'nocta tech', 'pullover'
   ],
   't-shirts': [
-    't-shirt', 'shirt', 'polo', 'top', 'jersey', 'v-neck', 'short sleeve', 'oversized tee'
+    't-shirt', 'shirt', 'polo', 'top', 'jersey', 'v-neck', 'short sleeve', 'oversized tee', 'long sleeve', 'tank top', 'vest'
   ],
   jackets: [
     'jacket', 'coat', 'windbreaker', 'vest', 'parka', 'puffer', 'down jacket',
-    'nuptse', 'bomber', 'harrington', 'varsity'
+    'nuptse', 'bomber', 'harrington', 'varsity', 'blazer', 'overcoat', 'trench', 'raincoat'
   ],
   sets: [
-    'tracksuit', 'track suit', 'two piece', '2 piece', 'co-ord', 'coord'
+    'tracksuit', 'track suit', 'two piece', '2 piece', 'co-ord', 'coord', 'outfit set', 'matching set'
   ],
   shoes: [
     'shoes', 'sneakers', 'skate', 'shoe', 'dunk', 'force', 'jordan', 'yeezy', 'gazelle',
@@ -35,12 +47,26 @@ const CATEGORY_MAP = {
     'spezial', 'crocs', 'slide', 'hotstep', 'shox', 'aj1', 'aj3', 'aj4', 'aj11',
     'air max', 'vapormax', 'tn', '9060', '2002r', '1906r', 'bapesta', 'lanvin',
     'miu miu', 'asics', 'acics', 'foam', 'slides', 'clog', 'mule', 'birk', 'boston', 'rick owens',
-    'b27', 'superstar', 'mind 001', 'be right back', 'nocta hotstep'
+    'b27', 'superstar', 'mind 001', 'be right back', 'nocta hotstep', 'boots', 'sandals', 'loafers'
   ]
 };
 
+// High-priority accessories that should be checked early to avoid misclassification
 const ACCESSORY_PRIORITY = [
-  'hat', 'cap', 'balaclava', 'beanie', 'bag', 'backpack', 'wallet', 'belt', 'glasses', 'sunglasses'
+  // Fragrances (often misclassified as clothing)
+  'perfume', 'cologne', 'fragrance', 'scent', 'eau de toilette', 'eau de parfum',
+  // Scarves and neck accessories
+  'scarf', 'scarves', 'shawl', 
+  // Headwear
+  'hat', 'cap', 'balaclava', 'beanie', 'headband',
+  // Bags
+  'bag', 'backpack', 'wallet', 'purse', 'tote',
+  // Jewelry
+  'necklace', 'bracelet', 'ring', 'chain', 'pendant',
+  // Eyewear
+  'belt', 'glasses', 'sunglasses',
+  // Watches
+  'watch', 'rolex', 'omega', 'patek', 'cartier'
 ];
 
 export const PRODUCT_CATEGORIES = [
@@ -105,55 +131,155 @@ const matchesCategory = (name, category) => {
 
 /**
  * Detects the category of a product based on its name.
+ * Uses intelligent pattern matching with priority-based classification.
  * @param {string} name - The product name.
  * @returns {string} - The detected category.
  */
 export function detectCategory(name) {
   if (!name) return 't-shirts';
-  const low = name.toLowerCase();
+  const low = name.toLowerCase().trim();
 
-  if ((low.includes('hoodie') && low.includes('pants')) || low.includes('tracksuit') || low.includes('track suit')) {
+  // ===== PHASE 1: Explicit multi-word patterns (highest priority) =====
+  
+  // Sets - must be checked first to avoid splitting into components
+  if ((low.includes('hoodie') && low.includes('pants')) || 
+      low.includes('tracksuit') || 
+      low.includes('track suit') ||
+      low.includes('two piece') ||
+      low.includes('2 piece') ||
+      /\b(co-ord|coord)\b/.test(low) ||
+      low.includes('matching set') ||
+      low.includes('outfit set')) {
     return 'sets';
   }
 
+  // ===== PHASE 2: High-priority accessories (prevent misclassification) =====
+  
+  // Fragrances - check before any clothing categories
+  if (low.includes('perfume') || 
+      low.includes('cologne') || 
+      low.includes('fragrance') ||
+      /\bscent\b/.test(low) ||
+      low.includes('eau de') ||
+      /\b(edt|edp)\b/.test(low)) {
+    return 'accessories';
+  }
+
+  // Scarves and neck accessories
+  if (low.includes('scarf') || 
+      low.includes('scarves') || 
+      low.includes('shawl') ||
+      (low.includes('neck') && (low.includes('tie') || low.includes('warmer')))) {
+    return 'accessories';
+  }
+
+  // Bags - check before 'track' in shoes
+  if (low.includes('bag') || 
+      low.includes('backpack') || 
+      low.includes('wallet') ||
+      low.includes('purse') ||
+      low.includes('tote') ||
+      low.includes('pouch')) {
+    return 'accessories';
+  }
+
+  // Headwear
+  if (/\b(hat|cap|beanie)\b/.test(low) || 
+      low.includes('balaclava') ||
+      low.includes('headband') ||
+      low.includes('bandana')) {
+    return 'accessories';
+  }
+
+  // Jewelry and watches
+  if (low.includes('necklace') || 
+      low.includes('bracelet') || 
+      low.includes('earring') ||
+      /\bring\b/.test(low) ||
+      low.includes('jewelry') ||
+      low.includes('chain') ||
+      low.includes('pendant') ||
+      low.includes('watch') ||
+      low.includes('rolex') ||
+      low.includes('omega') ||
+      low.includes('cartier') ||
+      low.includes('patek')) {
+    return 'accessories';
+  }
+
+  // Eyewear
+  if (low.includes('glasses') || 
+      low.includes('sunglasses') ||
+      low.includes('eyewear')) {
+    return 'accessories';
+  }
+
+  // Belt and other accessories
+  if (/\bbelt\b/.test(low) || 
+      low.includes('gloves') ||
+      low.includes('mittens')) {
+    return 'accessories';
+  }
+
+  // ===== PHASE 3: Specific brand/product patterns =====
+  
+  // Moncler jackets
   if (low.includes('moncler') && (low.includes('jacket') || low.includes('maya'))) {
     return 'jackets';
   }
 
+  // Nocta Tech Fleece (hoodies, not shoes)
   if (low.includes('nocta') && low.includes('tech') && !low.includes('hotstep')) {
     return 'hoodies';
   }
 
-  if (/\bshorts\b/.test(low) || low.includes('swim shorts')) {
+  // ===== PHASE 4: Clothing categories with exclusions =====
+  
+  // Shorts - use word boundary to avoid partial matches
+  if (/\bshorts\b/.test(low) || 
+      low.includes('swim shorts') ||
+      low.includes('mesh shorts') ||
+      low.includes('basketball shorts')) {
     return 'shorts';
   }
 
-  if (/\b(hoodie|hoody|sweatshirt)\b/.test(low)) {
+  // Hoodies and sweatshirts
+  if (/\b(hoodie|hoody|sweatshirt)\b/.test(low) ||
+      low.includes('pullover') ||
+      (low.includes('fleece') && !low.includes('jacket'))) {
     return 'hoodies';
   }
 
-  if (low.includes('suit') && !low.includes('swimsuit') && !low.includes('tracksuit')) {
+  // Suits - be very careful with this pattern
+  // Only match "suit" when it's clearly a formal suit (not tracksuit/swimsuit)
+  if (/\bsuit\b/.test(low) && 
+      !low.includes('tracksuit') && 
+      !low.includes('swimsuit') &&
+      !low.includes('jump suit') &&
+      !low.includes('jumpsuit') &&
+      (low.includes('dress suit') || 
+       low.includes('formal suit') ||
+       low.includes('business suit') ||
+       (low.includes('suit') && (low.includes('pant') || low.includes('trouser'))))) {
     return 'pants';
   }
 
-  if (/\bset\b/.test(low) || low.includes('co-ord') || low.includes('coord')) {
-    return 'sets';
-  }
-
-  if (ACCESSORY_PRIORITY.some(keyword => low.includes(keyword))) {
-    return 'accessories';
-  }
-
+  // ===== PHASE 5: Ordered category matching =====
+  
+  // Check categories in priority order
   for (const category of CLOTHING_CATEGORY_ORDER) {
     if (matchesCategory(low, category)) {
       return category;
     }
   }
 
+  // Final check for accessories (low priority items like socks, underwear)
   if (matchesCategory(low, 'accessories')) {
     return 'accessories';
   }
 
+  // ===== FALLBACK =====
+  // Default to t-shirts for unrecognized items
   return 't-shirts';
 }
 
