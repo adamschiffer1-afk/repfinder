@@ -1,0 +1,80 @@
+===========================================
+POPULAR BATCH - ADMIN PANEL CODE SNIPPETS
+===========================================
+
+Te fragmenty kodu musisz dodać do pliku: src/app/admin-99x-hsd/products/page.jsx
+
+-------------------------------------------
+1. BULK ACTIONS - BATCH SELECT (linia ~1190)
+-------------------------------------------
+
+ZNAJDŹ:
+                  <option value="best">{t('Best')}</option>
+                  <option value="budget">{t('Budget')}</option>
+                  <option value="random">{t('Random')}</option>
+                </select>
+
+ZAMIEŃ NA:
+                  <option value="best">{t('Best')}</option>
+                  <option value="budget">{t('Budget')}</option>
+                  <option value="random">{t('Random')}</option>
+                  <option value="popular">{t('Popular')} 🔥</option>
+                </select>
+
+-------------------------------------------
+2. FORM BATCH SELECT (linia ~1288)
+-------------------------------------------
+
+ZNAJDŹ:
+                <option value="best">Best</option>
+                <option value="budget">Budget</option>
+                <option value="random">Random</option>
+              </select>
+
+ZAMIEŃ NA:
+                <option value="best">Best</option>
+                <option value="budget">Budget</option>
+                <option value="random">Random</option>
+                <option value="popular">Popular 🔥</option>
+              </select>
+
+-------------------------------------------
+3. BULK SCRAPER BATCH SELECT (linia ~1447)
+-------------------------------------------
+
+ZNAJDŹ:
+                    <option value="best">{t('Best')}</option>
+                    <option value="budget">{t('Budget')}</option>
+                    <option value="random">{t('Random')}</option>
+                  </select>
+
+ZAMIEŃ NA:
+                    <option value="best">{t('Best')}</option>
+                    <option value="budget">{t('Budget')}</option>
+                    <option value="random">{t('Random')}</option>
+                    <option value="popular">{t('Popular')} 🔥</option>
+                  </select>
+
+-------------------------------------------
+4. FILTER BATCH PILLS (linia ~992)
+-------------------------------------------
+
+ZNAJDŹ:
+          <div className={styles.filterPills}>
+            {['all', 'best', 'budget', 'random'].map(batch => (
+
+ZAMIEŃ NA:
+          <div className={styles.filterPills}>
+            {['all', 'best', 'budget', 'random', 'popular'].map(batch => (
+
+ORAZ W TYM SAMYM BLOKU:
+
+ZNAJDŹ:
+                {batch === 'all' ? t('All') : batch}
+
+ZAMIEŃ NA:
+                {batch === 'all' ? t('All') : batch === 'popular' ? `🔥 ${batch}` : batch}
+
+-------------------------------------------
+KONIEC SNIPPETÓW
+-------------------------------------------

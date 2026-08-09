@@ -660,6 +660,13 @@
   border: 1px solid rgba(52, 211, 153, 0.2) !important;
 }
 
+.batchBadge_popular {
+  background: linear-gradient(135deg, rgba(255, 100, 50, 0.2) 0%, rgba(255, 150, 50, 0.2) 100%) !important;
+  color: #ff9966 !important;
+  border: 1px solid rgba(255, 120, 50, 0.5) !important;
+  font-weight: 700 !important;
+}
+
 .pinnedBadge {
   background: rgba(239, 68, 68, 0.12);
   color: #f87171;

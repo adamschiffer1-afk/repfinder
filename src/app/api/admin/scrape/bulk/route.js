@@ -9,7 +9,7 @@ import { detectCategory } from "@/utils/categoryHelper";
 const AFFILIATE_CODE = process.env.KAKOBUY_AFFILIATE_CODE || "xfrostyy";
 const DEFAULT_CONCURRENCY = 4;
 const MAX_CONCURRENCY = 6;
-const VALID_BATCHES = new Set(["best", "budget", "random"]);
+const VALID_BATCHES = new Set(["best", "budget", "random", "popular"]);
 const VALID_REPLACE_MODES = new Set(["none", "pinned", "all"]);
 const USER_AGENT =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1";

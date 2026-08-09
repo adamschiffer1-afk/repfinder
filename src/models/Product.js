@@ -25,7 +25,7 @@ const ProductSchema = new mongoose.Schema({
   },
   batch: {
     type: String,
-    enum: ['best', 'budget', 'random'],
+    enum: ['best', 'budget', 'random', 'popular'],
     default: 'random',
   },
   link: {
