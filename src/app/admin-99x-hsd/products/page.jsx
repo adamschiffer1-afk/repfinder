@@ -278,6 +278,11 @@ export default function ManageProducts() {
   const [showBulkScraperModal, setShowBulkScraperModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [bulkText, setBulkText] = useState('');
+  
+  // Backup/Restore state
+  const [backupData, setBackupData] = useState(null);
+  const [backupLoading, setBackupLoading] = useState(false);
+  const [restoreLoading, setRestoreLoading] = useState(false);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkProgress, setBulkProgress] = useState({ total: 0, current: 0, successes: 0, failures: 0, logs: [] });
   const [bulkReplaceMode, setBulkReplaceMode] = useState('none');
@@ -883,6 +888,96 @@ export default function ManageProducts() {
     }
   }, [currentPage, fetchProducts, showToast]);
 
+  // Backup & Delete All Products
+  const handleBackupAndDeleteAll = useCallback(() => {
+    askConfirmation(
+      '⚠️ Backup i Usuń Wszystkie Produkty',
+      'Ta operacja utworzy backup przypiętych produktów, a następnie USUNIE WSZYSTKIE produkty z bazy danych. Czy jesteś pewien?',
+      async () => {
+        setBackupLoading(true);
+        try {
+          const res = await fetch('/api/admin/backup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+          });
+          const data = await res.json();
+
+          if (res.ok) {
+            // Store backup in localStorage
+            localStorage.setItem('productsBackup', JSON.stringify(data.backup));
+            localStorage.setItem('productsBackupDate', new Date().toISOString());
+            setBackupData(data.backup);
+            
+            showToast(
+              `✅ Backup utworzony! Przypięte produkty: ${data.backup.length}. Usunięte: ${data.deletedCount}.`,
+              'success'
+            );
+            fetchProducts(1);
+          } else {
+            showToast(data.error || 'Błąd podczas tworzenia backupu.', 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia z serwerem.', 'error');
+        } finally {
+          setBackupLoading(false);
+        }
+      }
+    );
+  }, [askConfirmation, showToast, fetchProducts]);
+
+  // Restore Pinned Products from Backup
+  const handleRestorePinned = useCallback(() => {
+    const storedBackup = localStorage.getItem('productsBackup');
+    const backupDate = localStorage.getItem('productsBackupDate');
+    
+    if (!storedBackup) {
+      showToast('Brak dostępnego backupu. Najpierw wykonaj backup.', 'error');
+      return;
+    }
+
+    const backup = JSON.parse(storedBackup);
+    const formattedDate = backupDate ? new Date(backupDate).toLocaleString('pl-PL') : 'nieznana data';
+    
+    askConfirmation(
+      '🔄 Przywróć Przypięte Produkty',
+      `Czy chcesz przywrócić ${backup.length} przypiętych produktów z backupu (utworzony: ${formattedDate})?`,
+      async () => {
+        setRestoreLoading(true);
+        try {
+          const res = await fetch('/api/admin/restore', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ backup })
+          });
+          const data = await res.json();
+
+          if (res.ok) {
+            showToast(`✅ Przywrócono ${data.restoredCount} przypiętych produktów!`, 'success');
+            fetchProducts(1);
+          } else {
+            showToast(data.error || 'Błąd podczas przywracania produktów.', 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia z serwerem.', 'error');
+        } finally {
+          setRestoreLoading(false);
+        }
+      }
+    );
+  }, [askConfirmation, showToast, fetchProducts]);
+
+  // Check for existing backup on mount
+  useEffect(() => {
+    const storedBackup = localStorage.getItem('productsBackup');
+    if (storedBackup) {
+      try {
+        setBackupData(JSON.parse(storedBackup));
+      } catch (err) {
+        console.error('Invalid backup data in localStorage');
+      }
+    }
+  }, []);
+
   return (
     <div className={styles.adminContainer}>
       <header className={styles.adminHeader}>
@@ -907,6 +1002,26 @@ export default function ManageProducts() {
           <button className={styles.scraperBtn} onClick={() => setShowTemplateModal(true)} style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
             📋 Template Import
           </button>
+          <button 
+            className={styles.scraperBtn} 
+            onClick={handleBackupAndDeleteAll}
+            disabled={backupLoading}
+            style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)', opacity: backupLoading ? 0.5 : 1 }}
+            title="Tworzy backup przypiętych produktów i usuwa wszystkie produkty"
+          >
+            {backupLoading ? '⏳ Przetwarzanie...' : '💾 Backup & Delete All'}
+          </button>
+          {backupData && (
+            <button 
+              className={styles.scraperBtn} 
+              onClick={handleRestorePinned}
+              disabled={restoreLoading}
+              style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', opacity: restoreLoading ? 0.5 : 1 }}
+              title={`Przywraca ${backupData.length} przypiętych produktów z backupu`}
+            >
+              {restoreLoading ? '⏳ Przywracanie...' : `🔄 Restore ${backupData.length} Pinned`}
+            </button>
+          )}
           <button className={styles.navLink} onClick={() => {
             setEditingProduct(null);
             setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '', qcImages: [] });
