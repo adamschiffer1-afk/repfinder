@@ -235,19 +235,21 @@ export function detectCategory(name) {
 
   // ===== PHASE 4: Clothing categories with exclusions =====
   
+  // Hoodies - CHECK FIRST before other clothing!
+  if (/\bhoodie\b/i.test(low) || 
+      /\bhoody\b/i.test(low) ||
+      low.includes('sweatshirt') ||
+      low.includes('pullover') ||
+      (low.includes('fleece') && !low.includes('jacket') && !low.includes('pants'))) {
+    return 'hoodies';
+  }
+  
   // Shorts - use word boundary to avoid partial matches
   if (/\bshorts\b/.test(low) || 
       low.includes('swim shorts') ||
       low.includes('mesh shorts') ||
       low.includes('basketball shorts')) {
     return 'shorts';
-  }
-
-  // Hoodies and sweatshirts
-  if (/\b(hoodie|hoody|sweatshirt)\b/.test(low) ||
-      low.includes('pullover') ||
-      (low.includes('fleece') && !low.includes('jacket'))) {
-    return 'hoodies';
   }
 
   // Suits - be very careful with this pattern
