@@ -123,9 +123,9 @@ async function scrapeWeidianProduct(weidianUrl) {
 export async function POST(request) {
   console.log('Template import POST request received');
   
-  // Check authentication
+  // Check authentication - use same as bulk scraper
   const session = await auth();
-  if (!session?.user || session.user.role !== 'admin') {
+  if (!session || session.user.email !== 'kakobuybs209@gmail.com') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   

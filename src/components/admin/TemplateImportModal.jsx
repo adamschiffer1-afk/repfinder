@@ -518,11 +518,23 @@ export default function TemplateImportModal({
           {/* Batch Selection */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
             <label style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.8)' }}>{t('Batch')}</label>
-            <select value={bulkBatch} onChange={(e) => setBulkBatch(e.target.value)} disabled={bulkLoading} style={{ padding: '8px', background: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px' }}>
-              <option value="best">{t('Best')}</option>
-              <option value="budget">{t('Budget')}</option>
-              <option value="random">{t('Random')}</option>
-              <option value="popular">{t('Popular')} 🔥</option>
+            <select 
+              value={bulkBatch} 
+              onChange={(e) => setBulkBatch(e.target.value)} 
+              disabled={bulkLoading} 
+              style={{ 
+                padding: '8px', 
+                background: 'rgba(255,255,255,0.05)', 
+                color: 'white', 
+                border: '1px solid rgba(255,255,255,0.2)', 
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="best" style={{ background: '#1a1a2e', color: 'white' }}>{t('Best')}</option>
+              <option value="budget" style={{ background: '#1a1a2e', color: 'white' }}>{t('Budget')}</option>
+              <option value="random" style={{ background: '#1a1a2e', color: 'white' }}>{t('Random')}</option>
+              <option value="popular" style={{ background: '#1a1a2e', color: 'white' }}>{t('Popular')} 🔥</option>
             </select>
           </div>
 

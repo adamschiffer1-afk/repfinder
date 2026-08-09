@@ -9,7 +9,8 @@ import Product from '@/models/Product';
 export async function POST(request) {
   try {
     const session = await auth();
-    if (!session?.user || session.user.role !== 'admin') {
+    // Use same auth as bulk scraper
+    if (!session || session.user.email !== 'kakobuybs209@gmail.com') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
