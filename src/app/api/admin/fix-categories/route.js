@@ -16,10 +16,12 @@ export async function GET(request) {
   console.log('Fix categories request received');
   
   try {
-    // Check authentication
-    const session = await auth();
-    if (!session || session.user.email !== 'kakobuybs209@gmail.com') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // Simple auth with query param for easier access
+    const { searchParams } = new URL(request.url);
+    const secret = searchParams.get('secret');
+    
+    if (secret !== 'fix-my-categories-now') {
+      return NextResponse.json({ error: 'Unauthorized - add ?secret=fix-my-categories-now' }, { status: 401 });
     }
     await dbConnect();
     
