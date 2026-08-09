@@ -80,6 +80,7 @@ export function parseTemplateData(text) {
 /**
  * Parses CSV file content
  * Supports both comma and tab separation
+ * ONLY reads first 2 columns: Name (A) and Link (B), ignores rest (like ID in column C)
  * @param {string} csvText - CSV file content
  * @returns {Array<{name: string, url: string}>} - Array of products
  */
@@ -87,12 +88,18 @@ export function parseCSVFile(csvText) {
   if (!csvText.trim()) return [];
   
   const lines = csvText.split('\n');
-  console.log('Total lines in CSV:', lines.length);
+  console.log('📄 Total lines in CSV:', lines.length);
   
   const products = [];
   
-  // Skip header if it looks like headers
-  const startLine = (lines[0] && (lines[0].toLowerCase().includes('name') || lines[0].toLowerCase().includes('产品'))) ? 1 : 0;
+  // Skip header row if it contains Chinese characters (产品, 名称, 链接, etc) or English headers (name, link, product, etc)
+  const firstLine = lines[0] || '';
+  const hasChineseHeader = /[\u4e00-\u9fa5]/.test(firstLine);
+  const hasEnglishHeader = /name|link|product|url/i.test(firstLine);
+  const startLine = (hasChineseHeader || hasEnglishHeader) ? 1 : 0;
+  
+  console.log('🔍 Header detected:', hasChineseHeader ? 'Chinese' : hasEnglishHeader ? 'English' : 'None');
+  console.log('📊 Starting from line:', startLine);
   
   for (let i = startLine; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -101,17 +108,31 @@ export function parseCSVFile(csvText) {
     // Handle both comma and tab separation
     const parts = line.includes('\t') ? line.split('\t') : line.split(',');
     
+    // ONLY take first 2 columns: A (name) and B (link)
+    // Ignore column C (ID), D, E, etc.
     if (parts.length >= 2) {
       const name = parts[0]?.replace(/['"]/g, '').trim();
       const url = parts[1]?.replace(/['"]/g, '').trim();
       
-      if (name && url && url.includes('weidian.com')) {
+      // Validate we have both name and Weidian link
+      if (name && url && url.includes('weidian.c')) { // Accept weidian.com or partial
+        console.log(`✅ [${i}] Found: "${name}" -> ${url.substring(0, 50)}...`);
         products.push({ name, url });
+      } else {
+        if (name && !url) {
+          console.log(`⚠️  [${i}] Skipped: "${name}" - missing link`);
+        } else if (!name && url) {
+          console.log(`⚠️  [${i}] Skipped: link without name`);
+        } else if (url && !url.includes('weidian.c')) {
+          console.log(`⚠️  [${i}] Skipped: "${name}" - not a Weidian link (${url})`);
+        }
       }
+    } else {
+      console.log(`⚠️  [${i}] Skipped: insufficient columns (${parts.length})`);
     }
   }
   
-  console.log('Final parsed products:', products.length);
+  console.log(`✨ Final parsed products: ${products.length} out of ${lines.length - startLine} data rows`);
   return products;
 }
 
