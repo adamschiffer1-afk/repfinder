@@ -15,13 +15,12 @@ import { detectCategory } from '@/utils/categoryHelper';
 export async function GET(request) {
   console.log('Fix categories request received');
   
-  // Check authentication
-  const session = await auth();
-  if (!session || session.user.email !== 'kakobuybs209@gmail.com') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  
   try {
+    // Check authentication
+    const session = await auth();
+    if (!session || session.user.email !== 'kakobuybs209@gmail.com') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     await dbConnect();
     
     console.log('📦 Fetching all products...');
