@@ -122,6 +122,8 @@ export function parseCSVFile(csvText) {
  */
 export async function fetchGoogleSheetsData(url) {
   try {
+    console.log('🔗 Fetching Google Sheets data from:', url);
+    
     // Convert Google Sheets URL to CSV export URL
     let csvUrl = url;
     
@@ -132,18 +134,39 @@ export async function fetchGoogleSheetsData(url) {
       
       if (sheetId) {
         csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+        console.log('🔄 Converted URL:', csvUrl);
       }
     }
     
     const response = await fetch(`/api/admin/scrape/sheets?url=${encodeURIComponent(csvUrl)}`);
+    
+    console.log('📊 API Response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      let errorMessage = 'Failed to fetch Google Sheets data';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch (e) {
+        errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      }
+      console.error('❌ API Error:', errorMessage);
+      throw new Error(errorMessage);
     }
     
     const csvText = await response.text();
-    return parseCSVFile(csvText);
+    console.log('✅ Got CSV data, length:', csvText.length);
+    
+    if (!csvText || csvText.trim().length === 0) {
+      throw new Error('Google Sheets returned empty data');
+    }
+    
+    const parsed = parseCSVFile(csvText);
+    console.log('✅ Parsed products:', parsed.length);
+    
+    return parsed;
   } catch (error) {
-    console.error('Error fetching Google Sheets:', error);
-    throw error;
+    console.error('❌ Error fetching Google Sheets:', error);
+    throw new Error(`Google Sheets error: ${error.message}`);
   }
 }

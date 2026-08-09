@@ -104,14 +104,24 @@ export default function TemplateImportModal({
     try {
       const parsed = await fetchGoogleSheetsData(templateUrl);
       setParsedUrlData(parsed);
-      if (showToast) showToast(t('Google Sheets data loaded successfully'), 'success');
+      if (showToast) showToast(`✅ Załadowano ${parsed.length} produktów z Google Sheets!`, 'success');
     } catch (error) {
-      if (showToast) showToast(t('Failed to load Google Sheets data'), 'error');
+      console.error('Google Sheets error:', error);
+      const errorMessage = error.message || 'Failed to load Google Sheets data';
+      if (showToast) {
+        if (errorMessage.includes('access denied') || errorMessage.includes('403')) {
+          showToast('❌ Brak dostępu do arkusza. Ustaw udostępnianie na "Każdy, kto ma link, może przeglądać".', 'error');
+        } else if (errorMessage.includes('empty')) {
+          showToast('❌ Arkusz Google Sheets jest pusty lub nie ma danych.', 'error');
+        } else {
+          showToast(`❌ Błąd: ${errorMessage}`, 'error');
+        }
+      }
       setParsedUrlData([]);
     } finally {
       setLoadingSheets(false);
     }
-  }, [templateUrl, showToast, t]);
+  }, [templateUrl, showToast]);
 
   // Template import submit handler
   const handleTemplateImport = async (e) => {
