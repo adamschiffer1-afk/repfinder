@@ -24,6 +24,18 @@ import { detectCategory } from '@/utils/categoryHelper';
 const AFFILIATE_CODE = process.env.KAKOBUY_AFFILIATE_CODE || 'xfrostyy';
 const USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1';
 
+// Retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 2000; // 2 seconds between retries
+const REQUEST_DELAY = 150; // 150ms delay between requests to avoid rate limiting
+
+/**
+ * Sleep helper for delays
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /**
  * Helper functions
  */
@@ -52,18 +64,23 @@ function formatImageUrl(imageUrl) {
 }
 
 /**
- * Scrapes product data from Weidian URL
+ * Scrapes product data from Weidian URL with retry logic
  * @param {string} weidianUrl - Weidian product URL
+ * @param {number} retryCount - Current retry attempt
  * @returns {Promise<{name: string, price: number, image: string, category: string}>}
  */
-async function scrapeWeidianProduct(weidianUrl) {
+async function scrapeWeidianProduct(weidianUrl, retryCount = 0) {
   try {
     const response = await axios.get(weidianUrl, {
       headers: {
         'User-Agent': USER_AGENT,
-        'Referer': 'https://weidian.com/'
+        'Referer': 'https://weidian.com/',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cache-Control': 'no-cache'
       },
-      timeout: 12000
+      timeout: 20000, // Increased to 20 seconds
+      maxRedirects: 5
     });
 
     const $ = cheerio.load(response.data);
@@ -113,7 +130,14 @@ async function scrapeWeidianProduct(weidianUrl) {
       category
     };
   } catch (error) {
-    throw new Error(`Scraping failed: ${error.message}`);
+    // Retry logic
+    if (retryCount < MAX_RETRIES) {
+      console.log(`⚠️ Retry ${retryCount + 1}/${MAX_RETRIES} for ${weidianUrl}: ${error.message}`);
+      await sleep(RETRY_DELAY);
+      return scrapeWeidianProduct(weidianUrl, retryCount + 1);
+    }
+    
+    throw new Error(`Scraping failed after ${MAX_RETRIES} retries: ${error.message}`);
   }
 }
 
@@ -178,6 +202,11 @@ export async function POST(request) {
       console.log(`[${i + 1}/${products.length}] Processing: ${product.name}`);
       
       try {
+        // Add delay between requests to avoid rate limiting
+        if (i > 0) {
+          await sleep(REQUEST_DELAY);
+        }
+        
         // Extract itemID from Weidian URL
         const itemIdMatch = product.url.match(/itemID[=%](\d+)|\/item\/(\d+)/i);
         if (!itemIdMatch) {
@@ -193,7 +222,7 @@ export async function POST(request) {
         const itemId = itemIdMatch[1] || itemIdMatch[2];
         const weidianUrl = getWeidianUrl(itemId);
         
-        // Scrape product data from Weidian
+        // Scrape product data from Weidian (with retry logic)
         const scrapedData = await scrapeWeidianProduct(weidianUrl);
 
         // Use name from spreadsheet (user's custom name)
