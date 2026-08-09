@@ -1,0 +1,29 @@
+I have a Template Import package for bulk product imports. Please help me install it in my project.
+
+The package allows importing products via:
+- Paste Text (from spreadsheets)
+- Upload CSV/TXT files
+- Google Sheets URL
+
+It supports 3 modes:
+- Add/Refresh (safe - just adds/updates)
+- Replace Pinned (deletes pinned products first)
+- Replace All Catalog (deletes everything first)
+
+Package files are in: TEMPLATE-IMPORT-PACKAGE/
+
+Please:
+1. Read README.md to understand the package
+2. Read TEMPLATE-IMPORT-INSTRUCTIONS.md for installation steps
+3. Help me install all files in the correct locations
+4. Set up the component in my admin page
+5. Test that it works
+
+My project structure:
+- Next.js App Router (src/app/)
+- Supabase for database
+- Components in src/components/
+- Utils in src/utils/
+- Styles in src/styles/
+
+Start by reading the README.md file.

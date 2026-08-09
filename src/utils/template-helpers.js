@@ -1,0 +1,149 @@
+/**
+ * Template Import Helper Functions
+ * 
+ * Utilities for parsing product data from various sources:
+ * - Text (copied from spreadsheets)
+ * - CSV files
+ * - Google Sheets URLs
+ */
+
+/**
+ * Decodes repeated URI encoding (up to 3 levels)
+ * @param {string} value - The string to decode
+ * @returns {string} - Decoded string
+ */
+function decodeRepeated(value) {
+  let output = String(value || '');
+
+  for (let i = 0; i < 3; i++) {
+    try {
+      const decoded = decodeURIComponent(output);
+      if (decoded === output) break;
+      output = decoded;
+    } catch {
+      break;
+    }
+  }
+
+  return output;
+}
+
+/**
+ * Extracts unique Weidian itemIDs from text
+ * @param {string} text - Text containing Weidian URLs
+ * @returns {string[]} - Array of unique Weidian URLs
+ */
+export function extractWeidianUrls(text) {
+  const uniqueItemIds = new Set();
+  const variants = [String(text || ''), decodeRepeated(text)];
+
+  for (const value of variants) {
+    const regex = /(?:itemID=|itemID%3D|\/item\/)(\d+)/gi;
+    let match = regex.exec(value);
+
+    while (match) {
+      uniqueItemIds.add(match[1]);
+      match = regex.exec(value);
+    }
+  }
+
+  return Array.from(uniqueItemIds).map((itemId) => `https://weidian.com/item.html?itemID=${itemId}`);
+}
+
+/**
+ * Parses template data from pasted text (tab-separated)
+ * Expected format: Name [TAB] URL
+ * @param {string} text - Pasted text from spreadsheet
+ * @returns {Array<{name: string, url: string}>} - Array of products
+ */
+export function parseTemplateData(text) {
+  if (!text.trim()) return [];
+  
+  const lines = text.split('\n');
+  const products = [];
+  
+  for (const line of lines) {
+    const parts = line.split('\t'); // Tab-separated values from copy-paste
+    if (parts.length >= 2) {
+      const name = parts[0]?.trim();
+      const url = parts[1]?.trim();
+      
+      if (name && url && url.includes('weidian.com')) {
+        products.push({ name, url });
+      }
+    }
+  }
+  
+  return products;
+}
+
+/**
+ * Parses CSV file content
+ * Supports both comma and tab separation
+ * @param {string} csvText - CSV file content
+ * @returns {Array<{name: string, url: string}>} - Array of products
+ */
+export function parseCSVFile(csvText) {
+  if (!csvText.trim()) return [];
+  
+  const lines = csvText.split('\n');
+  console.log('Total lines in CSV:', lines.length);
+  
+  const products = [];
+  
+  // Skip header if it looks like headers
+  const startLine = (lines[0] && (lines[0].toLowerCase().includes('name') || lines[0].toLowerCase().includes('产品'))) ? 1 : 0;
+  
+  for (let i = startLine; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // Handle both comma and tab separation
+    const parts = line.includes('\t') ? line.split('\t') : line.split(',');
+    
+    if (parts.length >= 2) {
+      const name = parts[0]?.replace(/['"]/g, '').trim();
+      const url = parts[1]?.replace(/['"]/g, '').trim();
+      
+      if (name && url && url.includes('weidian.com')) {
+        products.push({ name, url });
+      }
+    }
+  }
+  
+  console.log('Final parsed products:', products.length);
+  return products;
+}
+
+/**
+ * Fetches and parses data from Google Sheets URL
+ * @param {string} url - Google Sheets URL
+ * @returns {Promise<Array<{name: string, url: string}>>} - Array of products
+ */
+export async function fetchGoogleSheetsData(url) {
+  try {
+    // Convert Google Sheets URL to CSV export URL
+    let csvUrl = url;
+    
+    if (url.includes('docs.google.com/spreadsheets')) {
+      const sheetId = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/)?.[1];
+      const gidMatch = url.match(/[#&]gid=([0-9]+)/);
+      const gid = gidMatch ? gidMatch[1] : '0';
+      
+      if (sheetId) {
+        csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+      }
+    }
+    
+    const response = await fetch(`/api/admin/scrape/sheets?url=${encodeURIComponent(csvUrl)}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const csvText = await response.text();
+    return parseCSVFile(csvText);
+  } catch (error) {
+    console.error('Error fetching Google Sheets:', error);
+    throw error;
+  }
+}

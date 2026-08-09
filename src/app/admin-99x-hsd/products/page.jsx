@@ -3,6 +3,7 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import styles from '@/styles/Admin.module.css';
 import { detectCategory, PRODUCT_CATEGORIES } from '@/utils/categoryHelper';
+import TemplateImportModal from '@/components/admin/TemplateImportModal';
 
 const REPLACE_CONFIRM_TEXT = 'PODMIEN';
 
@@ -275,6 +276,7 @@ export default function ManageProducts() {
   const [scraperStatus, setScraperStatus] = useState({ type: '', message: '' });
   const [scraperData, setScraperData] = useState({ name: '', url: '' });
   const [showBulkScraperModal, setShowBulkScraperModal] = useState(false);
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [bulkText, setBulkText] = useState('');
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkProgress, setBulkProgress] = useState({ total: 0, current: 0, successes: 0, failures: 0, logs: [] });
@@ -901,6 +903,9 @@ export default function ManageProducts() {
             setShowBulkScraperModal(true);
           }}>
             Bulk Import
+          </button>
+          <button className={styles.scraperBtn} onClick={() => setShowTemplateModal(true)} style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
+            📋 Template Import
           </button>
           <button className={styles.navLink} onClick={() => {
             setEditingProduct(null);
@@ -1596,6 +1601,21 @@ export default function ManageProducts() {
             }}
           />
         </div>
+      )}
+
+      {/* Template Import Modal */}
+      {showTemplateModal && (
+        <TemplateImportModal
+          isOpen={showTemplateModal}
+          onClose={() => setShowTemplateModal(false)}
+          onImportComplete={(result) => {
+            console.log('Template import completed:', result);
+            setSelectedIds([]);
+            setSortBy('pinned_order');
+            fetchProducts(1);
+          }}
+          showToast={showToast}
+        />
       )}
     </div>
   );
