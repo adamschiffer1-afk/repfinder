@@ -86,6 +86,17 @@ export const ProductDB = {
     
     if (error) throw error;
     
+    // Add MongoDB compatibility field to all products
+    if (data) {
+      data.forEach(product => {
+        product._id = product.id;
+        // Also map Supabase fields back to MongoDB names for UI compatibility
+        product.isPinned = product.is_pinned;
+        product.pinnedOrder = product.pinned_order;
+        product.qcImages = product.qc_images;
+      });
+    }
+    
     return { data, count };
   },
 
@@ -98,6 +109,12 @@ export const ProductDB = {
       .single();
     
     if (error) throw error;
+    
+    // Add MongoDB compatibility field
+    if (data) {
+      data._id = data.id;
+    }
+    
     return data;
   },
 
@@ -110,6 +127,15 @@ export const ProductDB = {
       .single();
     
     if (error) throw error;
+    
+    // Add MongoDB compatibility field
+    if (data) {
+      data._id = data.id;
+      data.isPinned = data.is_pinned;
+      data.pinnedOrder = data.pinned_order;
+      data.qcImages = data.qc_images;
+    }
+    
     return data;
   },
 
@@ -123,6 +149,15 @@ export const ProductDB = {
       .single();
     
     if (error) throw error;
+    
+    // Add MongoDB compatibility field
+    if (data) {
+      data._id = data.id;
+      data.isPinned = data.is_pinned;
+      data.pinnedOrder = data.pinned_order;
+      data.qcImages = data.qc_images;
+    }
+    
     return data;
   },
 
