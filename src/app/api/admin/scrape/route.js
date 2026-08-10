@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
+import { ProductDB } from "@/lib/supabase";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { detectCategory } from "@/utils/categoryHelper";
@@ -91,8 +90,6 @@ export async function POST(req) {
     const skuProperties = data.result.default_model.sku_properties;
     const variants = [];
 
-    await dbConnect();
-
     if (skuProperties && skuProperties.attr_list) {
       const imageAttr = skuProperties.attr_list.find(attr => 
         attr.attr_values && attr.attr_values.some(v => v.img)
@@ -132,7 +129,7 @@ export async function POST(req) {
     // Save all variants/product to DB
     const savedProducts = [];
     for (const v of variants) {
-      const newProduct = await Product.create(v);
+      const newProduct = await ProductDB.create(v);
       savedProducts.push(newProduct);
     }
 

@@ -15,8 +15,7 @@
 
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import dbConnect from '@/lib/mongodb';
-import Product from '@/models/Product';
+import { ProductDB, supabaseAdmin } from '@/lib/supabase';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { detectCategory } from '@/utils/categoryHelper';
@@ -142,7 +141,7 @@ export async function POST(request) {
   }
   
   try {
-    await dbConnect();
+    await ProductDB.countDocuments({});
     
     const body = await request.json();
     console.log('Request body parsed:', body);
@@ -172,13 +171,15 @@ export async function POST(request) {
     // Handle replacement modes
     if (replaceMode === 'all') {
       console.log('Deleting all products...');
-      const deleteResult = await Product.deleteMany({});
-      deletedCount = deleteResult.deletedCount || 0;
+      const { data, error } = await supabaseAdmin.from('products').delete().neq('id', '00000000-0000-0000-0000-000000000000').select('id');
+      if (error) throw error;
+      deletedCount = data?.length || 0;
       console.log('Deleted', deletedCount, 'products');
     } else if (replaceMode === 'pinned') {
       console.log('Deleting pinned products...');
-      const deleteResult = await Product.deleteMany({ isPinned: true });
-      deletedCount = deleteResult.deletedCount || 0;
+      const { data, error } = await supabaseAdmin.from('products').delete().eq('is_pinned', true).select('id');
+      if (error) throw error;
+      deletedCount = data?.length || 0;
       console.log('Deleted', deletedCount, 'pinned products');
     }
 
@@ -223,37 +224,53 @@ export async function POST(request) {
         const affiliateLink = getAffiliateLink(weidianUrl);
         
         // Check if product with this link already exists
-        const existingProduct = await Product.findOne({
-          link: new RegExp(`itemID(?:%3D|=)${itemId}`, 'i')
-        });
+        const { data: existingProducts, error: findError } = await supabaseAdmin
+          .from('products')
+          .select('*')
+          .ilike('link', `%itemID%${itemId}%`)
+          .limit(1);
+        
+        if (findError) throw findError;
+        
+        const existingProduct = existingProducts && existingProducts.length > 0 ? existingProducts[0] : null;
 
         if (existingProduct) {
           // Update existing product
-          existingProduct.name = finalName;
-          existingProduct.price = scrapedData.price;
-          existingProduct.image = scrapedData.image;
-          existingProduct.category = finalCategory;
-          existingProduct.batch = batch || 'best';
-          existingProduct.link = affiliateLink;
+          const updates = {
+            name: finalName,
+            price: scrapedData.price,
+            image: scrapedData.image,
+            category: finalCategory,
+            batch: batch || 'best',
+            link: affiliateLink,
+            updated_at: new Date().toISOString()
+          };
           
           if (pin) {
-            existingProduct.isPinned = true;
+            updates.is_pinned = true;
             if (startOrder !== undefined) {
-              existingProduct.pinnedOrder = startOrder + i;
+              updates.pinned_order = startOrder + i;
             }
           }
 
-          await existingProduct.save();
+          const { data: updated, error: updateError } = await supabaseAdmin
+            .from('products')
+            .update(updates)
+            .eq('id', existingProduct.id)
+            .select()
+            .single();
+          
+          if (updateError) throw updateError;
           
           results.push({
             status: 'success',
             action: 'updated',
             name: finalName,
             url: product.url,
-            itemId: existingProduct._id.toString()
+            itemId: updated.id
           });
           updated++;
-          console.log(`✅ [${i + 1}/${products.length}] Updated: ${finalName} (ID: ${existingProduct._id})`);
+          console.log(`✅ [${i + 1}/${products.length}] Updated: ${finalName} (ID: ${updated.id})`);
         } else {
           // Create new product
           const productData = {
@@ -264,21 +281,27 @@ export async function POST(request) {
             batch: batch || 'best',
             link: affiliateLink,
             clicks: 0,
-            isPinned: pin || false,
-            pinnedOrder: (pin && startOrder !== undefined) ? (startOrder + i) : 999999
+            is_pinned: pin || false,
+            pinned_order: (pin && startOrder !== undefined) ? (startOrder + i) : 999999
           };
 
-          const newProduct = await Product.create(productData);
+          const { data: newProduct, error: insertError } = await supabaseAdmin
+            .from('products')
+            .insert([productData])
+            .select()
+            .single();
+          
+          if (insertError) throw insertError;
           
           results.push({
             status: 'success',
             action: 'created',
             name: finalName,
             url: product.url,
-            itemId: newProduct._id.toString()
+            itemId: newProduct.id
           });
           created++;
-          console.log(`✅ [${i + 1}/${products.length}] Created: ${finalName} (ID: ${newProduct._id})`);
+          console.log(`✅ [${i + 1}/${products.length}] Created: ${finalName} (ID: ${newProduct.id})`);
         }
 
       } catch (error) {
