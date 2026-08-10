@@ -3,7 +3,7 @@ import { auth } from '@/auth';
 import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
-import { connectToDatabase } from '@/lib/mongodb';
+import dbConnect from '@/lib/mongodb';
 import Product from '@/models/Product';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -144,7 +144,7 @@ export async function POST(request) {
     }
 
     // 9. Connect to database and update Product document
-    await connectToDatabase();
+    await dbConnect();
 
     const product = await Product.findById(productId);
     if (!product) {
