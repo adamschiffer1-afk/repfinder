@@ -106,20 +106,8 @@ async function scrapeWeidianProduct(weidianUrl, retryCount = 0) {
     const priceCny = Number.parseFloat(itemInfo.origin_price);
     const priceUsd = Number.isFinite(priceCny) ? Number((priceCny * 0.14).toFixed(2)) : 0;
 
-    // Get image - prefer variant image, fallback to main image
-    let image = itemInfo.item_head;
-    const skuProperties = data?.result?.default_model?.sku_properties;
-
-    if (skuProperties?.attr_list) {
-      const imageAttr = skuProperties.attr_list.find((attr) =>
-        attr.attr_values?.some((value) => value.img)
-      );
-
-      if (imageAttr?.attr_values && imageAttr.attr_values[0]?.img) {
-        image = imageAttr.attr_values[0].img;
-      }
-    }
-
+    // ALWAYS use main product image (item_head), not variant images
+    const image = itemInfo.item_head;
     const formattedImage = formatImageUrl(image);
     const category = detectCategory(baseName);
 
