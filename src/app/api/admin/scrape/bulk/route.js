@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
+import { ProductDB, supabaseAdmin } from "@/lib/supabase";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { detectCategory } from "@/utils/categoryHelper";
@@ -201,8 +200,8 @@ async function scrapeProductsForItem(item, options) {
     category: detectCategory(baseName),
     batch: options.batch,
     link: affiliateLink,
-    isPinned: options.pin,
-    pinnedOrder: null
+    is_pinned: options.pin,
+    pinned_order: null
   }];
 
   return {
@@ -217,13 +216,27 @@ async function saveProductsForItem(scrapedProduct, options) {
   let deletedExistingCount = 0;
 
   if (shouldRefreshExisting) {
-    const deleteResult = await Product.deleteMany({
-      link: { $regex: getItemLinkRegex(scrapedProduct.itemId) }
-    });
-    deletedExistingCount = deleteResult.deletedCount || 0;
+    // Delete existing products with the same itemID in the link
+    const { data: existingProducts } = await supabaseAdmin
+      .from('products')
+      .select('id')
+      .ilike('link', `%itemID=${scrapedProduct.itemId}%`);
+    
+    if (existingProducts && existingProducts.length > 0) {
+      const ids = existingProducts.map(p => p.id);
+      await ProductDB.deleteMany(ids);
+      deletedExistingCount = existingProducts.length;
+    }
   }
 
-  const products = await Product.insertMany(scrapedProduct.productDataList, { ordered: true });
+  // Insert new products
+  const { data: products, error } = await supabaseAdmin
+    .from('products')
+    .insert(scrapedProduct.productDataList)
+    .select();
+
+  if (error) throw error;
+
   return {
     action: deletedExistingCount > 0 ? "updated" : "created",
     deletedExistingCount,
@@ -274,8 +287,8 @@ function assignPinnedOrders(results, options) {
 
       return {
         ...productData,
-        isPinned: options.pin,
-        pinnedOrder
+        is_pinned: options.pin,
+        pinned_order: pinnedOrder
       };
     });
 
@@ -360,15 +373,25 @@ export async function POST(req) {
       );
     }
 
-    await dbConnect();
-
+    // Handle replace mode deletions
     let deletedCount = 0;
     if (replaceMode === "all") {
-      const deleteResult = await Product.deleteMany({});
-      deletedCount = deleteResult.deletedCount || 0;
+      const { data: allProducts } = await supabaseAdmin.from('products').select('id');
+      if (allProducts && allProducts.length > 0) {
+        const ids = allProducts.map(p => p.id);
+        await ProductDB.deleteMany(ids);
+        deletedCount = allProducts.length;
+      }
     } else if (replaceMode === "pinned") {
-      const deleteResult = await Product.deleteMany({ isPinned: true });
-      deletedCount = deleteResult.deletedCount || 0;
+      const { data: pinnedProducts } = await supabaseAdmin
+        .from('products')
+        .select('id')
+        .eq('is_pinned', true);
+      if (pinnedProducts && pinnedProducts.length > 0) {
+        const ids = pinnedProducts.map(p => p.id);
+        await ProductDB.deleteMany(ids);
+        deletedCount = pinnedProducts.length;
+      }
     }
 
     let created = 0;
@@ -392,7 +415,7 @@ export async function POST(req) {
             status: "success",
             action: saved.action,
             name: product.name,
-            productId: product._id.toString(),
+            productId: product.id.toString(),
             productCount: 1,
             message: saved.action === "created" ? "Created" : "Updated"
           });
