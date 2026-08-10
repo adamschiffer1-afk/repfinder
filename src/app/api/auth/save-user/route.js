@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
-import dbConnect from '@/lib/mongodb';
-import User from '@/models/User';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export const runtime = 'nodejs';
 
@@ -43,8 +42,6 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await dbConnect();
-
     // Get IP address from headers
     const forwarded = request.headers.get('x-forwarded-for');
     const realIp = request.headers.get('x-real-ip');
@@ -63,28 +60,54 @@ export async function POST(request) {
       email,
       name: name || '',
       image: image || '',
-      isAdmin,
+      is_admin: isAdmin,
       provider: provider || 'unknown',
-      lastLogin: new Date(),
-      ipAddress: geoData.ip,
+      last_login: new Date().toISOString(),
+      ip_address: geoData.ip,
       country: geoData.country,
-      countryCode: geoData.countryCode,
+      country_code: geoData.countryCode,
       city: geoData.city,
+      updated_at: new Date().toISOString()
     };
 
-    if (discordId) userData.discordId = discordId;
-    if (googleId) userData.googleId = googleId;
+    if (discordId) userData.discord_id = discordId;
+    if (googleId) userData.google_id = googleId;
 
-    // Upsert user
-    const user = await User.findOneAndUpdate(
-      { email },
-      userData,
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+    // Check if user exists
+    const { data: existingUser, error: findError } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    let user;
+    
+    if (existingUser) {
+      // Update existing user
+      const { data, error } = await supabaseAdmin
+        .from('users')
+        .update(userData)
+        .eq('email', email)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      user = data;
+    } else {
+      // Create new user
+      const { data, error } = await supabaseAdmin
+        .from('users')
+        .insert([userData])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      user = data;
+    }
 
     return NextResponse.json({ success: true, user }, { status: 200 });
   } catch (error) {
     console.error('Error saving user:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error: ' + error.message }, { status: 500 });
   }
 }
