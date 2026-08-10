@@ -114,22 +114,36 @@ async function generateUniqueSlug(name, productId = null) {
 
 export async function POST(req) {
   try {
+    console.log("POST /api/products - Starting product creation");
+    
     const session = await auth();
     if (!session || session.user.email !== "kakobuybs209@gmail.com") {
+      console.log("POST /api/products - Unauthorized:", session?.user?.email);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const data = await req.json();
+    console.log("POST /api/products - Received data:", JSON.stringify(data, null, 2));
     
     if (data.name) {
       data.slug = await generateUniqueSlug(data.name);
+      console.log("POST /api/products - Generated slug:", data.slug);
     }
     
+    console.log("POST /api/products - Creating product with data:", JSON.stringify(data, null, 2));
     const product = await ProductDB.create(data);
+    console.log("POST /api/products - Product created successfully:", product.id);
+    
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error("Failed to create product:", error);
-    return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
+    console.error("Error details:", error.message, error.stack);
+    console.error("Error code:", error.code);
+    return NextResponse.json({ 
+      error: "Failed to create product",
+      details: error.message,
+      code: error.code
+    }, { status: 500 });
   }
 }
 
@@ -178,15 +192,23 @@ export async function DELETE(req) {
 
 export async function PATCH(req) {
   try {
+    console.log("PATCH /api/products - Starting bulk update");
+    
     const session = await auth();
     if (!session || session.user.email !== "kakobuybs209@gmail.com") {
+      console.log("PATCH /api/products - Unauthorized:", session?.user?.email);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { ids, update, reorder } = await req.json();
+    const body = await req.json();
+    console.log("PATCH /api/products - Received body:", JSON.stringify(body, null, 2));
+    
+    const { ids, update, reorder } = body;
 
     // Handle reordering pinned products
     if (Array.isArray(reorder)) {
+      console.log("PATCH /api/products - Reordering pinned products:", reorder.length);
+      
       const operations = reorder
         .map((item) => ({
           id: item?.id,
@@ -195,6 +217,7 @@ export async function PATCH(req) {
         .filter((item) => item.id && Number.isFinite(item.pinned_order));
 
       if (operations.length === 0 || operations.length !== reorder.length) {
+        console.log("PATCH /api/products - Invalid reorder payload");
         return NextResponse.json({ error: "Invalid reorder payload" }, { status: 400 });
       }
 
@@ -207,6 +230,7 @@ export async function PATCH(req) {
       );
 
       await Promise.all(promises);
+      console.log("PATCH /api/products - Reorder successful");
 
       return NextResponse.json({
         message: "Pinned order updated",
@@ -216,8 +240,11 @@ export async function PATCH(req) {
 
     // Handle bulk updates
     if (!Array.isArray(ids) || ids.length === 0 || !update) {
+      console.log("PATCH /api/products - Invalid input:", { ids, update });
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
+
+    console.log("PATCH /api/products - Bulk update for ids:", ids);
 
     // Allowed fields for bulk update (map MongoDB names to Supabase)
     const updateData = {};
@@ -233,16 +260,25 @@ export async function PATCH(req) {
     }
 
     if (Object.keys(updateData).length === 0) {
+      console.log("PATCH /api/products - No valid fields to update");
       return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
     }
 
+    console.log("PATCH /api/products - Update data:", JSON.stringify(updateData, null, 2));
+
     const result = await ProductDB.updateMany(ids, updateData);
+    console.log("PATCH /api/products - Update successful:", result.modifiedCount);
+    
     return NextResponse.json({ 
       message: `Successfully updated ${result.modifiedCount} products`, 
       modifiedCount: result.modifiedCount 
     });
   } catch (error) {
     console.error("Bulk update error:", error);
-    return NextResponse.json({ error: "Failed to update products" }, { status: 500 });
+    console.error("Error details:", error.message, error.stack);
+    return NextResponse.json({ 
+      error: "Failed to update products",
+      details: error.message 
+    }, { status: 500 });
   }
 }
