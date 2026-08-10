@@ -105,6 +105,8 @@ export async function PUT(req, { params }) {
     const { id } = params;
     const data = await req.json();
     
+    console.log("PUT /api/products/[id] - Received data:", JSON.stringify(data, null, 2));
+    
     // Map MongoDB field names to Supabase
     const mappedData = {};
     if (data.name !== undefined) mappedData.name = data.name;
@@ -126,10 +128,19 @@ export async function PUT(req, { params }) {
       }
     }
 
+    console.log("PUT /api/products/[id] - Mapped data for Supabase:", JSON.stringify(mappedData, null, 2));
+
     const product = await ProductDB.update(id, mappedData);
+    
+    console.log("PUT /api/products/[id] - Update successful:", product.id);
+    
     return NextResponse.json(product);
   } catch (error) {
     console.error("Update product error:", error);
-    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+    console.error("Error details:", error.message, error.stack);
+    return NextResponse.json({ 
+      error: "Failed to update product",
+      details: error.message 
+    }, { status: 500 });
   }
 }
