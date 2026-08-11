@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import styles from '@/styles/Products.module.css';
 import AgentModal from '@/components/AgentModal';
 import { categoriesData } from '@/data/productsData';
@@ -14,15 +14,18 @@ export default function ProductsPage() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [displayCount, setDisplayCount] = useState(20);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   
   // Get currency conversion utilities
   const { formatPrice } = useCurrency();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const searchRef = useRef(null);
+  const observerRef = useRef(null);
+  const sentinelRef = useRef(null);
   
-  const PRODUCTS_PER_PAGE = 20;
+  const PRODUCTS_PER_LOAD = 20;
 
   // Fetch products from API
   useEffect(() => {
@@ -136,7 +139,7 @@ export default function ProductsPage() {
       }
       
       setFilteredProducts(filtered);
-      setCurrentPage(1); // Reset to first page when filtering
+      setDisplayCount(PRODUCTS_PER_LOAD); // Reset to initial load amount
       
       setTimeout(() => {
         setIsTransitioning(false);
@@ -146,35 +149,42 @@ export default function ProductsPage() {
     return () => clearTimeout(timer);
   }, [searchQuery, selectedCategories, allProducts]);
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
-  const endIndex = startIndex + PRODUCTS_PER_PAGE;
-  const displayedProducts = filteredProducts.slice(startIndex, endIndex);
-
-  // Pagination handlers
-  const goToPage = (pageNum) => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentPage(pageNum);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setTimeout(() => {
-        setIsTransitioning(false);
-      }, 50);
-    }, 200);
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      goToPage(currentPage + 1);
+  // Infinite scroll observer
+  useEffect(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
     }
-  };
 
-  const goToPrevPage = () => {
-    if (currentPage > 1) {
-      goToPage(currentPage - 1);
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        const firstEntry = entries[0];
+        if (firstEntry.isIntersecting && !isLoadingMore && displayCount < filteredProducts.length) {
+          setIsLoadingMore(true);
+          
+          // Simulate loading delay for smooth experience
+          setTimeout(() => {
+            setDisplayCount(prev => Math.min(prev + PRODUCTS_PER_LOAD, filteredProducts.length));
+            setIsLoadingMore(false);
+          }, 300);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sentinelRef.current) {
+      observerRef.current.observe(sentinelRef.current);
     }
-  };
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [displayCount, filteredProducts.length, isLoadingMore]);
+
+  // Get products to display
+  const displayedProducts = filteredProducts.slice(0, displayCount);
+  const hasMore = displayCount < filteredProducts.length;
 
   const handleOpenAgentModal = (product) => {
     setSelectedProduct(product);
@@ -299,7 +309,7 @@ export default function ProductsPage() {
           ) : (
             // Product Cards
             displayedProducts.map((product, index) => (
-              <div key={`${product._id}-${currentPage}`} className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
+              <div key={`${product._id}-${index}`} className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
                 {/* Product Image */}
                 <div className={styles.imageWrapper}>
                   <img src={product.image} alt={product.name} className={styles.productImage} />
@@ -336,36 +346,15 @@ export default function ProductsPage() {
           )}
         </div>
 
-        {/* Pagination */}
-        {!loading && filteredProducts.length > 0 && totalPages > 1 && (
-          <div className={styles.pagination}>
-            <button 
-              className={styles.paginationButton}
-              onClick={goToPrevPage}
-              disabled={currentPage === 1}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Previous
-            </button>
-
-            <div className={styles.pageNumbers}>
-              <span className={styles.pageInfo}>
-                Page {currentPage} of {totalPages}
-              </span>
-            </div>
-
-            <button 
-              className={styles.paginationButton}
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Next
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
+        {/* Loading More Indicator */}
+        {!loading && hasMore && (
+          <div ref={sentinelRef} className={styles.loadingMore}>
+            {isLoadingMore && (
+              <div className={styles.loadingSpinner}>
+                <div className={styles.spinner}></div>
+                <span>Loading more products...</span>
+              </div>
+            )}
           </div>
         )}
       </div>

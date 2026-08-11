@@ -2,7 +2,6 @@ import { unstable_cache } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { ProductDB, supabaseAdmin } from "@/lib/supabase";
 import ProductDetail from "@/components/ProductDetail";
-import PopupModal from "@/components/PopupModal";
 import { extractItemId } from "@/utils/converter";
 import axios from "axios";
 import * as cheerio from "cheerio";
@@ -316,7 +315,6 @@ export default async function ProductDetailPage({ params }) {
   return (
     <>
       <ProductDetail productId={productId} initialData={productData} />
-      <PopupModal />
     </>
   );
 }
