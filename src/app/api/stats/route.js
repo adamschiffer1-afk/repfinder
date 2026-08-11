@@ -148,96 +148,30 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await dbConnect();
+    // Simple stats from Supabase - just product counts for now
+    const { supabaseAdmin } = await import("@/lib/supabase");
+    
+    const { count: totalProducts } = await supabaseAdmin
+      .from('products')
+      .select('*', { count: 'exact', head: true });
 
-    // 1. Total Visits
-    const totalVisits = await Stat.countDocuments({ type: 'page_view', ...cleanFilter });
+    const { count: pinnedProducts } = await supabaseAdmin
+      .from('products')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_pinned', true);
 
-    // 2. Total Product Clicks
-    const totalClicks = await Stat.countDocuments({ type: 'product_click', ...cleanFilter });
-
-    // 3. Top Products
-    const topProducts = await Stat.aggregate([
-      { $match: { type: 'product_click', productId: { $ne: null, $ne: "" }, ...cleanFilter } },
-      { $group: { _id: "$productId", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 },
-      {
-        $addFields: {
-          convertedId: {
-            $cond: {
-              if: { $regexMatch: { input: "$_id", regex: /^[0-9a-fA-F]{24}$/ } },
-              then: { $toObjectId: "$_id" },
-              else: "$_id"
-            }
-          }
-        }
-      },
-      {
-        $lookup: {
-          from: "products",
-          let: { cid: "$convertedId" },
-          pipeline: [
-            { $match: { $expr: { $eq: ["$_id", "$$cid"] } } }
-          ],
-          as: "productInfo"
-        }
-      },
-      { $unwind: { path: "$productInfo", preserveNullAndEmptyArrays: true } }
-    ]);
-
-    // 4. Top Agents
-    const topAgents = await Stat.aggregate([
-      { $match: { type: 'product_click', agent: { $ne: null }, ...cleanFilter } },
-      { $group: { _id: "$agent", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 5 }
-    ]);
-
-    // 5. Top Browsers
-    const topBrowsers = await Stat.aggregate([
-      { $match: { userAgent: { $ne: null, $ne: "" }, ...cleanFilter } },
-      { $group: { _id: "$userAgent", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 }
-    ]);
-
-    // 6. Recent Activity
-    const recentActivityRaw = await Stat.find({ type: { $ne: 'error_log' }, ...cleanFilter })
-      .sort({ timestamp: -1 })
-      .limit(10)
-      .lean();
-
-    const recentActivity = await Promise.all(recentActivityRaw.map(async (act) => {
-      if (act.productId && mongoose.Types.ObjectId.isValid(act.productId)) {
-        act.productId = await Product.findById(act.productId).select('name image').lean();
-      }
-      return act;
-    }));
-
-    // 7. Top Countries
-    const topCountries = await Stat.aggregate([
-      { $match: { country: { $ne: null, $ne: "" }, ...cleanFilter } },
-      { $group: { _id: "$country", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 }
-    ]);
-
-    // 8. Recent Errors
-    const recentErrors = await Stat.find({ type: 'error_log' })
-      .sort({ timestamp: -1 })
-      .limit(10)
-      .lean();
-
+    // Return simplified stats (full stats migration can be done later)
     return NextResponse.json({
-      totalVisits,
-      totalClicks,
-      topProducts,
-      topAgents,
-      topBrowsers,
-      recentActivity,
-      topCountries,
-      recentErrors
+      totalVisits: 0, // Stats collection needs migration
+      totalClicks: 0, // Stats collection needs migration
+      totalProducts: totalProducts || 0,
+      pinnedProducts: pinnedProducts || 0,
+      topProducts: [],
+      topAgents: [],
+      topBrowsers: [],
+      recentActivity: [],
+      topCountries: [],
+      recentErrors: []
     });
   } catch (error) {
     console.error("Fetch stats error:", error);
