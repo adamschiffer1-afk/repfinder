@@ -8,6 +8,7 @@ import Navbar from '@/components/Navbar';
 import PageTransition from '@/components/PageTransition';
 import TopLoadingBar from '@/components/TopLoadingBar';
 import UserWidget from '@/components/UserWidget';
+import OssbuyBanner from '@/components/OssbuyBanner';
 import { LanguageProvider } from '@/context/LanguageContext';
 import { AuthProvider } from '@/context/AuthContext';
 import SessionProviderWrapper from '@/components/SessionProviderWrapper';
@@ -62,6 +63,7 @@ export default async function RootLayout({ children }) {
               <AnalyticsTracker />
             </Suspense>
             <TopLoadingBar />
+            <OssbuyBanner />
             <LanguageProvider>
               <Navbar />
               <UserWidget />

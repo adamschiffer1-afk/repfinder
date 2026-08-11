@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import styles from '@/styles/Products.module.css';
-import FilterModal from '@/components/FilterModal';
 import AgentModal from '@/components/AgentModal';
 import { categoriesData } from '@/data/productsData';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -14,8 +13,6 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -372,9 +369,6 @@ export default function ProductsPage() {
           </div>
         )}
       </div>
-
-      {/* Filter Modal */}
-      <FilterModal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)} />
 
       {/* Agent Modal */}
       {selectedProduct && (
