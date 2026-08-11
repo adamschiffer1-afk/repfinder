@@ -1,7 +1,6 @@
 import { unstable_cache } from 'next/cache';
 import { redirect } from 'next/navigation';
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
+import { ProductDB, supabaseAdmin } from "@/lib/supabase";
 import ProductDetail from "@/components/ProductDetail";
 import PopupModal from "@/components/PopupModal";
 import { extractItemId } from "@/utils/converter";
@@ -103,24 +102,28 @@ const scrapeWeidian = unstable_cache(
 // ─── Full product data — cached 5 min per productId ──────────────────────────
 const getProductData = unstable_cache(
   async (productId) => {
-    await dbConnect();
-
-    const product = await Product.findById(productId).lean();
+    const product = await ProductDB.findById(productId);
     if (!product) return null;
 
     const itemId = extractItemId(product.link);
     let variants = [];
-    let localQcImages = product.qcImages || [];
+    let localQcImages = product.qc_images || [];
 
     if (itemId) {
-      // Use exact string match on itemId to avoid full-collection regex scan
-      variants = await Product.find({ link: { $regex: itemId, $options: "i" } })
-        .select("_id name image link qcImages")
-        .lean();
+      // Find variants with same itemId in link
+      const { data: allVariants } = await supabaseAdmin
+        .from('products')
+        .select('id, name, image, link, qc_images')
+        .ilike('link', `%${itemId}%`);
+      
+      variants = allVariants || [];
 
       if (localQcImages.length === 0) {
         for (const v of variants) {
-          if (v.qcImages?.length > 0) { localQcImages = v.qcImages; break; }
+          if (v.qc_images?.length > 0) { 
+            localQcImages = v.qc_images; 
+            break; 
+          }
         }
       }
     }
@@ -196,15 +199,13 @@ const getProductData = unstable_cache(
         } else if (v.name.includes("-")) {
           name = v.name.split("-").pop().trim();
         }
-        return { name, image: v.image, productId: v._id.toString() };
+        return { name, image: v.image, productId: v.id.toString() };
       });
     } else {
-      colors = [{ name: "Default Style", image: product.image, productId: product._id.toString() }];
+      colors = [{ name: "Default Style", image: product.image, productId: product.id.toString() }];
     }
 
-    // Serialize Mongoose objects
-    const serialized = JSON.parse(JSON.stringify({ product, variants, sizes, colors, qcImages: localQcImages, details: liveDetails }));
-    return serialized;
+    return { product, variants, sizes, colors, qcImages: localQcImages, details: liveDetails };
   },
   ["product-detail"],
   { revalidate: 300, tags: ["products"] } // 5 min cache
@@ -214,15 +215,25 @@ const getProductData = unstable_cache(
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   try {
-    await dbConnect();
     let product;
-    if (slug.match(/^[0-9a-fA-F]{24}$/)) {
-      product = await Product.findById(slug).select("name image").lean();
+    
+    // Check if slug is UUID format
+    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    if (uuidRegex.test(slug)) {
+      product = await ProductDB.findById(slug);
     }
+    
     if (!product) {
-      product = await Product.findOne({ slug }).select("name image").lean();
+      const { data } = await supabaseAdmin
+        .from('products')
+        .select('name, image')
+        .eq('slug', slug)
+        .single();
+      product = data;
     }
+    
     if (!product) return { title: "Nie znaleziono produktu | RepFinder" };
+    
     return {
       title: `${product.name} | RepFinder`,
       description: `Kup ${product.name} od Weidian/Taobao/1688. Sprawdź szczegóły, warianty, rozmiary i zdjęcia QC na RepFinder.`,
@@ -242,19 +253,28 @@ async function generateUniqueSlug(name, productId = null) {
     .trim()
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+  
   if (!baseSlug) baseSlug = "product";
+  
   let slug = baseSlug;
   let counter = 1;
+  
   while (true) {
-    const query = { slug };
+    let query = supabaseAdmin.from('products').select('id').eq('slug', slug);
+    
     if (productId) {
-      query._id = { $ne: productId };
+      query = query.neq('id', productId);
     }
-    const exists = await Product.findOne(query).select("_id").lean();
-    if (!exists) break;
+    
+    const { data, error } = await query.limit(1);
+    if (error) throw error;
+    
+    if (!data || data.length === 0) break;
+    
     slug = `${baseSlug}-${counter}`;
     counter++;
   }
+  
   return slug;
 }
 
@@ -262,27 +282,32 @@ async function generateUniqueSlug(name, productId = null) {
 export default async function ProductDetailPage({ params }) {
   const { slug } = await params;
 
-  await dbConnect();
-
-  const isId = slug.match(/^[0-9a-fA-F]{24}$/);
+  // Check if slug is UUID format (Supabase uses UUIDs)
+  const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+  const isId = uuidRegex.test(slug);
   let productId = slug;
   let productObj = null;
 
   if (isId) {
-    productObj = await Product.findById(slug);
+    productObj = await ProductDB.findById(slug);
     if (productObj) {
       if (!productObj.slug && productObj.name) {
-        const uniqueSlug = await generateUniqueSlug(productObj.name, productObj._id);
+        const uniqueSlug = await generateUniqueSlug(productObj.name, productObj.id);
+        await ProductDB.update(productObj.id, { slug: uniqueSlug });
         productObj.slug = uniqueSlug;
-        await Product.updateOne({ _id: productObj._id }, { $set: { slug: uniqueSlug } });
       }
       if (productObj.slug) {
         redirect(`/products/${productObj.slug}`);
       }
     }
   } else {
-    const found = await Product.findOne({ slug }).select("_id").lean();
-    if (found) productId = found._id.toString();
+    const { data: found } = await supabaseAdmin
+      .from('products')
+      .select('id')
+      .eq('slug', slug)
+      .single();
+    
+    if (found) productId = found.id.toString();
   }
 
   // Fetch all data server-side (cached)
