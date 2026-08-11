@@ -31328,6 +31328,11 @@ export const categoriesData = [
   "pants",
   "shorts",
   "jackets",
+  "longsleeve",
   "sets",
+  "electronics",
+  "headwear",
+  "bags-backpacks",
+  "belts",
   "accessories"
 ];
