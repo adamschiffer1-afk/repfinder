@@ -1,1533 +1,389 @@
 'use client';
 
-import { memo, useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { useState, useEffect, useRef } from 'react';
 import styles from '@/styles/Products.module.css';
-import { useAuth } from '@/context/AuthContext';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSearch,
-  faFilter,
-  faTimes,
-  faCheck,
-  faLayerGroup,
-  faSortAmountDown,
-  faDollarSign,
-  faCalendar,
-  faGem,
-  faTags,
-  faRandom,
-  faSortNumericDown,
-  faSortNumericUp,
-  faThumbsUp,
-  faThumbsDown,
-  faHeart,
-  faSpinner,
-  faBoxOpen,
-  faChevronRight,
-  faCopy,
-  faClock,
-  faShare
-} from '@fortawesome/free-solid-svg-icons';
-import { productsData, categoriesData } from '@/data/productsData';
-import { convertLink, SUPPORTED_AGENTS } from '@/utils/converter';
+import FilterModal from '@/components/FilterModal';
+import AgentModal from '@/components/AgentModal';
+import { categoriesData } from '@/data/productsData';
 import { useCurrency } from '@/hooks/useCurrency';
 
-import { useLanguage } from '@/context/LanguageContext';
-
-const SEARCH_SYNONYM_GROUPS = [
-  ['af1', 'airforce', 'air force', 'forces', 'air force 1', 'air force one', 'nike air force'],
-  ['b27', 'dior b27', 'dior shoes', 'dior sneaker', 'dior sneakers'],
-  ['j4', 'jordan 4', 'aj4', 'air jordan 4'],
-  ['j1', 'jordan 1', 'aj1', 'air jordan 1'],
-  ['j3', 'jordan 3', 'aj3', 'air jordan 3'],
-  ['j11', 'jordan 11', 'aj11', 'air jordan 11'],
-  ['tn', 'air max plus', 'nike tn'],
-  ['nb', 'new balance'],
-  ['yeezy slide', 'yeezy slides', 'slides'],
-  ['tee', 'tees', 't shirt', 't-shirt', 'tshirt'],
-  ['hoodie', 'hoody', 'sweatshirt', 'sweater'],
-  ['pants', 'trousers', 'joggers', 'sweatpants'],
-  ['shorts', 'short'],
-  ['jacket', 'coat', 'puffer', 'windbreaker'],
-  ['bag', 'backpack']
-];
-
-const SEARCH_BRANDS = [
-  'Nike', 'Adidas', 'Jordan', 'Dior', 'KITH', 'Moncler', 'New Balance', 'Stone Island',
-  'Arc\'teryx', 'Essentials', 'Hellstar', 'Chrome Hearts', 'Balenciaga', 'Louis Vuitton',
-  'Off-White', 'Supreme', 'Corteiz', 'Patagonia', 'Trapstar', 'Bape', 'Asics'
-];
-
-const RECENT_SEARCHES_KEY = 'repfinder_recent_searches';
-const RECENT_SEARCHES_LIMIT = 6;
-const ANALYTICS_VISITOR_KEY = '__vf_visitor_id';
-const CLICK_TRACK_COOLDOWN_MS = 60 * 1000;
-
-const normalizeSearchText = (value = '') =>
-  value
-    .toString()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim();
-
-const compactNormalizedText = (value = '') => value.replace(/\s+/g, '');
-
-const compactSearchText = (value = '') => compactNormalizedText(normalizeSearchText(value));
-
-const SEARCH_SYNONYM_GROUPS_BY_PHRASE_LENGTH = [...SEARCH_SYNONYM_GROUPS].sort((groupA, groupB) => {
-  const longest = (group) => Math.max(...group.map(term => normalizeSearchText(term).length), 0);
-  return longest(groupB) - longest(groupA);
-});
-
-const createSearchIndex = (searchable = '') => {
-  const normalizedSearchable = normalizeSearchText(searchable);
-  return {
-    searchable,
-    normalizedSearchable,
-    compactSearchable: compactNormalizedText(normalizedSearchable),
-    fuzzyTokens: normalizedSearchable.split(' ').filter(token => token.length >= 4)
-  };
-};
-
-const getProductSearchableText = (product = {}) => [
-  product.name,
-  product.category,
-  product.batch
-].filter(Boolean).join(' ');
-
-const createProductSearchIndex = (product) => ({
-  product,
-  ...createSearchIndex(getProductSearchableText(product))
-});
-
-const getExpandedTermsForGroup = (group) => {
-  const terms = new Set();
-  group.forEach((term) => {
-    const normalized = normalizeSearchText(term);
-    const compact = compactSearchText(term);
-    if (normalized) terms.add(normalized);
-    if (compact) terms.add(compact);
-  });
-  return [...terms];
-};
-
-const getExpandedTermsForToken = (token) => {
-  const terms = new Set();
-  const normalized = normalizeSearchText(token);
-  const compact = compactSearchText(token);
-  if (normalized) terms.add(normalized);
-  if (compact) terms.add(compact);
-
-  SEARCH_SYNONYM_GROUPS.forEach((group) => {
-    const normalizedGroup = group.map(normalizeSearchText);
-    if (normalizedGroup.includes(normalized)) {
-      getExpandedTermsForGroup(group).forEach(term => terms.add(term));
-    }
-  });
-
-  return [...terms];
-};
-
-const getSearchClauses = (query) => {
-  const normalized = normalizeSearchText(query);
-  const compact = compactSearchText(query);
-  if (!normalized && !compact) return [];
-
-  let remainder = ` ${normalized} `;
-  const clauses = [];
-
-  SEARCH_SYNONYM_GROUPS_BY_PHRASE_LENGTH.forEach((group) => {
-    const groupTerms = [...group].sort(
-      (termA, termB) => normalizeSearchText(termB).length - normalizeSearchText(termA).length
-    );
-
-    for (const groupTerm of groupTerms) {
-      const phrase = normalizeSearchText(groupTerm);
-      if (!phrase) continue;
-
-      const paddedPhrase = ` ${phrase} `;
-      if (!remainder.includes(paddedPhrase)) continue;
-
-      clauses.push(getExpandedTermsForGroup(group));
-      remainder = remainder.split(paddedPhrase).join(' ');
-      break;
-    }
-  });
-
-  remainder
-    .trim()
-    .split(' ')
-    .filter(token => token.length >= 2)
-    .forEach(token => {
-      clauses.push(getExpandedTermsForToken(token));
-    });
-
-  if (!clauses.length) {
-    clauses.push([normalized, compact].filter(Boolean));
-  }
-
-  return clauses;
-};
-
-const getEditDistance = (a, b) => {
-  if (Math.abs(a.length - b.length) > 1) return 2;
-  let previous = Array.from({ length: b.length + 1 }, (_, index) => index);
-
-  for (let i = 1; i <= a.length; i++) {
-    const current = [i];
-    for (let j = 1; j <= b.length; j++) {
-      current[j] = a[i - 1] === b[j - 1]
-        ? previous[j - 1]
-        : Math.min(previous[j - 1], previous[j], current[j - 1]) + 1;
-    }
-    previous = current;
-  }
-
-  return previous[b.length];
-};
-
-const getFuzzyQueryTokens = (query) => {
-  const allQueryTokens = normalizeSearchText(query).split(' ').filter(Boolean);
-  if (!allQueryTokens.length || allQueryTokens.some(token => token.length < 4)) return [];
-
-  return allQueryTokens.filter(token => token.length >= 4);
-};
-
-const hasFuzzyTokenMatch = (queryTokens, productTokens) => {
-  if (!queryTokens.length || !productTokens.length) return false;
-
-  return queryTokens.every(queryToken =>
-    productTokens.some(productToken => getEditDistance(queryToken, productToken) <= 1)
-  );
-};
-
-const clauseMatchesSearchIndex = (clauseTerms, searchIndex) => (
-  clauseTerms.some(term => (
-    searchIndex.normalizedSearchable.includes(term)
-    || searchIndex.compactSearchable.includes(term)
-  ))
-);
-
-const matchesSuggestionQuery = (searchIndex, query) => {
-  const normalizedQuery = normalizeSearchText(query);
-  const compactQuery = compactSearchText(query);
-  if (!normalizedQuery && !compactQuery) return true;
-  if (!searchIndex?.normalizedSearchable) return false;
-
-  if (
-    searchIndex.normalizedSearchable.includes(normalizedQuery)
-    || searchIndex.compactSearchable.includes(compactQuery)
-  ) {
-    return true;
-  }
-
-  const queryTokens = normalizedQuery.split(' ').filter(token => token.length >= 2);
-  if (!queryTokens.length) return false;
-
-  return queryTokens.every(token => (
-    searchIndex.normalizedSearchable.includes(token)
-    || searchIndex.compactSearchable.includes(compactSearchText(token))
-  ));
-};
-
-const productMatchesSearch = (
-  productOrSearchIndex,
-  query,
-  clauses = getSearchClauses(query),
-  fuzzyQueryTokens = getFuzzyQueryTokens(query)
-) => {
-  if (!productOrSearchIndex) return false;
-
-  const searchIndex = productOrSearchIndex.normalizedSearchable !== undefined
-    ? productOrSearchIndex
-    : createSearchIndex(getProductSearchableText(productOrSearchIndex));
-
-  if (!searchIndex.normalizedSearchable) return false;
-
-  const matchesClauses = clauses.length > 0
-    && clauses.every(clauseTerms => clauseMatchesSearchIndex(clauseTerms, searchIndex));
-
-  const fuzzyMatch = fuzzyQueryTokens.length > 0
-    && hasFuzzyTokenMatch(fuzzyQueryTokens, searchIndex.fuzzyTokens);
-
-  return matchesClauses || fuzzyMatch;
-};
-
-const shuffleArray = (items = []) => {
-  const arr = [...items];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-};
-
-const buildApiSortParam = () => 'random';
-
-const generateAnalyticsVisitorId = () => {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
-    const random = Math.random() * 16 | 0;
-    const value = char === 'x' ? random : (random & 0x3 | 0x8);
-    return value.toString(16);
-  });
-};
-
-const getAnalyticsVisitorId = () => {
-  if (typeof window === 'undefined') return null;
-
-  try {
-    let visitorId = localStorage.getItem(ANALYTICS_VISITOR_KEY);
-    if (!visitorId) {
-      visitorId = generateAnalyticsVisitorId();
-      localStorage.setItem(ANALYTICS_VISITOR_KEY, visitorId);
-    }
-    return visitorId;
-  } catch (err) {
-    return null;
-  }
-};
-
-const ProductCard = memo(function ProductCard({
-  product,
-  index,
-  formatPrice,
-  preferredAgentLogo,
-  quickCopied,
-  isNavigating,
-  onOpenAgent,
-  onQuickCopy,
-  viewAgentsLabel,
-  copyLinkLabel,
-}) {
-  return (
-    <div
-      className={styles.productCard}
-      style={{ animationDelay: `${index * 0.05}s` }}
-    >
-      <div 
-        className={styles.imageWrapper}
-        onClick={() => onOpenAgent(product)}
-        style={{ cursor: 'pointer' }}
-      >
-        <Image
-          src={product.image}
-          alt={product.name}
-          width={300}
-          height={300}
-          className={styles.productImage}
-          unoptimized={true}
-        />
-      </div>
-      <div className={styles.cardContent}>
-        <div className={styles.cardTags}>
-          {product.category && <span className={styles.tagCategory}>{product.category.toUpperCase()}</span>}
-          {product.batch === 'best' && <span className={styles.tagBest}>BEST BATCH</span>}
-          {product.batch === 'budget' && <span className={styles.tagBudget}>BUDGET BATCH</span>}
-        </div>
-
-        <h3 
-          className={styles.productName}
-          onClick={() => onOpenAgent(product)}
-          style={{ cursor: 'pointer' }}
-        >
-          {product.name}
-        </h3>
-
-        <div className={styles.cardPriceRow}>
-          <span className={styles.price}>{formatPrice(product.price)}</span>
-        </div>
-
-        <div className={styles.cardActionRow}>
-          <button
-            className={styles.viewBtnFull}
-            onClick={() => onOpenAgent(product)}
-            disabled={isNavigating}
-          >
-            {isNavigating ? (
-              <>
-                <FontAwesomeIcon icon={faSpinner} spin /> Ładowanie...
-              </>
-            ) : (
-              viewAgentsLabel
-            )}
-          </button>
-          <button
-            className={`${styles.quickCopyBtn} ${quickCopied ? styles.quickCopied : ''}`}
-            onClick={(event) => onQuickCopy(event, product)}
-            title={copyLinkLabel}
-          >
-            {quickCopied ? (
-              <FontAwesomeIcon icon={faCheck} className={styles.quickCopyIcon} />
-            ) : (
-              <img src={preferredAgentLogo} alt="Agent" className={styles.quickCopyAgentImg} />
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-});
-
-export default function Products() {
-  const { t } = useLanguage();
-  const { user, fetchWithAuth } = useAuth();
-  const router = useRouter();
-  const { formatPrice } = useCurrency();
-  const recentTrackedClicksRef = useRef(new Map());
-
-  const [products, setProducts] = useState([]);
+export default function ProductsPage() {
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [categories, setCategories] = useState(categoriesData);
-  const [suggestionNames, setSuggestionNames] = useState([]);
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
-
-  // Filter States
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedBatch, setSelectedBatch] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-
-
-  // UI States - Pagination
-  const [page, setPage] = useState(1);
-  const [limit] = useState(24);
-  const [totalPages, setTotalPages] = useState(1);
-  const [error, setError] = useState({ message: null, type: null });
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [detailLoading, setDetailLoading] = useState(false);
-  const [productDetails, setProductDetails] = useState(null);
-  const [galleryImage, setGalleryImage] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [agentModalProduct, setAgentModalProduct] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [copiedId, setCopiedId] = useState(null);
-  const [preferredAgent, setPreferredAgent] = useState('ossbuy');
-  const [preferredAgentLogo, setPreferredAgentLogo] = useState('/images/ossbuy.png');
-  const [quickCopiedId, setQuickCopiedId] = useState(null);
-  const [recentSearches, setRecentSearches] = useState([]);
-  const [filteredProductCount, setFilteredProductCount] = useState(0);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [navigatingProductId, setNavigatingProductId] = useState(null);
-  const productNameSuggestions = useMemo(() => (
-    suggestionNames.map(({ name, count }) => ({
-      type: 'product',
-      label: name,
-      meta: `${count} items`,
-      value: name,
-      count,
-      ...createSearchIndex(name)
-    }))
-  ), [suggestionNames]);
-  const catalogBrands = useMemo(
-    () => [...SEARCH_BRANDS].sort((a, b) => a.localeCompare(b)),
-    []
-  );
+  
+  // Get currency conversion utilities
+  const { formatPrice } = useCurrency();
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const searchRef = useRef(null);
+  
+  const PRODUCTS_PER_PAGE = 20;
 
+  // Fetch products from API
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const trimmed = searchQuery.trim();
-      setDebouncedSearchQuery(trimmed);
-      // Reset page only once, together with query update
-      setPage(1);
-    }, 300);
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [selectedCategories, selectedBatch, priceRange.min, priceRange.max]);
-
-  useEffect(() => {
-    if (!selectedProduct) {
-      setProductDetails(null);
-      setGalleryImage(null);
-      setSelectedSize(null);
-      return;
-    }
-
-    const fetchDetail = async () => {
-      setDetailLoading(true);
+    const fetchProducts = async () => {
       try {
-        const res = await fetch(`/api/products/${selectedProduct._id}`);
-        const data = await res.json();
-        if (data.success) {
-          setProductDetails(data);
-          setGalleryImage(data.product.image);
-          if (data.sizes && data.sizes.length > 0) {
-            setSelectedSize(data.sizes[0]);
-          }
+        setLoading(true);
+        
+        // Fetch from API
+        const res = await fetch('/api/products?limit=1000');
+        if (!res.ok) {
+          throw new Error('Failed to fetch products');
         }
+        
+        const data = await res.json();
+        
+        // Transform Supabase format to expected format
+        const products = data.map(p => ({
+          _id: p.id,
+          name: p.name,
+          slug: p.slug,
+          price: p.price,
+          image: p.image,
+          category: p.category,
+          batch: p.batch,
+          link: p.link,
+          clicks: p.clicks,
+          isPinned: p.is_pinned,
+          pinnedOrder: p.pinned_order
+        }));
+        
+        console.log('Fetched products from API, count:', products.length);
+        setAllProducts(products);
+        setFilteredProducts(products);
+        
       } catch (err) {
-        console.error("Failed to fetch product details:", err);
+        console.error('Error fetching products:', err);
+        setAllProducts([]);
+        setFilteredProducts([]);
       } finally {
-        setDetailLoading(false);
+        setLoading(false);
       }
     };
 
-    fetchDetail();
-  }, [selectedProduct]);
+    fetchProducts();
+  }, []);
 
-  const categoriesParam = selectedCategories.join(',');
-  const priceMin = priceRange.min;
-  const priceMax = priceRange.max;
-
-  const fetchProducts = useCallback(async (pageNum = 1) => {
-    setLoading(true);
-    
-    try {
-      const params = new URLSearchParams({
-        page: String(pageNum),
-        limit: String(limit),
-        sort: buildApiSortParam()
-      });
-
-      if (debouncedSearchQuery) params.set('search', debouncedSearchQuery);
-      if (categoriesParam) {
-        const catArr = categoriesParam.split(',');
-        if (catArr.length === 1) params.set('category', catArr[0]);
-        else params.set('categories', categoriesParam);
-      }
-      if (selectedBatch && selectedBatch !== 'random') params.set('batch', selectedBatch);
-      if (priceMin) params.set('minPrice', priceMin);
-      if (priceMax) params.set('maxPrice', priceMax);
-
-      const res = await fetch(`/api/products?${params.toString()}`);
-      const data = await res.json();
-
-      if (data?.products) {
-        const pinned = data.products.filter(p => p.isPinned);
-        const nonPinned = data.products.filter(p => !p.isPinned);
-        const shuffledNonPinned = shuffleArray(nonPinned);
-        const newProducts = [...pinned, ...shuffledNonPinned];
-        
-        setProducts(newProducts);
-        
-        setTotalPages(data.pages || 1);
-        setFilteredProductCount(data.total ?? 0);
-        setError({ message: null, type: null });
-      } else {
-        throw new Error(data?.error || 'Invalid products response');
-      }
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
-      const start = (pageNum - 1) * limit;
-      const fallback = [...productsData];
-      setProducts(fallback.slice(start, start + limit));
-      setFilteredProductCount(fallback.length);
-      setTotalPages(Math.ceil(fallback.length / limit) || 1);
-      setError({ message: 'Failed to load products from server, using local data', type: 'warning' });
-    } finally {
-      setLoading(false);
-      setIsInitialLoad(false);
+  // Generate suggestions from search query
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      setSuggestions([]);
+      return;
     }
-  }, [
-    limit,
-    debouncedSearchQuery,
-    categoriesParam,
-    selectedBatch,
-    priceMin,
-    priceMax,
-  ]);
 
+    const query = searchQuery.toLowerCase();
+    
+    // Get unique product names that match
+    const matchingProducts = allProducts
+      .filter(p => p.name.toLowerCase().includes(query))
+      .map(p => p.name)
+      .filter((name, index, self) => self.indexOf(name) === index) // unique
+      .slice(0, 5); // max 5 suggestions
+
+    setSuggestions(matchingProducts);
+  }, [searchQuery, allProducts]);
+
+  // Close suggestions when clicking outside
   useEffect(() => {
-    setPage(1);
-    setProducts([]);
-    fetchProducts(1);
-  }, [fetchProducts]);
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
 
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filter products based on search query and categories
   useEffect(() => {
-    if (!isSearchFocused) return undefined;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(async () => {
-      try {
-        const query = searchQuery.trim();
-        const url = query
-          ? `/api/products?suggest=names&search=${encodeURIComponent(query)}`
-          : '/api/products?suggest=names';
-        const res = await fetch(url, { signal: controller.signal });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (Array.isArray(data)) setSuggestionNames(data);
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          console.warn('Could not load search suggestions:', err);
+    // Skip transition on initial load
+    if (allProducts.length === 0) return;
+    
+    // Only trigger transition if something actually changed
+    if (searchQuery.trim() === '' && selectedCategories.length === 0 && filteredProducts.length === allProducts.length) return;
+    
+    setIsTransitioning(true);
+    
+    const timer = setTimeout(() => {
+      let filtered = allProducts;
+      
+      // Filter by search query
+      if (searchQuery.trim() !== '') {
+        const query = searchQuery.toLowerCase();
+        filtered = filtered.filter(product =>
+          product.name.toLowerCase().includes(query) ||
+          product.category.toLowerCase().includes(query)
+        );
+      }
+      
+      // Filter by categories or Popular
+      if (selectedCategories.length > 0) {
+        if (selectedCategories.includes('__popular__')) {
+          // Filter by batch='popular'
+          filtered = filtered.filter(product => product.batch === 'popular');
+        } else {
+          // Regular category filter
+          filtered = filtered.filter(product =>
+            selectedCategories.includes(product.category)
+          );
         }
       }
+      
+      setFilteredProducts(filtered);
+      setCurrentPage(1); // Reset to first page when filtering
+      
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 50);
     }, 200);
 
-    return () => {
-      clearTimeout(timeoutId);
-      controller.abort();
-    };
-  }, [searchQuery, isSearchFocused]);
+    return () => clearTimeout(timer);
+  }, [searchQuery, selectedCategories, allProducts]);
 
-  useEffect(() => {
-    try {
-      const savedSearches = JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || '[]');
-      if (Array.isArray(savedSearches)) {
-        setRecentSearches(savedSearches.slice(0, RECENT_SEARCHES_LIMIT));
-      }
-    } catch (err) {
-      console.warn('Could not load recent searches:', err);
-    }
-  }, []);
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = startIndex + PRODUCTS_PER_PAGE;
+  const displayedProducts = filteredProducts.slice(startIndex, endIndex);
 
-  useEffect(() => {
-    const loadSettings = () => {
-      const saved = localStorage.getItem('preferredAgent');
-      if (saved) {
-        const mapping = {
-          'Ossbuy': 'ossbuy',
-          'KakoBuy': 'kakobuy',
-          'ACBuy': 'allchinabuy',
-          'USFans': 'usfans',
-          'LitBuy': 'litbuy',
-          'GTBuy': 'gtbuy',
-          'OopBuy': 'oopbuy',
-          'MuleBuy': 'mulebuy',
-          'HipoBuy': 'hipobuy'
-        };
-        const logoMapping = {
-          'Ossbuy': '/images/ossbuy.png',
-          'KakoBuy': '/images/kako.png',
-          'ACBuy': '/images/allchinabuy.png',
-          'USFans': '/images/usfans.png',
-          'LitBuy': '/images/litbuy.png',
-          'GTBuy': '/images/gtbuy.png',
-          'OopBuy': '/images/oopbuy.png',
-          'MuleBuy': '/images/Mulebuy.jpg',
-          'HipoBuy': '/images/Hipobuy.png'
-        };
-        setPreferredAgent(mapping[saved] || 'ossbuy');
-        setPreferredAgentLogo(logoMapping[saved] || '/images/ossbuy.png');
-      }
-    };
-    loadSettings();
-    window.addEventListener('storage', loadSettings);
-    return () => window.removeEventListener('storage', loadSettings);
-  }, []);
+  // Pagination handlers
+  const goToPage = (pageNum) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentPage(pageNum);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 50);
+    }, 200);
+  };
 
-  const trackStat = useCallback(async (productId, type = 'product_click', agent = null) => {
-    try {
-      const visitorId = getAnalyticsVisitorId();
-
-      if (type === 'product_click') {
-        const now = Date.now();
-        const clickKey = [productId || 'unknown-product', agent || 'unknown-agent', visitorId || 'anonymous'].join(':');
-        const lastTrackedAt = recentTrackedClicksRef.current.get(clickKey);
-        if (lastTrackedAt && now - lastTrackedAt < CLICK_TRACK_COOLDOWN_MS) {
-          return;
-        }
-        recentTrackedClicksRef.current.set(clickKey, now);
-      }
-
-      await fetch('/api/stats', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          productId, 
-          type, 
-          agent,
-          visitorId,
-          userAgent: navigator.userAgent,
-          path: window.location.pathname + window.location.search
-        })
-      });
-    } catch (err) {
-      console.error("Stats error:", err);
-    }
-  }, []);
-
-  const handleQuickCopy = useCallback((e, product) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const link = convertLink(product.link, preferredAgent);
-    navigator.clipboard.writeText(link);
-    setQuickCopiedId(product._id);
-    trackStat(product._id, 'product_click', preferredAgent);
-    setTimeout(() => setQuickCopiedId(null), 2000);
-  }, [preferredAgent, trackStat]);
-
-  const saveRecentSearch = useCallback((value) => {
-    const query = value.trim();
-    if (query.length < 2) return;
-
-    setRecentSearches((current) => {
-      const next = [
-        query,
-        ...current.filter(item => normalizeSearchText(item) !== normalizeSearchText(query))
-      ].slice(0, RECENT_SEARCHES_LIMIT);
-
-      try {
-        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(next));
-      } catch (err) {
-        console.warn('Could not save recent searches:', err);
-      }
-
-      return next;
-    });
-  }, []);
-
-  const recentSearchSuggestions = useMemo(() => {
-    const query = normalizeSearchText(searchQuery);
-    const compactQuery = compactSearchText(searchQuery);
-
-    return recentSearches
-      .filter(item => {
-        if (!query) return true;
-        const normalizedItem = normalizeSearchText(item);
-        const compactItem = compactSearchText(item);
-        return normalizedItem.includes(query) || compactItem.includes(compactQuery);
-      })
-      .slice(0, 4)
-      .map(item => ({ type: 'recent', label: item, meta: 'Ostatnie', value: item }));
-  }, [recentSearches, searchQuery]);
-
-  const searchSuggestions = useMemo(() => {
-    const query = normalizeSearchText(searchQuery);
-    const compactQuery = compactSearchText(searchQuery);
-
-    const productSuggestions = productNameSuggestions
-      .filter((suggestion) => matchesSuggestionQuery(suggestion, searchQuery))
-      .slice(0, query ? 5 : 4)
-      .map(({ type, label, meta, value }) => ({ type, label, meta, value }));
-
-    const brandSuggestions = catalogBrands
-      .filter(brand => {
-        if (!query) return true;
-        const normalizedBrand = normalizeSearchText(brand);
-        const compactBrand = compactSearchText(brand);
-        return (
-          normalizedBrand.includes(query)
-          || compactBrand.includes(compactQuery)
-          || query.includes(normalizedBrand)
-        );
-      })
-      .slice(0, 4)
-      .map(brand => ({ type: 'brand', label: brand, meta: 'Brand', value: brand }));
-
-    const categorySuggestions = categories
-      .filter(category => {
-        if (!query) return true;
-        const categoryLabel = t(`products.${category}`);
-        const normalizedCategory = normalizeSearchText(category);
-        const normalizedLabel = normalizeSearchText(categoryLabel);
-        return normalizedCategory.includes(query) || normalizedLabel.includes(query);
-      })
-      .slice(0, 4)
-      .map(category => ({ type: 'category', label: t(`products.${category}`), meta: 'Category', value: category }));
-
-    const recentLabels = new Set(recentSearchSuggestions.map(item => normalizeSearchText(item.label)));
-    return [...productSuggestions, ...brandSuggestions, ...categorySuggestions]
-      .filter(item => !recentLabels.has(normalizeSearchText(item.label)))
-      .slice(0, 9);
-  }, [
-    catalogBrands,
-    categories,
-    productNameSuggestions,
-    recentSearchSuggestions,
-    searchQuery,
-    t
-  ]);
-
-  const visibleSearchSuggestions = useMemo(() => (
-    searchSuggestions.slice(0, searchQuery.trim() ? 5 : 4)
-  ), [searchSuggestions, searchQuery]);
-
-  const visibleRecentSearchSuggestions = useMemo(() => (
-    recentSearchSuggestions.slice(0, searchQuery.trim() ? 3 : 4)
-  ), [recentSearchSuggestions, searchQuery]);
-
-  const hasSearchDropdown = (
-    visibleRecentSearchSuggestions.length > 0
-    || visibleSearchSuggestions.length > 0
-    || !searchQuery.trim()
-  );
-
-  // Disable body scroll when modals are open
-  useEffect(() => {
-    if (isFilterModalOpen || agentModalProduct || selectedProduct) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isFilterModalOpen, agentModalProduct, selectedProduct]);
-
-  // Toast Timer
-
-  // Interaction Handlers
-  const handleVote = async (productId, voteType) => {
-    if (!user) {
-      setError({ message: t('products.mustBeLoggedVote') || 'Musisz być zalogowany, aby polubiać produkty!', type: 'error' });
-      return;
-    }
-
-    // Optimistic Update
-    const updateState = (product) => {
-      if (product._id !== productId) return product;
-      const newProduct = { ...product };
-
-      const isLiked = newProduct.isLiked;
-      const isDisliked = newProduct.isDisliked;
-
-      if ((voteType === 'like' && isLiked) || (voteType === 'dislike' && isDisliked)) {
-        // Toggle off (DELETE)
-        if (voteType === 'like') {
-          newProduct.isLiked = false;
-          newProduct.likes = Math.max(0, newProduct.likes - 1);
-        } else {
-          newProduct.isDisliked = false;
-          newProduct.dislikes = Math.max(0, newProduct.dislikes - 1);
-        }
-      } else {
-        // Switch or Add (POST)
-        if (voteType === 'like') {
-          if (isDisliked) {
-            newProduct.isDisliked = false;
-            newProduct.dislikes = Math.max(0, newProduct.dislikes - 1);
-          }
-          newProduct.isLiked = true;
-          newProduct.likes++;
-        } else {
-          if (isLiked) {
-            newProduct.isLiked = false;
-            newProduct.likes = Math.max(0, newProduct.likes - 1);
-          }
-          newProduct.isDisliked = true;
-          newProduct.dislikes++;
-        }
-      }
-      return newProduct;
-    };
-
-    setProducts(prev => prev.map(updateState));
-    if (selectedProduct && selectedProduct._id === productId) {
-      setSelectedProduct(updateState(selectedProduct));
-    }
-
-    try {
-      const currentProduct = products.find(p => p._id === productId) || selectedProduct;
-      const isLiked = currentProduct?.isLiked;
-      const isDisliked = currentProduct?.isDisliked;
-
-      let action = 'POST';
-      if ((voteType === 'like' && isLiked) || (voteType === 'dislike' && isDisliked)) {
-        action = 'DELETE';
-      }
-
-      const endpoint = `/api/users/posts/${productId}/vote`;
-      const options = {
-        method: action,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ voteType })
-      };
-
-      const res = await fetchWithAuth(endpoint, options);
-      if (!res.ok) throw new Error('Vote failed');
-
-      if (action === 'DELETE') {
-        setError({ message: voteType === 'like' ? (t('products.likeRevoked') || 'Cofnięto polubienie') : (t('products.dislikeRevoked') || 'Cofnięto dislike'), type: 'success' });
-      } else {
-        setError({ message: voteType === 'like' ? (t('products.liked') || 'Polubiono produkt!') : (t('products.disliked') || 'Zostawiono dislike'), type: 'success' });
-      }
-    } catch (err) {
-      console.error('Vote error:', err);
-      setError({ message: 'Błąd głosowania', type: 'error' });
-      // Revert state (simplified: just re-fetch or could implement proper revert)
-      fetchProducts();
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
     }
   };
 
-  const handleAddToWishlist = async (productId) => {
-    if (!user) {
-      setError({ message: 'Musisz być zalogowany, aby dodać do ulubionych!', type: 'error' });
-      return;
-    }
-
-    // Optimistic Update
-    const updateState = (product) => {
-      if (product._id !== productId) return product;
-      return { ...product, isFavorited: !product.isFavorited };
-    };
-
-    setProducts(prev => prev.map(updateState));
-    if (selectedProduct && selectedProduct._id === productId) {
-      setSelectedProduct(updateState(selectedProduct));
-    }
-
-    try {
-      const currentProduct = products.find(p => p._id === productId) || selectedProduct;
-      const isFavorited = currentProduct?.isFavorited;
-
-      const endpoint = `/api/users/favorites/${productId}`;
-      const method = isFavorited ? 'DELETE' : 'POST';
-
-      const res = await fetchWithAuth(endpoint, { method });
-      const data = await res.json();
-
-      if (!data.success) throw new Error(data.message || 'Error');
-
-      setError({
-        message: isFavorited ? 'Usunięto z ulubionych' : 'Dodano do ulubionych!',
-        type: 'success'
-      });
-    } catch (err) {
-      console.error('Wishlist error:', err);
-      setError({ message: 'Błąd ulubionych', type: 'error' });
-      fetchProducts();
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
     }
   };
 
-  // Reset page when filters change
-  const handleSearchChange = (e) => {
-    const nextQuery = e.target.value;
-    setSearchQuery(nextQuery);
-    setIsSearchFocused(true);
-    // Filters and page reset happen inside debounced useEffect — no immediate state storm
+  const handleOpenAgentModal = (product) => {
+    setSelectedProduct(product);
   };
 
-  const handleSearchKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      saveRecentSearch(searchQuery);
-      setIsSearchFocused(false);
-    }
-  };
-
-  const handleSuggestionSelect = (suggestion) => {
-    if (suggestion.type === 'category') {
-      setSelectedCategories([suggestion.value]);
-      setSearchQuery('');
-    } else {
-      setSelectedCategories([]);
-      setSelectedBatch('');
-      setPriceRange({ min: '', max: '' });
-      const nextQuery = suggestion.value?.trim() || suggestion.label?.trim() || '';
-      setSearchQuery(nextQuery);
-      if (nextQuery) saveRecentSearch(nextQuery);
-    }
-    setIsSearchFocused(false);
-    setPage(1);
-  };
-
-  const handleCategoryToggle = (category) => {
-    if (category === 'all') {
-      setSelectedCategories([]);
-    } else {
-      setSelectedCategories(prev =>
-        prev.includes(category)
-          ? prev.filter(c => c !== category)
-          : [...prev, category]
-      );
-    }
-    setPage(1);
-  };
-
-  const handleResetFilters = () => {
-    setSelectedCategories([]);
-    setSelectedBatch('');
-    setSearchQuery('');
-    setPriceRange({ min: '', max: '' });
-    setPage(1);
-    setProducts([]);
-    setIsFilterModalOpen(false);
-  };
-
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-    fetchProducts(newPage);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const openDescriptionModal = (product) => {
-    router.push(`/products/${product.slug || product._id}`);
-  };
-  const closeDescriptionModal = () => {
+  const handleCloseAgentModal = () => {
     setSelectedProduct(null);
-    setProductDetails(null);
-    setGalleryImage(null);
-    setSelectedSize(null);
   };
 
-  const openAgentModal = useCallback((product) => {
-    setNavigatingProductId(product._id);
-    router.push(`/products/${product.slug || product._id}`);
-  }, [router]);
-
-  const closeAgentModal = () => {
-    setAgentModalProduct(null);
-    setCopiedId(null);
+  const handleSuggestionClick = (suggestion) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
   };
 
-  const copyAgentLink = (e, product, agentValue) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const link = convertLink(product.link, agentValue);
-    navigator.clipboard.writeText(link);
-    setCopiedId(agentValue);
-    trackStat(product._id, 'product_click', agentValue);
-    setTimeout(() => setCopiedId(null), 2000);
+  const handleSearchFocus = () => {
+    if (suggestions.length > 0) {
+      setShowSuggestions(true);
+    }
   };
 
-  const handleAgentLinkClick = (product, agentValue) => {
-    trackStat(product._id, 'product_click', agentValue);
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setShowSuggestions(true);
   };
-
-  if (isInitialLoad && loading) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.skeletonGrid}>
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className={styles.skeletonCard}></div>
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <section className={styles.productsSection} id="products">
-      {/* Toast Notification */}
-      {error.message && (
-        <div className={`${styles.errorMessage} ${error.type === 'success' ? styles.success : ''}`}>
-          <span>{error.message}</span>
-          <button onClick={() => setError({ message: null, type: null })} className={styles.errorCloseButton}>
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-        </div>
-      )}
-
-      {/* Header */}
-      <div className={styles.headerSection}>
-        {/* Top Bar: Search + Filter Button */}
-        <div className={styles.topBar}>
-          <div className={styles.searchWrapper}>
-            <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
+    <>
+      <div className={styles.productsSection}>
+        {/* Header Section */}
+        <div className={styles.headerSection}>
+          {/* Search Bar */}
+          <div className={styles.searchWrapper} ref={searchRef}>
+            <svg className={styles.searchIcon} width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
             <input
               type="text"
-              className={styles.searchInput}
-              placeholder={t('products.searchPlaceholder')}
+              placeholder="Search..."
               value={searchQuery}
               onChange={handleSearchChange}
-              onKeyDown={handleSearchKeyDown}
-              onFocus={() => setIsSearchFocused(true)}
-              onClick={() => setIsSearchFocused(true)}
-              onBlur={() => {
-                saveRecentSearch(searchQuery);
-                setTimeout(() => setIsSearchFocused(false), 120);
-              }}
+              onFocus={handleSearchFocus}
+              className={styles.searchInput}
             />
-            {isSearchFocused && hasSearchDropdown && (
-              <div className={styles.searchSuggestions}>
-                {visibleRecentSearchSuggestions.length > 0 && (
-                  <div className={styles.suggestionSectionLabel}>Ostatnie wyszukiwania</div>
-                )}
-                {visibleRecentSearchSuggestions.map((suggestion) => (
-                  <button
-                    key={`${suggestion.type}-${suggestion.value}`}
-                    type="button"
-                    className={styles.searchSuggestionItem}
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => handleSuggestionSelect(suggestion)}
+            
+            {/* Suggestions Dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className={styles.suggestionsDropdown}>
+                {suggestions.map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className={styles.suggestionItem}
+                    onClick={() => handleSuggestionClick(suggestion)}
                   >
-                    <span className={styles.suggestionIcon}>
-                      <FontAwesomeIcon icon={faClock} />
-                    </span>
-                    <span className={styles.suggestionText}>{suggestion.label}</span>
-                    <span className={styles.suggestionMeta}>{suggestion.meta}</span>
-                  </button>
-                ))}
-                {visibleRecentSearchSuggestions.length > 0 && visibleSearchSuggestions.length > 0 && (
-                  <div className={styles.suggestionDivider} />
-                )}
-                {visibleSearchSuggestions.map((suggestion) => (
-                  <button
-                    key={`${suggestion.type}-${suggestion.value}`}
-                    type="button"
-                    className={styles.searchSuggestionItem}
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => handleSuggestionSelect(suggestion)}
-                  >
-                    <span className={styles.suggestionIcon}>
-                      <FontAwesomeIcon icon={suggestion.type === 'category' ? faLayerGroup : suggestion.type === 'brand' ? faTags : faSearch} />
-                    </span>
-                    <span className={styles.suggestionText}>{suggestion.label}</span>
-                    <span className={styles.suggestionMeta}>{suggestion.meta}</span>
-                  </button>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.5 }}>
+                      <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <span>{suggestion}</span>
+                  </div>
                 ))}
               </div>
             )}
           </div>
-          
-          <button
-            className={styles.filterTriggerBtn}
-            onClick={() => setIsFilterModalOpen(true)}
-          >
-            <FontAwesomeIcon icon={faFilter} /> {t('products.filters')}
-          </button>
 
-          <div className={styles.productCountBadge}>
-            <span className={styles.countNumber}>{filteredProductCount}</span>
-            <span className={styles.countText}>{t('products.productsCount')}</span>
+          {/* Categories Bar */}
+          <div className={styles.categoriesBar}>
+            {/* Popular Button - Shows products with batch='popular' */}
+            <button
+              className={`${styles.categoryPill} ${styles.popularPill} ${selectedCategories.includes('__popular__') ? styles.categoryPillActive : ''}`}
+              onClick={() => {
+                if (selectedCategories.includes('__popular__')) {
+                  setSelectedCategories([]);
+                } else {
+                  setSelectedCategories(['__popular__']);
+                }
+              }}
+            >
+              🔥 Popular
+            </button>
+            
+            <button
+              className={`${styles.categoryPill} ${selectedCategories.length === 0 || selectedCategories.includes('__popular__') ? '' : styles.categoryPillActive}`}
+              onClick={() => setSelectedCategories([])}
+            >
+              All
+            </button>
+            {categoriesData.map((cat) => (
+              <button
+                key={cat}
+                className={`${styles.categoryPill} ${selectedCategories.includes(cat) ? styles.categoryPillActive : ''}`}
+                onClick={() => {
+                  if (selectedCategories.includes(cat)) {
+                    setSelectedCategories([]);
+                  } else {
+                    setSelectedCategories([cat]);
+                  }
+                }}
+              >
+                {cat.charAt(0).toUpperCase() + cat.slice(1).replace('-', ' & ')}
+              </button>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Products Grid */}
-      <div className={`${styles.productsGrid} ${isTransitioning ? styles.productsGridTransitioning : ''}`}>
-        {loading && products.length === 0 ? (
-          [...Array(8)].map((_, i) => (
-            <div key={i} className={styles.skeletonCard} />
-          ))
-        ) : products.length === 0 ? (
-          <div className={styles.noResultsState}>
-            <FontAwesomeIcon icon={faBoxOpen} className={styles.stateIcon} />
-            <span className={styles.stateText}>{t('products.noResults')}</span>
+        {/* Products Grid */}
+        <div className={`${styles.productsGrid} ${isTransitioning ? styles.fadeOut : styles.fadeIn}`}>
+          {loading ? (
+            // Loading skeleton
+            Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className={styles.skeletonCard}>
+                <div className={styles.skeletonImage}></div>
+                <div className={styles.skeletonText}></div>
+                <div className={styles.skeletonText} style={{ width: '60%' }}></div>
+              </div>
+            ))
+          ) : displayedProducts.length === 0 ? (
+            // No results message
+            <div className={styles.noResults}>
+              <p>No products found for "{searchQuery}"</p>
+            </div>
+          ) : (
+            // Product Cards
+            displayedProducts.map((product, index) => (
+              <div key={`${product._id}-${currentPage}`} className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
+                {/* Product Image */}
+                <div className={styles.imageWrapper}>
+                  <img src={product.image} alt={product.name} className={styles.productImage} />
+                  {product.batch === 'best' && (
+                    <div className={styles.batchBadge}>Best Batch</div>
+                  )}
+                  {product.batch === 'popular' && (
+                    <div className={`${styles.batchBadge} ${styles.popularBadge}`}>🔥 Popular</div>
+                  )}
+                  {product.category && (
+                    <div className={styles.categoryBadge}>{product.category}</div>
+                  )}
+                </div>
+
+                {/* Product Info */}
+                <div className={styles.cardContent}>
+                  <h3 className={styles.productName}>{product.name}</h3>
+                  
+                  {/* Price Display */}
+                  <div className={styles.priceRow}>
+                    <div className={styles.primaryPrice}>{formatPrice(product.price)}</div>
+                  </div>
+
+                  {/* Action Button */}
+                  <button 
+                    className={styles.agentButton}
+                    onClick={() => handleOpenAgentModal(product)}
+                  >
+                    See agents
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Pagination */}
+        {!loading && filteredProducts.length > 0 && totalPages > 1 && (
+          <div className={styles.pagination}>
+            <button 
+              className={styles.paginationButton}
+              onClick={goToPrevPage}
+              disabled={currentPage === 1}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Previous
+            </button>
+
+            <div className={styles.pageNumbers}>
+              <span className={styles.pageInfo}>
+                Page {currentPage} of {totalPages}
+              </span>
+            </div>
+
+            <button 
+              className={styles.paginationButton}
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
-        ) : (
-          products.map((product, index) => (
-            <ProductCard
-              key={`${product._id}-${index}`}
-              product={product}
-              index={index}
-              formatPrice={formatPrice}
-              preferredAgentLogo={preferredAgentLogo}
-              quickCopied={quickCopiedId === product._id}
-              isNavigating={navigatingProductId === product._id}
-              onOpenAgent={openAgentModal}
-              onQuickCopy={handleQuickCopy}
-              viewAgentsLabel={t('products.viewAgents') || 'Zobacz agentów'}
-              copyLinkLabel={t('products.copyLink') || 'Kopiuj link do agenta'}
-            />
-          ))
         )}
       </div>
 
-      {/* Pagination */}
-      {!loading && products.length > 0 && totalPages > 1 && (
-        <div className={styles.paginationContainer}>
-          <button
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page === 1}
-            className={styles.paginationBtn}
-          >
-            Poprzednia
-          </button>
-          <span className={styles.pageInfo}>
-            Strona {page} z {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(page + 1)}
-            disabled={page >= totalPages}
-            className={styles.paginationBtn}
-          >
-            Następna
-          </button>
-        </div>
-      )}
-
       {/* Filter Modal */}
-      {isFilterModalOpen && (
-        <div className={styles.filterModalOverlay} onClick={() => setIsFilterModalOpen(false)}>
-          <div className={styles.filterModal} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <h2 className={styles.modalTitle}>{t('products.filterTitle')}</h2>
-              <button className={styles.closeModalBtn} onClick={() => setIsFilterModalOpen(false)}>
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
-            </div>
+      <FilterModal isOpen={isFilterModalOpen} onClose={() => setIsFilterModalOpen(false)} />
 
-            <div className={styles.modalBody}>
-              {/* Categories */}
-              <div className={styles.filterSection}>
-                <h4 className={styles.filterSectionTitle}>{t('products.categories')}</h4>
-                <div className={styles.categoriesList}>
-                  <button
-                    className={`${styles.categoryListItem} ${selectedCategories.length === 0 ? styles.active : ''}`}
-                    onClick={() => handleCategoryToggle('all')}
-                  >
-                    {t('products.allCategories')}
-                  </button>
-                  {categories.map((category, index) => (
-                    <button
-                      key={index}
-                      className={`${styles.categoryListItem} ${selectedCategories.includes(category) ? styles.active : ''}`}
-                      onClick={() => handleCategoryToggle(category)}
-                    >
-                      {t(`products.${category}`) || category.charAt(0).toUpperCase() + category.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-
-
-              <div className={styles.filterSection}>
-                <h4 className={styles.filterSectionTitle}>{t('products.priceRange')}</h4>
-                <div className={styles.filterRow}>
-                  <input
-                    type="number"
-                    className={styles.filterInput}
-                    placeholder={t('products.priceMin')}
-                    value={priceRange.min}
-                    onChange={(e) => setPriceRange(current => ({ ...current, min: e.target.value }))}
-                  />
-                  <input
-                    type="number"
-                    className={styles.filterInput}
-                    placeholder={t('products.priceMax')}
-                    value={priceRange.max}
-                    onChange={(e) => setPriceRange(current => ({ ...current, max: e.target.value }))}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.filterSection}>
-                <h4 className={styles.filterSectionTitle}>{t('products.tagsQuality')}</h4>
-                <select
-                  className={styles.filterSelect}
-                  value={selectedBatch}
-                  onChange={(e) => setSelectedBatch(e.target.value)}
-                >
-                  <option value="">{t('products.allTags')}</option>
-                  <option value="best">{t('products.bestBatch')}</option>
-                  <option value="budget">{t('products.budgetBatch')}</option>
-                  <option value="random">{t('products.randomBatch')}</option>
-                </select>
-              </div>
-            </div>
-
-            <div className={styles.modalFooter}>
-              <button className={styles.clearBtn} onClick={handleResetFilters}>{t('products.clearAll')}</button>
-              <button className={styles.applyBtn} onClick={() => setIsFilterModalOpen(false)}>{t('products.showResults')}</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Agent Selection Modal */}
-      {agentModalProduct && (
-        <div className={styles.agentModalOverlay} onClick={closeAgentModal}>
-          <div className={styles.agentModalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.agentModalHeader}>
-              <h2 className={styles.agentModalTitle}>{t('products.chooseAgent')}</h2>
-              <button className={styles.closeModalBtn} onClick={closeAgentModal}>
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
-            </div>
-
-            <div className={styles.agentList}>
-              {SUPPORTED_AGENTS.map((agent) => (
-                <div key={agent.value} className={styles.agentItem}>
-                  <a
-                    href={convertLink(agentModalProduct.link, agent.value)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.agentMain}
-                    onClick={() => handleAgentLinkClick(agentModalProduct, agent.value)}
-                  >
-                    <img src={agent.icon} alt={agent.label} className={styles.agentIcon} />
-                    <span className={styles.agentName}>{agent.label}</span>
-                    <FontAwesomeIcon icon={faChevronRight} className={styles.agentArrow} />
-                  </a>
-                  <button
-                    className={`${styles.agentCopyBtn} ${copiedId === agent.value ? styles.copied : ''}`}
-                    onClick={(e) => copyAgentLink(e, agentModalProduct, agent.value)}
-                    title="Copy Link"
-                  >
-                    <FontAwesomeIcon icon={copiedId === agent.value ? faCheck : faCopy} />
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Share Button in Agent Modal */}
-            <button
-              className={`${styles.shareButtonGray} ${copiedId === 'share' ? styles.shareButtonCopied : ''}`}
-              onClick={(e) => {
-                e.stopPropagation();
-                const shareLink = `${window.location.origin}/products/${agentModalProduct.slug || agentModalProduct._id}`;
-                navigator.clipboard.writeText(shareLink);
-                setCopiedId('share');
-                setTimeout(() => setCopiedId(null), 2000);
-              }}
-            >
-              <FontAwesomeIcon icon={copiedId === 'share' ? faCheck : faShare} />
-              <span>{copiedId === 'share' ? 'Skopiowano!' : 'Udostępnij'}</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Premium Product Details Modal */}
+      {/* Agent Modal */}
       {selectedProduct && (
-        <div className={styles.descModalOverlay} onClick={closeDescriptionModal}>
-          <div className={styles.descModalContent} onClick={e => e.stopPropagation()}>
-            
-            {/* Header: Back to Gallery & Close */}
-            <div className={styles.descModalHeaderRow}>
-              <button className={styles.backToGalleryBtn} onClick={closeDescriptionModal}>
-                <FontAwesomeIcon icon={faChevronRight} style={{ transform: 'rotate(180deg)', marginRight: '8px' }} />
-                Wróć do Galerii
-              </button>
-              <button className={styles.closeDescModalBtn} onClick={closeDescriptionModal}>
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
-            </div>
-
-            {detailLoading ? (
-              /* Beautiful premium loading skeleton */
-              <div className={styles.skeletonDetailLayout}>
-                <div className={styles.skeletonDetailLeft}>
-                  <div className={styles.skeletonDetailBigImage}></div>
-                  <div className={styles.skeletonDetailThumbnails}>
-                    {[...Array(4)].map((_, i) => <div key={i} className={styles.skeletonDetailThumb}></div>)}
-                  </div>
-                </div>
-                <div className={styles.skeletonDetailRight}>
-                  <div className={styles.skeletonDetailTitle}></div>
-                  <div className={styles.skeletonDetailPrice}></div>
-                  <div className={styles.skeletonDetailSection}></div>
-                  <div className={styles.skeletonDetailSection}></div>
-                </div>
-              </div>
-            ) : productDetails && (
-              <div className={styles.modalProductLayoutNew}>
-                
-                {/* Left Column: Media & Order */}
-                <div className={styles.modalProductLeftColumn}>
-                  
-                  {/* Gallery Viewport */}
-                  <div className={styles.mainImageContainerNew}>
-                    <img 
-                      src={galleryImage || productDetails.product.image} 
-                      alt={productDetails.product.name} 
-                      className={styles.mainGalleryImageNew} 
-                    />
-                  </div>
-
-                  {/* Gallery Thumbnails */}
-                  {(() => {
-                    const thumbnails = Array.from(new Set([
-                      productDetails.product.image,
-                      ...productDetails.variants.map(v => v.image),
-                      ...productDetails.qcImages
-                    ].filter(Boolean)));
-
-                    if (thumbnails.length <= 1) return null;
-
-                    return (
-                      <div className={styles.thumbnailsStripNew}>
-                        {thumbnails.map((img, idx) => (
-                          <button
-                            key={idx}
-                            className={`${styles.thumbnailBtnNew} ${galleryImage === img ? styles.activeThumbnailNew : ''}`}
-                            onClick={() => setGalleryImage(img)}
-                          >
-                            <img src={img} alt={`Miniatura ${idx + 1}`} className={styles.thumbnailImgNew} />
-                          </button>
-                        ))}
-                      </div>
-                    );
-                  })()}
-
-                  {/* Order Button Box */}
-                  <div className={styles.orderActionsContainer}>
-                    <a
-                      href={convertLink(productDetails.product.link, preferredAgent)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.orderButtonPremiumNew}
-                      onClick={() => trackStat(productDetails.product._id, 'product_click', preferredAgent)}
-                    >
-                      <img src={preferredAgentLogo} alt={preferredAgent} className={styles.orderAgentLogoNew} />
-                      <span>Zamów Produkt</span>
-                    </a>
-                    <button
-                      className={`${styles.detailCopyBtnNew} ${copiedId === 'main' ? styles.copiedNew : ''}`}
-                      onClick={(e) => {
-                        const link = convertLink(productDetails.product.link, preferredAgent);
-                        navigator.clipboard.writeText(link);
-                        setCopiedId('main');
-                        trackStat(productDetails.product._id, 'product_click', preferredAgent);
-                        setTimeout(() => setCopiedId(null), 2000);
-                      }}
-                      title="Kopiuj link agenta"
-                    >
-                      <FontAwesomeIcon icon={copiedId === 'main' ? faCheck : faCopy} />
-                    </button>
-                  </div>
-
-                  {/* Alternative Agents Section */}
-                  <div className={styles.altAgentsSectionNew}>
-                    <div className={styles.altAgentsTitleNew}>Inni agenci:</div>
-                    <div className={styles.altAgentsGridNew}>
-                      {SUPPORTED_AGENTS.filter(a => a.value !== preferredAgent).map((agent) => (
-                        <a
-                          key={agent.value}
-                          href={convertLink(productDetails.product.link, agent.value)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={styles.altAgentChipNew}
-                          onClick={() => trackStat(productDetails.product._id, 'product_click', agent.value)}
-                          title={agent.label}
-                        >
-                          <img src={agent.icon} alt={agent.label} className={styles.altAgentIconNew} />
-                          <span>{agent.label}</span>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Product Metadata Details Grid */}
-                  <div className={styles.detailsBoxNew}>
-                    <h4 className={styles.detailsBoxTitleNew}>Szczegóły Produktu</h4>
-                    <div className={styles.detailsGridNew}>
-                      <div className={styles.detailRowNew}>
-                        <span className={styles.detailLabelNew}>Platforma</span>
-                        <span className={`${styles.detailValNew} ${styles.badgePlatformNew}`}>
-                          {productDetails.details.platform.toUpperCase()}
-                        </span>
-                      </div>
-                      <div className={styles.detailRowNew}>
-                        <span className={styles.detailLabelNew}>Kategoria</span>
-                        <span className={`${styles.detailValNew} ${styles.badgeCategoryNew}`}>
-                          {productDetails.product.category.toUpperCase()}
-                        </span>
-                      </div>
-                      <div className={styles.detailRowNew}>
-                        <span className={styles.detailLabelNew}>Waga</span>
-                        <span className={styles.detailValNew}>{productDetails.details.weight || 'N/A'}</span>
-                      </div>
-                      <div className={styles.detailRowNew}>
-                        <span className={styles.detailLabelNew}>Dostawa</span>
-                        <span className={styles.detailValNew}>{productDetails.details.delivery || 'N/A'}</span>
-                      </div>
-                      <div className={styles.detailRowNew}>
-                        <span className={styles.detailLabelNew}>Sprzedaż</span>
-                        <span className={styles.detailValNew}>{productDetails.details.sales || '0'}</span>
-                      </div>
-                      <div className={styles.detailRowNew}>
-                        <span className={styles.detailLabelNew}>Kliknięcia</span>
-                        <span className={styles.detailValNew}>{productDetails.product.clicks || '0'}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Right Column: Info & Options */}
-                <div className={styles.modalProductRightColumn}>
-                  
-                  {/* Shop & Wishlist */}
-                  <div className={styles.shopRowNew}>
-                    <span className={styles.shopLabelNew}>Sklep: {productDetails.product.batch === 'best' ? 'Best Batch' : 'Premium Shop'}</span>
-                    <button
-                      className={`${styles.wishlistBtnNew} ${productDetails.product.isFavorited ? styles.wishlistActiveNew : ''}`}
-                      onClick={() => handleAddToWishlist(productDetails.product._id)}
-                      title="Dodaj do ulubionych"
-                    >
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                  </div>
-
-                  {/* Title */}
-                  <h2 className={styles.productTitleNew}>{productDetails.product.name}</h2>
-
-                  {/* Price */}
-                  <div className={styles.productPriceNew}>
-                    {formatPrice(productDetails.product.price)}
-                  </div>
-
-                  {/* Real-time views & likes stats */}
-                  <div className={styles.productStatsNew}>
-                    <span>{productDetails.details.views} wyświetleń</span>
-                    <span className={styles.statsSeparatorNew}>•</span>
-                    <span>{productDetails.details.favorites} polubień</span>
-                  </div>
-
-                  {/* Variant Styles Selector */}
-                  {productDetails.variants && productDetails.variants.length > 0 && (
-                    <div className={styles.variantsSectionNew}>
-                      <h4 className={styles.sectionLabelNew}>Warianty kolorystyczne</h4>
-                      <div className={styles.variantsGridNew}>
-                        {productDetails.variants.map((v) => {
-                          // Extract display label from parentheses if present
-                          let label = v.name;
-                          if (v.name.includes('(')) {
-                            label = v.name.split('(').pop().replace(')', '').trim();
-                          }
-                          return (
-                            <button
-                              key={v._id}
-                              className={`${styles.variantChipNew} ${productDetails.product._id === v._id ? styles.activeVariantNew : ''}`}
-                              onClick={() => {
-                                setSelectedProduct(v);
-                              }}
-                              title={v.name}
-                            >
-                              <img src={v.image} alt={v.name} className={styles.variantChipImgNew} />
-                              <span className={styles.variantChipTextNew}>{label}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Size Selector */}
-                  {productDetails.sizes && productDetails.sizes.length > 0 && (
-                    <div className={styles.sizesSectionNew}>
-                      <h4 className={styles.sectionLabelNew}>Dostępne Rozmiary</h4>
-                      <div className={styles.sizesGridNew}>
-                        {productDetails.sizes.map((sz) => (
-                          <button
-                            key={sz}
-                            className={`${styles.sizeChipNew} ${selectedSize === sz ? styles.activeSizeNew : ''}`}
-                            onClick={() => setSelectedSize(sz)}
-                          >
-                            {sz}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Share Button - placed after sizes */}
-                  <button
-                    className={`${styles.shareButtonGray} ${copiedId === 'share' ? styles.shareButtonCopied : ''}`}
-                    onClick={(e) => {
-                      const shareLink = `${window.location.origin}/products/${productDetails.product.slug || productDetails.product._id}`;
-                      navigator.clipboard.writeText(shareLink);
-                      setCopiedId('share');
-                      setTimeout(() => setCopiedId(null), 2000);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={copiedId === 'share' ? faCheck : faShare} />
-                    <span>{copiedId === 'share' ? 'Skopiowano!' : 'Udostępnij'}</span>
-                  </button>
-
-                </div>
-
-              </div>
-            )}
-
-          </div>
-        </div>
+        <AgentModal 
+          isOpen={true}
+          product={selectedProduct} 
+          onClose={handleCloseAgentModal}
+        />
       )}
-    </section>
+    </>
   );
 }
