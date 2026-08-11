@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
+import { supabaseAdmin } from "@/lib/supabase";
 import { extractItemId } from "@/utils/converter";
 
 export async function GET(request) {
@@ -11,23 +10,25 @@ export async function GET(request) {
     return NextResponse.json({ success: false, error: 'Missing url parameter' }, { status: 400 });
   }
 
-  // 1. Try to find local QC images scraped from Telegram in our MongoDB database
+  // 1. Try to find local QC images scraped from Telegram in our Supabase database
   try {
     const itemId = extractItemId(url);
     if (itemId) {
-      await dbConnect();
       // Find a product whose purchase link contains this item ID
-      // Use raw collection.findOne to avoid Mongoose CastError on old string arrays
-      const product = await Product.collection.findOne({
-        link: { $regex: itemId },
-        qcImages: { $exists: true, $not: { $size: 0 } }
-      });
+      const { data: products } = await supabaseAdmin
+        .from('products')
+        .select('name, qc_images')
+        .ilike('link', `%${itemId}%`)
+        .not('qc_images', 'is', null)
+        .limit(1);
 
-      if (product && product.qcImages && product.qcImages.length > 0) {
+      const product = products?.[0];
+
+      if (product && product.qc_images && product.qc_images.length > 0) {
         console.log(`✅ Found local Telegram QC images for item ID ${itemId} (Product: ${product.name})`);
         
         // Ensure we always return an array of strings (URLs)
-        const imageUrls = product.qcImages.map(img => 
+        const imageUrls = product.qc_images.map(img => 
           typeof img === 'string' ? img : img.url
         ).filter(Boolean);
 

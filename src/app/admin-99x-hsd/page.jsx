@@ -1,12 +1,9 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import styles from "@/styles/Admin.module.css";
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
-import Stat from "@/models/Stat";
+import { ProductDB, supabaseAdmin } from "@/lib/supabase";
 import Link from "next/link";
 import { parseUA } from "@/utils/uaParser";
-import mongoose from "mongoose";
 
 export default async function AdminDashboard() {
   const session = await auth();
@@ -19,79 +16,20 @@ export default async function AdminDashboard() {
   let topProducts = [], topAgents = [], topBrowsers = [], recentActivity = [];
 
   try {
-    await dbConnect();
+    // Get product count from Supabase
+    const { count } = await supabaseAdmin
+      .from('products')
+      .select('*', { count: 'exact', head: true });
     
-    [
-      productCount,
-      totalVisits,
-      totalClicks,
-      topProducts,
-      topAgents,
-      topBrowsers,
-      recentActivity
-    ] = await Promise.all([
-      Product.countDocuments(),
-      Stat.countDocuments({ type: 'page_view' }),
-      Stat.countDocuments({ type: 'product_click' }),
-      Stat.aggregate([
-        { $match: { type: 'product_click', productId: { $ne: null, $ne: "" } } },
-        { $group: { _id: "$productId", count: { $sum: 1 } } },
-        { $sort: { count: -1 } },
-        {
-          $addFields: {
-            convertedId: {
-              $cond: {
-                if: { $regexMatch: { input: "$_id", regex: /^[0-9a-fA-F]{24}$/ } },
-                then: { $toObjectId: "$_id" },
-                else: "$_id"
-              }
-            }
-          }
-        },
-        {
-          $lookup: {
-            from: "products",
-            let: { cid: "$convertedId" },
-            pipeline: [
-              { $match: { $expr: { $eq: ["$_id", "$$cid"] } } }
-            ],
-            as: "productInfo"
-          }
-        },
-        { $unwind: { path: "$productInfo", preserveNullAndEmptyArrays: false } },
-        { $limit: 10 }
-      ]),
-      Stat.aggregate([
-        { $match: { type: 'product_click', agent: { $ne: null } } },
-        { $group: { _id: "$agent", count: { $sum: 1 } } },
-        { $sort: { count: -1 } },
-        { $limit: 5 }
-      ]),
-      Stat.aggregate([
-        { $match: { userAgent: { $ne: null } } },
-        { $group: { _id: "$userAgent", count: { $sum: 1 } } },
-        { $sort: { count: -1 } },
-        { $limit: 10 }
-      ]),
-      Stat.find()
-        .sort({ timestamp: -1 })
-        .limit(10)
-        .lean()
-    ]);
-
-    // Manual population for recentActivity because productId is a string
-    const populatedActivity = await Promise.all(recentActivity.map(async (act) => {
-      if (act.productId) {
-        if (mongoose.Types.ObjectId.isValid(act.productId)) {
-          act.productId = await Product.findById(act.productId).select('name image').lean();
-        } else {
-          // Try to find in local data if it's a string ID (optional, but good for fallback)
-          // For now, we'll just keep the ID string if not found
-        }
-      }
-      return act;
-    }));
-    recentActivity = populatedActivity;
+    productCount = count || 0;
+    
+    // Stats tracking will be migrated later - for now just show product count
+    totalVisits = 0;
+    totalClicks = 0;
+    topProducts = [];
+    topAgents = [];
+    topBrowsers = [];
+    recentActivity = [];
   } catch (err) {
     console.error("Admin dashboard DB error:", err);
   }

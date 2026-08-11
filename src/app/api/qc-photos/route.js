@@ -1,5 +1,4 @@
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
+import { ProductDB } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
 /**
@@ -41,7 +40,7 @@ export async function GET(req) {
     await dbConnect();
 
     // Fetch the product
-    const product = await Product.findById(productId).select('qcPhotos').lean();
+    const product = await ProductDB.findById(productId);
 
     if (!product) {
       return NextResponse.json(
@@ -54,8 +53,8 @@ export async function GET(req) {
       );
     }
 
-    // If no qcPhotos field or empty array, return empty result
-    if (!product.qcPhotos || product.qcPhotos.length === 0) {
+    // If no qc_images field or empty array, return empty result
+    if (!product.qc_images || product.qc_images.length === 0) {
       return NextResponse.json({
         success: true,
         photos: [],
@@ -63,7 +62,7 @@ export async function GET(req) {
       });
     }
 
-    let photos = product.qcPhotos;
+    let photos = product.qc_images;
 
     // Filter by variantId if provided
     if (variantId) {
