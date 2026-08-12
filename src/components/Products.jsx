@@ -157,6 +157,9 @@ export default function ProductsPage() {
       setFilteredProducts(filtered);
       setDisplayCount(PRODUCTS_PER_LOAD); // Reset to initial load amount
       
+      console.log('Filtered products count:', filtered.length);
+      console.log('Display count reset to:', PRODUCTS_PER_LOAD);
+      
       setTimeout(() => {
         setIsTransitioning(false);
       }, 50);
