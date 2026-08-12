@@ -148,6 +148,9 @@ export default function ProductsPage() {
           filtered = filtered.filter(product => product.batch === 'popular');
         } else {
           // Regular category filter
+          console.log('Selected categories:', selectedCategories);
+          console.log('Sample product categories:', filtered.slice(0, 5).map(p => ({ name: p.name, category: p.category })));
+          
           filtered = filtered.filter(product =>
             selectedCategories.includes(product.category)
           );
