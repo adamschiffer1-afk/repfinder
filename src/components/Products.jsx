@@ -33,8 +33,8 @@ export default function ProductsPage() {
       try {
         setLoading(true);
         
-        // Fetch from API
-        const res = await fetch('/api/products?limit=1000');
+        // Fetch from API with proper sorting
+        const res = await fetch('/api/products?limit=1000&sort=pinned_order');
         if (!res.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -56,7 +56,23 @@ export default function ProductsPage() {
           pinnedOrder: p.pinned_order
         }));
         
+        // Sort by pinned first, then by pinned_order, then by created_at
+        products.sort((a, b) => {
+          // Pinned products first
+          if (a.isPinned && !b.isPinned) return -1;
+          if (!a.isPinned && b.isPinned) return 1;
+          
+          // If both pinned, sort by pinnedOrder
+          if (a.isPinned && b.isPinned) {
+            return (a.pinnedOrder || 999999) - (b.pinnedOrder || 999999);
+          }
+          
+          // Otherwise keep original order (already sorted by created_at from API)
+          return 0;
+        });
+        
         console.log('Fetched products from API, count:', products.length);
+        console.log('Pinned products:', products.filter(p => p.isPinned).length);
         setAllProducts(products);
         setFilteredProducts(products);
         
