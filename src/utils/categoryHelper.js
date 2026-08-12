@@ -1,25 +1,46 @@
 // src/utils/categoryHelper.js
 
 const CATEGORY_MAP = {
+  // NEW CATEGORIES
+  longsleeve: [
+    'longsleeve', 'long sleeve', 'long-sleeve', 'ls tee', 'ls shirt'
+  ],
+  electronics: [
+    'airpods', 'jbl', 'speaker', 'headphones', 'earbuds', 'charging', 'charger',
+    'batterypack', 'power bank', 'iphone', 'samsung', 'phone', 'ipad', 'tablet',
+    'apple pencil', 'pencil', 'electronics', 'gadget', 'tech'
+  ],
+  headwear: [
+    'hat', 'cap', 'balaclava', 'beanie', 'headband', 'bandana', 'bucket hat',
+    'snapback', 'trucker hat', 'dad hat', 'fitted cap', 'baseball cap'
+  ],
+  'bags-backpacks': [
+    'bag', 'backpack', 'tote', 'messenger bag', 'duffel', 'shoulder bag',
+    'crossbody', 'sling bag', 'handbag', 'clutch', 'travel bag', 'gym bag',
+    'laptop bag', 'school bag', 'rucksack'
+  ],
+  belts: [
+    'belt', 'waist belt', 'leather belt', 'buckle belt'
+  ],
+  
+  // EXISTING CATEGORIES
   accessories: [
-    // Headwear
-    'hat', 'cap', 'balaclava', 'beanie', 'headband', 'bandana',
-    // Bags & Carriers
-    'bag', 'backpack', 'wallet', 'purse', 'tote', 'messenger bag', 'duffel', 'pouch',
+    // Small Personal Items
+    'wallet', 'purse', 'pouch', 'card holder', 'keychain',
     // Jewelry & Personal Items
     'bracelet', 'necklace', 'earring', 'ring', 'jewelry', 'chain', 'pendant', 'brooch', 'pin',
     // Eyewear
     'glasses', 'sunglasses', 'eyewear',
-    // Neck & Waist Accessories
-    'belt', 'scarf', 'scarves', 'shawl', 'tie', 'bowtie', 'bow tie', 'bandana',
-    // Electronics & Tech
-    'case', 'jbl', 'airpods', 'pencil', 'charging', 'batterypack', 'pad', 'iphone', 'samsung', 'phone case',
+    // Neck Accessories
+    'scarf', 'scarves', 'shawl', 'tie', 'bowtie', 'bow tie',
+    // Phone Cases (keep separate from electronics)
+    'case', 'phone case', 'iphone case', 'samsung case',
     // Watches
     'watch', 'rolex', 'submariner', 'omega', 'patek', 'hublot', 'cartier', 'casio', 'seiko', 'citizen', 'audemars', 'ap', 'g-shock', 'zegarek',
     // Fragrances & Personal Care
     'perfume', 'cologne', 'fragrance', 'scent', 'eau de toilette', 'eau de parfum', 'edt', 'edp',
     // Small Accessories
-    'keychain', 'socks', 'redbull', 'boxer', 'underwear', 'briefs', 'gloves', 'mittens'
+    'socks', 'redbull', 'boxer', 'underwear', 'briefs', 'gloves', 'mittens'
   ],
   shorts: [
     'shorts', 'swim shorts', 'mesh shorts', 'ee shorts', 'basketball shorts', 'athletic shorts'
@@ -32,7 +53,7 @@ const CATEGORY_MAP = {
     'tech fleece', 'nocta tech', 'pullover'
   ],
   't-shirts': [
-    't-shirt', 'shirt', 'polo', 'top', 'jersey', 'v-neck', 'short sleeve', 'oversized tee', 'long sleeve', 'tank top', 'vest'
+    't-shirt', 'shirt', 'polo', 'top', 'jersey', 'v-neck', 'short sleeve', 'oversized tee', 'tank top', 'vest'
   ],
   jackets: [
     'jacket', 'coat', 'windbreaker', 'vest', 'parka', 'puffer', 'down jacket',
@@ -85,7 +106,7 @@ export const PRODUCT_CATEGORIES = [
   'accessories'
 ];
 
-const CLOTHING_CATEGORY_ORDER = ['sets', 'shoes', 'jackets', 'hoodies', 'shorts', 'pants', 't-shirts'];
+const CLOTHING_CATEGORY_ORDER = ['sets', 'shoes', 'jackets', 'hoodies', 'longsleeve', 'shorts', 'pants', 't-shirts'];
 
 const matchesKeyword = (name, keyword, category) => {
   if (keyword === 'track') {
@@ -158,7 +179,59 @@ export function detectCategory(name) {
     return 'sets';
   }
 
-  // ===== PHASE 2: High-priority accessories (prevent misclassification) =====
+  // ===== PHASE 2: NEW SPECIFIC CATEGORIES (check before accessories) =====
+  
+  // Belts - HIGHEST PRIORITY (very specific)
+  if (/\bbelt\b/.test(low)) {
+    return 'belts';
+  }
+  
+  // Electronics - check before accessories
+  if (low.includes('airpods') || 
+      low.includes('jbl') || 
+      low.includes('speaker') ||
+      low.includes('headphones') ||
+      low.includes('earbuds') ||
+      (low.includes('charger') || low.includes('charging')) ||
+      low.includes('power bank') ||
+      low.includes('batterypack') ||
+      low.includes('ipad') ||
+      low.includes('tablet') ||
+      (low.includes('apple') && low.includes('pencil'))) {
+    return 'electronics';
+  }
+  
+  // Headwear - check before accessories
+  if (/\b(hat|cap|beanie)\b/.test(low) || 
+      low.includes('balaclava') ||
+      low.includes('headband') ||
+      low.includes('bandana') ||
+      low.includes('bucket hat') ||
+      low.includes('snapback') ||
+      low.includes('trucker hat') ||
+      low.includes('dad hat')) {
+    return 'headwear';
+  }
+  
+  // Bags & Backpacks - check before accessories
+  if (low.includes('bag') || 
+      low.includes('backpack') || 
+      low.includes('tote') ||
+      low.includes('messenger') ||
+      low.includes('duffel') ||
+      low.includes('shoulder bag') ||
+      low.includes('crossbody') ||
+      low.includes('sling bag') ||
+      low.includes('handbag') ||
+      low.includes('clutch') ||
+      low.includes('rucksack') ||
+      (low.includes('travel') && low.includes('bag')) ||
+      (low.includes('gym') && low.includes('bag')) ||
+      (low.includes('laptop') && low.includes('bag'))) {
+    return 'bags-backpacks';
+  }
+
+  // ===== PHASE 3: General accessories (lower priority) =====
   
   // Fragrances - check before any clothing categories
   if (low.includes('perfume') || 
@@ -178,21 +251,12 @@ export function detectCategory(name) {
     return 'accessories';
   }
 
-  // Bags - check before 'track' in shoes
-  if (low.includes('bag') || 
-      low.includes('backpack') || 
-      low.includes('wallet') ||
-      low.includes('purse') ||
-      low.includes('tote') ||
-      low.includes('pouch')) {
-    return 'accessories';
-  }
-
-  // Headwear
-  if (/\b(hat|cap|beanie)\b/.test(low) || 
-      low.includes('balaclava') ||
-      low.includes('headband') ||
-      low.includes('bandana')) {
+  // Wallets and small items
+  if (low.includes('wallet') || 
+      low.includes('purse') || 
+      low.includes('pouch') ||
+      low.includes('card holder') ||
+      low.includes('keychain')) {
     return 'accessories';
   }
 
@@ -219,14 +283,14 @@ export function detectCategory(name) {
     return 'accessories';
   }
 
-  // Belt and other accessories
-  if (/\bbelt\b/.test(low) || 
-      low.includes('gloves') ||
-      low.includes('mittens')) {
+  // Phone cases (keep as accessories, not electronics)
+  if ((low.includes('case') || low.includes('phone case')) && 
+      !low.includes('suitcase') && 
+      !low.includes('briefcase')) {
     return 'accessories';
   }
 
-  // ===== PHASE 3: Specific brand/product patterns =====
+  // ===== PHASE 4: Specific brand/product patterns =====
   
   // Moncler jackets
   if (low.includes('moncler') && (low.includes('jacket') || low.includes('maya'))) {
@@ -238,7 +302,17 @@ export function detectCategory(name) {
     return 'hoodies';
   }
 
-  // ===== PHASE 4: Clothing categories with exclusions =====
+  // ===== PHASE 5: Clothing categories with exclusions =====
+  
+  // Longsleeve - CHECK BEFORE T-SHIRTS!
+  if (low.includes('longsleeve') || 
+      low.includes('long sleeve') ||
+      low.includes('long-sleeve') ||
+      low.includes('ls tee') ||
+      low.includes('ls shirt') ||
+      (low.includes('long') && low.includes('sleeve') && !low.includes('short'))) {
+    return 'longsleeve';
+  }
   
   // Hoodies - CHECK FIRST before other clothing!
   if (/\bhoodie\b/i.test(low) || 
@@ -271,7 +345,7 @@ export function detectCategory(name) {
     return 'pants';
   }
 
-  // ===== PHASE 5: Ordered category matching =====
+  // ===== PHASE 6: Ordered category matching =====
   
   // Check categories in priority order
   for (const category of CLOTHING_CATEGORY_ORDER) {
