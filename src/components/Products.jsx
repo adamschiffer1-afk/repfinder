@@ -365,10 +365,14 @@ export default function ProductsPage() {
         {/* Loading More Indicator */}
         {!loading && hasMore && (
           <div ref={sentinelRef} className={styles.loadingMore}>
-            {isLoadingMore && (
+            {isLoadingMore ? (
               <div className={styles.loadingSpinner}>
                 <div className={styles.spinner}></div>
-                <span>Loading more products...</span>
+                <span>Ładowanie więcej produktów...</span>
+              </div>
+            ) : (
+              <div className={styles.loadingTrigger}>
+                <span style={{ opacity: 0.3, fontSize: '0.8rem' }}>Scroll for more...</span>
               </div>
             )}
           </div>
