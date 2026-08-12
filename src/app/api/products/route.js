@@ -49,7 +49,11 @@ export async function GET(req) {
         .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
         .slice(0, 15);
       
-      return NextResponse.json(names);
+      return NextResponse.json(names, {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0'
+        }
+      });
     }
 
     // Handle pagination
@@ -65,12 +69,26 @@ export async function GET(req) {
         total,
         page,
         pages: Math.ceil((total || 0) / limit) || 1
+      }, {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+          'CDN-Cache-Control': 'no-store',
+          'Vercel-CDN-Cache-Control': 'no-store'
+        }
       });
     }
 
     // No pagination - return all
     const { data: products } = await ProductDB.find(filters, { sort: sortParam });
-    return NextResponse.json(products);
+    
+    // Disable caching
+    return NextResponse.json(products, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        'CDN-Cache-Control': 'no-store',
+        'Vercel-CDN-Cache-Control': 'no-store'
+      }
+    });
     
   } catch (error) {
     console.error('Products API error:', error);
