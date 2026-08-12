@@ -76,7 +76,12 @@ export const PRODUCT_CATEGORIES = [
   'pants',
   'shorts',
   'jackets',
+  'longsleeve',
   'sets',
+  'electronics',
+  'headwear',
+  'bags-backpacks',
+  'belts',
   'accessories'
 ];
 
