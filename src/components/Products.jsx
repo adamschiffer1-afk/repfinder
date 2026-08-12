@@ -34,7 +34,12 @@ export default function ProductsPage() {
         setLoading(true);
         
         // Fetch from API with proper sorting
-        const res = await fetch('/api/products?limit=1000&sort=pinned_order');
+        const res = await fetch('/api/products?limit=1000&sort=pinned_order', {
+          cache: 'no-store', // Prevent caching
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
         if (!res.ok) {
           throw new Error('Failed to fetch products');
         }
