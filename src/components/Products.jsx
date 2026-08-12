@@ -152,18 +152,61 @@ export default function ProductsPage() {
           // Filter by batch='popular'
           filtered = filtered.filter(product => product.batch === 'popular');
         } else {
-          // Regular category filter
-          console.log('Selected categories:', selectedCategories);
-          console.log('Sample product categories:', filtered.slice(0, 5).map(p => ({ name: p.name, category: p.category })));
+          // IMPORTANT: Re-fetch from API with category filter to bypass cache issues
+          const fetchCategoryProducts = async () => {
+            try {
+              const category = selectedCategories[0];
+              const res = await fetch(`/api/products?category=${category}&limit=1000`, {
+                cache: 'no-store',
+                headers: { 'Cache-Control': 'no-cache' }
+              });
+              
+              if (res.ok) {
+                const data = await res.json();
+                const products = data.map(p => ({
+                  _id: p.id,
+                  name: p.name,
+                  slug: p.slug,
+                  price: p.price,
+                  image: p.image,
+                  category: p.category,
+                  batch: p.batch,
+                  link: p.link,
+                  clicks: p.clicks,
+                  isPinned: p.is_pinned,
+                  pinnedOrder: p.pinned_order
+                }));
+                
+                console.log(`Fetched ${products.length} products for category: ${category}`);
+                setFilteredProducts(products);
+                setDisplayCount(PRODUCTS_PER_LOAD);
+                
+                setTimeout(() => {
+                  setIsTransitioning(false);
+                }, 50);
+              }
+            } catch (err) {
+              console.error('Error fetching category products:', err);
+              // Fallback to local filtering
+              filtered = allProducts.filter(product =>
+                selectedCategories.includes(product.category)
+              );
+              setFilteredProducts(filtered);
+              setDisplayCount(PRODUCTS_PER_LOAD);
+              
+              setTimeout(() => {
+                setIsTransitioning(false);
+              }, 50);
+            }
+          };
           
-          filtered = filtered.filter(product =>
-            selectedCategories.includes(product.category)
-          );
+          fetchCategoryProducts();
+          return; // Exit early, async fetch will handle state updates
         }
       }
       
       setFilteredProducts(filtered);
-      setDisplayCount(PRODUCTS_PER_LOAD); // Reset to initial load amount
+      setDisplayCount(PRODUCTS_PER_LOAD);
       
       console.log('Filtered products count:', filtered.length);
       console.log('Display count reset to:', PRODUCTS_PER_LOAD);
