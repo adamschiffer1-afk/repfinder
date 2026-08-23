@@ -1061,7 +1061,7 @@ export default function ManageProducts() {
         <div className={styles.filterSection}>
           <span className={styles.filterLabel}>Batch tag:</span>
           <div className={styles.filterPills}>
-            {['all', 'best', 'budget', 'random'].map(batch => (
+            {['all', 'best', 'budget', 'random', 'popular'].map(batch => (
               <button 
                 key={batch} 
                 className={`${styles.filterPill} ${filterBatch === batch ? styles.filterPillActive : ''}`} 
@@ -1205,6 +1205,7 @@ export default function ManageProducts() {
                   <option value="best">Best</option>
                   <option value="budget">Budget</option>
                   <option value="random">Random</option>
+                  <option value="popular">Popular</option>
                 </select>
               </div>
 
@@ -1300,6 +1301,7 @@ export default function ManageProducts() {
                 <option value="best">Best</option>
                 <option value="budget">Budget</option>
                 <option value="random">Random</option>
+                <option value="popular">Popular</option>
               </select>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 0' }}>
                 <input 
@@ -1549,6 +1551,7 @@ export default function ManageProducts() {
                     <option value="best">Best</option>
                     <option value="budget">Budget</option>
                     <option value="random">Random</option>
+                    <option value="popular">Popular</option>
                   </select>
                 </div>
               </div>
