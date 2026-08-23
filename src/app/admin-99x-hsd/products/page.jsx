@@ -369,7 +369,14 @@ export default function ManageProducts() {
       
       if (searchParam) url += `&search=${encodeURIComponent(searchParam)}`;
       if (filterCategory !== 'all') url += `&category=${encodeURIComponent(filterCategory)}`;
-      if (filterBatch !== 'all') url += `&batch=${encodeURIComponent(filterBatch)}`;
+      
+      // Special handling for batch filter:
+      // "all" means excluding "popular" (show best, budget, random)
+      // For this, we'll filter client-side since API doesn't support "not equal"
+      if (filterBatch !== 'all') {
+        url += `&batch=${encodeURIComponent(filterBatch)}`;
+      }
+      
       if (filterPinned !== 'all') url += `&pinned=${encodeURIComponent(filterPinned)}`;
       if (sortBy) url += `&sort=${encodeURIComponent(sortBy)}`;
 
@@ -379,14 +386,21 @@ export default function ManageProducts() {
 
       if (signal?.aborted) return;
       
-      if (data.products) {
-        setProducts(data.products);
-        setTotalPages(data.pages);
-        setCurrentPage(data.page);
-        setTotalProducts(data.total);
-      } else {
-        setProducts(data);
+      // Client-side filter: when batch is "all", exclude "popular"
+      let filteredProducts = data.products || data;
+      let totalCount = data.total || (Array.isArray(data) ? data.length : 0);
+      let totalPagesCount = data.pages || 1;
+      
+      if (filterBatch === 'all' && Array.isArray(filteredProducts)) {
+        filteredProducts = filteredProducts.filter(p => p.batch !== 'popular');
+        totalCount = filteredProducts.length;
+        totalPagesCount = 1; // Reset pagination when client-side filtering
       }
+
+      setProducts(filteredProducts);
+      setTotalProducts(totalCount);
+      setTotalPages(totalPagesCount);
+      setCurrentPage(data.page || page);
     } catch (err) {
       if (err.name === 'AbortError') return;
       console.error(err);
