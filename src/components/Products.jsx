@@ -203,6 +203,9 @@ export default function ProductsPage() {
           fetchCategoryProducts();
           return; // Exit early, async fetch will handle state updates
         }
+      } else {
+        // When "All" is selected (no categories), exclude "popular" batch
+        filtered = filtered.filter(product => product.batch !== 'popular');
       }
       
       setFilteredProducts(filtered);
