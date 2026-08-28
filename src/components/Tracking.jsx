@@ -108,6 +108,40 @@ export default function Tracking() {
       const originalStatus = (item.OriginalStatus || '').toLowerCase();
       
       // ========================================
+      // PRIORITY 0: EXPLICIT CITY NAMES OVERRIDE EVERYTHING
+      // Check location first - if it's a specific Chinese/Polish city, use that!
+      // ========================================
+      
+      // Chinese cities - must check FIRST before any status checks
+      if (originalLocation.includes('shanghai') || originalLocation.includes('szanghaj') ||
+          originalLocation.includes('上海') ||
+          originalLocation.includes('shenzhen') || originalLocation.includes('深圳') ||
+          originalLocation.includes('putian') || originalLocation.includes('莆田') ||
+          originalLocation.includes('beijing') || originalLocation.includes('北京') ||
+          originalLocation.includes('pekin')) {
+        return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // Polish cities with explicit names
+      if (originalLocation.includes('poznan') || originalLocation.includes('poznań') ||
+          originalLocation.includes('stalowa wola') || originalLocation.includes('warszawa') ||
+          originalLocation.includes('stryków') || originalLocation.includes('strykow')) {
+        return { code: 'PL', name: 'POLSKA' };
+      }
+      
+      // German cities
+      if (originalLocation.includes('bremen') || originalLocation.includes('brema') ||
+          originalLocation.includes('hamburg')) {
+        return { code: 'DE', name: 'NIEMCY' };
+      }
+      
+      // Dutch cities
+      if (originalLocation.includes('oirschot') || originalLocation.includes('vijfhuizen') ||
+          originalLocation.includes('veenendaal')) {
+        return { code: 'NL', name: 'HOLANDIA' };
+      }
+      
+      // ========================================
       // PRIORITY 1: STATUS-BASED DETECTION (Most reliable!)
       // Check what's happening in the status first
       // ========================================
@@ -218,26 +252,8 @@ export default function Tracking() {
       }
       
       // ========================================
-      // PRIORITY 2: EXPLICIT CITY NAMES in location
+      // PRIORITY 2: Special case statuses for Germany
       // ========================================
-      
-      // Polish cities
-      if (originalLocation.includes('poznan') || originalLocation.includes('poznań') ||
-          originalLocation.includes('stalowa wola') || originalLocation.includes('warszawa') ||
-          originalLocation.includes('stryków') || originalLocation.includes('strykow')) {
-        return { code: 'PL', name: 'POLSKA' };
-      }
-      
-      // German cities
-      if (originalLocation.includes('bremen') || originalLocation.includes('hamburg')) {
-        return { code: 'DE', name: 'NIEMCY' };
-      }
-      
-      // Special case: Events with "PL" location but actually in Germany
-      // "processed in parcel center of origin" with Bremen/Germany in nearby events
-      if (originalStatus.includes('germany, the international shipment has been processed')) {
-        return { code: 'DE', name: 'NIEMCY' };
-      }
       
       // "Pick-up was successful" = DHL picking up from Netherlands (happens in GERMANY)
       if (originalStatus.includes('pick-up was successful') || 
@@ -254,19 +270,6 @@ export default function Tracking() {
           !originalLocation.includes('stalowa') &&
           !originalLocation.includes('warszawa')) {
         return { code: 'DE', name: 'NIEMCY' };
-      }
-      
-      // Dutch cities
-      if (originalLocation.includes('oirschot') || originalLocation.includes('vijfhuizen') ||
-          originalLocation.includes('veenendaal')) {
-        return { code: 'NL', name: 'HOLANDIA' };
-      }
-      
-      // Chinese cities
-      if (originalLocation.includes('shanghai') || originalLocation.includes('上海') ||
-          originalLocation.includes('shenzhen') || originalLocation.includes('深圳') ||
-          originalLocation.includes('putian') || originalLocation.includes('莆田')) {
-        return { code: 'CN', name: 'CHINY' };
       }
       
       // ========================================
