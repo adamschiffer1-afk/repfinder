@@ -203,10 +203,8 @@ export default function ProductsPage() {
           fetchCategoryProducts();
           return; // Exit early, async fetch will handle state updates
         }
-      } else {
-        // When "All" is selected (no categories), exclude "popular" batch
-        filtered = filtered.filter(product => product.batch !== 'popular');
       }
+      // When "All" is selected (no categories), show all products including popular batch
       
       setFilteredProducts(filtered);
       setDisplayCount(PRODUCTS_PER_LOAD);
@@ -340,7 +338,7 @@ export default function ProductsPage() {
             </button>
             
             <button
-              className={`${styles.categoryPill} ${selectedCategories.length === 0 || selectedCategories.includes('__popular__') ? '' : styles.categoryPillActive}`}
+              className={`${styles.categoryPill} ${selectedCategories.length === 0 && !selectedCategories.includes('__popular__') ? styles.categoryPillActive : ''}`}
               onClick={() => setSelectedCategories([])}
             >
               All
