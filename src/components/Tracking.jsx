@@ -254,7 +254,7 @@ export default function Tracking() {
       }
       
       // Generic "odprawa celna zakończona" WITHOUT "eksportowa" 
-      // Context check: if location "Holandia" but NO specific city = likely misclassified China export
+      // Context check: if location mentions Netherlands but NO AMS = China export
       if ((originalStatus.includes('odprawa celna zakończona') ||
            originalStatus.includes('customs clearance completed') ||
            originalStatus.includes('清关完成')) &&
@@ -262,23 +262,20 @@ export default function Tracking() {
           !originalStatus.includes('eksportowa') &&
           !originalStatus.includes('出口')) {
         
-        // If location is generic "holandia" WITHOUT specific airport/city
-        const cleanLocation = originalLocation.trim();
-        
-        if (cleanLocation === 'holandia' || cleanLocation === 'holland' || 
-            cleanLocation === 'netherlands' || cleanLocation === 'nl') {
-          // This is misclassified - it's actually China export customs
-          return { code: 'CN', name: 'CHINY' };
-        }
-        
-        // If it has AMS or other Dutch city = real Netherlands
+        // If it has AMS or other specific Dutch city = real Netherlands
         if (originalLocation.includes('ams') || originalLocation.includes('amsterdam') ||
             originalLocation.includes('rotterdam') || originalLocation.includes('eindhoven') ||
             originalLocation.includes('oirschot') || originalLocation.includes('vijfhuizen')) {
           return { code: 'NL', name: 'HOLANDIA' };
         }
         
-        // Default to Netherlands if we can't determine
+        // If location mentions Netherlands/Holland BUT no specific city = misclassified China export
+        if (originalLocation.includes('holandia') || originalLocation.includes('holland') || 
+            originalLocation.includes('netherlands')) {
+          return { code: 'CN', name: 'CHINY' };
+        }
+        
+        // Default to Netherlands (has other context or empty location)
         return { code: 'NL', name: 'HOLANDIA' };
       }
       
