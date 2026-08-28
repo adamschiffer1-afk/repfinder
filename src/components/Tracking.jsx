@@ -254,7 +254,7 @@ export default function Tracking() {
       }
       
       // Generic "odprawa celna zakończona" WITHOUT "eksportowa" 
-      // Context check: if location mentions Netherlands but NO AMS = China export
+      // Context check: if location mentions Netherlands but NO real AMS = China export
       if ((originalStatus.includes('odprawa celna zakończona') ||
            originalStatus.includes('customs clearance completed') ||
            originalStatus.includes('清关完成')) &&
@@ -262,14 +262,19 @@ export default function Tracking() {
           !originalStatus.includes('eksportowa') &&
           !originalStatus.includes('出口')) {
         
-        // If it has AMS or other specific Dutch city = real Netherlands
-        if (originalLocation.includes('ams') || originalLocation.includes('amsterdam') ||
+        // If status explicitly says "arrived AMS" or "抵达【ams】" = real Netherlands
+        if (originalStatus.includes('arrived') && originalStatus.includes('ams')) {
+          return { code: 'NL', name: 'HOLANDIA' };
+        }
+        
+        // If location has specific Dutch cities = real Netherlands
+        if (originalLocation.includes('amsterdam') ||
             originalLocation.includes('rotterdam') || originalLocation.includes('eindhoven') ||
             originalLocation.includes('oirschot') || originalLocation.includes('vijfhuizen')) {
           return { code: 'NL', name: 'HOLANDIA' };
         }
         
-        // If location mentions Netherlands/Holland BUT no specific city = misclassified China export
+        // If location mentions Netherlands/Holland without specific city = misclassified China export
         if (originalLocation.includes('holandia') || originalLocation.includes('holland') || 
             originalLocation.includes('netherlands')) {
           return { code: 'CN', name: 'CHINY' };
@@ -290,9 +295,20 @@ export default function Tracking() {
       }
       
       // Netherlands arrival/processing
-      if (originalStatus.includes('抵达【ams】') ||
-          originalStatus.includes('目的地清关完成')) {
+      // But check: if status is just "AMS" (3 letters) it might be a Chinese facility code, not Amsterdam
+      if (originalStatus.includes('抵达【ams】') || originalStatus.includes('arrived ams')) {
         return { code: 'NL', name: 'HOLANDIA' };
+      }
+      
+      if (originalStatus.includes('目的地清关完成')) {
+        return { code: 'NL', name: 'HOLANDIA' };
+      }
+      
+      // If status is just "ams" (short code, 3-4 chars) = Chinese facility, not Amsterdam
+      // (Real Amsterdam would have more context like "arrived at AMS" or Chinese "抵达【ams】")
+      if (originalStatus.trim() === 'ams' || originalStatus.trim().length <= 4) {
+        // This is likely a facility code in China, not Amsterdam
+        return { code: 'CN', name: 'CHINY' };
       }
       
       // Initial tracking data received
