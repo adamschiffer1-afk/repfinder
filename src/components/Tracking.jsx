@@ -182,6 +182,8 @@ export default function Tracking() {
       // DHL Poland-specific statuses (actual Polish operations)
       if (originalStatus.includes('poland, the shipment has been loaded onto the delivery vehicle') ||
           originalStatus.includes('poland, the shipment is being prepared for delivery') ||
+          originalStatus.includes('poland, the shipment has been processed in the parcel center') ||
+          originalStatus.includes('poland, the shipment has arrived in the destination country') ||
           originalStatus.includes('loaded onto the delivery vehicle') ||
           originalStatus.includes('prepared for delivery in the delivery depot')) {
         return { code: 'PL', name: 'POLSKA' };

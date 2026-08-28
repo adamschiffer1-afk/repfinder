@@ -468,7 +468,17 @@ async function fetchFromApi(apiUrl, trackingCode) {
             if (index === 2) mainInfo['Kraj'] = text;
             if (index === 3) mainInfo['Data'] = text;
             if (index === 4) mainInfo['Ostatni status'] = translateStatus(text.split('/')[0].trim());
-            if (index === 5) mainInfo['Odbiorca'] = text;
+            if (index === 5) {
+                // Clean up recipient field - remove status prefixes
+                let recipient = text;
+                // Remove Chinese delivery confirmation character
+                recipient = recipient.replace(/^签收/, '').trim();
+                // Remove status text patterns
+                recipient = recipient.replace(/Poland,\s*The shipment has been successfully delivered\s*\/?\s*/gi, '').trim();
+                recipient = recipient.replace(/Poland\s*$/i, '').trim();
+                recipient = recipient.replace(/\s*\/\s*Poland\s*$/i, '').trim();
+                mainInfo['Odbiorca'] = recipient || 'Brak danych';
+            }
         });
 
         // Dodaj informację o przewidywanym czasie dostawy
