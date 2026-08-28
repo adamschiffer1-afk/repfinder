@@ -118,31 +118,10 @@ export default function Tracking() {
       const originalStatus = (item.OriginalStatus || '').toLowerCase();
       
       // ========================================
-      // PRIORITY -1: DETECT MISCLASSIFIED NETHERLANDS EVENTS
-      // ANY event with "holandia" in location that doesn't have real NL status = CHINA
+      // HARDCODE FIX: If displayed location is "Holandia" = CHINA
+      // Real Netherlands events have specific cities or "Brak danych o lokalizacji"
       // ========================================
-      
-      const hasHolandiaInLocation = originalLocation.includes('holandia') || 
-                                    originalLocation.includes('holland') ||
-                                    originalLocation.includes('netherlands');
-      
-      const hasRealDutchCity = originalLocation.includes('amsterdam') || 
-                               originalLocation.includes('oirschot') ||
-                               originalLocation.includes('vijfhuizen') || 
-                               originalLocation.includes('rotterdam') ||
-                               originalLocation.includes('eindhoven');
-      
-      const hasRealNetherlandsStatus = originalStatus.includes('pending') ||
-                                       originalStatus.includes('oczekuje') ||
-                                       originalStatus.includes('demontaż') ||
-                                       originalStatus.includes('dismantling') ||
-                                       originalStatus.includes('lot dotarł') ||
-                                       originalStatus.includes('flight has arrived') ||
-                                       originalStatus.includes('flight arrived') ||
-                                       originalStatus.includes('抵达');
-      
-      // If has "holandia" but NO real Dutch city AND NO real NL status = CHINA
-      if (hasHolandiaInLocation && !hasRealDutchCity && !hasRealNetherlandsStatus) {
+      if (location === 'holandia' || location === 'holland' || location === 'netherlands') {
         return { code: 'CN', name: 'CHINY' };
       }
       
