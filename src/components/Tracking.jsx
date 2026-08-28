@@ -245,6 +245,7 @@ export default function Tracking() {
       }
       
       // Customs and processing - IMPORT (Netherlands/Europe)
+      // BUT: Check if it's really import or misclassified export
       if (originalStatus.includes('customs clearance completed pending scanning') ||
           originalStatus.includes('清关完成,等待提取') ||
           originalStatus.includes('dismantling the board') ||
@@ -253,7 +254,7 @@ export default function Tracking() {
       }
       
       // Generic "odprawa celna zakończona" WITHOUT "eksportowa" 
-      // BUT: Check if it's really in Netherlands or misclassified Chinese customs
+      // Context check: if location "Holandia" but NO "AMS" mentioned = likely misclassified China export
       if ((originalStatus.includes('odprawa celna zakończona') ||
            originalStatus.includes('customs clearance completed') ||
            originalStatus.includes('清关完成')) &&
@@ -261,9 +262,24 @@ export default function Tracking() {
           !originalStatus.includes('eksportowa') &&
           !originalStatus.includes('出口')) {
         
-        // If location says "Holandia" but we're checking Chinese cities first (PRIORITY 0),
-        // this should only trigger if NOT in Chinese city
-        // So this is likely Netherlands import customs
+        // If it explicitly says AMS (Amsterdam airport) = Netherlands
+        if (originalStatus.includes('ams') || originalStatus.includes('amsterdam') ||
+            originalLocation.includes('ams') || originalLocation.includes('amsterdam')) {
+          return { code: 'NL', name: 'HOLANDIA' };
+        }
+        
+        // If location is "Holandia" but NO AMS = probably wrong, it's China export
+        if (originalLocation.includes('holandia') || originalLocation.includes('holland') ||
+            originalLocation.includes('netherlands')) {
+          // Check if it's just plain "Holandia" without city = misclassified
+          if (!originalLocation.includes('ams') && !originalLocation.includes('amsterdam') &&
+              !originalLocation.includes('rotterdam') && !originalLocation.includes('eindhoven')) {
+            // Likely China export with wrong location tag
+            return { code: 'CN', name: 'CHINY' };
+          }
+        }
+        
+        // Default to Netherlands (has specific city or other context)
         return { code: 'NL', name: 'HOLANDIA' };
       }
       
