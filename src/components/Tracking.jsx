@@ -175,7 +175,17 @@ export default function Tracking() {
         return { code: 'NL', name: 'HOLANDIA' };
       }
       
-      // Customs and processing
+      // Customs and processing - EXPORT (China)
+      if (originalStatus.includes('export customs clearance completed') ||
+          originalStatus.includes('出口清关完成') ||
+          originalStatus.includes('export customs') ||
+          originalStatus.includes('odprawa celna eksportowa') ||
+          originalStatus.includes('expected flight') ||
+          originalStatus.includes('预计')) {
+        return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // Customs and processing - IMPORT (Netherlands/Europe)
       if (originalStatus.includes('customs clearance completed pending scanning') ||
           originalStatus.includes('清关完成,等待提取') ||
           originalStatus.includes('dismantling the board') ||
@@ -183,19 +193,12 @@ export default function Tracking() {
         return { code: 'NL', name: 'HOLANDIA' };
       }
       
-      if (originalStatus.includes('export customs clearance completed') ||
-          originalStatus.includes('出口清关完成') ||
-          originalStatus.includes('export customs') ||
-          originalStatus.includes('expected flight') ||
-          originalStatus.includes('预计')) {
-        return { code: 'CN', name: 'CHINY' };
-      }
-      
-      // Generic "odprawa celna zakończona" WITHOUT "export" = HOLANDIA (import)
+      // Generic "odprawa celna zakończona" WITHOUT "eksportowa" = HOLANDIA (import)
       if ((originalStatus.includes('odprawa celna zakończona') ||
            originalStatus.includes('customs clearance completed') ||
            originalStatus.includes('清关完成')) &&
           !originalStatus.includes('export') &&
+          !originalStatus.includes('eksportowa') &&
           !originalStatus.includes('出口')) {
         return { code: 'NL', name: 'HOLANDIA' };
       }
