@@ -262,9 +262,11 @@ export default function Tracking() {
           !originalStatus.includes('eksportowa') &&
           !originalStatus.includes('出口')) {
         
-        // If location is "holandia"/"holland"/"netherlands" WITHOUT specific airport/city
-        if (originalLocation === 'holandia' || originalLocation === 'holland' || 
-            originalLocation === 'netherlands' || originalLocation === 'nl') {
+        // If location is generic "holandia" WITHOUT specific airport/city
+        const cleanLocation = originalLocation.trim();
+        
+        if (cleanLocation === 'holandia' || cleanLocation === 'holland' || 
+            cleanLocation === 'netherlands' || cleanLocation === 'nl') {
           // This is misclassified - it's actually China export customs
           return { code: 'CN', name: 'CHINY' };
         }
