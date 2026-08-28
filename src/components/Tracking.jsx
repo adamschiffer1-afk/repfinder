@@ -108,6 +108,26 @@ export default function Tracking() {
     setShowAll((prev) => !prev);
   };
 
+  // DHL sometimes tags an event with a country name that contradicts where the
+  // package actually is (e.g. "Holandia" on a China export event). When the
+  // location is a bare country name that disagrees with the detected country
+  // group, show the group's country instead of the misleading label.
+  const GENERIC_COUNTRY_LABELS = {
+    'holandia': 'NL', 'holland': 'NL', 'netherlands': 'NL',
+    'polska': 'PL', 'poland': 'PL',
+    'niemcy': 'DE', 'germany': 'DE',
+    'chiny': 'CN', 'china': 'CN',
+  };
+
+  const resolveDisplayLocation = (rawLocation, groupCode) => {
+    const key = (rawLocation || '').trim().toLowerCase();
+    const labelCountry = GENERIC_COUNTRY_LABELS[key];
+    if (labelCountry && labelCountry !== groupCode) {
+      return COUNTRY_MAP[groupCode] || rawLocation;
+    }
+    return rawLocation;
+  };
+
   // Logic to group tracking data by country
   const groupedData = useMemo(() => {
     if (!trackingData?.Szczegóły_przesyłki) return [];
@@ -589,7 +609,7 @@ export default function Tracking() {
                               {detail.Lokalizacja && (
                                 <p className={styles.timelineLocation}>
                                   <FontAwesomeIcon icon={faMapPin} />
-                                  {translateLocationFe(detail.Lokalizacja, language)}
+                                  {translateLocationFe(resolveDisplayLocation(detail.Lokalizacja, group.code), language)}
                                 </p>
                               )}
                             </div>
