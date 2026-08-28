@@ -21,6 +21,14 @@ input, textarea, [contenteditable="true"] {
   -ms-user-select: text;
 }
 
+/* Allow text selection on tracking page */
+.trackingPage {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
 html {
   scroll-behavior: smooth;
 }
