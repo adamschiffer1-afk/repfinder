@@ -119,27 +119,31 @@ export default function Tracking() {
       
       // ========================================
       // PRIORITY -1: DETECT MISCLASSIFIED NETHERLANDS EVENTS
-      // If location is generic "Holandia" WITHOUT specific city AND status doesn't 
-      // indicate real Netherlands arrival (pending scanning) = CHINA export
+      // ANY event with "holandia" in location that doesn't have real NL status = CHINA
       // ========================================
       
-      // Check if this is a misclassified "Netherlands" event that's actually China
-      const isGenericNetherlands = (originalLocation === 'holandia' || originalLocation === 'holland' || 
-                                    originalLocation === 'netherlands' || originalLocation === 'nl' ||
-                                    (originalLocation.includes('holandia') && !originalLocation.includes('ams') &&
-                                     !originalLocation.includes('amsterdam') && !originalLocation.includes('oirschot') &&
-                                     !originalLocation.includes('vijfhuizen') && !originalLocation.includes('rotterdam')));
+      const hasHolandiaInLocation = originalLocation.includes('holandia') || 
+                                    originalLocation.includes('holland') ||
+                                    originalLocation.includes('netherlands');
       
-      const isRealNetherlandsStatus = originalStatus.includes('pending scanning') ||
-                                      originalStatus.includes('oczekuje na skanowanie') ||
-                                      originalStatus.includes('demontaż') ||
-                                      originalStatus.includes('dismantling') ||
-                                      originalStatus.includes('lot dotarł') ||
-                                      originalStatus.includes('flight has arrived') ||
-                                      originalStatus.includes('抵达【ams】');
+      const hasRealDutchCity = originalLocation.includes('ams') ||
+                               originalLocation.includes('amsterdam') || 
+                               originalLocation.includes('oirschot') ||
+                               originalLocation.includes('vijfhuizen') || 
+                               originalLocation.includes('rotterdam') ||
+                               originalLocation.includes('eindhoven');
       
-      // If generic Netherlands location but NOT a real Netherlands status = CHINA
-      if (isGenericNetherlands && !isRealNetherlandsStatus) {
+      const hasRealNetherlandsStatus = originalStatus.includes('pending') ||
+                                       originalStatus.includes('oczekuje') ||
+                                       originalStatus.includes('demontaż') ||
+                                       originalStatus.includes('dismantling') ||
+                                       originalStatus.includes('lot dotarł') ||
+                                       originalStatus.includes('flight has arrived') ||
+                                       originalStatus.includes('flight arrived') ||
+                                       originalStatus.includes('抵达');
+      
+      // If has "holandia" but NO real Dutch city AND NO real NL status = CHINA
+      if (hasHolandiaInLocation && !hasRealDutchCity && !hasRealNetherlandsStatus) {
         return { code: 'CN', name: 'CHINY' };
       }
       
