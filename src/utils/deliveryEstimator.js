@@ -93,8 +93,8 @@ const MILESTONES = [
   {
     key: 'delivered',
     patterns: [
-      'delivered successfully', 'delivery successful', 'dostarczono', 'dostarczona',
-      'delivered.', 'zugestellt', 'doręczono',
+      'delivered successfully', 'successfully delivered', 'delivery successful', 'dostarczono', 'dostarczona',
+      'delivered.', 'zugestellt', 'doręczono', 'pomyślnie dostarczona',
     ],
     minDays: 0, maxDays: 0,
     labelPl: 'DOSTARCZONO',
