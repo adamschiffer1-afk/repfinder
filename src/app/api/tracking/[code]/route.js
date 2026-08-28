@@ -417,140 +417,6 @@ function formatLocation(location) {
     return cleanLocation;
 }
 
-// ─── Funkcja grupowania zdarzeń według krajów ─────────────────────────────────
-function groupEventsByCountry(trackingInfo) {
-    const countryGroups = [];
-    let currentCountry = null;
-    let currentEvents = [];
-    
-    // Mapowanie krajów do flag i nazw
-    const countryMap = {
-        'polska': { flag: '🇵🇱', name: 'POLSKA' },
-        'poland': { flag: '🇵🇱', name: 'POLSKA' },
-        'niemcy': { flag: '🇩🇪', name: 'NIEMCY' },
-        'germany': { flag: '🇩🇪', name: 'NIEMCY' },
-        'holandia': { flag: '🇳🇱', name: 'HOLANDIA' },
-        'netherlands': { flag: '🇳🇱', name: 'HOLANDIA' },
-        'holland': { flag: '🇳🇱', name: 'HOLANDIA' },
-        'chiny': { flag: '🇨🇳', name: 'CHINY' },
-        'china': { flag: '🇨🇳', name: 'CHINY' },
-        'francja': { flag: '🇫🇷', name: 'FRANCJA' },
-        'france': { flag: '🇫🇷', name: 'FRANCJA' },
-        'belgia': { flag: '🇧🇪', name: 'BELGIA' },
-        'belgium': { flag: '🇧🇪', name: 'BELGIA' }
-    };
-    
-    function getCountryFromLocation(location) {
-        if (!location) return null;
-        const loc = location.toLowerCase();
-        
-        // Sprawdź bezpośrednie mapowania
-        for (const [key, value] of Object.entries(countryMap)) {
-            if (loc.includes(key)) {
-                return value;
-            }
-        }
-        
-        // Sprawdź konkretne miasta
-        if (loc.includes('stalowa wola') || loc.includes('warszawa') || 
-            loc.includes('poznań') || loc.includes('kraków') || loc.includes('gdańsk')) {
-            return countryMap['polska'];
-        }
-        
-        if (loc.includes('shanghai') || loc.includes('shenzhen') || 
-            loc.includes('beijing') || loc.includes('guangzhou') ||
-            loc.includes('上海') || loc.includes('深圳') || loc.includes('北京') ||
-            loc.includes('广州') || loc.includes('中国') || loc.includes('shanghai') ||
-            loc.includes('putian') || loc.includes('莆田')) {
-            return countryMap['chiny'];
-        }
-        
-        if (loc.includes('amsterdam') || loc.includes('rotterdam') || 
-            loc.includes('vijfhuizen') || loc.includes('oirschot') || loc.includes('veenendaal') ||
-            loc.includes('ams')) {
-            return countryMap['holandia'];
-        }
-        
-        if (loc.includes('hamburg') || loc.includes('berlin') || 
-            loc.includes('köln') || loc.includes('münchen') || loc.includes('bremen') ||
-            loc.includes('germany') || loc.includes('de')) {
-            return countryMap['niemcy'];
-        }
-        
-        return null;
-    }
-    
-    trackingInfo.forEach(event => {
-        const country = getCountryFromLocation(event.Lokalizacja);
-        const countryName = country ? country.name : 'INNE';
-        
-        if (currentCountry !== countryName) {
-            // Zapisz poprzednią grupę (jeśli istnieje)
-            if (currentCountry && currentEvents.length > 0) {
-                countryGroups.push({
-                    country: currentCountry,
-                    flag: getCurrentFlag(currentCountry),
-                    events: [...currentEvents]
-                });
-            }
-            
-            // Rozpocznij nową grupę
-            currentCountry = countryName;
-            currentEvents = [];
-        }
-        
-        // Dodaj zdarzenie do obecnej grupy
-        currentEvents.push({
-            Data: formatEventDate(event.Data),
-            Lokalizacja: event.Lokalizacja,
-            Status: event.Status,
-            OriginalDate: event.OriginalDate,
-            OriginalLocation: event.OriginalLocation,
-            OriginalStatus: event.OriginalStatus
-        });
-    });
-    
-    // Dodaj ostatnią grupę
-    if (currentCountry && currentEvents.length > 0) {
-        countryGroups.push({
-            country: currentCountry,
-            flag: getCurrentFlag(currentCountry),
-            events: [...currentEvents]
-        });
-    }
-    
-    return countryGroups;
-    
-    function getCurrentFlag(countryName) {
-        const flagMap = {
-            'POLSKA': '🇵🇱',
-            'NIEMCY': '🇩🇪', 
-            'HOLANDIA': '🇳🇱',
-            'CHINY': '🇨🇳',
-            'FRANCJA': '🇫🇷',
-            'BELGIA': '🇧🇪'
-        };
-        return flagMap[countryName] || '🌍';
-    }
-}
-
-// ─── Funkcja formatowania daty zdarzenia ──────────────────────────────────────
-function formatEventDate(dateString) {
-    try {
-        const date = new Date(dateString);
-        return date.toLocaleString('pl-PL', {
-            year: 'numeric',
-            month: '2-digit', 
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'Europe/Warsaw'
-        });
-    } catch (e) {
-        return dateString; // Zwróć oryginalną datę jeśli parsing nie powiódł się
-    }
-}
-
 // ─── Pobieranie z serwera IP (skraper) ────────────────────────────────────────
 async function fetchFromApi(apiUrl, trackingCode) {
     try {
@@ -594,9 +460,6 @@ async function fetchFromApi(apiUrl, trackingCode) {
             return dateB - dateA; // Sortowanie malejące (najnowsze pierwsze)
         });
 
-        // Grupuj zdarzenia według krajów dla lepszej prezentacji
-        const groupedTracking = groupEventsByCountry(trackingInfo);
-
         const mainInfo = {};
         $('.menu_ ul:nth-child(2) li').each((index, element) => {
             const text = $(element).text().trim();
@@ -622,7 +485,7 @@ async function fetchFromApi(apiUrl, trackingCode) {
 
         return trackingInfo.length > 0 ? { 
             mainInfo, 
-            trackingInfo: groupedTracking, // Używaj pogrupowanych danych
+            trackingInfo: trackingInfo, // Zwróć płaską listę (frontend sam grupuje)
             source_api: 'New Tracking Server' 
         } : null;
     } catch (error) {
