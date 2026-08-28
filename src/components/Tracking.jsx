@@ -514,7 +514,15 @@ export default function Tracking() {
                   {trackingData.Informacje_główne.Odbiorca && (
                     <div className={styles.infoItem}>
                       <FontAwesomeIcon icon={faUser} />
-                      <span><strong>{t('tracking.recipient')}:</strong> {trackingData.Informacje_główne.Odbiorca}</span>
+                      <span><strong>{t('tracking.recipient')}:</strong> {(() => {
+                        let recipient = trackingData.Informacje_główne.Odbiorca;
+                        // Clean up recipient field (backup cleaning on frontend)
+                        recipient = recipient.replace(/^签收/, '').trim();
+                        recipient = recipient.replace(/Poland,\s*The shipment has been successfully delivered\s*\/?\s*/gi, '').trim();
+                        recipient = recipient.replace(/Poland\s*$/i, '').trim();
+                        recipient = recipient.replace(/\s*\/\s*Poland\s*$/i, '').trim();
+                        return recipient || 'Brak danych';
+                      })()}</span>
                     </div>
                   )}
                 </div>
