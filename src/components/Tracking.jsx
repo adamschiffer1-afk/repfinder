@@ -102,80 +102,138 @@ export default function Tracking() {
   const groupedData = useMemo(() => {
     if (!trackingData?.Szczegóły_przesyłki) return [];
 
-    const countryNameDisplay = typeof Intl !== 'undefined' && Intl.DisplayNames 
-      ? new Intl.DisplayNames([language || 'pl'], { type: 'region' }) 
-      : null;
-
     const getCountryInfo = (item) => {
-      const status = (item.Status || '').toLowerCase();
       const location = (item.Lokalizacja || '').toLowerCase();
+      const originalLocation = (item.OriginalLocation || '').toLowerCase();
+      const originalStatus = (item.OriginalStatus || '').toLowerCase();
       
-      // Translate to Polish for reliable keyword matching regardless of API response language
-      const translatedStatus = translateStatusFe(item.Status, 'pl').toLowerCase();
-      const translatedLoc = translateLocationFe(item.Lokalizacja, 'pl').toLowerCase();
-      const fullText = (status + ' ' + location + ' ' + translatedStatus + ' ' + translatedLoc);
-
-      // 1. Detect explicit country codes in parentheses (e.g. (NL), (DE), (US))
-      const codeMatch = fullText.match(/\(([A-Z]{2})\)/i);
-      if (codeMatch) {
-        const code = codeMatch[1].toUpperCase();
-        if (COUNTRY_MAP[code]) return { code, name: COUNTRY_MAP[code] };
-        
-        try {
-          if (countryNameDisplay) {
-            const name = countryNameDisplay.of(code);
-            return { code, name: name.toUpperCase() };
-          }
-        } catch (e) {}
-        return { code, name: code };
-      }
-
-      // 2. Explicit location codes/names have priority over status keywords
-      if (location === 'pl' || location.includes('polska') || location.includes('poland') || location.includes('warszawa')) return { code: 'PL', name: 'POLSKA' };
-      if (location === 'de' || location.includes('niemcy') || location.includes('germany') || location.includes('frankfurt')) return { code: 'DE', name: 'NIEMCY' };
-      if (location === 'nl' || location.includes('holandia') || location.includes('netherlands') || location.includes('amsterdam') || location.includes('oirschot')) return { code: 'NL', name: 'HOLANDIA' };
-      if (location === 'cn' || location.includes('chiny') || location.includes('china') || location.includes('shenzhen') || location.includes('guangzhou')) return { code: 'CN', name: 'CHINY' };
-
-      // 3. Fallback to specific status keywords if location is empty or generic
-      if (
-        fullText.includes('holandia') ||
-        fullText.includes('schiphol') ||
-        fullText.includes('haarlemmermeer') ||
-        fullText.includes('lot przyleciał') ||
-        fullText.includes('flight has arrived') ||
-        fullText.includes('wylądowała') ||
-        fullText.includes('demontaż tablicy') ||
-        fullText.includes('dismantling the board') ||
-        fullText.includes('w oczekiwaniu na skanowanie') ||
-        fullText.includes('pending scanning') ||
-        fullText.includes('odprawa celna') ||
-        fullText.includes('customs clearance') ||
-        fullText.includes('cleared customs')
-      ) {
-        return { code: 'NL', name: 'HOLANDIA' };
-      }
+      // ========================================
+      // PRIORITY 1: Check explicit city names in ORIGINAL location
+      // These are the MOST RELIABLE indicators
+      // ========================================
       
-      if (
-        fullText.includes('frankfurt') || 
-        fullText.includes('niemcy') || 
-        fullText.includes('germany') || 
-        (fullText.includes('dhl') && !fullText.includes('pl'))
-      ) {
-        return { code: 'DE', name: 'NIEMCY' };
-      }
-      
-      if (
-        fullText.includes('warszawa') || 
-        fullText.includes('polska') || 
-        fullText.includes('poland') || 
-        fullText.includes('dostarczona') ||
-        fullText.includes('doręczono') ||
-        fullText.includes('delivered')
-      ) {
+      // Polish cities
+      if (originalLocation.includes('poznan') || originalLocation.includes('poznań') ||
+          originalLocation.includes('stalowa wola') || originalLocation.includes('warszawa') ||
+          originalLocation.includes('warsaw') || originalLocation.includes('stryków') ||
+          originalLocation.includes('strykow') || originalLocation.includes('dobra')) {
         return { code: 'PL', name: 'POLSKA' };
       }
       
-      // Default to origin
+      // German cities
+      if (originalLocation.includes('bremen') || originalLocation.includes('hamburg') ||
+          originalLocation.includes('frankfurt') || originalLocation.includes('leipzig')) {
+        return { code: 'DE', name: 'NIEMCY' };
+      }
+      
+      // Dutch cities
+      if (originalLocation.includes('oirschot') || originalLocation.includes('vijfhuizen') ||
+          originalLocation.includes('veenendaal') || originalLocation.includes('amsterdam') ||
+          originalLocation.includes('rotterdam') || originalLocation.includes('eindhoven')) {
+        return { code: 'NL', name: 'HOLANDIA' };
+      }
+      
+      // Chinese cities (for explicit mentions)
+      if (originalLocation.includes('shanghai') || originalLocation.includes('上海') ||
+          originalLocation.includes('shenzhen') || originalLocation.includes('深圳') ||
+          originalLocation.includes('beijing') || originalLocation.includes('北京') ||
+          originalLocation.includes('guangzhou') || originalLocation.includes('广州') ||
+          originalLocation.includes('putian') || originalLocation.includes('莆田')) {
+        return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // ========================================
+      // PRIORITY 2: Check country codes in ORIGINAL location
+      // Only if NOT contradicted by explicit DHL locations above
+      // ========================================
+      
+      // Exact country code match (reliable when present)
+      if (originalLocation === 'pl' || originalLocation === 'poland') {
+        return { code: 'PL', name: 'POLSKA' };
+      }
+      
+      if (originalLocation === 'de' || originalLocation === 'germany') {
+        return { code: 'DE', name: 'NIEMCY' };
+      }
+      
+      if (originalLocation === 'nl' || originalLocation === 'netherlands' || originalLocation === 'holland') {
+        return { code: 'NL', name: 'HOLANDIA' };
+      }
+      
+      if (originalLocation === 'cn' || originalLocation === 'china') {
+        return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // ========================================
+      // PRIORITY 3: Flight events = determine by status keywords
+      // ========================================
+      
+      // "Flight has departed" or 航班已起飞 = still in CHINA
+      if (originalStatus.includes('flight has departed') || 
+          originalStatus.includes('航班已起飞') ||
+          originalStatus.includes('flight departure')) {
+        return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // "Flight has arrived" or 航班已抵达 = arrived in EUROPE (usually Netherlands)
+      if (originalStatus.includes('flight has arrived') || 
+          originalStatus.includes('航班已抵达') ||
+          originalStatus.includes('flight arrival')) {
+        return { code: 'NL', name: 'HOLANDIA' };
+      }
+      
+      // ========================================
+      // PRIORITY 4: Customs clearance events
+      // ========================================
+      
+      // Export customs (China)
+      if (originalStatus.includes('export customs') || 
+          originalStatus.includes('出口清关')) {
+        return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // Import/Destination customs or "pending scanning" = Netherlands
+      if (originalStatus.includes('customs clearance completed pending scanning') ||
+          originalStatus.includes('清关完成')) {
+        return { code: 'NL', name: 'HOLANDIA' };
+      }
+      
+      // Dismantling board / unpacking = usually Netherlands hub
+      if (originalStatus.includes('dismantling the board') || 
+          originalStatus.includes('拆板中')) {
+        return { code: 'NL', name: 'HOLANDIA' };
+      }
+      
+      // ========================================
+      // PRIORITY 5: Check formatted location (translated by backend)
+      // ========================================
+      
+      if (location.includes('polska') || location.includes('poland')) {
+        return { code: 'PL', name: 'POLSKA' };
+      }
+      
+      if (location.includes('holandia') || location.includes('netherlands')) {
+        return { code: 'NL', name: 'HOLANDIA' };
+      }
+      
+      if (location.includes('niemcy') || location.includes('germany')) {
+        return { code: 'DE', name: 'NIEMCY' };
+      }
+
+      if (location.includes('chiny') || location.includes('china')) {
+        return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // ========================================
+      // PRIORITY 6: Default based on status patterns
+      // ========================================
+      
+      // If has Chinese characters in status = China
+      if (/[\u4e00-\u9fa5]/.test(originalStatus)) {
+        return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // Default: if completely empty or unknown = China (origin)
       return { code: 'CN', name: 'CHINY' };
     };
 
