@@ -20,7 +20,9 @@ import {
   faInfoCircle,
   faTimes,
   faMap,
-  faClock
+  faClock,
+  faCopy,
+  faCheck
 } from '@fortawesome/free-solid-svg-icons';
 import TrackingGlobe from './TrackingGlobe';
 
@@ -51,6 +53,14 @@ export default function Tracking() {
   const [showGlobe, setShowGlobe] = useState(false);
   const itemsToShow = 15;
   const [initialLoad, setInitialLoad] = useState(true);
+  const [copiedField, setCopiedField] = useState(null);
+
+  const copyToClipboard = (text, fieldName) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedField(fieldName);
+      setTimeout(() => setCopiedField(null), 2000);
+    });
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -436,10 +446,24 @@ export default function Tracking() {
                   <div className={styles.infoItem}>
                     <FontAwesomeIcon icon={faHashtag} />
                     <span><strong>{t('tracking.reference')}:</strong> {trackingData.Informacje_główne['Numer referencyjny']}</span>
+                    <button 
+                      className={styles.copyBtn}
+                      onClick={() => copyToClipboard(trackingData.Informacje_główne['Numer referencyjny'], 'reference')}
+                      title="Kopiuj"
+                    >
+                      <FontAwesomeIcon icon={copiedField === 'reference' ? faCheck : faCopy} />
+                    </button>
                   </div>
                   <div className={styles.infoItem}>
                     <FontAwesomeIcon icon={faTruck} />
                     <span><strong>{t('tracking.trackingNumber')}:</strong> {trackingData.Informacje_główne['Numer śledzenia']}</span>
+                    <button 
+                      className={styles.copyBtn}
+                      onClick={() => copyToClipboard(trackingData.Informacje_główne['Numer śledzenia'], 'tracking')}
+                      title="Kopiuj"
+                    >
+                      <FontAwesomeIcon icon={copiedField === 'tracking' ? faCheck : faCopy} />
+                    </button>
                   </div>
                   <div className={styles.infoItem}>
                     <FontAwesomeIcon icon={faGlobe} />

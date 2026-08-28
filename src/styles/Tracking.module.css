@@ -255,10 +255,40 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  position: relative;
 }
 
 .infoItem svg {
   color: #a78bfa;
+}
+
+.infoItem span {
+  flex: 1;
+}
+
+.copyBtn {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+}
+
+.copyBtn:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(139, 92, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.copyBtn:active {
+  transform: scale(0.95);
 }
 
 /* COUNTRY GROUPS */
