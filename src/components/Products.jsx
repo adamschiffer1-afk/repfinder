@@ -79,7 +79,8 @@ export default function ProductsPage() {
         console.log('Fetched products from API, count:', products.length);
         console.log('Pinned products:', products.filter(p => p.isPinned).length);
         setAllProducts(products);
-        setFilteredProducts(products);
+        // Initially show all products EXCEPT popular batch (default to "All" tab)
+        setFilteredProducts(products.filter(p => p.batch !== 'popular'));
         
       } catch (err) {
         console.error('Error fetching products:', err);
