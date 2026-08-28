@@ -118,6 +118,32 @@ export default function Tracking() {
       const originalStatus = (item.OriginalStatus || '').toLowerCase();
       
       // ========================================
+      // PRIORITY -1: DETECT MISCLASSIFIED NETHERLANDS EVENTS
+      // If location is generic "Holandia" WITHOUT specific city AND status doesn't 
+      // indicate real Netherlands arrival (pending scanning) = CHINA export
+      // ========================================
+      
+      // Check if this is a misclassified "Netherlands" event that's actually China
+      const isGenericNetherlands = (originalLocation === 'holandia' || originalLocation === 'holland' || 
+                                    originalLocation === 'netherlands' || originalLocation === 'nl' ||
+                                    (originalLocation.includes('holandia') && !originalLocation.includes('ams') &&
+                                     !originalLocation.includes('amsterdam') && !originalLocation.includes('oirschot') &&
+                                     !originalLocation.includes('vijfhuizen') && !originalLocation.includes('rotterdam')));
+      
+      const isRealNetherlandsStatus = originalStatus.includes('pending scanning') ||
+                                      originalStatus.includes('oczekuje na skanowanie') ||
+                                      originalStatus.includes('demontaż') ||
+                                      originalStatus.includes('dismantling') ||
+                                      originalStatus.includes('lot dotarł') ||
+                                      originalStatus.includes('flight has arrived') ||
+                                      originalStatus.includes('抵达【ams】');
+      
+      // If generic Netherlands location but NOT a real Netherlands status = CHINA
+      if (isGenericNetherlands && !isRealNetherlandsStatus) {
+        return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // ========================================
       // PRIORITY 0: EXPLICIT CITY NAMES OVERRIDE EVERYTHING
       // Check location first - if it's a specific Chinese/Polish city, use that!
       // ========================================
