@@ -167,9 +167,19 @@ export default function Tracking() {
       
       if (originalStatus.includes('export customs clearance completed') ||
           originalStatus.includes('出口清关完成') ||
+          originalStatus.includes('export customs') ||
           originalStatus.includes('expected flight') ||
           originalStatus.includes('预计')) {
         return { code: 'CN', name: 'CHINY' };
+      }
+      
+      // Generic "odprawa celna zakończona" WITHOUT "export" = HOLANDIA (import)
+      if ((originalStatus.includes('odprawa celna zakończona') ||
+           originalStatus.includes('customs clearance completed') ||
+           originalStatus.includes('清关完成')) &&
+          !originalStatus.includes('export') &&
+          !originalStatus.includes('出口')) {
+        return { code: 'NL', name: 'HOLANDIA' };
       }
       
       // Chinese warehouse operations
