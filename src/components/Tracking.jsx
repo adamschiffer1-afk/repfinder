@@ -123,12 +123,15 @@ export default function Tracking() {
       // ========================================
       
       // Chinese cities - must check FIRST before any status checks
+      // Also check if status mentions Chinese city even if location is wrong
       if (originalLocation.includes('shanghai') || originalLocation.includes('szanghaj') ||
           originalLocation.includes('上海') ||
           originalLocation.includes('shenzhen') || originalLocation.includes('深圳') ||
           originalLocation.includes('putian') || originalLocation.includes('莆田') ||
           originalLocation.includes('beijing') || originalLocation.includes('北京') ||
-          originalLocation.includes('pekin')) {
+          originalLocation.includes('pekin') ||
+          originalStatus.includes('shanghai') || originalStatus.includes('szanghaj') ||
+          originalStatus.includes('shenzhen') || originalStatus.includes('beijing')) {
         return { code: 'CN', name: 'CHINY' };
       }
       
@@ -247,13 +250,18 @@ export default function Tracking() {
         return { code: 'NL', name: 'HOLANDIA' };
       }
       
-      // Generic "odprawa celna zakończona" WITHOUT "eksportowa" = HOLANDIA (import)
+      // Generic "odprawa celna zakończona" WITHOUT "eksportowa" 
+      // BUT: Check if it's really in Netherlands or misclassified Chinese customs
       if ((originalStatus.includes('odprawa celna zakończona') ||
            originalStatus.includes('customs clearance completed') ||
            originalStatus.includes('清关完成')) &&
           !originalStatus.includes('export') &&
           !originalStatus.includes('eksportowa') &&
           !originalStatus.includes('出口')) {
+        
+        // If location says "Holandia" but we're checking Chinese cities first (PRIORITY 0),
+        // this should only trigger if NOT in Chinese city
+        // So this is likely Netherlands import customs
         return { code: 'NL', name: 'HOLANDIA' };
       }
       
@@ -292,21 +300,21 @@ export default function Tracking() {
       }
       
       // "Loaded to movement/tour vehicle" - check location carefully
-      if ((originalStatus.includes('loaded to movement') || 
-           originalStatus.includes('załadowany do pojazdu')) &&
-          originalLocation === 'pl') {
-        // If it mentions Polish city explicitly = POLAND
+      if (originalStatus.includes('loaded to movement') || 
+          originalStatus.includes('załadowany do pojazdu')) {
+        // If location contains "polska" in status OR location = POLAND
+        if (originalStatus.includes('polska') || 
+            originalLocation.includes('polska') ||
+            originalLocation.includes('poland')) {
+          return { code: 'PL', name: 'POLSKA' };
+        }
+        // If it mentions Polish city explicitly = POLAND  
         if (originalLocation.includes('poznan') || originalLocation.includes('poznań') ||
             originalLocation.includes('stalowa') || originalLocation.includes('rudnik') ||
             originalLocation.includes('warszawa')) {
           return { code: 'PL', name: 'POLSKA' };
         }
-        // Generic "PL" without city = check context from status
-        // If status says "Polska" explicitly = POLAND
-        if (originalStatus.includes('polska')) {
-          return { code: 'PL', name: 'POLSKA' };
-        }
-        // Otherwise = GERMANY (loading for transport TO Poland)
+        // Otherwise generic "PL" without context = GERMANY (loading for transport TO Poland)
         return { code: 'DE', name: 'NIEMCY' };
       }
       
