@@ -135,7 +135,8 @@ export default function Tracking() {
       // Polish cities with explicit names
       if (originalLocation.includes('poznan') || originalLocation.includes('poznań') ||
           originalLocation.includes('stalowa wola') || originalLocation.includes('warszawa') ||
-          originalLocation.includes('stryków') || originalLocation.includes('strykow')) {
+          originalLocation.includes('stryków') || originalLocation.includes('strykow') ||
+          originalLocation.includes('rudnik')) {
         return { code: 'PL', name: 'POLSKA' };
       }
       
@@ -190,11 +191,30 @@ export default function Tracking() {
       
       // Poland-specific operations
       if (originalStatus.includes('processed in the destination parcel center') ||
-          originalStatus.includes('unloaded from movement')) {
-        // Check if location explicitly mentions Polish city
+          originalStatus.includes('unloaded from movement') ||
+          originalStatus.includes('przesyłka została przetworzona w docelowym centrum obsługi paczek') ||
+          originalStatus.includes('rozładunek z pojazdu transportowego') ||
+          originalStatus.includes('przybył pojazd transportowy')) {
+        // Check if location explicitly mentions Polish city OR is generic "polska"/"pl"
         if (originalLocation.includes('poznan') || originalLocation.includes('poznań') ||
-            originalLocation.includes('stalowa') || originalLocation === 'pl') {
+            originalLocation.includes('stalowa') || originalLocation.includes('rudnik') ||
+            originalLocation.includes('polska') || originalLocation === 'pl') {
           return { code: 'PL', name: 'POLSKA' };
+        }
+      }
+      
+      // "Processed in parcel center of origin" with Polish city = POLAND
+      if (originalStatus.includes('processed in the parcel center of origin') ||
+          originalStatus.includes('przetworzona w centrum dystrybucyjnym of origin')) {
+        // Check location
+        if (originalLocation.includes('poznan') || originalLocation.includes('poznań') ||
+            originalLocation.includes('stalowa') || originalLocation.includes('rudnik') ||
+            originalLocation.includes('polska')) {
+          return { code: 'PL', name: 'POLSKA' };
+        }
+        // Bremen = Germany
+        if (originalLocation.includes('bremen') || originalLocation.includes('brema')) {
+          return { code: 'DE', name: 'NIEMCY' };
         }
       }
       
@@ -271,14 +291,22 @@ export default function Tracking() {
         return { code: 'DE', name: 'NIEMCY' };
       }
       
-      // "Loaded to movement/tour vehicle" without explicit Polish city = GERMANY
-      // (loading for transport TO Poland, not IN Poland)
+      // "Loaded to movement/tour vehicle" - check location carefully
       if ((originalStatus.includes('loaded to movement') || 
            originalStatus.includes('załadowany do pojazdu')) &&
-          originalLocation === 'pl' &&
-          !originalLocation.includes('poznan') &&
-          !originalLocation.includes('stalowa') &&
-          !originalLocation.includes('warszawa')) {
+          originalLocation === 'pl') {
+        // If it mentions Polish city explicitly = POLAND
+        if (originalLocation.includes('poznan') || originalLocation.includes('poznań') ||
+            originalLocation.includes('stalowa') || originalLocation.includes('rudnik') ||
+            originalLocation.includes('warszawa')) {
+          return { code: 'PL', name: 'POLSKA' };
+        }
+        // Generic "PL" without city = check context from status
+        // If status says "Polska" explicitly = POLAND
+        if (originalStatus.includes('polska')) {
+          return { code: 'PL', name: 'POLSKA' };
+        }
+        // Otherwise = GERMANY (loading for transport TO Poland)
         return { code: 'DE', name: 'NIEMCY' };
       }
       
