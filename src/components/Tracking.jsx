@@ -154,16 +154,6 @@ export default function Tracking() {
         }
       }
       
-      // "Pick-up was successful" = DHL picking up from Netherlands hub (in GERMANY)
-      if (originalStatus.includes('pick-up was successful')) {
-        return { code: 'DE', name: 'NIEMCY' };
-      }
-      
-      // "Loaded to movement/tour vehicle" when location is PL = moving within Germany
-      if (originalStatus.includes('loaded to movement') && originalLocation === 'pl') {
-        return { code: 'DE', name: 'NIEMCY' };
-      }
-      
       // Flight events
       if (originalStatus.includes('flight has departed') || 
           originalStatus.includes('航班已起飞')) {
@@ -240,6 +230,29 @@ export default function Tracking() {
       
       // German cities
       if (originalLocation.includes('bremen') || originalLocation.includes('hamburg')) {
+        return { code: 'DE', name: 'NIEMCY' };
+      }
+      
+      // Special case: Events with "PL" location but actually in Germany
+      // "processed in parcel center of origin" with Bremen/Germany in nearby events
+      if (originalStatus.includes('germany, the international shipment has been processed')) {
+        return { code: 'DE', name: 'NIEMCY' };
+      }
+      
+      // "Pick-up was successful" = DHL picking up from Netherlands (happens in GERMANY)
+      if (originalStatus.includes('pick-up was successful') || 
+          originalStatus.includes('odbiór przebiegł pomyślnie')) {
+        return { code: 'DE', name: 'NIEMCY' };
+      }
+      
+      // "Loaded to movement/tour vehicle" without explicit Polish city = GERMANY
+      // (loading for transport TO Poland, not IN Poland)
+      if ((originalStatus.includes('loaded to movement') || 
+           originalStatus.includes('załadowany do pojazdu')) &&
+          originalLocation === 'pl' &&
+          !originalLocation.includes('poznan') &&
+          !originalLocation.includes('stalowa') &&
+          !originalLocation.includes('warszawa')) {
         return { code: 'DE', name: 'NIEMCY' };
       }
       
