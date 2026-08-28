@@ -123,10 +123,19 @@ export default function Tracking() {
         return { code: 'DE', name: 'NIEMCY' };
       }
       
+      // Final delivery statuses = POLAND (destination)
+      if (originalStatus.includes('successfully delivered') ||
+          originalStatus.includes('pomyślnie dostarczona') ||
+          originalStatus.includes('delivered successfully') ||
+          originalStatus.includes('签收')) {
+        return { code: 'PL', name: 'POLSKA' };
+      }
+      
       // DHL Poland-specific statuses (actual Polish operations)
-      if (originalStatus.includes('poland, the shipment has been successfully delivered') ||
-          originalStatus.includes('poland, the shipment has been loaded onto the delivery vehicle') ||
-          originalStatus.includes('poland, the shipment is being prepared for delivery')) {
+      if (originalStatus.includes('poland, the shipment has been loaded onto the delivery vehicle') ||
+          originalStatus.includes('poland, the shipment is being prepared for delivery') ||
+          originalStatus.includes('loaded onto the delivery vehicle') ||
+          originalStatus.includes('prepared for delivery in the delivery depot')) {
         return { code: 'PL', name: 'POLSKA' };
       }
       
@@ -137,13 +146,22 @@ export default function Tracking() {
       
       // Poland-specific operations
       if (originalStatus.includes('processed in the destination parcel center') ||
-          originalStatus.includes('unloaded from movement') ||
-          originalStatus.includes('pick-up was successful')) {
+          originalStatus.includes('unloaded from movement')) {
         // Check if location explicitly mentions Polish city
         if (originalLocation.includes('poznan') || originalLocation.includes('poznań') ||
             originalLocation.includes('stalowa') || originalLocation === 'pl') {
           return { code: 'PL', name: 'POLSKA' };
         }
+      }
+      
+      // "Pick-up was successful" = DHL picking up from Netherlands hub (in GERMANY)
+      if (originalStatus.includes('pick-up was successful')) {
+        return { code: 'DE', name: 'NIEMCY' };
+      }
+      
+      // "Loaded to movement/tour vehicle" when location is PL = moving within Germany
+      if (originalStatus.includes('loaded to movement') && originalLocation === 'pl') {
+        return { code: 'DE', name: 'NIEMCY' };
       }
       
       // Flight events
