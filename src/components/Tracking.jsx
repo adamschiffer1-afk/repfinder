@@ -126,8 +126,7 @@ export default function Tracking() {
                                     originalLocation.includes('holland') ||
                                     originalLocation.includes('netherlands');
       
-      const hasRealDutchCity = originalLocation.includes('ams') ||
-                               originalLocation.includes('amsterdam') || 
+      const hasRealDutchCity = originalLocation.includes('amsterdam') || 
                                originalLocation.includes('oirschot') ||
                                originalLocation.includes('vijfhuizen') || 
                                originalLocation.includes('rotterdam') ||
