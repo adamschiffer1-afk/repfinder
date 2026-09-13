@@ -50,6 +50,10 @@ export const ProductDB = {
         query = query.eq('is_pinned', false);
       }
     }
+    // Hide hidden products from public view (admin can see them via filters.showHidden)
+    if (!filters.showHidden) {
+      query = query.or('is_hidden.is.null,is_hidden.eq.false');
+    }
     if (filters.search) {
       query = query.ilike('name', `%${filters.search}%`);
     }
@@ -94,6 +98,7 @@ export const ProductDB = {
         product.isPinned = product.is_pinned;
         product.pinnedOrder = product.pinned_order;
         product.qcImages = product.qc_images;
+        product.isHidden = product.is_hidden || false;
       });
     }
     

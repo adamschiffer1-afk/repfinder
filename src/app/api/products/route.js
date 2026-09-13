@@ -23,6 +23,8 @@ export async function GET(req) {
     if (category && category !== 'all') filters.category = category;
     if (batch && batch !== 'all') filters.batch = batch;
     if (pinned && pinned !== 'all') filters.is_pinned = pinned;
+    // Admin can see hidden products
+    if (admin) filters.showHidden = true;
 
     // Suggest names for autocomplete
     if (suggest === 'names') {
@@ -276,6 +278,7 @@ export async function PATCH(req) {
         updateData.pinned_order = 999999;
       }
     }
+    if (update.isHidden !== undefined) updateData.is_hidden = update.isHidden;
 
     if (Object.keys(updateData).length === 0) {
       console.log("PATCH /api/products - No valid fields to update");

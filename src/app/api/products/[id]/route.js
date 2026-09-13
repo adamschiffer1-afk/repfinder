@@ -119,6 +119,7 @@ export async function PUT(req, { params }) {
     if (data.isPinned !== undefined) mappedData.is_pinned = data.isPinned;
     if (data.pinnedOrder !== undefined) mappedData.pinned_order = data.pinnedOrder;
     if (data.qcImages !== undefined) mappedData.qc_images = data.qcImages;
+    if (data.isHidden !== undefined) mappedData.is_hidden = data.isHidden;
     if (data.slug) {
       mappedData.slug = await generateUniqueSlug(data.slug, id);
     } else if (data.name) {

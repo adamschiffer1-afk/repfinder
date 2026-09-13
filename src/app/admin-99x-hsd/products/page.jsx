@@ -133,6 +133,7 @@ const ProductTable = memo(function ProductTable({
           <th>Batch</th>
           <th>Kliknięcia</th>
           <th>Przypięty</th>
+          <th>Widoczność</th>
           <th>Akcje</th>
         </tr>
       </thead>
@@ -253,6 +254,27 @@ const ProductTable = memo(function ProductTable({
                   </div>
                 ) : (
                   <span className={styles.unpinnedBadge}>Nie</span>
+                )}
+              </td>
+              <td style={{ textAlign: 'center' }}>
+                {product.isHidden ? (
+                  <span style={{ 
+                    background: 'rgba(239,68,68,0.15)', 
+                    color: '#f87171', 
+                    padding: '3px 8px', 
+                    borderRadius: '4px', 
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}>🙈 Ukryty</span>
+                ) : (
+                  <span style={{ 
+                    background: 'rgba(34,197,94,0.15)', 
+                    color: '#4ade80', 
+                    padding: '3px 8px', 
+                    borderRadius: '4px', 
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}>👁️ Widoczny</span>
                 )}
               </td>
               <td className={styles.actions}>
@@ -588,6 +610,32 @@ export default function ManageProducts() {
           const data = await res.json();
           if (res.ok) {
             showToast(`Pomyślnie ${isPinned ? 'przypięto' : 'odpięto'} ${data.modifiedCount} produktów!`, 'success');
+            setSelectedIds([]);
+            fetchProducts(currentPage);
+          } else {
+            showToast(data.error || 'Wystąpił błąd podczas aktualizacji.', 'error');
+          }
+        } catch (err) {
+          showToast('Błąd połączenia z serwerem.', 'error');
+        }
+      }
+    );
+  }, [selectedIds, currentPage, fetchProducts, showToast, askConfirmation]);
+
+  const handleBulkVisibilityChange = useCallback((isHidden) => {
+    askConfirmation(
+      isHidden ? 'Ukryj produkty' : 'Pokaż produkty',
+      `Czy chcesz ${isHidden ? 'ukryć' : 'pokazać'} ${selectedIds.length} zaznaczonych produktów ${isHidden ? 'na stronie publicznej' : 'na stronie publicznej'}?`,
+      async () => {
+        try {
+          const res = await fetch('/api/products', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: selectedIds, update: { isHidden } })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showToast(`Pomyślnie ${isHidden ? 'ukryto' : 'pokazano'} ${data.modifiedCount} produktów!`, 'success');
             setSelectedIds([]);
             fetchProducts(currentPage);
           } else {
@@ -1235,6 +1283,21 @@ export default function ManageProducts() {
                   onClick={() => handleBulkPinChange(false)}
                 >
                   📍 Odepnij
+                </button>
+              </div>
+
+              <div className={styles.bulkActionGroup}>
+                <button 
+                  className={styles.bulkUnpinBtn} 
+                  onClick={() => handleBulkVisibilityChange(true)}
+                >
+                  🙈 Ukryj
+                </button>
+                <button 
+                  className={styles.bulkPinBtn} 
+                  onClick={() => handleBulkVisibilityChange(false)}
+                >
+                  👁️ Pokaż
                 </button>
               </div>
 
