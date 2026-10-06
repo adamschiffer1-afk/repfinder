@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from '@/styles/FaqSection.module.css';
 
-
 export default function FaqSection() {
   const [activeFaq, setActiveFaq] = useState(null);
   const answerRefs = useRef([]);
@@ -46,26 +45,30 @@ export default function FaqSection() {
   }, [activeFaq]);
 
   return (
-    <section className={`${styles.faqSection} py-5`}>
-      <div className="container">
-        <h2 className={`${styles.sectionTitle} text-center mb-4`}>
-          Frequently Asked <span className={styles.highlight}>Questions</span>
-        </h2>
-        <div className={styles.faqItems}>
+    <section className={styles.section}>
+      <div className={styles.inner}>
+        <div className={styles.header}>
+          <p className={styles.eyebrow}>Pomoc</p>
+          <h2 className={styles.title}>
+            Frequently Asked <span className={styles.titleHighlight}>Questions</span>
+          </h2>
+        </div>
+
+        <div className={styles.faqList}>
           {faqs.map((faq, index) => (
             <div
               key={index}
               className={`${styles.faqItem} ${activeFaq === index ? styles.faqItemActive : ''}`}
             >
-              <div
-                className={`${styles.faqQuestion} d-flex justify-content-between align-items-center`}
+              <button
+                className={styles.faqQuestion}
                 onClick={() => toggleFaq(index)}
               >
-                <h3 className="mb-0">{faq.question}</h3>
+                <span className={styles.questionText}>{faq.question}</span>
                 <span className={styles.faqToggle}>
                   {activeFaq === index ? '−' : '+'}
                 </span>
-              </div>
+              </button>
               <div
                 className={styles.faqAnswer}
                 ref={(el) => (answerRefs.current[index] = el)}
@@ -74,7 +77,7 @@ export default function FaqSection() {
                   overflow: 'hidden',
                 }}
               >
-                <p>{faq.answer}</p>
+                <p className={styles.answerText}>{faq.answer}</p>
               </div>
             </div>
           ))}

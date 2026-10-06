@@ -83,7 +83,7 @@ export default function PopupModal() {
 
         <div className={styles.header}>
           <div className={styles.brandWrapper}>
-            <img src="/images/rf-logo-removebg-preview.png" alt="Logo" className={styles.modalLogo} />
+            <img src="/images/nowelogo.png" alt="Logo" className={styles.modalLogo} />
             <h2 className={styles.brandTitle}>RepFinder</h2>
           </div>
           <div className={styles.badge}>

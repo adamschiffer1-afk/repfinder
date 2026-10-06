@@ -1,149 +1,153 @@
 'use client';
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faCog, faExternalLinkAlt, faBars, faTimes, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
-import { faDiscord } from '@fortawesome/free-brands-svg-icons';
-import styles from '@/styles/Navbar.module.css';
-import SettingsModal from '@/components/SettingsModal';
-import { useSession, signIn, signOut } from 'next-auth/react';
-
+import { faChevronDown, faCog, faBars, faTimes, faLink, faTruck, faCamera, faCalculator } from '@fortawesome/free-solid-svg-icons';
+import { useSession } from 'next-auth/react';
 import { useLanguage } from '@/context/LanguageContext';
+import SettingsModal from '@/components/SettingsModal';
+import styles from '@/styles/Navbar.module.css';
+
+const TOOLS = [
+  { href: '/link-converter', label: 'Link Converter',    icon: faLink },
+  { href: '/tracking',       label: 'Tracking',          icon: faTruck },
+  { href: '/qc',             label: 'Quality Check',     icon: faCamera },
+];
+
+const LANGUAGES = [
+  { code: 'pl', flag: '/images/flag-pl.png',   label: 'Polski' },
+  { code: 'en', flag: '/images/flag-us.png',   label: 'English' },
+  { code: 'cn', flag: '/images/flag-cn.png',   label: '中文' },
+  { code: 'de', flag: '/images/niemcy.png',    label: 'Deutsch' },
+  { code: 'es', flag: '/images/hiszpania.png', label: 'Español' },
+];
 
 export default function Navbar() {
   const { language, changeLanguage, t } = useLanguage();
   const pathname = usePathname();
   const { data: session, status } = useSession();
+
+  const [scrolled,      setScrolled]      = useState(false);
+  const [visible,       setVisible]       = useState(true);
+  const [lastY,         setLastY]         = useState(0);
+  const [toolsOpen,     setToolsOpen]     = useState(false);
+  const [langOpen,      setLangOpen]      = useState(false);
+  const [mobileOpen,    setMobileOpen]    = useState(false);
+  const [settingsOpen,  setSettingsOpen]  = useState(false);
+  const [isInitial,     setIsInitial]     = useState(false);
+
+  // Hide on admin
   if (pathname?.startsWith('/admin-99x-hsd')) return null;
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isInitial, setIsInitial] = useState(false);
-  const [isToolsOpen, setIsToolsOpen] = useState(false);
-  const [isLangOpen, setIsLangOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [visible, setVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Hide on scroll down, show on scroll up
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setVisible(false);
-      } else {
-        setVisible(true);
-      }
-      
-      setScrolled(currentScrollY > 20);
-      setLastScrollY(currentScrollY);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 10);
+      setVisible(y < lastY || y < 60);
+      setLastY(y);
     };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [lastY]);
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Auto-open settings on first visit
-    const hasSeen = localStorage.getItem('hasSeenSettings');
-    if (!hasSeen) {
+  useEffect(() => {
+    if (!localStorage.getItem('hasSeenSettings')) {
       setIsInitial(true);
-      setIsSettingsOpen(true);
+      setSettingsOpen(true);
       localStorage.setItem('hasSeenSettings', 'true');
     }
+  }, []);
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  const currentLang = LANGUAGES.find(l => l.code === language) ?? LANGUAGES[0];
 
-  const navItems = [
-    { href: '/', label: t('navbar.home') },
-    { href: '/products', label: t('navbar.products') },
+  const NAV_ITEMS = [
+    { href: '/',          label: t('navbar.home') },
+    { href: '/products',  label: t('navbar.products') },
     { href: '/tutorials', label: t('navbar.tutorials') },
   ];
 
-  const languages = [
-    { code: 'pl', flag: '/images/flag-pl.png', label: 'Polski' },
-    { code: 'en', flag: '/images/flag-us.png', label: 'English' },
-    { code: 'cn', flag: '/images/flag-cn.png', label: '中文' },
-    { code: 'de', flag: '/images/niemcy.png', label: 'Deutsch' },
-    { code: 'es', flag: '/images/hiszpania.png', label: 'Español' },
-  ];
-
-  const currentLang = languages.find(l => l.code === language) || languages[0];
-
-  const handleLogin = () => {
-    signIn('discord', { callbackUrl: '/' });
-  };
-
-  const handleLogout = () => {
-    signOut({ callbackUrl: '/' });
-  };
-
-  const isAdmin = session?.user?.isAdmin === true;
-  const userRole = isAdmin ? 'Administrator' : 'Użytkownik';
-
   return (
     <>
-      <nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : ''} ${!visible ? styles.navbarHidden : ''}`}>
+      <nav
+        className={[
+          styles.navbar,
+          scrolled   ? styles.navbarScrolled : '',
+          !visible   ? styles.navbarHidden   : '',
+        ].join(' ')}
+      >
         <div className={styles.navContainer}>
+
+          {/* ── BRAND ── */}
           <div className={styles.navLeft}>
             <Link href="/" className={styles.brand}>
-              <img src="/images/rf-logo-removebg-preview.png" alt="RF" className={styles.navLogo} />
-              RepFinder
+              <img
+                src="/images/nowelogo.png"
+                alt="RepFinder"
+                className={styles.navLogo}
+              />
+              <span className={styles.brandName}>RepFinder</span>
             </Link>
           </div>
 
-          <div className={styles.navCenter}>
-            {navItems.map((item) => (
-              <Link 
-                key={item.href} 
+          {/* ── CENTER LINKS ── */}
+          <nav className={styles.navCenter}>
+            {NAV_ITEMS.map(item => (
+              <Link
+                key={item.href}
                 href={item.href}
                 className={`${styles.navLink} ${pathname === item.href ? styles.active : ''}`}
               >
                 {item.label}
               </Link>
             ))}
-            
-            <div 
+
+            {/* tools dropdown */}
+            <div
               className={styles.dropdownWrapper}
-              onMouseEnter={() => setIsToolsOpen(true)}
-              onMouseLeave={() => setIsToolsOpen(false)}
+              onMouseEnter={() => setToolsOpen(true)}
+              onMouseLeave={() => setToolsOpen(false)}
             >
               <button className={`${styles.navLink} ${styles.dropdownToggle}`}>
-                {t('navbar.tools')} <FontAwesomeIcon icon={faChevronDown} className={styles.dropIcon} />
+                {t('navbar.tools')}
+                <FontAwesomeIcon icon={faChevronDown} className={styles.dropIcon} />
               </button>
-              
-              {isToolsOpen && (
+
+              {toolsOpen && (
                 <div className={styles.toolsDropdown}>
-                  <Link href="/link-converter" className={styles.toolsLink}>Link Converter</Link>
-                  <Link href="/tracking" className={styles.toolsLink}>Tracking</Link>
-                  <Link href="/qc" className={styles.toolsLink}>{t('navbar.qualityCheck')}</Link>
-                  <Link href="/calculator" className={styles.toolsLink}>{t('navbar.calculator')}</Link>
+                  {TOOLS.map(tool => (
+                    <Link key={tool.href} href={tool.href} className={styles.toolsLink}>
+                      <FontAwesomeIcon icon={tool.icon} className={styles.toolIcon} />
+                      {tool.label}
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
-          </div>
+          </nav>
 
+          {/* ── RIGHT ACTIONS ── */}
           <div className={styles.navRight}>
-            {/* Language Switcher */}
-            <div 
+
+            {/* language */}
+            <div
               className={styles.langWrapper}
-              onMouseEnter={() => setIsLangOpen(true)}
-              onMouseLeave={() => setIsLangOpen(false)}
+              onMouseEnter={() => setLangOpen(true)}
+              onMouseLeave={() => setLangOpen(false)}
             >
-              <button className={styles.langBtn}>
+              <button className={styles.langBtn} aria-label="Language">
                 <img src={currentLang.flag} alt={currentLang.label} className={styles.navFlag} />
                 <FontAwesomeIcon icon={faChevronDown} className={styles.langChevron} />
               </button>
-              
-              {isLangOpen && (
+
+              {langOpen && (
                 <div className={styles.langDropdown}>
-                  {languages.map((lang) => (
-                    <button 
-                      key={lang.code} 
+                  {LANGUAGES.map(lang => (
+                    <button
+                      key={lang.code}
                       className={`${styles.langOption} ${language === lang.code ? styles.langActive : ''}`}
-                      onClick={() => {
-                        changeLanguage(lang.code);
-                        setIsLangOpen(false);
-                      }}
+                      onClick={() => { changeLanguage(lang.code); setLangOpen(false); }}
                     >
                       <img src={lang.flag} alt={lang.label} className={styles.optionFlag} />
                       {lang.label}
@@ -153,71 +157,64 @@ export default function Navbar() {
               )}
             </div>
 
-            <button 
-              onClick={() => { setIsInitial(false); setIsSettingsOpen(true); }}
+            {/* settings */}
+            <button
               className={styles.settingsBtn}
+              onClick={() => { setIsInitial(false); setSettingsOpen(true); }}
               aria-label="Settings"
             >
               <FontAwesomeIcon icon={faCog} className={styles.settingsIcon} />
             </button>
 
-            {/* Simple Login Button */}
-            {status !== 'loading' && !session?.user && (
-              <button 
-                className={styles.discordLoginBtn}
-                onClick={() => signIn('discord', { callbackUrl: '/' })}
-              >
-                <FontAwesomeIcon icon={faDiscord} className={styles.discordIcon} />
-                {t('auth.login')}
-              </button>
-            )}
-            
-            <button 
+            {/* hamburger */}
+            <button
               className={styles.hamburgerBtn}
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle menu"
+              onClick={() => setMobileOpen(o => !o)}
+              aria-label="Menu"
             >
-              <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} className={styles.hamburgerIcon} />
+              <FontAwesomeIcon icon={mobileOpen ? faTimes : faBars} className={styles.hamburgerIcon} />
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
+        {/* ── MOBILE MENU ── */}
+        {mobileOpen && (
           <div className={styles.mobileMenu}>
-            {navItems.map((item) => (
-              <Link 
-                key={item.href} 
+            {NAV_ITEMS.map(item => (
+              <Link
+                key={item.href}
                 href={item.href}
                 className={`${styles.mobileNavLink} ${pathname === item.href ? styles.active : ''}`}
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={() => setMobileOpen(false)}
               >
                 {item.label}
               </Link>
             ))}
-            
+
             <div className={styles.mobileToolsSection}>
-              <div className={styles.mobileToolsTitle}>{t('navbar.tools')}</div>
+              <p className={styles.mobileToolsTitle}>{t('navbar.tools')}</p>
               <div className={styles.mobileToolsList}>
-                <Link href="/link-converter" className={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Link Converter</Link>
-                <Link href="/tracking" className={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>Tracking</Link>
-                <Link href="/qc" className={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>{t('navbar.qualityCheck')}</Link>
-                <Link href="/calculator" className={styles.mobileNavLink} onClick={() => setIsMobileMenuOpen(false)}>{t('navbar.calculator')}</Link>
+                {TOOLS.map(tool => (
+                  <Link
+                    key={tool.href}
+                    href={tool.href}
+                    className={styles.mobileNavLink}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {tool.label}
+                  </Link>
+                ))}
               </div>
             </div>
 
-            {/* Mobile Language Switcher */}
             <div className={styles.mobileLangSection}>
-              <div className={styles.mobileToolsTitle}>Language</div>
+              <p className={styles.mobileToolsTitle}>Język</p>
               <div className={styles.mobileLangGrid}>
-                {languages.map((lang) => (
-                  <button 
-                    key={lang.code} 
+                {LANGUAGES.map(lang => (
+                  <button
+                    key={lang.code}
                     className={`${styles.mobileLangBtn} ${language === lang.code ? styles.mobileLangActive : ''}`}
-                    onClick={() => {
-                      changeLanguage(lang.code);
-                      setIsMobileMenuOpen(false);
-                    }}
+                    onClick={() => { changeLanguage(lang.code); setMobileOpen(false); }}
                   >
                     <img src={lang.flag} alt={lang.label} className={styles.mobileFlag} />
                     {lang.code.toUpperCase()}
@@ -228,9 +225,10 @@ export default function Navbar() {
           </div>
         )}
       </nav>
-      <SettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
+
+      <SettingsModal
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
         isInitial={isInitial}
       />
     </>

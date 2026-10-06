@@ -26,7 +26,9 @@ export const translations = {
       howToBuy: "Jak kupować?",
       statsLinks: "4000+ Linków",
       statsQC: "Sprawdzone QC",
-      floatingSearch: "Szybkie wyszukiwanie"
+      floatingSearch: "Szybkie wyszukiwanie",
+      popularProducts: "Popularne produkty",
+      seeAll: "Zobacz wszystkie"
     },
     products: {
       searchPlaceholder: "Szukaj produktów...",
@@ -359,7 +361,9 @@ export const translations = {
       howToBuy: "How to buy?",
       statsLinks: "4000+ Links",
       statsQC: "Verified QC",
-      floatingSearch: "Quick search"
+      floatingSearch: "Quick search",
+      popularProducts: "Popular products",
+      seeAll: "See all"
     },
     products: {
       searchPlaceholder: "Search for products...",
@@ -638,7 +642,9 @@ export const translations = {
       howToBuy: "如何购买？",
       statsLinks: "4000+ 链接",
       statsQC: "经验证的质检",
-      floatingSearch: "快速搜索"
+      floatingSearch: "快速搜索",
+      popularProducts: "热门产品",
+      seeAll: "查看全部"
     },
     products: {
       searchPlaceholder: "搜索产品...",

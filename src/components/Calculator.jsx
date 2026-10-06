@@ -314,7 +314,7 @@ export default function Calculator() {
         
         {/* ─── NATIVE HEADER WITH OFFICIAL LOGO ─── */}
         <div className={styles.header}>
-          <img src="/images/rf-logo-removebg-preview.png" alt="RepFinder Logo" className={styles.headerLogo} />
+          <img src="/images/nowelogo.png" alt="RepFinder Logo" className={styles.headerLogo} />
           <h1>{t('calculator.title')}</h1>
           <p>{t('calculator.subtitle')}</p>
         </div>

@@ -83,9 +83,9 @@ export default function Tutorials() {
         <Confetti
           width={width}
           height={height}
-          colors={['#a78bfa', '#8b5cf6', '#6366f1', '#ec4899', '#facc15', '#2dd4bf']}
+          colors={['#ffffff', '#cccccc', '#888888', '#444444', '#f0f0f0', '#aaaaaa']}
           recycle={false}
-          numberOfPieces={400}
+          numberOfPieces={300}
           gravity={0.4}
           initialVelocityY={15}
           style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999, pointerEvents: 'none' }}

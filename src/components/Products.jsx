@@ -5,6 +5,24 @@ import styles from '@/styles/Products.module.css';
 import AgentModal from '@/components/AgentModal';
 import { categoriesData } from '@/data/productsData';
 import { useCurrency } from '@/hooks/useCurrency';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTshirt, faSocks, faRunning, faGlasses, faShoppingBag, faBriefcase, faRing, faBolt, faFire, faBoxOpen, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
+
+const CATEGORY_ICONS = {
+  'shoes':          faShoePrints,
+  'hoodies':        faTshirt,
+  't-shirts':       faTshirt,
+  'pants':          faSocks,
+  'shorts':         faRunning,
+  'jackets':        faLayerGroup,
+  'longsleeve':     faTshirt,
+  'sets':           faLayerGroup,
+  'electronics':    faBolt,
+  'headwear':       faHatCowboy,
+  'bags-backpacks': faShoppingBag,
+  'belts':          faRing,
+  'accessories':    faGlasses,
+};
 
 export default function ProductsPage() {
   const [allProducts, setAllProducts] = useState([]);
@@ -17,7 +35,21 @@ export default function ProductsPage() {
   const [displayCount, setDisplayCount] = useState(20);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [catDropdownOpen, setCatDropdownOpen] = useState(false);
+  const [catSearch, setCatSearch] = useState('');
+  const catDropdownRef = useRef(null);
   
+  // Sorting state
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+  const [sortBy, setSortBy] = useState('name-asc'); // name-asc, name-desc, price-asc, price-desc, newest
+  const sortDropdownRef = useRef(null);
+  
+  // Price filter state
+  const [priceDropdownOpen, setPriceDropdownOpen] = useState(false);
+  const [selectedPriceRange, setSelectedPriceRange] = useState('all');
+  const [customMin, setCustomMin] = useState('');
+  const [customMax, setCustomMax] = useState('');
+  const priceDropdownRef = useRef(null);
   // Get currency conversion utilities
   const { formatPrice } = useCurrency();
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -119,11 +151,52 @@ export default function ProductsPage() {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSuggestions(false);
       }
+      if (catDropdownRef.current && !catDropdownRef.current.contains(event.target)) {
+        setCatDropdownOpen(false);
+      }
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target)) {
+        setSortDropdownOpen(false);
+      }
+      if (priceDropdownRef.current && !priceDropdownRef.current.contains(event.target)) {
+        setPriceDropdownOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Prevent body scroll when any dropdown is open
+  useEffect(() => {
+    const isAnyDropdownOpen = catDropdownOpen || sortDropdownOpen || priceDropdownOpen;
+    
+    if (isAnyDropdownOpen) {
+      // Store current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflowY = 'scroll'; // Keep scrollbar to prevent layout shift
+    } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflowY = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
+
+    return () => {
+      // Cleanup on unmount
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflowY = '';
+    };
+  }, [catDropdownOpen, sortDropdownOpen, priceDropdownOpen]);
 
   // Filter products based on search query and categories
   useEffect(() => {
@@ -164,7 +237,7 @@ export default function ProductsPage() {
               
               if (res.ok) {
                 const data = await res.json();
-                const products = data.map(p => ({
+                let products = data.map(p => ({
                   _id: p.id,
                   name: p.name,
                   slug: p.slug,
@@ -177,6 +250,11 @@ export default function ProductsPage() {
                   isPinned: p.is_pinned,
                   pinnedOrder: p.pinned_order
                 }));
+                
+                // Apply price filter
+                products = applyPriceFilter(products);
+                // Apply sorting
+                products = applySorting(products);
                 
                 console.log(`Fetched ${products.length} products for category: ${category}`);
                 setFilteredProducts(products);
@@ -192,6 +270,12 @@ export default function ProductsPage() {
               filtered = allProducts.filter(product =>
                 selectedCategories.includes(product.category)
               );
+              
+              // Apply price filter
+              filtered = applyPriceFilter(filtered);
+              // Apply sorting
+              filtered = applySorting(filtered);
+              
               setFilteredProducts(filtered);
               setDisplayCount(PRODUCTS_PER_LOAD);
               
@@ -209,6 +293,12 @@ export default function ProductsPage() {
         filtered = filtered.filter(product => product.batch !== 'popular');
       }
       
+      // Apply price filter
+      filtered = applyPriceFilter(filtered);
+      
+      // Apply sorting
+      filtered = applySorting(filtered);
+      
       setFilteredProducts(filtered);
       setDisplayCount(PRODUCTS_PER_LOAD);
       
@@ -221,7 +311,58 @@ export default function ProductsPage() {
     }, 200);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, selectedCategories, allProducts]);
+  }, [searchQuery, selectedCategories, allProducts, sortBy, selectedPriceRange, customMin, customMax]);
+
+  // Helper function to apply price filter
+  const applyPriceFilter = (products) => {
+    if (selectedPriceRange === 'all') return products;
+    
+    if (selectedPriceRange === 'custom') {
+      const min = parseFloat(customMin) || 0;
+      const max = parseFloat(customMax) || Infinity;
+      return products.filter(p => p.price >= min && p.price <= max);
+    }
+    
+    // Predefined ranges (in PLN or base currency)
+    const ranges = {
+      'under-29': [0, 29],
+      '29-58': [29, 58],
+      '58-116': [58, 116],
+      '116-290': [116, 290],
+      'over-290': [290, Infinity]
+    };
+    
+    const [min, max] = ranges[selectedPriceRange] || [0, Infinity];
+    return products.filter(p => p.price >= min && p.price <= max);
+  };
+
+  // Helper function to apply sorting
+  const applySorting = (products) => {
+    const sorted = [...products];
+    
+    switch (sortBy) {
+      case 'name-asc':
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case 'name-desc':
+        sorted.sort((a, b) => b.name.localeCompare(a.name));
+        break;
+      case 'price-asc':
+        sorted.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        sorted.sort((a, b) => b.price - a.price);
+        break;
+      case 'newest':
+        // Newest first (assuming _id or default order is newest)
+        // If you have a createdAt field, use that instead
+        break;
+      default:
+        break;
+    }
+    
+    return sorted;
+  };
 
   // Infinite scroll observer
   useEffect(() => {
@@ -289,78 +430,299 @@ export default function ProductsPage() {
       <div className={styles.productsSection}>
         {/* Header Section */}
         <div className={styles.headerSection}>
-          {/* Search Bar */}
-          <div className={styles.searchWrapper} ref={searchRef}>
-            <svg className={styles.searchIcon} width="15" height="15" viewBox="0 0 24 24" fill="none">
-              <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
-              <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              onFocus={handleSearchFocus}
-              className={styles.searchInput}
-            />
-            
-            {/* Suggestions Dropdown */}
-            {showSuggestions && suggestions.length > 0 && (
-              <div className={styles.suggestionsDropdown}>
-                {suggestions.map((suggestion, index) => (
-                  <div
-                    key={index}
-                    className={styles.suggestionItem}
-                    onClick={() => handleSuggestionClick(suggestion)}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.5 }}>
-                      <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
-                    <span>{suggestion}</span>
-                  </div>
-                ))}
-              </div>
+          {/* Page title + count */}
+          <div className={styles.pageTitle}>
+            <span className={styles.pageTitleText}>Produkty</span>
+            {!loading && filteredProducts.length > 0 && (
+              <span className={styles.pageTitleCount}>{filteredProducts.length} produktów</span>
             )}
           </div>
 
-          {/* Categories Bar */}
-          <div className={styles.categoriesBar}>
-            {/* Popular Button - Shows products with batch='popular' */}
-            <button
-              className={`${styles.categoryPill} ${styles.popularPill} ${selectedCategories.includes('__popular__') ? styles.categoryPillActive : ''}`}
-              onClick={() => {
-                if (selectedCategories.includes('__popular__')) {
-                  setSelectedCategories([]);
-                } else {
-                  setSelectedCategories(['__popular__']);
-                }
-              }}
+          {/* Top bar: search + category dropdown */}
+          <div className={styles.topBar}>
+            {/* Search Bar */}
+            <div className={styles.searchWrapper} ref={searchRef}>
+              <svg className={styles.searchIcon} width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+                <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Szukaj..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onFocus={handleSearchFocus}
+                className={styles.searchInput}
+              />
+              {showSuggestions && suggestions.length > 0 && (
+                <div className={styles.suggestionsDropdown}>
+                  {suggestions.map((suggestion, index) => (
+                    <div key={index} className={styles.suggestionItem} onClick={() => handleSuggestionClick(suggestion)}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.4 }}>
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+                        <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                      <span>{suggestion}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Category Dropdown */}
+            <div
+              className={styles.catDropdownWrapper}
+              ref={catDropdownRef}
             >
-              🔥 Popular
-            </button>
-            
-            <button
-              className={`${styles.categoryPill} ${selectedCategories.length === 0 && !selectedCategories.includes('__popular__') ? styles.categoryPillActive : ''}`}
-              onClick={() => setSelectedCategories([])}
-            >
-              All
-            </button>
-            {categoriesData.map((cat) => (
               <button
-                key={cat}
-                className={`${styles.categoryPill} ${selectedCategories.includes(cat) ? styles.categoryPillActive : ''}`}
-                onClick={() => {
-                  if (selectedCategories.includes(cat)) {
-                    setSelectedCategories([]);
-                  } else {
-                    setSelectedCategories([cat]);
-                  }
-                }}
+                className={styles.catDropdownBtn}
+                onClick={() => { setCatDropdownOpen(o => !o); setCatSearch(''); }}
               >
-                {cat.charAt(0).toUpperCase() + cat.slice(1).replace('-', ' & ')}
+                <FontAwesomeIcon icon={faTh} className={styles.catBtnIcon} />
+                <span className={styles.catBtnLabel}>
+                  {selectedCategories.includes('__popular__')
+                    ? 'Popular'
+                    : selectedCategories.length > 0
+                      ? selectedCategories[0].charAt(0).toUpperCase() + selectedCategories[0].slice(1).replace('-', ' & ')
+                      : 'Wszystkie kategorie'
+                  }
+                </span>
+                <FontAwesomeIcon icon={faChevronDown} className={`${styles.catChevron} ${catDropdownOpen ? styles.catChevronOpen : ''}`} />
               </button>
-            ))}
+
+              {catDropdownOpen && (
+                <div className={styles.catDropdownMenu}>
+                  {/* Search inside dropdown */}
+                  <div className={styles.catDropdownSearch}>
+                    <FontAwesomeIcon icon={faSearch} className={styles.catDropdownSearchIcon} />
+                    <input
+                      type="text"
+                      placeholder="Szukaj kategorii..."
+                      value={catSearch}
+                      onChange={e => setCatSearch(e.target.value)}
+                      className={styles.catDropdownSearchInput}
+                      autoFocus
+                    />
+                  </div>
+
+                  {/* All categories option */}
+                  {('wszystkie'.includes(catSearch.toLowerCase()) || catSearch === '') && (
+                    <button
+                      className={`${styles.catDropdownItem} ${selectedCategories.length === 0 && !selectedCategories.includes('__popular__') ? styles.catDropdownItemActive : ''}`}
+                      onClick={() => { setSelectedCategories([]); setCatDropdownOpen(false); }}
+                    >
+                      <FontAwesomeIcon icon={faTh} className={styles.catItemIcon} />
+                      <span className={styles.catItemLabel}>Wszystkie kategorie</span>
+                      {selectedCategories.length === 0 && !selectedCategories.includes('__popular__') && (
+                        <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />
+                      )}
+                    </button>
+                  )}
+
+                  {/* Popular */}
+                  {('popular'.includes(catSearch.toLowerCase()) || catSearch === '') && (
+                    <button
+                      className={`${styles.catDropdownItem} ${selectedCategories.includes('__popular__') ? styles.catDropdownItemActive : ''}`}
+                      onClick={() => { setSelectedCategories(['__popular__']); setCatDropdownOpen(false); }}
+                    >
+                      <FontAwesomeIcon icon={faFire} className={styles.catItemIcon} />
+                      <span className={styles.catItemLabel}>Popular</span>
+                      {selectedCategories.includes('__popular__') && (
+                        <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />
+                      )}
+                    </button>
+                  )}
+
+                  {/* Category list */}
+                  {categoriesData
+                    .filter(cat => cat.toLowerCase().includes(catSearch.toLowerCase()) || catSearch === '')
+                    .map(cat => (
+                      <button
+                        key={cat}
+                        className={`${styles.catDropdownItem} ${selectedCategories.includes(cat) ? styles.catDropdownItemActive : ''}`}
+                        onClick={() => { setSelectedCategories([cat]); setCatDropdownOpen(false); }}
+                      >
+                        <FontAwesomeIcon icon={CATEGORY_ICONS[cat] || faBoxOpen} className={styles.catItemIcon} />
+                        <span className={styles.catItemLabel}>{cat.charAt(0).toUpperCase() + cat.slice(1).replace('-', ' & ')}</span>
+                        {selectedCategories.includes(cat) && (
+                          <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />
+                        )}
+                      </button>
+                    ))
+                  }
+                </div>
+              )}
+            </div>
+
+            {/* Sort Dropdown */}
+            <div
+              className={styles.catDropdownWrapper}
+              ref={sortDropdownRef}
+            >
+              <button
+                className={styles.catDropdownBtn}
+                onClick={() => setSortDropdownOpen(o => !o)}
+              >
+                <svg className={styles.catBtnIcon} width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 6h18M3 12h15M3 18h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+                <span className={styles.catBtnLabel}>
+                  {sortBy === 'name-asc' ? 'Name: A-Z' :
+                   sortBy === 'name-desc' ? 'Name: Z-A' :
+                   sortBy === 'price-asc' ? 'Price: Low to High' :
+                   sortBy === 'price-desc' ? 'Price: High to Low' :
+                   'Newest First'}
+                </span>
+                <FontAwesomeIcon icon={faChevronDown} className={`${styles.catChevron} ${sortDropdownOpen ? styles.catChevronOpen : ''}`} />
+              </button>
+
+              {sortDropdownOpen && (
+                <div className={styles.catDropdownMenu}>
+                  <button
+                    className={`${styles.catDropdownItem} ${sortBy === 'name-asc' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSortBy('name-asc'); setSortDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>Name: A-Z</span>
+                    {sortBy === 'name-asc' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  <button
+                    className={`${styles.catDropdownItem} ${sortBy === 'name-desc' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSortBy('name-desc'); setSortDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>Name: Z-A</span>
+                    {sortBy === 'name-desc' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  <button
+                    className={`${styles.catDropdownItem} ${sortBy === 'price-asc' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSortBy('price-asc'); setSortDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>Price: Low to High</span>
+                    {sortBy === 'price-asc' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  <button
+                    className={`${styles.catDropdownItem} ${sortBy === 'price-desc' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSortBy('price-desc'); setSortDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>Price: High to Low</span>
+                    {sortBy === 'price-desc' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  <button
+                    className={`${styles.catDropdownItem} ${sortBy === 'newest' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSortBy('newest'); setSortDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>Newest First</span>
+                    {sortBy === 'newest' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Price Filter Dropdown */}
+            <div
+              className={styles.catDropdownWrapper}
+              ref={priceDropdownRef}
+            >
+              <button
+                className={styles.catDropdownBtn}
+                onClick={() => setPriceDropdownOpen(o => !o)}
+              >
+                <svg className={styles.catBtnIcon} width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span className={styles.catBtnLabel}>
+                  {selectedPriceRange === 'all' ? 'All Prices' :
+                   selectedPriceRange === 'under-29' ? 'Under 29 PLN' :
+                   selectedPriceRange === '29-58' ? '29 - 58 PLN' :
+                   selectedPriceRange === '58-116' ? '58 - 116 PLN' :
+                   selectedPriceRange === '116-290' ? '116 - 290 PLN' :
+                   selectedPriceRange === 'over-290' ? 'Over 290 PLN' :
+                   'Custom Range'}
+                </span>
+                <FontAwesomeIcon icon={faChevronDown} className={`${styles.catChevron} ${priceDropdownOpen ? styles.catChevronOpen : ''}`} />
+              </button>
+
+              {priceDropdownOpen && (
+                <div className={styles.catDropdownMenu}>
+                  <button
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'all' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('all'); setPriceDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>All Prices</span>
+                    {selectedPriceRange === 'all' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  <button
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'under-29' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('under-29'); setPriceDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>Under 29 PLN</span>
+                    {selectedPriceRange === 'under-29' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  <button
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === '29-58' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('29-58'); setPriceDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>29 - 58 PLN</span>
+                    {selectedPriceRange === '29-58' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  <button
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === '58-116' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('58-116'); setPriceDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>58 - 116 PLN</span>
+                    {selectedPriceRange === '58-116' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  <button
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === '116-290' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('116-290'); setPriceDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>116 - 290 PLN</span>
+                    {selectedPriceRange === '116-290' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  <button
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'over-290' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('over-290'); setPriceDropdownOpen(false); }}
+                  >
+                    <span className={styles.catItemLabel}>Over 290 PLN</span>
+                    {selectedPriceRange === 'over-290' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                  </button>
+                  
+                  {/* Custom Range Divider */}
+                  <div className={styles.catDropdownDivider}>CUSTOM RANGE</div>
+                  
+                  {/* Custom Range Inputs */}
+                  <div className={styles.customRangeWrapper}>
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={customMin}
+                      onChange={(e) => setCustomMin(e.target.value)}
+                      className={styles.customRangeInput}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <span className={styles.customRangeSeparator}>-</span>
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      value={customMax}
+                      onChange={(e) => setCustomMax(e.target.value)}
+                      className={styles.customRangeInput}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                  <button
+                    className={styles.customRangeApply}
+                    onClick={() => { 
+                      if (customMin || customMax) {
+                        setSelectedPriceRange('custom'); 
+                      }
+                      setPriceDropdownOpen(false); 
+                    }}
+                  >
+                    Apply Custom Range
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

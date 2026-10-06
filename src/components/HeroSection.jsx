@@ -1,102 +1,139 @@
+'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import styles from '@/styles/HeroSection.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faArrowRight, faPlay, faBoxOpen, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
-
+import { faArrowRight, faBoxOpen, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
 import { useLanguage } from '@/context/LanguageContext';
+import AgentModal from '@/components/AgentModal';
+
+const FALLBACK = [
+  { _id: 'm1', name: 'Nike Air Force 1',     price: 28, image: null, category: 'shoes',   batch: 'popular' },
+  { _id: 'm2', name: 'Palace Puffer Jacket', price: 64, image: null, category: 'jackets', batch: 'best'    },
+  { _id: 'm3', name: 'New Balance 550',      price: 22, image: null, category: 'shoes',   batch: 'best'    },
+  { _id: 'm4', name: 'Carhartt WIP Hoodie',  price: 18, image: null, category: 'hoodies', batch: 'best'    },
+  { _id: 'm5', name: 'Stone Island Tee',     price: 14, image: null, category: 't-shirts', batch: 'popular' },
+  { _id: 'm6', name: 'Bape Hoodie',          price: 32, image: null, category: 'hoodies', batch: 'best'    },
+  { _id: 'm7', name: 'Supreme Box Logo',     price: 45, image: null, category: 't-shirts', batch: 'popular' },
+  { _id: 'm8', name: 'OG Adidas Samba',      price: 19, image: null, category: 'shoes',   batch: 'best'    },
+];
+
+function fmt(p) {
+  if (!p && p !== 0) return '—';
+  const n = typeof p === 'number' ? p : parseFloat(p);
+  return isNaN(n) ? String(p) : `$${n.toFixed(2)}`;
+}
+
+function MarqueeRow({ items, reverse, onCardClick }) {
+  // duplicate for seamless loop
+  const doubled = [...items, ...items];
+  return (
+    <div className={styles.marqueeOuter}>
+      <div className={`${styles.marqueeTrack} ${reverse ? styles.marqueeReverse : ''}`}>
+        {doubled.map((p, i) => (
+          <div
+            key={`${p._id}-${i}`}
+            className={styles.mCard}
+            onClick={() => onCardClick(p)}
+          >
+            <div className={styles.mImg}>
+              {p.image
+                ? <img src={p.image} alt={p.name} />
+                : <FontAwesomeIcon icon={faBoxOpen} className={styles.mPlaceholder} />
+              }
+              {p.batch === 'popular' && <span className={styles.mBadgePop}>🔥</span>}
+              {p.batch === 'best'    && <span className={styles.mBadgeBest}>★</span>}
+            </div>
+            <div className={styles.mInfo}>
+              <span className={styles.mName}>{p.name}</span>
+              <span className={styles.mPrice}>{fmt(p.price)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function HeroSection() {
-  const { t, language } = useLanguage();
-  const [query, setQuery] = useState('');
-  const [scrolled, setScrolled] = useState(false);
-  const [animationKey, setAnimationKey] = useState(0);
-  const router = useRouter();
+  const { t } = useLanguage();
+  const router  = useRouter();
+  const [products, setProducts]   = useState([]);
+  const [selected, setSelected]   = useState(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-
-    // If it is the first visit, the setup modal is open.
-    // We listen to the 'storage' event which is dispatched when the setup modal is saved.
-    const hasSeen = localStorage.getItem('hasSeenSettings');
-    const handleStorageChange = () => {
-      setAnimationKey(prev => prev + 1);
-    };
-
-    if (!hasSeen) {
-      window.addEventListener('storage', handleStorageChange);
-    }
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    fetch('/api/products?limit=12&sort=pinned_order', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : [])
+      .then(data => Array.isArray(data) && data.length >= 6 && setProducts(data.slice(0, 12)))
+      .catch(() => {});
   }, []);
 
+  const list = products.length >= 6 ? products : FALLBACK;
+
   return (
-    <section className={styles.heroWrapper}>
-      {/* BACKGROUND ELEMENTS */}
-      <div className={styles.ambientGlow1} />
-      <div className={styles.ambientGlow2} />
-      <div className={styles.gridOverlay} />
-      <div className={styles.bottomFade} />
+    <>
+      <section className={styles.heroWrapper}>
+        <div className={styles.gridOverlay} />
 
-      <div className={styles.contentContainer} key={animationKey}>
-        <div className={`${styles.badge} ${styles.animateEntry} ${styles.delay1}`}>
-          <span className={styles.badgeText}>{t('hero.badge')}</span>
-          <div className={styles.badgeDot} />
-        </div>
+        <div className={styles.heroInner}>
 
-        <h1 className={`${styles.mainTitle} ${styles.animateEntry} ${styles.delay2}`}>
-          {t('hero.title')} <br />
-          <span className={styles.gradientText}>{t('hero.titleSpan')}</span> {t('hero.titleSuffix')}
-        </h1>
+          {/* ── LEFT ── */}
+          <div className={styles.leftCol}>
+            <div className={`${styles.badge} ${styles.a1}`}>
+              <span className={styles.badgeDot} />
+              <span className={styles.badgeText}>{t('hero.badge')}</span>
+            </div>
 
-        <p className={`${styles.description} ${styles.animateEntry} ${styles.delay3}`}>
-          {t('hero.description')}
-        </p>
+            <h1 className={`${styles.mainTitle} ${styles.a2}`}>
+              {t('hero.title')}<br />
+              <span className={styles.gradientText}>{t('hero.titleSpan')}</span>
+              {t('hero.titleSuffix') ? <><br />{t('hero.titleSuffix')}</> : null}
+            </h1>
 
-        <div className={`${styles.actionGroup} ${styles.animateEntry} ${styles.delay4}`}>
-          <button 
-            className={styles.primaryBtn}
-            onClick={() => router.push('/products')}
-          >
-            {t('hero.browseBtn')} <FontAwesomeIcon icon={faArrowRight} />
-          </button>
-          
-          <button 
-            className={styles.secondaryBtn}
-            onClick={() => router.push('/tutorials')}
-          >
-            <div className={styles.playIcon}><FontAwesomeIcon icon={faPlay} /></div>
-            {t('hero.howToBuy')}
-          </button>
-        </div>
+            <p className={`${styles.description} ${styles.a3}`}>
+              {t('hero.description')}
+            </p>
 
-        {/* STATS / TRUST */}
-        <div className={`${styles.trustRow} ${styles.animateEntry} ${styles.delay5}`}>
-          <div className={styles.trustItem}>
-            <FontAwesomeIcon icon={faBoxOpen} />
-            <span>{t('hero.statsLinks')}</span>
+            <div className={`${styles.actionGroup} ${styles.a4}`}>
+              <button className={styles.primaryBtn} onClick={() => router.push('/products')}>
+                {t('hero.browseBtn')} <FontAwesomeIcon icon={faArrowRight} />
+              </button>
+              <button className={styles.secondaryBtn} onClick={() => router.push('/tutorials')}>
+                {t('hero.howToBuy')}
+              </button>
+            </div>
+
+            <div className={`${styles.trustRow} ${styles.a5}`}>
+              <div className={styles.trustItem}>
+                <FontAwesomeIcon icon={faBoxOpen} />
+                <span>{t('hero.statsLinks')}</span>
+              </div>
+              <div className={styles.trustItem}>
+                <FontAwesomeIcon icon={faShieldAlt} />
+                <span>{t('hero.statsQC')}</span>
+              </div>
+            </div>
           </div>
-          <div className={styles.trustItem}>
-            <FontAwesomeIcon icon={faShieldAlt} />
-            <span>{t('hero.statsQC')}</span>
-          </div>
-        </div>
-      </div>
 
-      {/* FLOATING DECORATIONS */}
-      <div className={styles.floatingCardWrapper1}>
-        <div className={styles.floatingCard1}>
-          <div className={styles.cardIcon}><FontAwesomeIcon icon={faSearch} /></div>
-          <div className={styles.cardContent}>
-            <div className={styles.cardTitle}>{t('hero.floatingSearch')}</div>
-            <div className={styles.cardBar} />
+          {/* ── RIGHT — marquee ── */}
+          <div className={styles.rightCol}>
+            <div className={styles.marqueeHeader}>
+              <span className={styles.marqueeLabel}>{t('hero.popularProducts')}</span>
+              <Link href="/products" className={styles.marqueeSeeAll}>{t('hero.seeAll')} →</Link>
+            </div>
+
+            <div className={styles.marqueeStack}>
+              <MarqueeRow items={list} reverse={false} onCardClick={setSelected} />
+            </div>
           </div>
+
         </div>
-      </div>
-    </section>
+      </section>
+
+      {selected && (
+        <AgentModal isOpen product={selected} onClose={() => setSelected(null)} />
+      )}
+    </>
   );
 }

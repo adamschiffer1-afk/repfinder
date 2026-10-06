@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { Inter } from 'next/font/google';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,8 +13,16 @@ import { LanguageProvider } from '@/context/LanguageContext';
 import { AuthProvider } from '@/context/AuthContext';
 import SessionProviderWrapper from '@/components/SessionProviderWrapper';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
+import MobileNav from '@/components/MobileNav';
 
 config.autoAddCss = false;
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800', '900'],
+});
 
 export const metadata = {
   metadataBase: new URL('https://repfinder.xyz'),
@@ -27,7 +36,7 @@ export const metadata = {
     siteName: 'RepFinder',
     images: [
       {
-        url: '/images/rf-logo-removebg-preview.png',
+        url: '/images/nowelogo.png',
         width: 800,
         height: 600,
         alt: 'RepFinder Logo',
@@ -53,9 +62,9 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="pl">
       <head>
-        <link rel="icon" href="/images/rf-logo-removebg-preview.png" type="image/png" />
+        <link rel="icon" href="/images/nowelogo.png" type="image/png" />
       </head>
-      <body>
+      <body className={inter.variable}>
         <SessionProviderWrapper>
           <AuthProvider>
             <Suspense fallback={null}>
@@ -65,6 +74,7 @@ export default async function RootLayout({ children }) {
             <LanguageProvider>
               <Navbar />
               <UserWidget />
+              <MobileNav />
               <PageTransition>
                 <main>
                   {children}

@@ -25,7 +25,7 @@ export default function AdminSidebar() {
     <nav className={styles.sidebar}>
       {/* Logo */}
       <div className={styles.logoWrap}>
-        <img src="/images/rf-logo-removebg-preview.png" alt="RepFinder" className={styles.logoImage} />
+        <img src="/images/nowelogo.png" alt="RepFinder" className={styles.logoImage} />
         <div className={styles.logoText}>
           <span className={styles.logoMain}>RepFinder</span>
           <span className={styles.logoSub}>Admin Panel</span>

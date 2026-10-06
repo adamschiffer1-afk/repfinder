@@ -18,7 +18,7 @@ export default function Footer() {
       <div className={styles.divider}>
         <div className={styles.dividerLine}></div>
         <div className={styles.dividerLogo}>
-          <img src="/images/rf-logo-removebg-preview.png" alt="RepFinder Logo" />
+          <img src="/images/nowelogo.png" alt="RepFinder Logo" />
         </div>
         <div className={styles.dividerLine}></div>
       </div>
@@ -28,10 +28,10 @@ export default function Footer() {
           <div className={styles.footerColumn}>
             <div className={styles.logoWrapper}>
               <Image
-                src="/images/rf-logo-removebg-preview.png"
+                src="/images/nowelogo.png"
                 alt="Logo"
-                width={120}
-                height={100}
+                width={48}
+                height={40}
                 style={{ objectFit: 'contain' }}
               />
             </div>
@@ -60,6 +60,8 @@ export default function Footer() {
           <div className={styles.footerColumn}>
             <h5 className={styles.footerTitle}>{t('footer.info')}</h5>
             <p className={styles.legalInfo}>{t('footer.copyright')}</p>
+            <a href="/privacy-policy" className={styles.legalLink}>Polityka prywatności</a>
+            <a href="/terms" className={styles.legalLink}>Regulamin</a>
           </div>
         </div>
       </div>

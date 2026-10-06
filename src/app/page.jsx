@@ -1,15 +1,15 @@
 'use client';
 
 import HeroSection from '@/components/HeroSection';
-import CarouselSection from '@/components/CarouselSection';
 import BentoFeatures from '@/components/BentoFeatures';
+import FaqSection from '@/components/FaqSection';
 
 export default function Home() {
   return (
     <>
       <HeroSection />
-      <CarouselSection />
       <BentoFeatures />
+      <FaqSection />
     </>
   );
 }
