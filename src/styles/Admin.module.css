@@ -170,7 +170,7 @@
 
 .adminTable th {
   background: rgba(255, 255, 255, 0.05);
-  color: #a78bfa;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 600;
   text-transform: uppercase;
   font-size: 12px;
@@ -229,6 +229,16 @@
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
+}
+
+/* Override any blue tints - ensure pure black background */
+.adminModal,
+.adminModal * {
+  background-color: transparent;
+}
+
+.adminModal {
+  background: #0a0a0a !important;
 }
 
 .adminModal h2 {
@@ -503,8 +513,8 @@
 }
 
 .badge {
-  background: rgba(167, 139, 250, 0.2);
-  color: #a78bfa;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 12px;
@@ -665,7 +675,7 @@
 .filterLabel {
   font-size: 13px;
   font-weight: 700;
-  color: #a78bfa;
+  color: rgba(255, 255, 255, 0.9);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   min-width: 90px;
@@ -733,8 +743,8 @@
 }
 
 .sortSelect:focus {
-  border-color: #a78bfa;
-  box-shadow: 0 0 10px rgba(167, 139, 250, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 .sortSelect option {
@@ -794,9 +804,9 @@
 }
 
 .dragHandle:hover:not(:disabled) {
-  color: #a78bfa;
-  border-color: rgba(167, 139, 250, 0.45);
-  background: rgba(167, 139, 250, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .dragHandle:active:not(:disabled) {
@@ -809,8 +819,8 @@
 }
 
 .selectedRow {
-  background: rgba(167, 139, 250, 0.06) !important;
-  border-left: 3px solid #a78bfa;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-left: 3px solid rgba(255, 255, 255, 0.3);
 }
 
 .tableImgContainer {
@@ -847,7 +857,7 @@
 
 .clicksCell {
   font-weight: 600;
-  color: #a78bfa;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .badge {
@@ -983,9 +993,9 @@
 }
 
 .checkboxContainer input:checked ~ .checkboxCustom {
-  background: #a78bfa;
-  border-color: #a78bfa;
-  box-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 .checkboxCustom::after {
@@ -1054,7 +1064,7 @@
 }
 
 .bulkCount strong {
-  color: #a78bfa;
+  color: rgba(255, 255, 255, 0.9);
   font-size: 16px;
 }
 
@@ -1095,9 +1105,9 @@
 }
 
 .bulkPinBtn:hover {
-  background: rgba(167, 139, 250, 0.15);
-  border-color: #a78bfa;
-  color: #a78bfa;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .bulkUnpinBtn:hover {
@@ -1281,7 +1291,7 @@
 
 /* Modal Container */
 .adminModal {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: #0a0a0a !important;
   padding: 30px;
   border-radius: 12px;
   width: 90%;
@@ -1289,7 +1299,7 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .adminModal.compact {
@@ -1326,8 +1336,8 @@
 }
 
 .modeOptionSelected {
-  background: rgba(167, 139, 250, 0.2);
-  border-color: #a78bfa;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
@@ -1341,8 +1351,8 @@
 /* Buttons */
 .scraperBtn {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #a78bfa, #7c3aed);
-  color: white;
+  background: #fff;
+  color: #000;
   border: none;
   border-radius: 6px;
   cursor: pointer;
