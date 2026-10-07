@@ -234,7 +234,7 @@ export default function SettingsPage() {
                 Anuluj
               </button>
               <button
-                type="submit"
+                type="button"
                 onClick={handleAddProduct}
                 disabled={saving || !selectedProductId}
               >
