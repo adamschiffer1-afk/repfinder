@@ -216,6 +216,15 @@
   overscroll-behavior: contain; /* Prevent scroll chaining to parent */
 }
 
+@media (max-width: 768px) {
+  .catDropdownMenu {
+    left: auto;
+    right: 0;
+    width: calc(100vw - 32px); /* Full width minus padding */
+    max-width: 260px; /* But not wider than original */
+  }
+}
+
 .catDropdownMenu::-webkit-scrollbar {
   width: 4px;
 }
@@ -326,18 +335,38 @@
   border-radius: 18px;
   overflow: hidden;
   cursor: pointer;
-  transition: border-color .2s ease, transform .2s ease, background .2s ease;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   animation: cardIn .5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   opacity: 0;
+  position: relative;
+}
+
+.productCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(255,255,255,.04), transparent 60%);
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .productCard:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255,255,255,.15);
-  background: rgba(255,255,255,.05);
-  box-shadow: 0 12px 32px rgba(0,0,0,.4);
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  box-shadow: 0 20px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
+}
+
+.productCard:hover::before {
+  opacity: 1;
+}
+
+.productCard:active {
+  transform: translateY(-2px) scale(1.01);
 }
 
 @keyframes cardIn {
