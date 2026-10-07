@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
 import ProductSkeleton from '@/components/ProductSkeleton';
@@ -11,12 +10,6 @@ import { categoriesData } from '@/data/productsData';
 import { useCurrency } from '@/hooks/useCurrency';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTshirt, faSocks, faRunning, faGlasses, faShoppingBag, faBriefcase, faRing, faBolt, faFire, faBoxOpen, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
-
-// Dynamic import for AgentModal (only loads when needed)
-const AgentModal = dynamic(() => import('@/components/AgentModal'), {
-  loading: () => null,
-  ssr: false
-});
 
 // Memoized ProductCard component
 const ProductCard = memo(({ product, index, formatPrice, onOpenModal }) => {
@@ -59,7 +52,12 @@ const ProductCard = memo(({ product, index, formatPrice, onOpenModal }) => {
           className={styles.agentButton}
           onClick={() => onOpenModal(product)}
         >
-          See agents
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+          Zobacz produkt
         </button>
       </div>
     </div>
@@ -93,7 +91,6 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [displayCount, setDisplayCount] = useState(20);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -472,11 +469,33 @@ export default function ProductsPage() {
   const hasMore = displayCount < filteredProducts.length;
 
   const handleOpenAgentModal = (product) => {
-    setSelectedProduct(product);
+    // Get preferred agent from localStorage
+    const preferredAgent = localStorage.getItem('preferredAgent') || 'KakoBuy';
+    
+    // Extract weidian URL from product.link
+    const weidianMatch = product.link?.match(/url=([^&]+)/);
+    const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
+    
+    // Generate agent link
+    const agentUrls = {
+      'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=xfrostyy`,
+      'ACBuy': `https://www.allchinabuy.com/en/page/buy?nTag=Home-search&from=search-input&url=${encodeURIComponent(weidianUrl)}`,
+      'USFans': `https://www.usfans.net/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'GTBuy': `https://www.gtbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'OopBuy': `https://www.oopbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'MuleBuy': `https://www.mulebuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'HipoBuy': `https://www.hipobuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`
+    };
+    
+    const agentLink = agentUrls[preferredAgent] || agentUrls['KakoBuy'];
+    
+    // Open in new tab
+    window.open(agentLink, '_blank');
   };
 
   const handleCloseAgentModal = () => {
-    setSelectedProduct(null);
+    // No longer needed but keep for compatibility
   };
 
   const handleSuggestionClick = (suggestion) => {
@@ -841,15 +860,6 @@ export default function ProductsPage() {
           </div>
         )}
       </div>
-
-      {/* Agent Modal */}
-      {selectedProduct && (
-        <AgentModal 
-          isOpen={true}
-          product={selectedProduct} 
-          onClose={handleCloseAgentModal}
-        />
-      )}
     </>
   );
 }
