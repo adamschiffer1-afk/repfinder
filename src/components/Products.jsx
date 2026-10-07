@@ -1,12 +1,73 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, memo } from 'react';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
-import AgentModal from '@/components/AgentModal';
+import ProductSkeleton from '@/components/ProductSkeleton';
+import EmptyState from '@/components/EmptyState';
+import { useToast } from '@/components/Toast';
 import { categoriesData } from '@/data/productsData';
 import { useCurrency } from '@/hooks/useCurrency';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTshirt, faSocks, faRunning, faGlasses, faShoppingBag, faBriefcase, faRing, faBolt, faFire, faBoxOpen, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
+
+// Dynamic import for AgentModal (only loads when needed)
+const AgentModal = dynamic(() => import('@/components/AgentModal'), {
+  loading: () => null,
+  ssr: false
+});
+
+// Memoized ProductCard component
+const ProductCard = memo(({ product, index, formatPrice, onOpenModal }) => {
+  return (
+    <div className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
+      {/* Product Image */}
+      <div className={styles.imageWrapper}>
+        <Image 
+          src={product.image} 
+          alt={product.name} 
+          className={styles.productImage}
+          width={300}
+          height={300}
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvc3ZnPg=="
+        />
+        {product.batch === 'best' && (
+          <div className={styles.batchBadge}>Best Batch</div>
+        )}
+        {product.batch === 'popular' && (
+          <div className={`${styles.batchBadge} ${styles.popularBadge}`}>🔥 Popular</div>
+        )}
+        {product.category && (
+          <div className={styles.categoryBadge}>{product.category}</div>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className={styles.cardContent}>
+        <h3 className={styles.productName}>{product.name}</h3>
+        
+        {/* Price Display */}
+        <div className={styles.priceRow}>
+          <div className={styles.primaryPrice}>{formatPrice(product.price)}</div>
+        </div>
+
+        {/* Action Button */}
+        <button 
+          className={styles.agentButton}
+          onClick={() => onOpenModal(product)}
+        >
+          See agents
+        </button>
+      </div>
+    </div>
+  );
+}, (prevProps, nextProps) => {
+  return prevProps.product._id === nextProps.product._id && 
+         prevProps.index === nextProps.index;
+});
 
 const CATEGORY_ICONS = {
   'shoes':          faShoePrints,
@@ -25,6 +86,7 @@ const CATEGORY_ICONS = {
 };
 
 export default function ProductsPage() {
+  const toast = useToast();
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -731,53 +793,26 @@ export default function ProductsPage() {
           {loading ? (
             // Loading skeleton
             Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className={styles.skeletonCard}>
-                <div className={styles.skeletonImage}></div>
-                <div className={styles.skeletonText}></div>
-                <div className={styles.skeletonText} style={{ width: '60%' }}></div>
-              </div>
+              <ProductSkeleton key={i} />
             ))
           ) : displayedProducts.length === 0 ? (
             // No results message
-            <div className={styles.noResults}>
-              <p>No products found for "{searchQuery}"</p>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <EmptyState 
+                title={searchQuery ? `No products found for "${searchQuery}"` : "No products found"}
+                description="Try adjusting your filters or search query to find what you're looking for."
+              />
             </div>
           ) : (
             // Product Cards
             displayedProducts.map((product, index) => (
-              <div key={`${product._id}-${index}`} className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
-                {/* Product Image */}
-                <div className={styles.imageWrapper}>
-                  <img src={product.image} alt={product.name} className={styles.productImage} />
-                  {product.batch === 'best' && (
-                    <div className={styles.batchBadge}>Best Batch</div>
-                  )}
-                  {product.batch === 'popular' && (
-                    <div className={`${styles.batchBadge} ${styles.popularBadge}`}>🔥 Popular</div>
-                  )}
-                  {product.category && (
-                    <div className={styles.categoryBadge}>{product.category}</div>
-                  )}
-                </div>
-
-                {/* Product Info */}
-                <div className={styles.cardContent}>
-                  <h3 className={styles.productName}>{product.name}</h3>
-                  
-                  {/* Price Display */}
-                  <div className={styles.priceRow}>
-                    <div className={styles.primaryPrice}>{formatPrice(product.price)}</div>
-                  </div>
-
-                  {/* Action Button */}
-                  <button 
-                    className={styles.agentButton}
-                    onClick={() => handleOpenAgentModal(product)}
-                  >
-                    See agents
-                  </button>
-                </div>
-              </div>
+              <ProductCard
+                key={`${product._id}-${index}`}
+                product={product}
+                index={index}
+                formatPrice={formatPrice}
+                onOpenModal={handleOpenAgentModal}
+              />
             ))
           )}
         </div>
