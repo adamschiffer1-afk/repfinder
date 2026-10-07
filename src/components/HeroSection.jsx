@@ -60,12 +60,12 @@ export default function HeroSection() {
   const router  = useRouter();
   const [products, setProducts]   = useState([]);
   const [selected, setSelected]   = useState(null);
-  const [defaultAgent, setDefaultAgent] = useState('kakobuy');
+  const [preferredAgent, setPreferredAgent] = useState('KakoBuy');
 
   useEffect(() => {
-    // Load default agent from localStorage
-    const saved = localStorage.getItem('defaultAgent');
-    if (saved) setDefaultAgent(saved);
+    // Load preferred agent from localStorage
+    const saved = localStorage.getItem('preferredAgent');
+    if (saved) setPreferredAgent(saved);
     
     fetch('/api/products?limit=12&sort=pinned_order', { cache: 'no-store' })
       .then(r => r.ok ? r.json() : [])
@@ -73,23 +73,29 @@ export default function HeroSection() {
       .catch(() => {});
   }, []);
 
-  const getAgentLink = (product, agent) => {
+  const getAgentLink = (product, agentName) => {
+    // Extract weidian URL from product.link (it's wrapped in kakobuy)
+    const weidianMatch = product.link?.match(/url=([^&]+)/);
+    const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
+    
     const agentUrls = {
-      kakobuy: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(product.link || '')}&affcode=xfrostyy`,
-      pandabuy: `https://www.pandabuy.com/product?url=${encodeURIComponent(product.link || '')}`,
-      sugargoo: `https://www.sugargoo.com/#/home/productDetail?productLink=${encodeURIComponent(product.link || '')}`,
-      cssbuy: `https://www.cssbuy.com/item-${product.link?.match(/itemID[=%](\d+)/)?.[1] || ''}.html`,
-      superbuy: `https://www.superbuy.com/en/page/buy?url=${encodeURIComponent(product.link || '')}`,
-      wegobuy: `https://www.wegobuy.com/en/page/buy?url=${encodeURIComponent(product.link || '')}`
+      'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=xfrostyy`,
+      'ACBuy': `https://www.allchinabuy.com/en/page/buy?nTag=Home-search&from=search-input&url=${encodeURIComponent(weidianUrl)}`,
+      'USFans': `https://www.usfans.net/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'GTBuy': `https://www.gtbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'OopBuy': `https://www.oopbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'MuleBuy': `https://www.mulebuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'HipoBuy': `https://www.hipobuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`
     };
-    return agentUrls[agent] || agentUrls.kakobuy;
+    return agentUrls[agentName] || agentUrls['KakoBuy'];
   };
 
   const handleProductsClick = () => {
     // Get first pinned product
     const firstProduct = products.find(p => p.is_pinned) || products[0];
     if (firstProduct) {
-      window.open(getAgentLink(firstProduct, defaultAgent), '_blank');
+      window.open(getAgentLink(firstProduct, preferredAgent), '_blank');
     } else {
       router.push('/products');
     }
