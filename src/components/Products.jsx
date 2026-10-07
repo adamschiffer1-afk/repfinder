@@ -390,13 +390,13 @@ export default function ProductsPage() {
       return products.filter(p => p.price >= min && p.price <= max);
     }
     
-    // Predefined ranges (in PLN or base currency)
+    // Predefined ranges (in USD - products are stored in USD)
     const ranges = {
-      'under-29': [0, 29],
-      '29-58': [29, 58],
-      '58-116': [58, 116],
-      '116-290': [116, 290],
-      'over-290': [290, Infinity]
+      'under-10': [0, 10],
+      '10-20': [10, 20],
+      '20-40': [20, 40],
+      '40-100': [40, 100],
+      'over-100': [100, Infinity]
     };
     
     const [min, max] = ranges[selectedPriceRange] || [0, Infinity];
@@ -720,11 +720,11 @@ export default function ProductsPage() {
                 </svg>
                 <span className={styles.catBtnLabel}>
                   {selectedPriceRange === 'all' ? 'All Prices' :
-                   selectedPriceRange === 'under-29' ? 'Under 29 PLN' :
-                   selectedPriceRange === '29-58' ? '29 - 58 PLN' :
-                   selectedPriceRange === '58-116' ? '58 - 116 PLN' :
-                   selectedPriceRange === '116-290' ? '116 - 290 PLN' :
-                   selectedPriceRange === 'over-290' ? 'Over 290 PLN' :
+                   selectedPriceRange === 'under-10' ? 'Under $10' :
+                   selectedPriceRange === '10-20' ? '$10 - $20' :
+                   selectedPriceRange === '20-40' ? '$20 - $40' :
+                   selectedPriceRange === '40-100' ? '$40 - $100' :
+                   selectedPriceRange === 'over-100' ? 'Over $100' :
                    'Custom Range'}
                 </span>
                 <FontAwesomeIcon icon={faChevronDown} className={`${styles.catChevron} ${priceDropdownOpen ? styles.catChevronOpen : ''}`} />
@@ -740,39 +740,39 @@ export default function ProductsPage() {
                     {selectedPriceRange === 'all' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'under-29' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('under-29'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'under-10' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('under-10'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>Under 29 PLN</span>
-                    {selectedPriceRange === 'under-29' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>Under $10</span>
+                    {selectedPriceRange === 'under-10' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === '29-58' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('29-58'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === '10-20' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('10-20'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>29 - 58 PLN</span>
-                    {selectedPriceRange === '29-58' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>$10 - $20</span>
+                    {selectedPriceRange === '10-20' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === '58-116' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('58-116'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === '20-40' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('20-40'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>58 - 116 PLN</span>
-                    {selectedPriceRange === '58-116' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>$20 - $40</span>
+                    {selectedPriceRange === '20-40' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === '116-290' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('116-290'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === '40-100' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('40-100'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>116 - 290 PLN</span>
-                    {selectedPriceRange === '116-290' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>$40 - $100</span>
+                    {selectedPriceRange === '40-100' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'over-290' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('over-290'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'over-100' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('over-100'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>Over 290 PLN</span>
-                    {selectedPriceRange === 'over-290' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>Over $100</span>
+                    {selectedPriceRange === 'over-100' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   
                   {/* Custom Range Divider */}
