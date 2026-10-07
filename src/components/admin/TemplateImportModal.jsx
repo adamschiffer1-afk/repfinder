@@ -168,6 +168,14 @@ export default function TemplateImportModal({
     }, estimatedTimePerProduct);
 
     try {
+      console.log('🚀 Starting template import request...', {
+        endpoint: apiEndpoint,
+        productCount: dataToImport.length,
+        replaceMode: bulkReplaceMode,
+        batch: bulkBatch,
+        category: bulkCategory
+      });
+      
       const res = await fetch(apiEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -182,7 +190,15 @@ export default function TemplateImportModal({
           concurrency: 4
         })
       });
+      
+      console.log('📡 Response received:', {
+        status: res.status,
+        statusText: res.statusText,
+        ok: res.ok
+      });
+      
       const data = await res.json();
+      console.log('📦 Response data:', data);
       
       // Clear progress interval once we get response
       clearInterval(progressInterval);
@@ -198,6 +214,7 @@ export default function TemplateImportModal({
       });
 
       if (!res.ok) {
+        console.error('❌ Import failed:', data);
         if (showToast) showToast(data.error || t('Failed to execute import.'), 'error');
         return;
       }
@@ -215,13 +232,15 @@ export default function TemplateImportModal({
         onImportComplete(data);
       }
     } catch (err) {
+      console.error('❌ Template import error:', err);
+      clearInterval(progressInterval);
       setBulkProgress((prev) => ({
         ...prev,
         current: prev.total,
         failures: prev.total,
-        logs: [{ status: 'error', message: t('Server connection error') }]
+        logs: [{ status: 'error', message: `${t('Server connection error')}: ${err.message}` }]
       }));
-      if (showToast) showToast(t('Server connection error during import.'), 'error');
+      if (showToast) showToast(t('Server connection error during import.') + ': ' + err.message, 'error');
     } finally {
       setBulkLoading(false);
     }
