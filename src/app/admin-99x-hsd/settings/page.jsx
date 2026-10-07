@@ -10,10 +10,14 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState('');
+  const [defaultAgent, setDefaultAgent] = useState('kakobuy'); // New: default agent
 
   // Load popular products and all products
   useEffect(() => {
     fetchData();
+    // Load default agent from localStorage
+    const saved = localStorage.getItem('defaultAgent');
+    if (saved) setDefaultAgent(saved);
   }, []);
 
   const fetchData = async () => {
@@ -88,6 +92,11 @@ export default function SettingsPage() {
     }
   };
 
+  const handleSaveAgent = () => {
+    localStorage.setItem('defaultAgent', defaultAgent);
+    alert('Domyślny agent zapisany!');
+  };
+
   const availableProducts = allProducts.filter(
     p => !popularProducts.some(pp => pp.id === p.id)
   );
@@ -114,6 +123,46 @@ export default function SettingsPage() {
         <div>
           <h1>Ustawienia</h1>
           <p className={styles.headerSubtitle}>Zarządzaj ustawieniami strony</p>
+        </div>
+      </div>
+
+      {/* Default Agent Section */}
+      <div className={styles.settingsSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <h2 className={styles.sectionTitle}>Domyślny Agent</h2>
+            <p className={styles.sectionSubtitle}>
+              Wybierz agenta który będzie używany w przycisku "Zobacz produkty" na głównej stronie
+            </p>
+          </div>
+          <button 
+            className={styles.actionBtn}
+            onClick={handleSaveAgent}
+            disabled={saving}
+          >
+            💾 Zapisz
+          </button>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px' }}>
+          <label style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>
+            Wybierz agenta
+          </label>
+          <select
+            value={defaultAgent}
+            onChange={(e) => setDefaultAgent(e.target.value)}
+            className={styles.settingsSelect}
+          >
+            <option value="kakobuy">🛒 Kakobuy</option>
+            <option value="pandabuy">🐼 Pandabuy</option>
+            <option value="sugargoo">🍬 Sugargoo</option>
+            <option value="cssbuy">🎨 CSSBuy</option>
+            <option value="superbuy">⚡ Superbuy</option>
+            <option value="wegobuy">🌏 Wegobuy</option>
+          </select>
+          <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)', margin: 0 }}>
+            Przycisk będzie przekierowywał do pierwszego produktu z sekcji Popular Products używając wybranego agenta
+          </p>
         </div>
       </div>
 

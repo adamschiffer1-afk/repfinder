@@ -217,8 +217,10 @@
   font-weight: 600;
   color: #000;
   background: #fff;
+  border: none;
   border-radius: 8px;
   text-decoration: none;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
