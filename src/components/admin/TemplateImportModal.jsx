@@ -604,8 +604,8 @@ export default function TemplateImportModal({
                 <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '150px', overflow: 'auto' }}>
                   {bulkProgress.logs.slice(0, 8).map((log, index) => (
                     <div key={`${log.itemId || index}-${index}`} style={{ display: 'grid', gridTemplateColumns: '82px minmax(0, 1fr)', gap: '8px', fontSize: '13px', color: '#ffffff', padding: '4px 0' }}>
-                      <span style={{ color: log.status === 'success' ? '#34d399' : log.status === 'error' ? '#ef4444' : log.status === 'processing' ? '#60a5fa' : '#fbbf24', fontWeight: 700 }}>
-                        {log.status === 'success' ? (log.action || 'ok') : log.status === 'processing' ? '⏳' : log.status}
+                      <span style={{ color: log.status === 'success' ? '#34d399' : log.status === 'error' ? '#ef4444' : log.status === 'warning' ? '#fbbf24' : log.status === 'processing' ? '#60a5fa' : '#fbbf24', fontWeight: 700 }}>
+                        {log.status === 'success' ? (log.action || 'ok') : log.status === 'warning' ? '⚠️' : log.status === 'processing' ? '⏳' : log.status}
                       </span>
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'rgba(255, 255, 255, 0.9)' }}>
                         {log.name || log.message || log.url}

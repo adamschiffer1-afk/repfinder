@@ -66,9 +66,10 @@ function formatImageUrl(imageUrl) {
  * Scrapes product data from Weidian URL with retry logic
  * @param {string} weidianUrl - Weidian product URL
  * @param {number} retryCount - Current retry attempt
- * @returns {Promise<{name: string, price: number, image: string, category: string}>}
+ * @param {boolean} allowFallback - Return fallback data instead of throwing error
+ * @returns {Promise<{name: string, price: number, image: string, category: string, scraped: boolean}>}
  */
-async function scrapeWeidianProduct(weidianUrl, retryCount = 0) {
+async function scrapeWeidianProduct(weidianUrl, retryCount = 0, allowFallback = true) {
   try {
     const response = await axios.get(weidianUrl, {
       headers: {
@@ -86,24 +87,24 @@ async function scrapeWeidianProduct(weidianUrl, retryCount = 0) {
     const scriptTag = $('#__rocker-render-inject__');
 
     if (scriptTag.length === 0) {
-      throw new Error('Could not find product data. Weidian may be blocking this item.');
+      throw new Error('Could not find product data on page');
     }
 
     let data;
     try {
       data = JSON.parse(scriptTag.attr('data-obj'));
     } catch {
-      throw new Error('Could not parse product data.');
+      throw new Error('Could not parse JSON data');
     }
 
     const itemInfo = data?.result?.default_model?.item_info;
     if (!itemInfo) {
-      throw new Error('Product payload is missing item information.');
+      throw new Error('Missing item_info in response');
     }
 
     const baseName = cleanName(itemInfo.item_name || 'Weidian Product');
     const priceCny = Number.parseFloat(itemInfo.origin_price);
-    const priceUsd = Number.isFinite(priceCny) ? Number((priceCny * 0.14).toFixed(2)) : 0;
+    const priceUsd = Number.isFinite(priceCny) ? Number((priceCny * 0.14).toFixed(2)) : 10.00; // Default $10
 
     // ALWAYS use main product image (item_head), not variant images
     const image = itemInfo.item_head;
@@ -113,18 +114,32 @@ async function scrapeWeidianProduct(weidianUrl, retryCount = 0) {
     return {
       name: baseName,
       price: priceUsd,
-      image: formattedImage,
-      category
+      image: formattedImage || 'https://via.placeholder.com/400x400?text=No+Image',
+      category,
+      scraped: true
     };
   } catch (error) {
     // Retry logic
     if (retryCount < MAX_RETRIES) {
       console.log(`⚠️ Retry ${retryCount + 1}/${MAX_RETRIES} for ${weidianUrl}: ${error.message}`);
       await sleep(RETRY_DELAY);
-      return scrapeWeidianProduct(weidianUrl, retryCount + 1);
+      return scrapeWeidianProduct(weidianUrl, retryCount + 1, allowFallback);
     }
     
-    throw new Error(`Scraping failed after ${MAX_RETRIES} retries: ${error.message}`);
+    // If all retries failed and fallback is allowed, return default values
+    if (allowFallback) {
+      console.log(`⚠️ Using fallback data for ${weidianUrl}`);
+      return {
+        name: 'Weidian Product',
+        price: 10.00,
+        image: 'https://via.placeholder.com/400x400?text=No+Image',
+        category: 'accessories',
+        scraped: false,
+        error: error.message
+      };
+    }
+    
+    throw new Error(`Scraping failed: ${error.message}`);
   }
 }
 
@@ -221,8 +236,8 @@ export async function POST(request) {
         const itemId = itemIdMatch[1] || itemIdMatch[2];
         const weidianUrl = getWeidianUrl(itemId);
         
-        // Scrape product data from Weidian (with retry logic)
-        const scrapedData = await scrapeWeidianProduct(weidianUrl);
+        // Scrape product data from Weidian (with retry logic and fallback)
+        const scrapedData = await scrapeWeidianProduct(weidianUrl, 0, true); // allowFallback = true
 
         // Use name from spreadsheet (user's custom name)
         const finalName = product.name;
@@ -230,8 +245,17 @@ export async function POST(request) {
         // Determine category: use manual override if provided, otherwise use scraped/auto-detected
         const finalCategory = category || scrapedData.category;
         
+        // Use scraped price and image, or fallback values
+        const finalPrice = scrapedData.price;
+        const finalImage = scrapedData.image;
+        
         // Get affiliate link
         const affiliateLink = getAffiliateLink(weidianUrl);
+        
+        // Log warning if scraping failed
+        if (!scrapedData.scraped) {
+          console.log(`⚠️ [${globalIndex + 1}/${products.length}] Using fallback data (scraping failed): ${finalName}`);
+        }
         
         // Check if product with this link already exists
         const { data: existingProducts, error: findError } = await supabaseAdmin
@@ -248,8 +272,8 @@ export async function POST(request) {
           // Update existing product
           const updates = {
             name: finalName,
-            price: scrapedData.price,
-            image: scrapedData.image,
+            price: finalPrice,
+            image: finalImage,
             category: finalCategory,
             batch: batch || 'best',
             link: affiliateLink,
@@ -273,11 +297,12 @@ export async function POST(request) {
           if (updateError) throw updateError;
           
           results.push({
-            status: 'success',
+            status: scrapedData.scraped ? 'success' : 'warning',
             action: 'updated',
             name: finalName,
             url: product.url,
-            itemId: updated.id
+            itemId: updated.id,
+            message: scrapedData.scraped ? undefined : 'Used fallback data (scraping failed)'
           });
           updated++;
           console.log(`✅ [${globalIndex + 1}/${products.length}] Updated: ${finalName} (ID: ${updated.id})`);
@@ -285,8 +310,8 @@ export async function POST(request) {
           // Create new product
           const productData = {
             name: finalName,
-            price: scrapedData.price,
-            image: scrapedData.image,
+            price: finalPrice,
+            image: finalImage,
             category: finalCategory,
             batch: batch || 'best',
             link: affiliateLink,
@@ -304,11 +329,12 @@ export async function POST(request) {
           if (insertError) throw insertError;
           
           results.push({
-            status: 'success',
+            status: scrapedData.scraped ? 'success' : 'warning',
             action: 'created',
             name: finalName,
             url: product.url,
-            itemId: newProduct.id
+            itemId: newProduct.id,
+            message: scrapedData.scraped ? undefined : 'Used fallback data (scraping failed)'
           });
           created++;
           console.log(`✅ [${globalIndex + 1}/${products.length}] Created: ${finalName} (ID: ${newProduct.id})`);
