@@ -4,6 +4,15 @@
   padding: 40px 0 60px;
   background: #0a0a0a;
   position: relative;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .inner {
@@ -56,7 +65,17 @@
   border: 1px solid rgba(255,255,255,.07);
   border-radius: 12px;
   overflow: hidden;
-  transition: border-color .2s ease, background .2s ease;
+  transition: border-color .2s ease, background .2s ease,
+              opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              translate 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  translate: 0 20px;
+  transition-delay: var(--delay, 0s);
+}
+
+.section.visible .faqItem {
+  opacity: 1;
+  translate: 0 0;
 }
 
 .faqItem:hover {

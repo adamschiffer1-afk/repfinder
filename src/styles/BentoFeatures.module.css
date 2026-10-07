@@ -3,6 +3,15 @@
 .section {
   padding: 60px 0 120px;
   background: #0a0a0a;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .inner {
@@ -57,9 +66,19 @@
   border-radius: 16px;
   text-decoration: none;
   min-height: 160px;
-  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease,
+              opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              translate 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  opacity: 0;
+  translate: 0 30px;
+  transition-delay: var(--delay, 0s);
+}
+
+.section.visible .card {
+  opacity: 1;
+  translate: 0 0;
 }
 
 .card::before {

@@ -18,9 +18,9 @@ export const translations = {
     },
     hero: {
       badge: "Najlepsze findsy w sieci",
-      title: "Twoje centrum",
-      titleSpan: "Linki",
-      titleSuffix: "od RepFinder",
+      title: "Twoje centrum linków",
+      titleSpan: "od RepFinder",
+      titleSuffix: "",
       description: "Starannie wybrane linki od sprawdzonych sellerów. Wszystko, czego szukasz — w jednym miejscu.",
       browseBtn: "Przeglądaj produkty",
       howToBuy: "Jak kupować?",

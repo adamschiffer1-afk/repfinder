@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalculator, faExchangeAlt, faBox, faTruck, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { useLanguage } from '@/context/LanguageContext';
+import useScrollAnimation from '@/hooks/useScrollAnimation';
 
 const FEATURES = [
   {
@@ -28,9 +29,10 @@ const FEATURES = [
 
 export default function BentoFeatures() {
   const { t } = useLanguage();
+  const [sectionRef, isVisible] = useScrollAnimation({ threshold: 0.15 });
 
   return (
-    <section className={styles.section}>
+    <section ref={sectionRef} className={`${styles.section} ${isVisible ? styles.visible : ''}`}>
       <div className={styles.inner}>
         <div className={styles.header}>
           <p className={styles.eyebrow}>Narzędzia</p>
@@ -41,8 +43,13 @@ export default function BentoFeatures() {
         </div>
 
         <div className={styles.grid}>
-          {FEATURES.map((f) => (
-            <Link key={f.href} href={f.href} className={styles.card}>
+          {FEATURES.map((f, index) => (
+            <Link 
+              key={f.href} 
+              href={f.href} 
+              className={styles.card}
+              style={{ '--delay': `${index * 0.1}s` }}
+            >
               <div className={styles.cardTop}>
                 <div className={styles.iconBox}>
                   <FontAwesomeIcon icon={f.icon} />

@@ -34,6 +34,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  cursor: pointer;
 }
 
 /* Avatar Section (Left) */
@@ -180,9 +181,10 @@
 
 /* Expand indicator */
 .expandIndicator {
-  display: flex;
+  display: none; /* Hidden on desktop */
   justify-content: center;
-  margin-top: 4px;
+  align-items: center;
+  margin-left: auto;
 }
 
 .chevron {
@@ -238,40 +240,69 @@
   }
 
   .widget {
+    min-width: unset;
+    width: auto;
+    padding: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .widget.expanded {
     min-width: 200px;
-    padding: 12px;
   }
 
   .userProfile {
-    gap: 12px;
+    gap: 10px;
+  }
+
+  /* Chevron zawsze widoczny na mobile */
+  .expandIndicator {
+    display: flex;
+    margin-left: 8px;
+  }
+
+  .chevron {
+    font-size: 14px;
   }
 
   .avatar,
   .avatarPlaceholder {
-    width: 52px;
-    height: 52px;
+    width: 48px;
+    height: 48px;
   }
 
   .avatarPlaceholder {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .statusDot {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-width: 2px;
   }
 
   .userName {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .userEmail {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .roleBadge {
     font-size: 9px;
-    padding: 4px 10px;
+    padding: 4px 8px;
+  }
+
+  /* Disable hover on mobile, use only click */
+  .widget:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transform: none;
+  }
+
+  .widget.expanded:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
   }
 }

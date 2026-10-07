@@ -88,7 +88,6 @@ export default function HeroSection() {
             <h1 className={`${styles.mainTitle} ${styles.a2}`}>
               {t('hero.title')}<br />
               <span className={styles.gradientText}>{t('hero.titleSpan')}</span>
-              {t('hero.titleSuffix') ? <><br />{t('hero.titleSuffix')}</> : null}
             </h1>
 
             <p className={`${styles.description} ${styles.a3}`}>
