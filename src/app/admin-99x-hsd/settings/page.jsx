@@ -20,15 +20,24 @@ export default function SettingsPage() {
     try {
       setLoading(true);
       
+      console.log('🔄 Fetching products...');
+      
       // Fetch all products
       const productsRes = await fetch('/api/products');
       const productsData = await productsRes.json();
-      setAllProducts(productsData.products || []);
+      
+      // API returns array directly when no pagination
+      const allProds = Array.isArray(productsData) ? productsData : (productsData.products || []);
+      console.log('📦 All products:', allProds.length);
+      setAllProducts(allProds);
 
       // Fetch popular products (pinned products)
       const popularRes = await fetch('/api/products?pinned=true');
       const popularData = await popularRes.json();
-      setPopularProducts(popularData.products || []);
+      
+      const pinnedProds = Array.isArray(popularData) ? popularData : (popularData.products || []);
+      console.log('📌 Pinned products:', pinnedProds.length);
+      setPopularProducts(pinnedProds);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
