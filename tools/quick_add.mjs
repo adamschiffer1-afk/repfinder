@@ -45,6 +45,7 @@ function detectCategory(name) {
   if (nameLower.includes('jacket') || nameLower.includes('coat') || nameLower.includes('puffer') || nameLower.includes('windbreaker')) return 'jackets';
   if (nameLower.includes('set') || nameLower.includes('suit') || nameLower.includes('tracksuit')) return 'sets';
   if (nameLower.includes('shoe') || nameLower.includes('sneaker') || nameLower.includes('trainer')) return 'shoes';
+  if (nameLower.includes('bag') || nameLower.includes('backpack') || nameLower.includes('pouch')) return 'bags';
   
   return 'accessories';
 }
@@ -113,12 +114,26 @@ async function quickAdd() {
 ╚═══════════════════════════════════════════════════════╝
 
 Użycie:
-  node quick_add.mjs "Nazwa produktu" "Link Weidian"
+  node quick_add.mjs "Nazwa produktu" "Link Weidian" [kategoria]
 
-Przykład:
+Przykład (automatyczna kategoria):
   node quick_add.mjs "Nike Hoodie" "https://weidian.com/item.html?itemID=7507616560"
 
-Kategoria jest automatycznie wykrywana na podstawie nazwy:
+Przykład (ręczna kategoria):
+  node quick_add.mjs "Nike Hoodie" "https://weidian.com/item.html?itemID=7507616560" hoodies
+
+Dostępne kategorie:
+  • shoes       - Buty
+  • hoodies     - Bluzy z kapturem
+  • t-shirts    - Koszulki
+  • pants       - Spodnie
+  • shorts      - Szorty
+  • jackets     - Kurtki
+  • sets        - Zestawy/Dresy
+  • accessories - Akcesoria
+  • bags        - Torby
+
+Automatyczna detekcja kategorii:
   • hoodie → hoodies
   • pants/jeans → pants  
   • jacket → jackets
@@ -126,18 +141,23 @@ Kategoria jest automatycznie wykrywana na podstawie nazwy:
   • sweatshirt → hoodies
   • set/suit → sets
   • shoe → shoes
+  • bag → bags
   • inne → accessories
 `);
     process.exit(1);
   }
 
-  const [name, url] = args;
+  const [name, url, manualCategory] = args;
   
   console.log('\n' + '='.repeat(60));
   console.log('🚀 QUICK ADD - Dodawanie produktu');
   console.log('='.repeat(60));
   console.log(`📝 Nazwa: ${name}`);
-  console.log(`🔗 Link:  ${url}\n`);
+  console.log(`🔗 Link:  ${url}`);
+  if (manualCategory) {
+    console.log(`🏷️  Kategoria (ręczna): ${manualCategory}`);
+  }
+  console.log();
 
   try {
     // Extract itemID
@@ -153,9 +173,18 @@ Kategoria jest automatycznie wykrywana na podstawie nazwy:
     // Scrape
     const scrapedData = await scrapeWeidian(weidianUrl);
     
-    // Detect category
-    const category = detectCategory(name);
-    console.log(`🏷️  Kategoria: ${category}`);
+    // Detect or use manual category
+    const category = manualCategory || detectCategory(name);
+    
+    // Validate category
+    const validCategories = ['shoes', 'hoodies', 't-shirts', 'pants', 'shorts', 'jackets', 'sets', 'accessories', 'bags'];
+    if (!validCategories.includes(category)) {
+      console.log(`⚠️  Nieprawidłowa kategoria: ${category}`);
+      console.log(`   Dostępne: ${validCategories.join(', ')}`);
+      process.exit(1);
+    }
+    
+    console.log(`🏷️  Kategoria: ${category} ${manualCategory ? '(ręczna)' : '(auto)'}`);
     
     // Check if exists
     const { data: existing } = await supabase

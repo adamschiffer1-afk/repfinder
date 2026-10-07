@@ -11,7 +11,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-const CSV_FILE = 'missing_jackets.csv'; // Local CSV file
+const CSV_FILE = 'hoodies_pants_import.csv'; // Local CSV file
 const AFFILIATE_CODE = 'xfrostyy';
 const USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1';
 
@@ -52,9 +52,47 @@ function getAffiliateLink(weidianUrl) {
   return `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=${AFFILIATE_CODE}`;
 }
 
-// All products in jackets_import.csv are jackets
+// Detect category based on product name
 function detectCategory(name) {
-  return 'jackets';
+  const nameLower = name.toLowerCase();
+  
+  // Hoodies
+  if (nameLower.includes('hoodie') || nameLower.includes('hooded')) {
+    return 'hoodies';
+  }
+  
+  // Pants (includes jeans, trousers, shorts)
+  if (nameLower.includes('pant') || nameLower.includes('jean') || 
+      nameLower.includes('trouser') || nameLower.includes('short') ||
+      nameLower.includes('cargo')) {
+    return 'pants';
+  }
+  
+  // Sweatshirts/Sweaters (not hoodies)
+  if (nameLower.includes('sweatshirt') || nameLower.includes('sweater') || 
+      nameLower.includes('cardigan')) {
+    return 'hoodies'; // Treat as hoodies category
+  }
+  
+  // T-shirts
+  if (nameLower.includes('t-shirt') || nameLower.includes('tee') || 
+      nameLower.includes('polo') || nameLower.includes('shirt')) {
+    return 't-shirts';
+  }
+  
+  // Sets/Tracksuits
+  if (nameLower.includes('set') || nameLower.includes('suit') || 
+      nameLower.includes('tracksuit')) {
+    return 'sets';
+  }
+  
+  // Vest
+  if (nameLower.includes('vest')) {
+    return 'accessories';
+  }
+  
+  // Default to accessories if unsure
+  return 'accessories';
 }
 
 async function scrapeWeidianProduct(weidianUrl, retryCount = 0) {
