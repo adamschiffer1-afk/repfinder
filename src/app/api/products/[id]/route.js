@@ -95,49 +95,73 @@ export async function DELETE(req, { params }) {
   }
 }
 
+async function updateProductHandler(req, params) {
+  const session = await auth();
+  if (!session || session.user.email !== "kakobuybs209@gmail.com") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = params;
+  const data = await req.json();
+  
+  console.log("UPDATE /api/products/[id] - Received data:", JSON.stringify(data, null, 2));
+  
+  // Map MongoDB field names to Supabase (support both snake_case and camelCase)
+  const mappedData = {};
+  if (data.name !== undefined) mappedData.name = data.name;
+  if (data.price !== undefined) mappedData.price = data.price;
+  if (data.image !== undefined) mappedData.image = data.image;
+  if (data.category !== undefined) mappedData.category = data.category;
+  if (data.batch !== undefined) mappedData.batch = data.batch;
+  if (data.link !== undefined) mappedData.link = data.link;
+  if (data.clicks !== undefined) mappedData.clicks = data.clicks;
+  
+  // Support both camelCase and snake_case
+  if (data.isPinned !== undefined) mappedData.is_pinned = data.isPinned;
+  if (data.is_pinned !== undefined) mappedData.is_pinned = data.is_pinned;
+  if (data.pinnedOrder !== undefined) mappedData.pinned_order = data.pinnedOrder;
+  if (data.pinned_order !== undefined) mappedData.pinned_order = data.pinned_order;
+  if (data.qcImages !== undefined) mappedData.qc_images = data.qcImages;
+  if (data.qc_images !== undefined) mappedData.qc_images = data.qc_images;
+  if (data.isHidden !== undefined) mappedData.is_hidden = data.isHidden;
+  if (data.is_hidden !== undefined) mappedData.is_hidden = data.is_hidden;
+  
+  if (data.slug) {
+    mappedData.slug = await generateUniqueSlug(data.slug, id);
+  } else if (data.name) {
+    const existing = await ProductDB.findById(id);
+    if (!existing || !existing.slug) {
+      mappedData.slug = await generateUniqueSlug(data.name, id);
+    }
+  }
+
+  console.log("UPDATE /api/products/[id] - Mapped data for Supabase:", JSON.stringify(mappedData, null, 2));
+
+  const product = await ProductDB.update(id, mappedData);
+  
+  console.log("UPDATE /api/products/[id] - Update successful:", product.id);
+  
+  return NextResponse.json(product);
+}
+
 export async function PUT(req, { params }) {
   try {
-    const session = await auth();
-    if (!session || session.user.email !== "kakobuybs209@gmail.com") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { id } = params;
-    const data = await req.json();
-    
-    console.log("PUT /api/products/[id] - Received data:", JSON.stringify(data, null, 2));
-    
-    // Map MongoDB field names to Supabase
-    const mappedData = {};
-    if (data.name !== undefined) mappedData.name = data.name;
-    if (data.price !== undefined) mappedData.price = data.price;
-    if (data.image !== undefined) mappedData.image = data.image;
-    if (data.category !== undefined) mappedData.category = data.category;
-    if (data.batch !== undefined) mappedData.batch = data.batch;
-    if (data.link !== undefined) mappedData.link = data.link;
-    if (data.clicks !== undefined) mappedData.clicks = data.clicks;
-    if (data.isPinned !== undefined) mappedData.is_pinned = data.isPinned;
-    if (data.pinnedOrder !== undefined) mappedData.pinned_order = data.pinnedOrder;
-    if (data.qcImages !== undefined) mappedData.qc_images = data.qcImages;
-    if (data.isHidden !== undefined) mappedData.is_hidden = data.isHidden;
-    if (data.slug) {
-      mappedData.slug = await generateUniqueSlug(data.slug, id);
-    } else if (data.name) {
-      const existing = await ProductDB.findById(id);
-      if (!existing || !existing.slug) {
-        mappedData.slug = await generateUniqueSlug(data.name, id);
-      }
-    }
-
-    console.log("PUT /api/products/[id] - Mapped data for Supabase:", JSON.stringify(mappedData, null, 2));
-
-    const product = await ProductDB.update(id, mappedData);
-    
-    console.log("PUT /api/products/[id] - Update successful:", product.id);
-    
-    return NextResponse.json(product);
+    return await updateProductHandler(req, params);
   } catch (error) {
-    console.error("Update product error:", error);
+    console.error("PUT product error:", error);
+    console.error("Error details:", error.message, error.stack);
+    return NextResponse.json({ 
+      error: "Failed to update product",
+      details: error.message 
+    }, { status: 500 });
+  }
+}
+
+export async function PATCH(req, { params }) {
+  try {
+    return await updateProductHandler(req, params);
+  } catch (error) {
+    console.error("PATCH product error:", error);
     console.error("Error details:", error.message, error.stack);
     return NextResponse.json({ 
       error: "Failed to update product",
