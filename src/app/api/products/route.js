@@ -17,6 +17,8 @@ export async function GET(req) {
     const batch = searchParams.get('batch');
     const pinned = searchParams.get('pinned');
 
+    console.log('[Products API] Request params:', { admin, page, limit, category, batch, pinned, search });
+
     // Build filters
     const filters = {};
     if (search) filters.search = search;
@@ -25,6 +27,8 @@ export async function GET(req) {
     if (pinned && pinned !== 'all') filters.is_pinned = pinned;
     // Admin can see hidden products
     if (admin) filters.showHidden = true;
+
+    console.log('[Products API] Filters:', filters);
 
     // Suggest names for autocomplete
     if (suggest === 'names') {

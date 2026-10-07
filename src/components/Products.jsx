@@ -127,6 +127,8 @@ export default function ProductsPage() {
       try {
         setLoading(true);
         
+        console.log('[Products] Fetching from /api/products...');
+        
         // Fetch from API with proper sorting
         const res = await fetch('/api/products?limit=1000&sort=pinned_order', {
           cache: 'no-store', // Prevent caching
@@ -134,11 +136,17 @@ export default function ProductsPage() {
             'Cache-Control': 'no-cache'
           }
         });
+        
+        console.log('[Products] Response status:', res.status);
+        
         if (!res.ok) {
           throw new Error('Failed to fetch products');
         }
         
         const data = await res.json();
+        
+        console.log('[Products] Received data:', data);
+        console.log('[Products] Number of products:', data.length);
         
         // Transform Supabase format to expected format
         const products = data.map(p => ({

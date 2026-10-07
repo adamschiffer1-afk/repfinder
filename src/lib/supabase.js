@@ -34,6 +34,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const ProductDB = {
   // Get all products with filters
   async find(filters = {}, options = {}) {
+    console.log('[ProductDB.find] Starting with filters:', filters, 'options:', options);
     let query = supabaseAdmin.from('products').select('*', { count: 'exact' });
 
     // Apply filters
@@ -52,6 +53,7 @@ export const ProductDB = {
     }
     // Hide hidden products from public view (admin can see them via filters.showHidden)
     if (!filters.showHidden) {
+      console.log('[ProductDB.find] Filtering out hidden products');
       query = query.or('is_hidden.is.null,is_hidden.eq.false');
     }
     if (filters.search) {
