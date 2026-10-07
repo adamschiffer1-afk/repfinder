@@ -209,9 +209,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -219,37 +219,41 @@
 }
 
 .adminModal {
-  background: rgba(10, 10, 10, 0.95);
+  background: linear-gradient(135deg, rgba(18,18,20,0.98), rgba(10,10,12,0.98));
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  padding: 28px 32px;
+  padding: 32px;
   border-radius: 16px;
   width: 100%;
-  max-width: 540px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  max-width: 600px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
 }
 
 .adminModal h2 {
-  margin: 0 0 24px;
-  font-size: 20px;
+  margin: 0 0 28px;
+  font-size: 24px;
   font-weight: 800;
   color: #fff;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.5px;
 }
 
 .adminModal form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .adminModal input, 
 .adminModal select, 
 .adminModal textarea {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 13px 16px;
   border-radius: 10px;
   color: #fff;
   color-scheme: dark;
@@ -263,13 +267,13 @@
 .adminModal textarea:focus {
   outline: none;
   border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.03);
 }
 
 .adminModal input::placeholder,
 .adminModal textarea::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .adminModal select {
@@ -286,38 +290,59 @@
   color: #fff;
 }
 
+.adminModal label {
+  display: block;
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .modalActions {
   display: flex;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 12px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
 }
 
 .modalActions button {
   flex: 1;
-  padding: 12px;
+  padding: 14px;
   border-radius: 10px;
   border: none;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .modalActions button[type="submit"] {
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(130deg, rgba(255,255,255,0.15), rgba(255,255,255,0.08));
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .modalActions button[type="submit"]:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: linear-gradient(130deg, rgba(255,255,255,0.2), rgba(255,255,255,0.12));
+  border-color: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .modalActions button[type="button"] {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modalActions button[type="button"]:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.15);
+}
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
