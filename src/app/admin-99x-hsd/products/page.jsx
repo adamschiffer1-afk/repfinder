@@ -1952,22 +1952,17 @@ function CategoryGridItem({ product, onNameSave, onImageClick, showToast }) {
         onClick={() => onImageClick(product.image)}
       >
         <img src={product.image} alt={shortName} />
-        {product.isPinned && (
-          <span className={styles.categoryGridPinBadge}>📌</span>
-        )}
-        {product.isHidden && (
-          <span className={styles.categoryGridHiddenBadge}>🙈</span>
-        )}
       </div>
       
       <div className={styles.categoryGridItemContent}>
         {isEditing ? (
-          <textarea
+          <input
+            type="text"
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && e.ctrlKey) {
+              if (e.key === 'Enter') {
                 handleSave();
               } else if (e.key === 'Escape') {
                 setEditValue(product.name);
@@ -1976,27 +1971,29 @@ function CategoryGridItem({ product, onNameSave, onImageClick, showToast }) {
             }}
             autoFocus
             className={styles.categoryGridItemInput}
-            rows={3}
           />
         ) : (
-          <p 
-            className={styles.categoryGridItemName}
-            onClick={() => {
-              setEditValue(product.name);
-              setIsEditing(true);
-            }}
-            title="Kliknij aby edytować (pełna nazwa)"
-          >
-            {shortName}
-          </p>
+          <div className={styles.categoryGridItemInfo}>
+            <p 
+              className={styles.categoryGridItemName}
+              onClick={() => {
+                setEditValue(product.name);
+                setIsEditing(true);
+              }}
+              title="Kliknij aby edytować"
+            >
+              {shortName}
+            </p>
+            <div className={styles.categoryGridItemMeta}>
+              <span className={styles.categoryGridPrice}>${product.price}</span>
+              <span className={`${styles.badge} ${styles[`batchBadge_${product.batch}`]}`}>
+                {product.batch}
+              </span>
+              {product.isPinned && <span className={styles.categoryGridPinBadge}>📌</span>}
+              {product.isHidden && <span className={styles.categoryGridHiddenBadge}>🙈</span>}
+            </div>
+          </div>
         )}
-        
-        <div className={styles.categoryGridItemMeta}>
-          <span className={styles.categoryGridPrice}>${product.price}</span>
-          <span className={`${styles.badge} ${styles[`batchBadge_${product.batch}`]}`}>
-            {product.batch}
-          </span>
-        </div>
       </div>
     </div>
   );

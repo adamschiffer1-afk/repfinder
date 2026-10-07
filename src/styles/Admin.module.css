@@ -1735,17 +1735,16 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.97);
-  backdrop-filter: blur(8px);
+  background: #000;
   z-index: 9999;
   overflow-y: auto;
-  padding: 20px;
+  padding: 0;
 }
 
 .categoryGridContainer {
-  max-width: 1800px;
-  margin: 0 auto;
-  min-height: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  padding: 20px 40px;
 }
 
 .categoryGridHeader {
@@ -1753,14 +1752,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
-  padding: 20px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.08);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(12px);
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .categoryGridHeader h2 {
@@ -1773,8 +1766,8 @@
 }
 
 .categoryGridClose {
-  background: rgba(239,68,68,0.15);
-  border: 1px solid rgba(239,68,68,0.3);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -1785,99 +1778,79 @@
 }
 
 .categoryGridClose:hover {
-  background: rgba(239,68,68,0.25);
+  background: rgba(255,255,255,0.12);
   transform: translateY(-1px);
 }
 
 .categoryGridContent {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  padding-bottom: 40px;
+  gap: 2px;
+  background: rgba(255,255,255,0.05);
+  padding: 2px;
+  border-radius: 8px;
 }
 
 .categoryGridItem {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.2s ease;
+  background: rgba(255,255,255,0.02);
+  padding: 12px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.2s ease;
+  border-radius: 6px;
 }
 
 .categoryGridItem:hover {
   background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.15);
-  transform: translateY(-2px);
 }
 
 .categoryGridItemImage {
-  position: relative;
-  width: 100%;
-  padding-top: 100%; /* 1:1 aspect ratio */
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
   background: rgba(0,0,0,0.3);
   cursor: pointer;
   overflow: hidden;
+  border-radius: 6px;
+  position: relative;
 }
 
 .categoryGridItemImage img {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .categoryGridItemImage:hover img {
-  transform: scale(1.05);
-}
-
-.categoryGridPinBadge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(8px);
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.categoryGridHiddenBadge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(239,68,68,0.3);
-  backdrop-filter: blur(8px);
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 14px;
+  transform: scale(1.1);
 }
 
 .categoryGridItemContent {
-  padding: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.categoryGridItemInfo {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  flex: 1;
+  gap: 6px;
 }
 
 .categoryGridItemName {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: white;
-  line-height: 1.4;
+  line-height: 1.3;
   cursor: pointer;
   transition: color 0.2s ease;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 60px;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .categoryGridItemName:hover {
@@ -1886,61 +1859,67 @@
 
 .categoryGridItemInput {
   width: 100%;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 8px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 6px;
   color: white;
   font-size: 13px;
-  padding: 10px;
-  resize: vertical;
+  padding: 8px;
   font-family: inherit;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .categoryGridItemInput:focus {
   outline: none;
-  border-color: rgba(255,255,255,0.4);
-  background: rgba(0,0,0,0.5);
+  border-color: rgba(255,255,255,0.5);
+  background: rgba(0,0,0,0.6);
 }
 
 .categoryGridItemMeta {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 8px;
-  margin-top: auto;
+  flex-wrap: wrap;
 }
 
 .categoryGridPrice {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
-  color: white;
+  color: #4ade80;
+}
+
+.categoryGridPinBadge,
+.categoryGridHiddenBadge {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.1);
+}
+
+.categoryGridHiddenBadge {
+  background: rgba(239,68,68,0.2);
 }
 
 /* Responsive */
-@media (max-width: 1400px) {
+@media (max-width: 1600px) {
   .categoryGridContent {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
   .categoryGridContent {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .categoryGridHeader h2 {
-    font-size: 24px;
+  .categoryGridContainer {
+    padding: 20px;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .categoryGridContent {
     grid-template-columns: 1fr;
-  }
-  
-  .categoryGridOverlay {
-    padding: 12px;
   }
   
   .categoryGridHeader {
@@ -1951,5 +1930,9 @@
   
   .categoryGridClose {
     width: 100%;
+  }
+  
+  .categoryGridHeader h2 {
+    font-size: 24px;
   }
 }
