@@ -110,7 +110,7 @@ export default function ProductsPage() {
   const [customMax, setCustomMax] = useState('');
   const priceDropdownRef = useRef(null);
   // Get currency conversion utilities
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currency, rates } = useCurrency();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const searchRef = useRef(null);
   const observerRef = useRef(null);
@@ -378,20 +378,27 @@ export default function ProductsPage() {
     }, 200);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, selectedCategories, allProducts, sortBy, selectedPriceRange, customMin, customMax]);
+  }, [searchQuery, selectedCategories, allProducts, sortBy, selectedPriceRange, customMin, customMax, currency, rates]);
 
   // Helper function to apply price filter
   const applyPriceFilter = (products) => {
     if (selectedPriceRange === 'all') return products;
     
+    // Get exchange rate for current currency
+    const rate = rates[currency] || 1;
+    
     if (selectedPriceRange === 'custom') {
       const min = parseFloat(customMin) || 0;
       const max = parseFloat(customMax) || Infinity;
-      return products.filter(p => p.price >= min && p.price <= max);
+      // Custom range is in displayed currency, need to convert to USD for comparison
+      return products.filter(p => {
+        const priceInCurrency = p.price * rate;
+        return priceInCurrency >= min && priceInCurrency <= max;
+      });
     }
     
-    // Predefined ranges (in USD - products are stored in USD)
-    const ranges = {
+    // Predefined ranges in USD (will be converted to display currency)
+    const rangesUSD = {
       'under-10': [0, 10],
       '10-20': [10, 20],
       '20-40': [20, 40],
@@ -399,8 +406,22 @@ export default function ProductsPage() {
       'over-100': [100, Infinity]
     };
     
-    const [min, max] = ranges[selectedPriceRange] || [0, Infinity];
-    return products.filter(p => p.price >= min && p.price <= max);
+    const [minUSD, maxUSD] = rangesUSD[selectedPriceRange] || [0, Infinity];
+    
+    return products.filter(p => p.price >= minUSD && p.price <= maxUSD);
+  };
+
+  // Helper function to format price range labels in current currency
+  const formatRangeLabel = (minUSD, maxUSD) => {
+    const rate = rates[currency] || 1;
+    const symbol = currency === 'USD' ? '$' : currency === 'PLN' ? 'zł' : '¥';
+    
+    const min = Math.round(minUSD * rate);
+    const max = maxUSD === Infinity ? null : Math.round(maxUSD * rate);
+    
+    if (max === null) return `Over ${symbol}${min}`;
+    if (min === 0) return `Under ${symbol}${max}`;
+    return `${symbol}${min} - ${symbol}${max}`;
   };
 
   // Helper function to apply sorting
@@ -720,11 +741,11 @@ export default function ProductsPage() {
                 </svg>
                 <span className={styles.catBtnLabel}>
                   {selectedPriceRange === 'all' ? 'All Prices' :
-                   selectedPriceRange === 'under-10' ? 'Under $10' :
-                   selectedPriceRange === '10-20' ? '$10 - $20' :
-                   selectedPriceRange === '20-40' ? '$20 - $40' :
-                   selectedPriceRange === '40-100' ? '$40 - $100' :
-                   selectedPriceRange === 'over-100' ? 'Over $100' :
+                   selectedPriceRange === 'under-10' ? formatRangeLabel(0, 10) :
+                   selectedPriceRange === '10-20' ? formatRangeLabel(10, 20) :
+                   selectedPriceRange === '20-40' ? formatRangeLabel(20, 40) :
+                   selectedPriceRange === '40-100' ? formatRangeLabel(40, 100) :
+                   selectedPriceRange === 'over-100' ? formatRangeLabel(100, Infinity) :
                    'Custom Range'}
                 </span>
                 <FontAwesomeIcon icon={faChevronDown} className={`${styles.catChevron} ${priceDropdownOpen ? styles.catChevronOpen : ''}`} />
@@ -743,35 +764,35 @@ export default function ProductsPage() {
                     className={`${styles.catDropdownItem} ${selectedPriceRange === 'under-10' ? styles.catDropdownItemActive : ''}`}
                     onClick={() => { setSelectedPriceRange('under-10'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>Under $10</span>
+                    <span className={styles.catItemLabel}>{formatRangeLabel(0, 10)}</span>
                     {selectedPriceRange === 'under-10' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
                     className={`${styles.catDropdownItem} ${selectedPriceRange === '10-20' ? styles.catDropdownItemActive : ''}`}
                     onClick={() => { setSelectedPriceRange('10-20'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>$10 - $20</span>
+                    <span className={styles.catItemLabel}>{formatRangeLabel(10, 20)}</span>
                     {selectedPriceRange === '10-20' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
                     className={`${styles.catDropdownItem} ${selectedPriceRange === '20-40' ? styles.catDropdownItemActive : ''}`}
                     onClick={() => { setSelectedPriceRange('20-40'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>$20 - $40</span>
+                    <span className={styles.catItemLabel}>{formatRangeLabel(20, 40)}</span>
                     {selectedPriceRange === '20-40' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
                     className={`${styles.catDropdownItem} ${selectedPriceRange === '40-100' ? styles.catDropdownItemActive : ''}`}
                     onClick={() => { setSelectedPriceRange('40-100'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>$40 - $100</span>
+                    <span className={styles.catItemLabel}>{formatRangeLabel(40, 100)}</span>
                     {selectedPriceRange === '40-100' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
                     className={`${styles.catDropdownItem} ${selectedPriceRange === 'over-100' ? styles.catDropdownItemActive : ''}`}
                     onClick={() => { setSelectedPriceRange('over-100'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>Over $100</span>
+                    <span className={styles.catItemLabel}>{formatRangeLabel(100, Infinity)}</span>
                     {selectedPriceRange === 'over-100' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   
