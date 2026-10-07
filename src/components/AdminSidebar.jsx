@@ -9,6 +9,7 @@ const NAV = [
   { href: '/admin-99x-hsd/products',  label: 'Produkty',    icon: '📦' },
   { href: '/admin-99x-hsd/stats',     label: 'Statystyki',  icon: '📈' },
   { href: '/admin-99x-hsd/users',     label: 'Użytkownicy', icon: '👥' },
+  { href: '/admin-99x-hsd/settings',  label: 'Ustawienia',  icon: '⚙️' },
 ];
 
 export default function AdminSidebar() {
