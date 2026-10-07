@@ -26,7 +26,7 @@ const USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) Apple
 // Retry configuration
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 2000; // 2 seconds between retries
-const REQUEST_DELAY = 150; // 150ms delay between requests to avoid rate limiting
+const REQUEST_DELAY = 1000; // 1 second delay between requests to avoid rate limiting
 
 /**
  * Sleep helper for delays
@@ -186,9 +186,19 @@ export async function POST(request) {
     // Process each product
     console.log(`\n📦 STARTING TEMPLATE IMPORT: ${products.length} products\n`);
     
-    for (let i = 0; i < products.length; i++) {
-      const product = products[i];
-      console.log(`[${i + 1}/${products.length}] Processing: ${product.name}`);
+    // Process in batches of 20 to avoid timeouts
+    const BATCH_SIZE = 20;
+    
+    for (let batchStart = 0; batchStart < products.length; batchStart += BATCH_SIZE) {
+      const batchEnd = Math.min(batchStart + BATCH_SIZE, products.length);
+      const batch = products.slice(batchStart, batchEnd);
+      
+      console.log(`\n🔄 Processing batch ${Math.floor(batchStart / BATCH_SIZE) + 1}/${Math.ceil(products.length / BATCH_SIZE)} (${batchStart + 1}-${batchEnd})`);
+    
+    for (let i = 0; i < batch.length; i++) {
+      const product = batch[i];
+      const globalIndex = batchStart + i;
+      console.log(`[${globalIndex + 1}/${products.length}] Processing: ${product.name}`);
       
       try {
         // Add delay between requests to avoid rate limiting
@@ -270,7 +280,7 @@ export async function POST(request) {
             itemId: updated.id
           });
           updated++;
-          console.log(`✅ [${i + 1}/${products.length}] Updated: ${finalName} (ID: ${updated.id})`);
+          console.log(`✅ [${globalIndex + 1}/${products.length}] Updated: ${finalName} (ID: ${updated.id})`);
         } else {
           // Create new product
           const productData = {
@@ -301,11 +311,11 @@ export async function POST(request) {
             itemId: newProduct.id
           });
           created++;
-          console.log(`✅ [${i + 1}/${products.length}] Created: ${finalName} (ID: ${newProduct.id})`);
+          console.log(`✅ [${globalIndex + 1}/${products.length}] Created: ${finalName} (ID: ${newProduct.id})`);
         }
 
       } catch (error) {
-        console.error(`❌ [${i + 1}/${products.length}] Error processing ${product.name}:`, error.message);
+        console.error(`❌ [${globalIndex + 1}/${products.length}] Error processing ${product.name}:`, error.message);
         results.push({
           status: 'error',
           message: error.message,
@@ -314,6 +324,13 @@ export async function POST(request) {
         });
         failures++;
       }
+    }
+    
+    // Add delay between batches
+    if (batchEnd < products.length) {
+      console.log(`⏸️  Waiting 3 seconds before next batch...`);
+      await sleep(3000);
+    }
     }
 
     console.log(`\n✨ TEMPLATE IMPORT COMPLETED: Created ${created} | Updated ${updated} | Failed ${failures}\n`);
