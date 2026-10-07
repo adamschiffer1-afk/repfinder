@@ -219,16 +219,13 @@
 }
 
 .adminModal {
-  background: linear-gradient(135deg, rgba(18,18,20,0.98), rgba(10,10,12,0.98));
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: #0a0a0a;
   padding: 32px;
   border-radius: 16px;
   width: 100%;
   max-width: 600px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.8), 
-              inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.9);
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -251,11 +248,11 @@
 .adminModal input, 
 .adminModal select, 
 .adminModal textarea {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 13px 16px;
   border-radius: 10px;
-  color: #fff;
+  color: #ededed;
   color-scheme: dark;
   font: inherit;
   font-size: 14px;
@@ -266,9 +263,8 @@
 .adminModal select:focus, 
 .adminModal textarea:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .adminModal input::placeholder,
@@ -281,13 +277,8 @@
 }
 
 .adminModal select option {
-  background: #121214;
-  color: #fff;
-}
-
-.adminModal select option:checked {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: #0a0a0a;
+  color: #ededed;
 }
 
 .adminModal label {
@@ -320,16 +311,15 @@
 }
 
 .modalActions button[type="submit"] {
-  background: linear-gradient(130deg, rgba(255,255,255,0.15), rgba(255,255,255,0.08));
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #fff;
+  color: #000;
+  border: none;
 }
 
 .modalActions button[type="submit"]:hover:not(:disabled) {
-  background: linear-gradient(130deg, rgba(255,255,255,0.2), rgba(255,255,255,0.12));
-  border-color: rgba(255, 255, 255, 0.3);
+  background: #fdfcff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 16px rgba(255,255,255,0.2);
 }
 
 .modalActions button[type="button"] {
