@@ -67,10 +67,18 @@ export default function HeroSection() {
     const saved = localStorage.getItem('preferredAgent');
     if (saved) setPreferredAgent(saved);
     
-    fetch('/api/products?limit=12&sort=pinned_order', { cache: 'no-store' })
-      .then(r => r.ok ? r.json() : [])
-      .then(data => Array.isArray(data) && data.length >= 6 && setProducts(data.slice(0, 12)))
-      .catch(() => {});
+    fetch('/api/products?pinned=true&limit=12', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : { products: [] })
+      .then(data => {
+        const prods = data.products || data || [];
+        if (Array.isArray(prods) && prods.length >= 6) {
+          setProducts(prods.slice(0, 12));
+        } else {
+          // If no pinned products, use fallback
+          setProducts(FALLBACK);
+        }
+      })
+      .catch(() => setProducts(FALLBACK));
   }, []);
 
   const getAgentLink = (product, agentName) => {
