@@ -301,6 +301,12 @@ export default function ManageProducts() {
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [bulkText, setBulkText] = useState('');
   
+  // Category Grid Modal state
+  const [showCategoryGrid, setShowCategoryGrid] = useState(false);
+  const [categoryGridProducts, setCategoryGridProducts] = useState([]);
+  const [categoryGridLoading, setCategoryGridLoading] = useState(false);
+  const [selectedCategoryName, setSelectedCategoryName] = useState('');
+  
   // Backup/Restore state
   const [backupData, setBackupData] = useState(null);
   const [backupLoading, setBackupLoading] = useState(false);
@@ -942,13 +948,50 @@ export default function ManageProducts() {
       if (res.ok) {
         showToast('Nazwa i kategoria zaktualizowane!', 'success');
         fetchProducts(currentPage);
+        // Update category grid if open
+        if (showCategoryGrid) {
+          fetchCategoryProducts(selectedCategoryName);
+        }
       } else {
         showToast('Błąd aktualizacji nazwy.', 'error');
       }
     } catch (err) {
       showToast('Błąd połączenia.', 'error');
     }
-  }, [currentPage, fetchProducts, showToast]);
+  }, [currentPage, fetchProducts, showToast, showCategoryGrid, selectedCategoryName]);
+
+  // Open category grid modal
+  const openCategoryGrid = useCallback(async (category) => {
+    setSelectedCategoryName(category);
+    setShowCategoryGrid(true);
+    setCategoryGridLoading(true);
+    
+    try {
+      const res = await fetch(`/api/products?category=${encodeURIComponent(category)}&limit=1000&admin=true`);
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      setCategoryGridProducts(Array.isArray(data) ? data : data.products || []);
+    } catch (err) {
+      showToast('Błąd pobierania produktów kategorii', 'error');
+      setCategoryGridProducts([]);
+    } finally {
+      setCategoryGridLoading(false);
+    }
+  }, [showToast]);
+
+  const fetchCategoryProducts = useCallback(async (category) => {
+    setCategoryGridLoading(true);
+    try {
+      const res = await fetch(`/api/products?category=${encodeURIComponent(category)}&limit=1000&admin=true`);
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      setCategoryGridProducts(Array.isArray(data) ? data : data.products || []);
+    } catch (err) {
+      showToast('Błąd pobierania produktów kategorii', 'error');
+    } finally {
+      setCategoryGridLoading(false);
+    }
+  }, [showToast]);
 
   // Backup & Delete All Products
   const handleBackupAndDeleteAll = useCallback(() => {
@@ -1130,6 +1173,8 @@ export default function ManageProducts() {
                   key={cat} 
                   className={`${styles.filterTag} ${filterCategory === cat ? styles.filterTagActive : ''}`} 
                   onClick={() => setFilterCategory(cat)}
+                  onDoubleClick={() => openCategoryGrid(cat)}
+                  title="Kliknij dwukrotnie aby otworzyć grid edycji"
                 >
                   {cat}
                 </button>
@@ -1831,6 +1876,128 @@ export default function ManageProducts() {
           showToast={showToast}
         />
       )}
+
+      {/* Category Grid Modal - Full Screen */}
+      {showCategoryGrid && (
+        <div className={styles.categoryGridOverlay}>
+          <div className={styles.categoryGridContainer}>
+            <div className={styles.categoryGridHeader}>
+              <h2>
+                <span style={{ textTransform: 'uppercase', fontWeight: '800' }}>{selectedCategoryName}</span>
+                <span className={styles.productsBadge}>{categoryGridProducts.length}</span>
+              </h2>
+              <button 
+                className={styles.categoryGridClose}
+                onClick={() => setShowCategoryGrid(false)}
+              >
+                × Zamknij
+              </button>
+            </div>
+
+            {categoryGridLoading ? (
+              <div className={styles.spinnerContainer}>
+                <div className={styles.loadingSpinner}></div>
+                <p style={{ marginTop: '10px' }}>Ładowanie produktów...</p>
+              </div>
+            ) : (
+              <div className={styles.categoryGridContent}>
+                {categoryGridProducts.map((product) => (
+                  <CategoryGridItem
+                    key={product._id}
+                    product={product}
+                    onNameSave={handleNameSave}
+                    onImageClick={handleImageClick}
+                    showToast={showToast}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Category Grid Item Component
+function CategoryGridItem({ product, onNameSave, onImageClick, showToast }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(product.name);
+
+  // Extract short name (remove brand/batch info after second image link)
+  const getShortName = (fullName) => {
+    // Remove yupoo/imgur links and everything after them
+    const cleanName = fullName
+      .replace(/https?:\/\/[^\s]+/gi, '')
+      .replace(/\(.*?\)/g, '')
+      .trim();
+    return cleanName || fullName;
+  };
+
+  const shortName = getShortName(product.name);
+
+  const handleSave = () => {
+    if (editValue.trim() !== product.name && editValue.trim()) {
+      onNameSave(product._id, editValue.trim());
+      setIsEditing(false);
+    } else {
+      setIsEditing(false);
+    }
+  };
+
+  return (
+    <div className={styles.categoryGridItem}>
+      <div 
+        className={styles.categoryGridItemImage}
+        onClick={() => onImageClick(product.image)}
+      >
+        <img src={product.image} alt={shortName} />
+        {product.isPinned && (
+          <span className={styles.categoryGridPinBadge}>📌</span>
+        )}
+        {product.isHidden && (
+          <span className={styles.categoryGridHiddenBadge}>🙈</span>
+        )}
+      </div>
+      
+      <div className={styles.categoryGridItemContent}>
+        {isEditing ? (
+          <textarea
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={handleSave}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.ctrlKey) {
+                handleSave();
+              } else if (e.key === 'Escape') {
+                setEditValue(product.name);
+                setIsEditing(false);
+              }
+            }}
+            autoFocus
+            className={styles.categoryGridItemInput}
+            rows={3}
+          />
+        ) : (
+          <p 
+            className={styles.categoryGridItemName}
+            onClick={() => {
+              setEditValue(product.name);
+              setIsEditing(true);
+            }}
+            title="Kliknij aby edytować (pełna nazwa)"
+          >
+            {shortName}
+          </p>
+        )}
+        
+        <div className={styles.categoryGridItemMeta}>
+          <span className={styles.categoryGridPrice}>${product.price}</span>
+          <span className={`${styles.badge} ${styles[`batchBadge_${product.batch}`]}`}>
+            {product.batch}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
