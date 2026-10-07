@@ -1923,6 +1923,7 @@ export default function ManageProducts() {
 function CategoryGridItem({ product, onNameSave, onImageClick, showToast }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(product.name);
+  const [isChangingCategory, setIsChangingCategory] = useState(false);
 
   // Extract short name (remove brand/batch info after second image link)
   const getShortName = (fullName) => {
@@ -1942,6 +1943,32 @@ function CategoryGridItem({ product, onNameSave, onImageClick, showToast }) {
       setIsEditing(false);
     } else {
       setIsEditing(false);
+    }
+  };
+
+  const handleCategoryChange = async (newCategory) => {
+    if (newCategory === product.category) {
+      setIsChangingCategory(false);
+      return;
+    }
+    
+    try {
+      const res = await fetch(`/api/products/${product._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: newCategory })
+      });
+      
+      if (res.ok) {
+        showToast(`Kategoria zmieniona na: ${newCategory}`, 'success');
+        // Update local state
+        product.category = newCategory;
+        setIsChangingCategory(false);
+      } else {
+        showToast('Błąd zmiany kategorii', 'error');
+      }
+    } catch (err) {
+      showToast('Błąd połączenia', 'error');
     }
   };
 
@@ -1986,6 +2013,29 @@ function CategoryGridItem({ product, onNameSave, onImageClick, showToast }) {
             </p>
             <div className={styles.categoryGridItemMeta}>
               <span className={styles.categoryGridPrice}>${product.price}</span>
+              
+              {isChangingCategory ? (
+                <select
+                  value={product.category}
+                  onChange={(e) => handleCategoryChange(e.target.value)}
+                  onBlur={() => setIsChangingCategory(false)}
+                  autoFocus
+                  className={styles.categoryGridCategorySelect}
+                >
+                  {PRODUCT_CATEGORIES.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              ) : (
+                <span 
+                  className={styles.categoryGridCategoryBadge}
+                  onClick={() => setIsChangingCategory(true)}
+                  title="Kliknij aby zmienić kategorię"
+                >
+                  {product.category}
+                </span>
+              )}
+              
               <span className={`${styles.badge} ${styles[`batchBadge_${product.batch}`]}`}>
                 {product.batch}
               </span>
