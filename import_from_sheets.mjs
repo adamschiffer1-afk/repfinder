@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { config } from 'dotenv';
+import { readFileSync } from 'fs';
 
 // Load environment variables
 config({ path: '.env.local' });
@@ -10,8 +11,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-const SHEET_ID = '1eR9coenezlmkepTlycJWld9aw0R9XWFHWu_MuE7Un-o';
-const SHEET_GID = '522778948';
+const CSV_FILE = 'jackets_import.csv'; // Local CSV file
 const AFFILIATE_CODE = 'xfrostyy';
 const USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1';
 
@@ -52,42 +52,9 @@ function getAffiliateLink(weidianUrl) {
   return `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=${AFFILIATE_CODE}`;
 }
 
+// All products in jackets_import.csv are jackets
 function detectCategory(name) {
-  const nameLower = name.toLowerCase();
-  
-  if (nameLower.includes('shoe') || nameLower.includes('sneaker') || nameLower.includes('nike') || 
-      nameLower.includes('jordan') || nameLower.includes('dunk') || nameLower.includes('yeezy') ||
-      nameLower.includes('balance') || nameLower.includes('af1') || nameLower.includes('aj1')) {
-    return 'shoes';
-  }
-  
-  if (nameLower.includes('hoodie') || nameLower.includes('sweatshirt')) {
-    return 'hoodies';
-  }
-  
-  if (nameLower.includes('t-shirt') || nameLower.includes('tee ') || nameLower.includes('shirt')) {
-    return 't-shirts';
-  }
-  
-  if (nameLower.includes('pant') || nameLower.includes('jean') || nameLower.includes('trouser') || 
-      nameLower.includes('cargo')) {
-    return 'pants';
-  }
-  
-  if (nameLower.includes('short')) {
-    return 'shorts';
-  }
-  
-  if (nameLower.includes('jacket') || nameLower.includes('coat') || nameLower.includes('puffer') ||
-      nameLower.includes('windbreaker')) {
-    return 'jackets';
-  }
-  
-  if (nameLower.includes('set') || nameLower.includes('tracksuit') || nameLower.includes('outfit')) {
-    return 'sets';
-  }
-  
-  return 'accessories';
+  return 'jackets';
 }
 
 async function scrapeWeidianProduct(weidianUrl, retryCount = 0) {
@@ -145,12 +112,11 @@ async function scrapeWeidianProduct(weidianUrl, retryCount = 0) {
   }
 }
 
-async function fetchGoogleSheets() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
-  console.log('📥 Fetching Google Sheets data...\n');
+async function fetchLocalCSV() {
+  console.log(`📥 Reading local CSV file: ${CSV_FILE}\n`);
   
-  const response = await axios.get(url);
-  const lines = response.data.split('\n').filter(line => line.trim());
+  const csvContent = readFileSync(CSV_FILE, 'utf-8');
+  const lines = csvContent.split('\n').filter(line => line.trim());
   
   const products = [];
   for (let i = 1; i < lines.length; i++) { // Skip header
@@ -160,16 +126,16 @@ async function fetchGoogleSheets() {
     }
   }
   
-  console.log(`✅ Found ${products.length} products in sheet\n`);
+  console.log(`✅ Found ${products.length} products in CSV\n`);
   return products;
 }
 
 async function importProducts() {
-  console.log('🚀 STARTING IMPORT FROM GOOGLE SHEETS\n');
+  console.log('🚀 STARTING IMPORT OF JACKETS FROM LOCAL CSV\n');
   console.log('='.repeat(60));
   
   try {
-    const products = await fetchGoogleSheets();
+    const products = await fetchLocalCSV();
     
     let created = 0;
     let updated = 0;
