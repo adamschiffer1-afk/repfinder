@@ -208,15 +208,29 @@
   color: rgba(255,255,255,.3);
 }
 
-.marqueeSeeAll {
+.productBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
   font-size: 12px;
-  font-weight: 500;
-  color: rgba(255,255,255,.3);
+  font-weight: 600;
+  color: #000;
+  background: #fff;
+  border-radius: 8px;
   text-decoration: none;
-  transition: color .15s;
+  transition: all 0.2s ease;
 }
 
-.marqueeSeeAll:hover { color: rgba(255,255,255,.7); }
+.productBtn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.productBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+}
 
 .marqueeStack {
   display: flex;
