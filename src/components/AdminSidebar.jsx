@@ -8,8 +8,6 @@ const NAV = [
   { href: '/admin-99x-hsd',           label: 'Dashboard',   icon: '🏠' },
   { href: '/admin-99x-hsd/products',  label: 'Produkty',    icon: '📦' },
   { href: '/admin-99x-hsd/stats',     label: 'Statystyki',  icon: '📈' },
-  { href: '/admin-99x-hsd/kakobuy',   label: 'Kakobuy',     icon: '🛒' },
-  { href: '/admin-99x-hsd/earnings',  label: 'Zarobki',     icon: '💰' },
   { href: '/admin-99x-hsd/users',     label: 'Użytkownicy', icon: '👥' },
 ];
 

@@ -39,109 +39,106 @@ export default async function AdminDashboard() {
       <header className={styles.adminHeader}>
         <div>
           <h1>Witaj, {session?.user?.name || 'Admin'} 👋</h1>
-          <p>Oto co dzieje się dzisiaj na Twojej stronie.</p>
+          <p className={styles.headerSubtitle}>Przegląd zarządzania produktami RepFinder</p>
         </div>
         <div className={styles.adminNav}>
           <Link href="/admin-99x-hsd/products" className={styles.navLink}>Zarządzaj Produktami</Link>
-          <form action="/api/auth/signout" method="POST">
-             <button type="submit" className={styles.logoutBtn}>Wyloguj</button>
-          </form>
         </div>
       </header>
 
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <h3>Wszystkie Produkty</h3>
-          <p className={styles.statValue}>{productCount || 0}</p>
-          <span className={styles.statLabel}>Aktywnych w bazie</span>
+          <div className={styles.statIcon}>📦</div>
+          <div className={styles.statContent}>
+            <h3>Wszystkie Produkty</h3>
+            <p className={styles.statValue}>{productCount || 0}</p>
+            <span className={styles.statLabel}>Aktywnych w bazie</span>
+          </div>
         </div>
 
         <div className={styles.statCard}>
-          <h3>Wizyty na stronie</h3>
-          <p className={styles.statValue}>{totalVisits || 0}</p>
-          <span className={styles.statLabel}>Całkowita liczba wejść</span>
+          <div className={styles.statIcon}>👁️</div>
+          <div className={styles.statContent}>
+            <h3>Wizyty na stronie</h3>
+            <p className={styles.statValue}>{totalVisits || 0}</p>
+            <span className={styles.statLabel}>Całkowita liczba wejść</span>
+          </div>
         </div>
 
         <div className={styles.statCard}>
-          <h3>Wszystkie Kliknięcia</h3>
-          <p className={styles.statValue}>{totalClicks || 0}</p>
-          <span className={styles.statLabel}>Zainteresowanie produktami</span>
+          <div className={styles.statIcon}>🖱️</div>
+          <div className={styles.statContent}>
+            <h3>Wszystkie Kliknięcia</h3>
+            <p className={styles.statValue}>{totalClicks || 0}</p>
+            <span className={styles.statLabel}>Zainteresowanie produktami</span>
+          </div>
         </div>
       </div>
 
       <div className={styles.dashboardGrid}>
         {/* Top Products */}
-        <div className={styles.recentActivity}>
-          <h2>🔥 Top 5 Produktów</h2>
-          <div className={styles.activityList}>
+        <div className={styles.dashboardCard}>
+          <div className={styles.cardHeader}>
+            <h2>🔥 Top 5 Produktów</h2>
+          </div>
+          <div className={styles.cardContent}>
             {topProducts?.length > 0 ? topProducts.map((p, i) => (
-              <div key={i} className={styles.activityItem}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div key={i} className={styles.listItem}>
+                <div className={styles.itemInfo}>
                   {p.productInfo?.image && (
-                    <img src={p.productInfo.image} alt="" style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} />
+                    <img src={p.productInfo.image} alt="" className={styles.itemImage} />
                   )}
-                  <span style={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span className={styles.itemName}>
                     {p.productInfo?.name || 'Nieznany produkt'}
                   </span>
                 </div>
-                <span className={styles.badge}>{p.count} kliknięć</span>
+                <span className={styles.itemBadge}>{p.count} kliknięć</span>
               </div>
-            )) : <p className={styles.noDataText}>Brak danych o kliknięciach.</p>}
+            )) : <p className={styles.emptyText}>Brak danych o kliknięciach.</p>}
           </div>
         </div>
 
         {/* Top Agents */}
-        <div className={styles.recentActivity}>
-          <h2>📦 Najczęściej wybierany Agent</h2>
-          <div className={styles.activityList}>
+        <div className={styles.dashboardCard}>
+          <div className={styles.cardHeader}>
+            <h2>📦 Najczęściej wybierany Agent</h2>
+          </div>
+          <div className={styles.cardContent}>
             {topAgents?.length > 0 ? topAgents.map((a, i) => (
-              <div key={i} className={styles.activityItem}>
-                <span style={{ textTransform: 'capitalize', fontWeight: 600 }}>{a._id || 'Auto'}</span>
-                <span className={styles.badge}>{a.count} razy</span>
+              <div key={i} className={styles.listItem}>
+                <span className={styles.itemName} style={{ textTransform: 'capitalize', fontWeight: 600 }}>{a._id || 'Auto'}</span>
+                <span className={styles.itemBadge}>{a.count} razy</span>
               </div>
-            )) : <p className={styles.noDataText}>Brak danych o agentach.</p>}
+            )) : <p className={styles.emptyText}>Brak danych o agentach.</p>}
           </div>
         </div>
 
         {/* Recent Activity Log */}
-        <div className={styles.recentActivity} style={{ gridColumn: 'span 2' }}>
-          <h2>🕒 Ostatnia Aktywność</h2>
-          <div className={styles.activityList}>
+        <div className={styles.dashboardCard} style={{ gridColumn: 'span 2' }}>
+          <div className={styles.cardHeader}>
+            <h2>🕒 Ostatnia Aktywność</h2>
+          </div>
+          <div className={styles.cardContent}>
             {recentActivity?.length > 0 ? recentActivity.map((act, i) => (
-              <div key={i} className={styles.activityItem}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  <span style={{ fontWeight: 600, color: '#fff' }}>
+              <div key={i} className={styles.activityRow}>
+                <div>
+                  <span className={styles.activityType}>
                     {act.type === 'page_view' ? '👀 Wizyta na stronie' : '🖱️ Kliknięcie produktu'}
                   </span>
-                  <span style={{ fontSize: '11px', opacity: 0.6 }}>
+                  <div className={styles.activityDetails}>
                     {act.path || '/'} • {parseUA(act.userAgent)}
-                  </span>
+                  </div>
                   {act.productId && (
-                    <span style={{ fontSize: '12px', color: '#a78bfa' }}>
+                    <div className={styles.activityProduct}>
                       Produkt: {act.productId.name}
-                    </span>
+                    </div>
                   )}
                 </div>
-                <span style={{ fontSize: '11px', opacity: 0.5 }}>
+                <span className={styles.activityTime}>
                   {new Date(act.timestamp).toLocaleString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                 </span>
               </div>
-            )) : <p className={styles.noDataText}>Brak ostatniej aktywności.</p>}
-          </div>
-        </div>
-
-        {/* Top Browsers */}
-        <div className={styles.recentActivity} style={{ gridColumn: 'span 2' }}>
-          <h2>🌐 Przeglądarki i Systemy</h2>
-          <div className={styles.activityList}>
-            {topBrowsers?.length > 0 ? topBrowsers.map((b, i) => (
-              <div key={i} className={styles.activityItem}>
-                <span style={{ fontWeight: 500 }}>
-                  {parseUA(b._id)}
-                </span>
-                <span className={styles.badge}>{b.count} wizyt</span>
-              </div>
-            )) : <p className={styles.noDataText}>Brak danych o przeglądarkach.</p>}
+            )) : <p className={styles.emptyText}>Brak ostatniej aktywności.</p>}
           </div>
         </div>
       </div>
