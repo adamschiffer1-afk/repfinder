@@ -37,14 +37,27 @@ export default function SettingsPage() {
   };
 
   const handleAddProduct = async () => {
-    if (!selectedProductId) return;
+    console.log('🔵 handleAddProduct called');
+    console.log('selectedProductId:', selectedProductId);
+    
+    if (!selectedProductId) {
+      console.log('❌ No product selected');
+      return;
+    }
 
     try {
       setSaving(true);
       const product = allProducts.find(p => p.id === selectedProductId);
       
-      if (!product) return;
+      console.log('📦 Found product:', product);
+      
+      if (!product) {
+        console.log('❌ Product not found in allProducts');
+        return;
+      }
 
+      console.log('🚀 Sending PATCH request...');
+      
       // Pin the product
       const res = await fetch(`/api/products/${selectedProductId}`, {
         method: 'PATCH',
@@ -55,13 +68,20 @@ export default function SettingsPage() {
         })
       });
 
+      console.log('📡 Response status:', res.status);
+      
       if (res.ok) {
+        const data = await res.json();
+        console.log('✅ Success:', data);
         await fetchData();
         setShowAddModal(false);
         setSelectedProductId('');
+      } else {
+        const errorData = await res.json();
+        console.error('❌ Error response:', errorData);
       }
     } catch (error) {
-      console.error('Error adding product:', error);
+      console.error('❌ Error adding product:', error);
     } finally {
       setSaving(false);
     }
