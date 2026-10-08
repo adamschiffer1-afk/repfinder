@@ -578,14 +578,19 @@ export default function TemplateImportModal({
               }}
             >
               <option value="auto" style={{ background: '#0a0a0a', color: 'white' }}>🤖 {t('Auto-detect (AI)')}</option>
-              <option value="shoes" style={{ background: '#0a0a0a', color: 'white' }}>👟 {t('Shoes')}</option>
-              <option value="hoodies" style={{ background: '#0a0a0a', color: 'white' }}>🧥 {t('Hoodies')}</option>
-              <option value="t-shirts" style={{ background: '#0a0a0a', color: 'white' }}>👕 {t('T-Shirts')}</option>
-              <option value="pants" style={{ background: '#0a0a0a', color: 'white' }}>👖 {t('Pants')}</option>
-              <option value="shorts" style={{ background: '#0a0a0a', color: 'white' }}>🩳 {t('Shorts')}</option>
-              <option value="jackets" style={{ background: '#0a0a0a', color: 'white' }}>🧥 {t('Jackets')}</option>
-              <option value="sets" style={{ background: '#0a0a0a', color: 'white' }}>👔 {t('Sets')}</option>
-              <option value="accessories" style={{ background: '#0a0a0a', color: 'white' }}>⌚ {t('Accessories')}</option>
+              <option value="shoes" style={{ background: '#0a0a0a', color: 'white' }}>👟 Shoes</option>
+              <option value="hoodies" style={{ background: '#0a0a0a', color: 'white' }}>🧥 Hoodies</option>
+              <option value="t-shirts" style={{ background: '#0a0a0a', color: 'white' }}>👕 T-Shirts</option>
+              <option value="longsleeve" style={{ background: '#0a0a0a', color: 'white' }}>👔 Longsleeve</option>
+              <option value="pants" style={{ background: '#0a0a0a', color: 'white' }}>👖 Pants</option>
+              <option value="shorts" style={{ background: '#0a0a0a', color: 'white' }}>🩳 Shorts</option>
+              <option value="jackets" style={{ background: '#0a0a0a', color: 'white' }}>🧥 Jackets</option>
+              <option value="sets" style={{ background: '#0a0a0a', color: 'white' }}>👔 Sets</option>
+              <option value="bags" style={{ background: '#0a0a0a', color: 'white' }}>🎒 Bags & backpacks</option>
+              <option value="accessories" style={{ background: '#0a0a0a', color: 'white' }}>⌚ Accessories</option>
+              <option value="headwear" style={{ background: '#0a0a0a', color: 'white' }}>🧢 Headwear</option>
+              <option value="belts" style={{ background: '#0a0a0a', color: 'white' }}>👖 Belts</option>
+              <option value="electronics" style={{ background: '#0a0a0a', color: 'white' }}>📱 Electronics</option>
             </select>
             {bulkCategory !== 'auto' && (
               <div style={{ fontSize: '11px', color: '#60a5fa', fontStyle: 'italic' }}>

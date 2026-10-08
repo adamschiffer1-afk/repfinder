@@ -267,11 +267,8 @@ export default function ProductsPage() {
 
   // Filter products based on search query and categories
   useEffect(() => {
-    // Skip transition on initial load
+    // Skip if no products loaded yet
     if (allProducts.length === 0) return;
-    
-    // Only trigger transition if something actually changed
-    if (searchQuery.trim() === '' && selectedCategories.length === 0 && filteredProducts.length === allProducts.length) return;
     
     setIsTransitioning(true);
     
