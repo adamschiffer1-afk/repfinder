@@ -10,6 +10,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Load popular products and all products
   useEffect(() => {
@@ -203,40 +204,140 @@ export default function SettingsPage() {
       {/* Add Product Modal */}
       {showAddModal && (
         <div className={styles.modalOverlay} onClick={() => setShowAddModal(false)}>
-          <div className={styles.adminModal} onClick={(e) => e.stopPropagation()}>
-            <h2>Dodaj produkt do Popular Products</h2>
+          <div className={styles.adminModal} style={{ maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }} onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ marginBottom: '16px' }}>Dodaj produkty do Popular Products</h2>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>
-                Wybierz produkt
-              </label>
-              
+            {/* Search Input */}
+            <div style={{ marginBottom: '16px' }}>
+              <input
+                type="text"
+                placeholder="🔍 Szukaj produktu..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={styles.settingsSelect}
+                style={{ width: '100%' }}
+              />
+            </div>
+
+            {/* Product List */}
+            <div style={{ 
+              flex: 1, 
+              overflowY: 'auto', 
+              marginBottom: '16px',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '8px',
+              background: 'rgba(255,255,255,0.03)'
+            }}>
               {availableProducts.length === 0 ? (
-                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}>
-                  Wszystkie produkty zostały już dodane
-                </p>
+                <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
+                  <p>Wszystkie produkty zostały już dodane</p>
+                </div>
               ) : (
-                <select
-                  value={selectedProductId}
-                  onChange={(e) => setSelectedProductId(e.target.value)}
-                  className={styles.settingsSelect}
-                >
-                  <option value="">-- Wybierz produkt --</option>
-                  {availableProducts.map(product => (
-                    <option key={product.id} value={product.id}>
-                      {product.name} - ${product.price} ({product.batch})
-                    </option>
-                  ))}
-                </select>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  {availableProducts
+                    .filter(p => 
+                      searchQuery === '' || 
+                      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      p.category.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map(product => (
+                      <div
+                        key={product.id}
+                        onClick={() => {
+                          if (selectedProductId === product.id) {
+                            setSelectedProductId('');
+                          } else {
+                            setSelectedProductId(product.id);
+                          }
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          padding: '12px',
+                          cursor: 'pointer',
+                          background: selectedProductId === product.id ? 'rgba(255,255,255,0.1)' : 'transparent',
+                          borderBottom: '1px solid rgba(255,255,255,0.05)',
+                          transition: 'background 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (selectedProductId !== product.id) {
+                            e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (selectedProductId !== product.id) {
+                            e.currentTarget.style.background = 'transparent';
+                          }
+                        }}
+                      >
+                        {/* Checkbox */}
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          border: '2px solid rgba(255,255,255,0.3)',
+                          borderRadius: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: selectedProductId === product.id ? '#fff' : 'transparent',
+                          flexShrink: 0
+                        }}>
+                          {selectedProductId === product.id && (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </div>
+
+                        {/* Product Image */}
+                        <img 
+                          src={product.image} 
+                          alt={product.name}
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            objectFit: 'cover',
+                            borderRadius: '6px',
+                            flexShrink: 0
+                          }}
+                        />
+
+                        {/* Product Info */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ 
+                            fontSize: '14px', 
+                            fontWeight: 600, 
+                            color: '#fff',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {product.name}
+                          </div>
+                          <div style={{ 
+                            fontSize: '12px', 
+                            color: 'rgba(255,255,255,0.6)',
+                            marginTop: '2px'
+                          }}>
+                            ${product.price} • {product.category} • {product.batch}
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
               )}
             </div>
 
+            {/* Actions */}
             <div className={styles.modalActions}>
               <button
                 type="button"
                 onClick={() => {
                   setShowAddModal(false);
                   setSelectedProductId('');
+                  setSearchQuery('');
                 }}
                 disabled={saving}
               >
@@ -247,7 +348,7 @@ export default function SettingsPage() {
                 onClick={handleAddProduct}
                 disabled={saving || !selectedProductId}
               >
-                {saving ? 'Dodawanie...' : 'Dodaj'}
+                {saving ? 'Dodawanie...' : 'Dodaj zaznaczony'}
               </button>
             </div>
           </div>
