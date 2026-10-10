@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTshirt, faSocks, faRunning, faGlasses, faShoppingBag, faBriefcase, faRing, faBolt, faFire, faBoxOpen, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 
 // Memoized ProductCard component
-const ProductCard = memo(({ product, index, formatPrice, onOpenModal }) => {
+const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink }) => {
   return (
     <div className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
       {/* Product Image */}
@@ -47,18 +47,30 @@ const ProductCard = memo(({ product, index, formatPrice, onOpenModal }) => {
           <div className={styles.primaryPrice}>{formatPrice(product.price)}</div>
         </div>
 
-        {/* Action Button */}
-        <button 
-          className={styles.agentButton}
-          onClick={() => onOpenModal(product)}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <path d="M16 10a4 4 0 0 1-8 0" />
-          </svg>
-          Zobacz produkt
-        </button>
+        {/* Action Buttons */}
+        <div className={styles.buttonRow}>
+          <button 
+            className={styles.agentButton}
+            onClick={() => onOpenModal(product)}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+            Zobacz produkt
+          </button>
+          <button 
+            className={styles.copyButton}
+            onClick={() => onCopyLink(product)}
+            title="Copy product link"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -117,6 +129,16 @@ export default function ProductsPage() {
   const sentinelRef = useRef(null);
   
   const PRODUCTS_PER_LOAD = 20;
+
+  // Helper function to shuffle array randomly
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
 
   // Fetch products from API
   useEffect(() => {
@@ -178,8 +200,15 @@ export default function ProductsPage() {
         console.log('Fetched products from API, count:', products.length);
         console.log('Pinned products:', products.filter(p => p.isPinned).length);
         setAllProducts(products);
+        
         // Initially show all products EXCEPT popular batch (default to "All" tab)
-        setFilteredProducts(products.filter(p => p.batch !== 'popular'));
+        // Separate pinned and non-pinned products
+        const initialFiltered = products.filter(p => p.batch !== 'popular');
+        const pinnedProducts = initialFiltered.filter(p => p.isPinned);
+        const nonPinnedProducts = shuffleArray(initialFiltered.filter(p => !p.isPinned));
+        
+        // Combine: pinned first (in order), then randomized non-pinned
+        setFilteredProducts([...pinnedProducts, ...nonPinnedProducts]);
         
       } catch (err) {
         console.error('Error fetching products:', err);
@@ -317,8 +346,11 @@ export default function ProductsPage() {
                 
                 // Apply price filter
                 products = applyPriceFilter(products);
-                // Apply sorting
-                products = applySorting(products);
+                
+                // Always randomize products (but keep pinned at top)
+                const pinnedProducts = products.filter(p => p.isPinned);
+                const nonPinnedProducts = shuffleArray(products.filter(p => !p.isPinned));
+                products = [...pinnedProducts, ...nonPinnedProducts];
                 
                 console.log(`Fetched ${products.length} products for category: ${category}`);
                 setFilteredProducts(products);
@@ -337,8 +369,11 @@ export default function ProductsPage() {
               
               // Apply price filter
               filtered = applyPriceFilter(filtered);
-              // Apply sorting
-              filtered = applySorting(filtered);
+              
+              // Always randomize products (but keep pinned at top)
+              const pinnedFiltered = filtered.filter(p => p.isPinned);
+              const nonPinnedFiltered = shuffleArray(filtered.filter(p => !p.isPinned));
+              filtered = [...pinnedFiltered, ...nonPinnedFiltered];
               
               setFilteredProducts(filtered);
               setDisplayCount(PRODUCTS_PER_LOAD);
@@ -360,8 +395,10 @@ export default function ProductsPage() {
       // Apply price filter
       filtered = applyPriceFilter(filtered);
       
-      // Apply sorting
-      filtered = applySorting(filtered);
+      // Always randomize products for all categories (but keep pinned at top)
+      const pinnedFiltered = filtered.filter(p => p.isPinned);
+      const nonPinnedFiltered = shuffleArray(filtered.filter(p => !p.isPinned));
+      filtered = [...pinnedFiltered, ...nonPinnedFiltered];
       
       setFilteredProducts(filtered);
       setDisplayCount(PRODUCTS_PER_LOAD);
@@ -510,6 +547,20 @@ export default function ProductsPage() {
     
     // Open in new tab
     window.open(agentLink, '_blank');
+  };
+
+  const handleCopyLink = (product) => {
+    // Extract weidian URL from product.link
+    const weidianMatch = product.link?.match(/url=([^&]+)/);
+    const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(weidianUrl).then(() => {
+      toast.success('Link skopiowany do schowka!');
+    }).catch((err) => {
+      console.error('Failed to copy:', err);
+      toast.error('Nie udało się skopiować linku');
+    });
   };
 
   const handleCloseAgentModal = () => {
@@ -857,6 +908,7 @@ export default function ProductsPage() {
                 index={index}
                 formatPrice={formatPrice}
                 onOpenModal={handleOpenAgentModal}
+                onCopyLink={handleCopyLink}
               />
             ))
           )}
