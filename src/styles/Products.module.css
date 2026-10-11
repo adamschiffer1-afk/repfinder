@@ -420,7 +420,7 @@
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
 }
 
@@ -434,12 +434,15 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   letter-spacing: -.1px;
+  flex: 1;
+  min-width: 0;
 }
 
 .priceRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   margin-top: auto;
 }
 
@@ -448,6 +451,7 @@
   font-weight: 700;
   color: #fff;
   letter-spacing: -.3px;
+  flex-shrink: 0;
 }
 
 .convertedPrice {

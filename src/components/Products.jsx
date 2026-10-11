@@ -762,10 +762,9 @@ export default function ProductsPage() {
 
                 {/* Product Info */}
                 <div className={styles.cardContent}>
-                  <h3 className={styles.productName}>{product.name}</h3>
-                  
-                  {/* Price Display */}
+                  {/* Name and Price in one row */}
                   <div className={styles.priceRow}>
+                    <h3 className={styles.productName}>{product.name}</h3>
                     <div className={styles.primaryPrice}>{formatPrice(product.price)}</div>
                   </div>
 
