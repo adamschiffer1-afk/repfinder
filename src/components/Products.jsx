@@ -40,11 +40,9 @@ const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink
 
       {/* Product Info */}
       <div className={styles.cardContent}>
-        <h3 className={styles.productName}>{product.name}</h3>
-        
-        {/* Price Display */}
         <div className={styles.priceRow}>
           <div className={styles.primaryPrice}>{formatPrice(product.price)}</div>
+          <h3 className={styles.productName}>{product.name}</h3>
         </div>
 
         {/* Action Buttons */}
