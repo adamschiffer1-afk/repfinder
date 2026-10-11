@@ -59,7 +59,6 @@ export default function HeroSection() {
   const { t } = useLanguage();
   const router  = useRouter();
   const [products, setProducts]   = useState([]);
-  const [selected, setSelected]   = useState(null);
   const [preferredAgent, setPreferredAgent] = useState('KakoBuy');
 
   useEffect(() => {
@@ -100,13 +99,7 @@ export default function HeroSection() {
   };
 
   const handleProductsClick = () => {
-    // Get first pinned product
-    const firstProduct = products.find(p => p.is_pinned) || products[0];
-    if (firstProduct) {
-      window.open(getAgentLink(firstProduct, preferredAgent), '_blank');
-    } else {
-      router.push('/products');
-    }
+    router.push('/products');
   };
 
   const list = products.length >= 6 ? products : FALLBACK;
@@ -170,16 +163,12 @@ export default function HeroSection() {
             </div>
 
             <div className={styles.marqueeStack}>
-              <MarqueeRow items={list} reverse={false} onCardClick={setSelected} />
+              <MarqueeRow items={list} reverse={false} onCardClick={(p) => window.open(getAgentLink(p, preferredAgent), '_blank')} />
             </div>
           </div>
 
         </div>
       </section>
-
-      {selected && (
-        <AgentModal isOpen product={selected} onClose={() => setSelected(null)} />
-      )}
     </>
   );
 }

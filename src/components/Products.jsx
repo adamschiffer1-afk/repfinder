@@ -15,8 +15,8 @@ import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTs
 const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink }) => {
   return (
     <div className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
-      {/* Product Image */}
-      <div className={styles.imageWrapper}>
+      {/* Product Image — click opens agent */}
+      <div className={styles.imageWrapper} onClick={() => onOpenModal(product)} style={{ cursor: 'pointer' }}>
         <Image 
           src={product.image} 
           alt={product.name} 
@@ -417,7 +417,7 @@ export default function ProductsPage() {
     if (selectedPriceRange === 'all') return products;
     
     // Get exchange rate for current currency
-    const rate = rates[currency] || 1;
+    const rate = (rates && rates[currency]) ? rates[currency] : 1;
     
     if (selectedPriceRange === 'custom') {
       const min = parseFloat(customMin) || 0;
@@ -445,7 +445,7 @@ export default function ProductsPage() {
 
   // Helper function to format price range labels in current currency
   const formatRangeLabel = (minUSD, maxUSD) => {
-    const rate = rates[currency] || 1;
+    const rate = (rates && rates[currency]) ? rates[currency] : 1;
     const symbol = currency === 'USD' ? '$' : currency === 'PLN' ? 'zł' : '¥';
     
     const min = Math.round(minUSD * rate);
