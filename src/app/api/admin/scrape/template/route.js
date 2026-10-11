@@ -29,6 +29,43 @@ const RETRY_DELAY = 2000; // 2 seconds between retries
 const REQUEST_DELAY = 150; // 150ms delay between requests to avoid rate limiting
 
 /**
+ * Generate unique slug for product
+ */
+async function generateUniqueSlug(name, productId = null) {
+  let baseSlug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+  
+  if (!baseSlug) baseSlug = "product";
+  
+  let slug = baseSlug;
+  let counter = 1;
+  
+  while (true) {
+    let query = supabaseAdmin.from('products').select('id').eq('slug', slug);
+    
+    if (productId) {
+      query = query.neq('id', productId);
+    }
+    
+    const { data, error } = await query.limit(1);
+    if (error) throw error;
+    
+    if (!data || data.length === 0) break;
+    
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  
+  return slug;
+}
+
+/**
  * Sleep helper for delays
  */
 function sleep(ms) {
@@ -243,6 +280,7 @@ export async function POST(request) {
             category: finalCategory,
             batch: batch || 'best',
             link: affiliateLink,
+            slug: await generateUniqueSlug(finalName, existingProduct.id),
             updated_at: new Date().toISOString()
           };
           
@@ -280,9 +318,12 @@ export async function POST(request) {
             category: finalCategory,
             batch: batch || 'best',
             link: affiliateLink,
+            slug: await generateUniqueSlug(finalName),
             clicks: 0,
             is_pinned: pin || false,
-            pinned_order: (pin && startOrder !== undefined) ? (startOrder + i) : 999999
+            pinned_order: (pin && startOrder !== undefined) ? (startOrder + i) : null,
+            qc_images: [],
+            is_hidden: false
           };
 
           const { data: newProduct, error: insertError } = await supabaseAdmin

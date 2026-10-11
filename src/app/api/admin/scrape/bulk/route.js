@@ -13,6 +13,43 @@ const VALID_REPLACE_MODES = new Set(["none", "pinned", "all"]);
 const USER_AGENT =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1";
 
+/**
+ * Generate unique slug for product
+ */
+async function generateUniqueSlug(name, productId = null) {
+  let baseSlug = name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+  
+  if (!baseSlug) baseSlug = "product";
+  
+  let slug = baseSlug;
+  let counter = 1;
+  
+  while (true) {
+    let query = supabaseAdmin.from('products').select('id').eq('slug', slug);
+    
+    if (productId) {
+      query = query.neq('id', productId);
+    }
+    
+    const { data, error } = await query.limit(1);
+    if (error) throw error;
+    
+    if (!data || data.length === 0) break;
+    
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+  
+  return slug;
+}
+
 const VARIANT_TYPE_MAP = [
   { keywords: ["ĺŤ«čˇŁ", "čżžĺ¸˝ĺŤ«čˇŁ", "hoodie", "hoody", "sweatshirt", "ä¸ŠčˇŁĺ¤–ĺĄ—"], type: "hoodies", label: "Hoodie" },
   { keywords: ["ĺŤ«čŁ¤", "čżĺŠ¨čŁ¤", "é•żčŁ¤", "pants", "trousers", "joggers", "sweatpants"], type: "pants", label: "Pants" },
@@ -229,10 +266,21 @@ async function saveProductsForItem(scrapedProduct, options) {
     }
   }
 
+  // Generate slugs for all products before insertion
+  const productsWithSlugs = await Promise.all(
+    scrapedProduct.productDataList.map(async (productData) => ({
+      ...productData,
+      slug: await generateUniqueSlug(productData.name),
+      qc_images: productData.qc_images || [],
+      is_hidden: productData.is_hidden || false,
+      clicks: productData.clicks || 0
+    }))
+  );
+
   // Insert new products
   const { data: products, error } = await supabaseAdmin
     .from('products')
-    .insert(scrapedProduct.productDataList)
+    .insert(productsWithSlugs)
     .select();
 
   if (error) throw error;

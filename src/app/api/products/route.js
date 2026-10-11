@@ -145,13 +145,27 @@ export async function POST(req) {
     const data = await req.json();
     console.log("POST /api/products - Received data:", JSON.stringify(data, null, 2));
     
-    if (data.name) {
-      data.slug = await generateUniqueSlug(data.name);
-      console.log("POST /api/products - Generated slug:", data.slug);
+    // Map camelCase fields to snake_case for Supabase
+    const supabaseData = {
+      name: data.name,
+      price: parseFloat(data.price) || 0,
+      image: data.image,
+      category: data.category,
+      batch: data.batch,
+      link: data.link,
+      is_pinned: data.isPinned || false,
+      pinned_order: data.isPinned ? (data.pinnedOrder !== null && data.pinnedOrder !== '' && data.pinnedOrder !== undefined ? parseInt(data.pinnedOrder, 10) : 999999) : null,
+      qc_images: data.qcImages || [],
+      is_hidden: data.isHidden || false
+    };
+    
+    if (supabaseData.name) {
+      supabaseData.slug = await generateUniqueSlug(supabaseData.name);
+      console.log("POST /api/products - Generated slug:", supabaseData.slug);
     }
     
-    console.log("POST /api/products - Creating product with data:", JSON.stringify(data, null, 2));
-    const product = await ProductDB.create(data);
+    console.log("POST /api/products - Creating product with data:", JSON.stringify(supabaseData, null, 2));
+    const product = await ProductDB.create(supabaseData);
     console.log("POST /api/products - Product created successfully:", product.id);
     
     return NextResponse.json(product, { status: 201 });

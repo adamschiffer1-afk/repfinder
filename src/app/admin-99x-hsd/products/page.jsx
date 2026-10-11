@@ -863,7 +863,7 @@ export default function ManageProducts() {
     const payload = {
       ...formData,
       isPinned: formData.isPinned,
-      pinnedOrder: formData.isPinned && formData.pinnedOrder !== '' ? parseInt(formData.pinnedOrder, 10) : 999999
+      pinnedOrder: formData.isPinned && formData.pinnedOrder !== '' ? parseInt(formData.pinnedOrder, 10) : (formData.isPinned ? 999999 : null)
     };
 
     const res = await fetch(url, {
@@ -882,7 +882,9 @@ export default function ManageProducts() {
       setSelectedQcIndices([]);
       setBulkColorwayText('');
     } else {
-      showToast('Coś poszło nie tak podczas zapisywania produktu.', 'error');
+      const errorData = await res.json();
+      console.error('Save error:', errorData);
+      showToast(`Coś poszło nie tak podczas zapisywania produktu: ${errorData.details || errorData.error || 'nieznany błąd'}`, 'error');
     }
   };
 

@@ -125,13 +125,26 @@ export const ProductDB = {
 
   // Create new product
   async create(productData) {
+    // Ensure default values for fields that might be missing
+    const dataToInsert = {
+      ...productData,
+      clicks: productData.clicks || 0,
+      is_pinned: productData.is_pinned || false,
+      pinned_order: productData.pinned_order || null,
+      qc_images: productData.qc_images || [],
+      is_hidden: productData.is_hidden || false
+    };
+
     const { data, error } = await supabaseAdmin
       .from('products')
-      .insert([productData])
+      .insert([dataToInsert])
       .select()
       .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase insert error:", error);
+      throw error;
+    }
     
     // Add MongoDB compatibility field
     if (data) {
@@ -139,6 +152,7 @@ export const ProductDB = {
       data.isPinned = data.is_pinned;
       data.pinnedOrder = data.pinned_order;
       data.qcImages = data.qc_images;
+      data.isHidden = data.is_hidden;
     }
     
     return data;

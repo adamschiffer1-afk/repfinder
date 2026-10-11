@@ -110,7 +110,7 @@ export async function PUT(req, { params }) {
     // Map MongoDB field names to Supabase
     const mappedData = {};
     if (data.name !== undefined) mappedData.name = data.name;
-    if (data.price !== undefined) mappedData.price = data.price;
+    if (data.price !== undefined) mappedData.price = parseFloat(data.price) || 0;
     if (data.image !== undefined) mappedData.image = data.image;
     if (data.category !== undefined) mappedData.category = data.category;
     if (data.batch !== undefined) mappedData.batch = data.batch;
