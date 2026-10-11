@@ -1,12 +1,83 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, memo } from 'react';
+import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
-import AgentModal from '@/components/AgentModal';
+import ProductSkeleton from '@/components/ProductSkeleton';
+import EmptyState from '@/components/EmptyState';
+import { useToast } from '@/components/Toast';
 import { categoriesData } from '@/data/productsData';
 import { useCurrency } from '@/hooks/useCurrency';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTshirt, faSocks, faRunning, faGlasses, faShoppingBag, faBriefcase, faRing, faBolt, faFire, faBoxOpen, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
+
+// Memoized ProductCard component
+const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink }) => {
+  return (
+    <div className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
+      {/* Product Image */}
+      <div className={styles.imageWrapper}>
+        <Image 
+          src={product.image} 
+          alt={product.name} 
+          className={styles.productImage}
+          width={300}
+          height={300}
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvc3ZnPg=="
+        />
+        {product.batch === 'best' && (
+          <div className={styles.batchBadge}>Best Batch</div>
+        )}
+        {product.batch === 'popular' && (
+          <div className={`${styles.batchBadge} ${styles.popularBadge}`}>🔥 Popular</div>
+        )}
+        {product.category && (
+          <div className={styles.categoryBadge}>{product.category}</div>
+        )}
+      </div>
+
+      {/* Product Info */}
+      <div className={styles.cardContent}>
+        <h3 className={styles.productName}>{product.name}</h3>
+        
+        {/* Price Display */}
+        <div className={styles.priceRow}>
+          <div className={styles.primaryPrice}>{formatPrice(product.price)}</div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className={styles.buttonRow}>
+          <button 
+            className={styles.agentButton}
+            onClick={() => onOpenModal(product)}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+            Zobacz produkt
+          </button>
+          <button 
+            className={styles.copyButton}
+            onClick={() => onCopyLink(product)}
+            title="Copy product link"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}, (prevProps, nextProps) => {
+  return prevProps.product._id === nextProps.product._id && 
+         prevProps.index === nextProps.index;
+});
 
 const CATEGORY_ICONS = {
   'shoes':          faShoePrints,
@@ -25,13 +96,13 @@ const CATEGORY_ICONS = {
 };
 
 export default function ProductsPage() {
+  const toast = useToast();
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [displayCount, setDisplayCount] = useState(20);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -51,7 +122,7 @@ export default function ProductsPage() {
   const [customMax, setCustomMax] = useState('');
   const priceDropdownRef = useRef(null);
   // Get currency conversion utilities
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currency, rates } = useCurrency();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const searchRef = useRef(null);
   const observerRef = useRef(null);
@@ -59,11 +130,23 @@ export default function ProductsPage() {
   
   const PRODUCTS_PER_LOAD = 20;
 
+  // Helper function to shuffle array randomly
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
   // Fetch products from API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        
+        console.log('[Products] Fetching from /api/products...');
         
         // Fetch from API with proper sorting
         const res = await fetch('/api/products?limit=1000&sort=pinned_order', {
@@ -72,11 +155,17 @@ export default function ProductsPage() {
             'Cache-Control': 'no-cache'
           }
         });
+        
+        console.log('[Products] Response status:', res.status);
+        
         if (!res.ok) {
           throw new Error('Failed to fetch products');
         }
         
         const data = await res.json();
+        
+        console.log('[Products] Received data:', data);
+        console.log('[Products] Number of products:', data.length);
         
         // Transform Supabase format to expected format
         const products = data.map(p => ({
@@ -111,8 +200,15 @@ export default function ProductsPage() {
         console.log('Fetched products from API, count:', products.length);
         console.log('Pinned products:', products.filter(p => p.isPinned).length);
         setAllProducts(products);
+        
         // Initially show all products EXCEPT popular batch (default to "All" tab)
-        setFilteredProducts(products.filter(p => p.batch !== 'popular'));
+        // Separate pinned and non-pinned products
+        const initialFiltered = products.filter(p => p.batch !== 'popular');
+        const pinnedProducts = initialFiltered.filter(p => p.isPinned);
+        const nonPinnedProducts = shuffleArray(initialFiltered.filter(p => !p.isPinned));
+        
+        // Combine: pinned first (in order), then randomized non-pinned
+        setFilteredProducts([...pinnedProducts, ...nonPinnedProducts]);
         
       } catch (err) {
         console.error('Error fetching products:', err);
@@ -200,11 +296,8 @@ export default function ProductsPage() {
 
   // Filter products based on search query and categories
   useEffect(() => {
-    // Skip transition on initial load
+    // Skip if no products loaded yet
     if (allProducts.length === 0) return;
-    
-    // Only trigger transition if something actually changed
-    if (searchQuery.trim() === '' && selectedCategories.length === 0 && filteredProducts.length === allProducts.length) return;
     
     setIsTransitioning(true);
     
@@ -253,8 +346,11 @@ export default function ProductsPage() {
                 
                 // Apply price filter
                 products = applyPriceFilter(products);
-                // Apply sorting
-                products = applySorting(products);
+                
+                // Always randomize products (but keep pinned at top)
+                const pinnedProducts = products.filter(p => p.isPinned);
+                const nonPinnedProducts = shuffleArray(products.filter(p => !p.isPinned));
+                products = [...pinnedProducts, ...nonPinnedProducts];
                 
                 console.log(`Fetched ${products.length} products for category: ${category}`);
                 setFilteredProducts(products);
@@ -273,8 +369,11 @@ export default function ProductsPage() {
               
               // Apply price filter
               filtered = applyPriceFilter(filtered);
-              // Apply sorting
-              filtered = applySorting(filtered);
+              
+              // Always randomize products (but keep pinned at top)
+              const pinnedFiltered = filtered.filter(p => p.isPinned);
+              const nonPinnedFiltered = shuffleArray(filtered.filter(p => !p.isPinned));
+              filtered = [...pinnedFiltered, ...nonPinnedFiltered];
               
               setFilteredProducts(filtered);
               setDisplayCount(PRODUCTS_PER_LOAD);
@@ -296,8 +395,10 @@ export default function ProductsPage() {
       // Apply price filter
       filtered = applyPriceFilter(filtered);
       
-      // Apply sorting
-      filtered = applySorting(filtered);
+      // Always randomize products for all categories (but keep pinned at top)
+      const pinnedFiltered = filtered.filter(p => p.isPinned);
+      const nonPinnedFiltered = shuffleArray(filtered.filter(p => !p.isPinned));
+      filtered = [...pinnedFiltered, ...nonPinnedFiltered];
       
       setFilteredProducts(filtered);
       setDisplayCount(PRODUCTS_PER_LOAD);
@@ -311,29 +412,50 @@ export default function ProductsPage() {
     }, 200);
 
     return () => clearTimeout(timer);
-  }, [searchQuery, selectedCategories, allProducts, sortBy, selectedPriceRange, customMin, customMax]);
+  }, [searchQuery, selectedCategories, allProducts, sortBy, selectedPriceRange, customMin, customMax, currency, rates]);
 
   // Helper function to apply price filter
   const applyPriceFilter = (products) => {
     if (selectedPriceRange === 'all') return products;
     
+    // Get exchange rate for current currency
+    const rate = rates[currency] || 1;
+    
     if (selectedPriceRange === 'custom') {
       const min = parseFloat(customMin) || 0;
       const max = parseFloat(customMax) || Infinity;
-      return products.filter(p => p.price >= min && p.price <= max);
+      // Custom range is in displayed currency, need to convert to USD for comparison
+      return products.filter(p => {
+        const priceInCurrency = p.price * rate;
+        return priceInCurrency >= min && priceInCurrency <= max;
+      });
     }
     
-    // Predefined ranges (in PLN or base currency)
-    const ranges = {
-      'under-29': [0, 29],
-      '29-58': [29, 58],
-      '58-116': [58, 116],
-      '116-290': [116, 290],
-      'over-290': [290, Infinity]
+    // Predefined ranges in USD (will be converted to display currency)
+    const rangesUSD = {
+      'under-10': [0, 10],
+      '10-20': [10, 20],
+      '20-40': [20, 40],
+      '40-100': [40, 100],
+      'over-100': [100, Infinity]
     };
     
-    const [min, max] = ranges[selectedPriceRange] || [0, Infinity];
-    return products.filter(p => p.price >= min && p.price <= max);
+    const [minUSD, maxUSD] = rangesUSD[selectedPriceRange] || [0, Infinity];
+    
+    return products.filter(p => p.price >= minUSD && p.price <= maxUSD);
+  };
+
+  // Helper function to format price range labels in current currency
+  const formatRangeLabel = (minUSD, maxUSD) => {
+    const rate = rates[currency] || 1;
+    const symbol = currency === 'USD' ? '$' : currency === 'PLN' ? 'zł' : '¥';
+    
+    const min = Math.round(minUSD * rate);
+    const max = maxUSD === Infinity ? null : Math.round(maxUSD * rate);
+    
+    if (max === null) return `Over ${symbol}${min}`;
+    if (min === 0) return `Under ${symbol}${max}`;
+    return `${symbol}${min} - ${symbol}${max}`;
   };
 
   // Helper function to apply sorting
@@ -402,11 +524,47 @@ export default function ProductsPage() {
   const hasMore = displayCount < filteredProducts.length;
 
   const handleOpenAgentModal = (product) => {
-    setSelectedProduct(product);
+    // Get preferred agent from localStorage
+    const preferredAgent = localStorage.getItem('preferredAgent') || 'KakoBuy';
+    
+    // Extract weidian URL from product.link
+    const weidianMatch = product.link?.match(/url=([^&]+)/);
+    const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
+    
+    // Generate agent link
+    const agentUrls = {
+      'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=xfrostyy`,
+      'ACBuy': `https://www.allchinabuy.com/en/page/buy?nTag=Home-search&from=search-input&url=${encodeURIComponent(weidianUrl)}`,
+      'USFans': `https://www.usfans.net/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'GTBuy': `https://www.gtbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'OopBuy': `https://www.oopbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'MuleBuy': `https://www.mulebuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'HipoBuy': `https://www.hipobuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`
+    };
+    
+    const agentLink = agentUrls[preferredAgent] || agentUrls['KakoBuy'];
+    
+    // Open in new tab
+    window.open(agentLink, '_blank');
+  };
+
+  const handleCopyLink = (product) => {
+    // Extract weidian URL from product.link
+    const weidianMatch = product.link?.match(/url=([^&]+)/);
+    const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(weidianUrl).then(() => {
+      toast.success('Link skopiowany do schowka!');
+    }).catch((err) => {
+      console.error('Failed to copy:', err);
+      toast.error('Nie udało się skopiować linku');
+    });
   };
 
   const handleCloseAgentModal = () => {
-    setSelectedProduct(null);
+    // No longer needed but keep for compatibility
   };
 
   const handleSuggestionClick = (suggestion) => {
@@ -631,11 +789,11 @@ export default function ProductsPage() {
                 </svg>
                 <span className={styles.catBtnLabel}>
                   {selectedPriceRange === 'all' ? 'All Prices' :
-                   selectedPriceRange === 'under-29' ? 'Under 29 PLN' :
-                   selectedPriceRange === '29-58' ? '29 - 58 PLN' :
-                   selectedPriceRange === '58-116' ? '58 - 116 PLN' :
-                   selectedPriceRange === '116-290' ? '116 - 290 PLN' :
-                   selectedPriceRange === 'over-290' ? 'Over 290 PLN' :
+                   selectedPriceRange === 'under-10' ? formatRangeLabel(0, 10) :
+                   selectedPriceRange === '10-20' ? formatRangeLabel(10, 20) :
+                   selectedPriceRange === '20-40' ? formatRangeLabel(20, 40) :
+                   selectedPriceRange === '40-100' ? formatRangeLabel(40, 100) :
+                   selectedPriceRange === 'over-100' ? formatRangeLabel(100, Infinity) :
                    'Custom Range'}
                 </span>
                 <FontAwesomeIcon icon={faChevronDown} className={`${styles.catChevron} ${priceDropdownOpen ? styles.catChevronOpen : ''}`} />
@@ -651,39 +809,39 @@ export default function ProductsPage() {
                     {selectedPriceRange === 'all' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'under-29' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('under-29'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'under-10' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('under-10'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>Under 29 PLN</span>
-                    {selectedPriceRange === 'under-29' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>{formatRangeLabel(0, 10)}</span>
+                    {selectedPriceRange === 'under-10' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === '29-58' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('29-58'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === '10-20' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('10-20'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>29 - 58 PLN</span>
-                    {selectedPriceRange === '29-58' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>{formatRangeLabel(10, 20)}</span>
+                    {selectedPriceRange === '10-20' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === '58-116' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('58-116'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === '20-40' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('20-40'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>58 - 116 PLN</span>
-                    {selectedPriceRange === '58-116' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>{formatRangeLabel(20, 40)}</span>
+                    {selectedPriceRange === '20-40' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === '116-290' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('116-290'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === '40-100' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('40-100'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>116 - 290 PLN</span>
-                    {selectedPriceRange === '116-290' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>{formatRangeLabel(40, 100)}</span>
+                    {selectedPriceRange === '40-100' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   <button
-                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'over-290' ? styles.catDropdownItemActive : ''}`}
-                    onClick={() => { setSelectedPriceRange('over-290'); setPriceDropdownOpen(false); }}
+                    className={`${styles.catDropdownItem} ${selectedPriceRange === 'over-100' ? styles.catDropdownItemActive : ''}`}
+                    onClick={() => { setSelectedPriceRange('over-100'); setPriceDropdownOpen(false); }}
                   >
-                    <span className={styles.catItemLabel}>Over 290 PLN</span>
-                    {selectedPriceRange === 'over-290' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
+                    <span className={styles.catItemLabel}>{formatRangeLabel(100, Infinity)}</span>
+                    {selectedPriceRange === 'over-100' && <FontAwesomeIcon icon={faCheck} className={styles.catItemCheck} />}
                   </button>
                   
                   {/* Custom Range Divider */}
@@ -731,57 +889,27 @@ export default function ProductsPage() {
           {loading ? (
             // Loading skeleton
             Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className={styles.skeletonCard}>
-                <div className={styles.skeletonImage}></div>
-                <div className={styles.skeletonText}></div>
-                <div className={styles.skeletonText} style={{ width: '60%' }}></div>
-              </div>
+              <ProductSkeleton key={i} />
             ))
           ) : displayedProducts.length === 0 ? (
             // No results message
-            <div className={styles.noResults}>
-              <p>No products found for "{searchQuery}"</p>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <EmptyState 
+                title={searchQuery ? `No products found for "${searchQuery}"` : "No products found"}
+                description="Try adjusting your filters or search query to find what you're looking for."
+              />
             </div>
           ) : (
             // Product Cards
             displayedProducts.map((product, index) => (
-              <div key={`${product._id}-${index}`} className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
-                {/* Product Image */}
-                <div className={styles.imageWrapper}>
-                  <img src={product.image} alt={product.name} className={styles.productImage} />
-                  {product.batch === 'best' && (
-                    <div className={styles.batchBadge}>Best Batch</div>
-                  )}
-                  {product.batch === 'popular' && (
-                    <div className={`${styles.batchBadge} ${styles.popularBadge}`}>🔥 Popular</div>
-                  )}
-                  {product.category && (
-                    <div className={styles.categoryBadge}>{product.category}</div>
-                  )}
-                </div>
-
-                {/* Product Info */}
-                <div className={styles.cardContent}>
-                  {/* Name and Price in one row */}
-                  <div className={styles.priceRow}>
-                    <h3 className={styles.productName}>{product.name}</h3>
-                    <div className={styles.primaryPrice}>{formatPrice(product.price)}</div>
-                  </div>
-
-                  {/* Action Button */}
-                  <button 
-                    className={styles.agentButton}
-                    onClick={() => handleOpenAgentModal(product)}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}>
-                      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                      <line x1="3" y1="6" x2="21" y2="6" />
-                      <path d="M16 10a4 4 0 0 1-8 0" />
-                    </svg>
-                    Zobacz produkt
-                  </button>
-                </div>
-              </div>
+              <ProductCard
+                key={`${product._id}-${index}`}
+                product={product}
+                index={index}
+                formatPrice={formatPrice}
+                onOpenModal={handleOpenAgentModal}
+                onCopyLink={handleCopyLink}
+              />
             ))
           )}
         </div>
@@ -802,15 +930,6 @@ export default function ProductsPage() {
           </div>
         )}
       </div>
-
-      {/* Agent Modal */}
-      {selectedProduct && (
-        <AgentModal 
-          isOpen={true}
-          product={selectedProduct} 
-          onClose={handleCloseAgentModal}
-        />
-      )}
     </>
   );
 }

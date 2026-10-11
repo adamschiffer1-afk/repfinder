@@ -31,6 +31,7 @@ export default function Navbar() {
 
   const [scrolled,      setScrolled]      = useState(false);
   const [visible,       setVisible]       = useState(true);
+  const [lastY,         setLastY]         = useState(0);
   const [toolsOpen,     setToolsOpen]     = useState(false);
   const [langOpen,      setLangOpen]      = useState(false);
   const [mobileOpen,    setMobileOpen]    = useState(false);

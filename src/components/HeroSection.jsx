@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import styles from '@/styles/HeroSection.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faBoxOpen, faShieldAlt } from '@fortawesome/free-solid-svg-icons';
@@ -61,13 +60,54 @@ export default function HeroSection() {
   const router  = useRouter();
   const [products, setProducts]   = useState([]);
   const [selected, setSelected]   = useState(null);
+  const [preferredAgent, setPreferredAgent] = useState('KakoBuy');
 
   useEffect(() => {
-    fetch('/api/products?limit=12&sort=pinned_order', { cache: 'no-store' })
-      .then(r => r.ok ? r.json() : [])
-      .then(data => Array.isArray(data) && data.length >= 6 && setProducts(data.slice(0, 12)))
-      .catch(() => {});
+    // Load preferred agent from localStorage
+    const saved = localStorage.getItem('preferredAgent');
+    if (saved) setPreferredAgent(saved);
+    
+    fetch('/api/products?pinned=true&limit=12', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : { products: [] })
+      .then(data => {
+        const prods = data.products || data || [];
+        if (Array.isArray(prods) && prods.length >= 6) {
+          setProducts(prods.slice(0, 12));
+        } else {
+          // If no pinned products, use fallback
+          setProducts(FALLBACK);
+        }
+      })
+      .catch(() => setProducts(FALLBACK));
   }, []);
+
+  const getAgentLink = (product, agentName) => {
+    // Extract weidian URL from product.link (it's wrapped in kakobuy)
+    const weidianMatch = product.link?.match(/url=([^&]+)/);
+    const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
+    
+    const agentUrls = {
+      'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=xfrostyy`,
+      'ACBuy': `https://www.allchinabuy.com/en/page/buy?nTag=Home-search&from=search-input&url=${encodeURIComponent(weidianUrl)}`,
+      'USFans': `https://www.usfans.net/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'GTBuy': `https://www.gtbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'OopBuy': `https://www.oopbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'MuleBuy': `https://www.mulebuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'HipoBuy': `https://www.hipobuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`
+    };
+    return agentUrls[agentName] || agentUrls['KakoBuy'];
+  };
+
+  const handleProductsClick = () => {
+    // Get first pinned product
+    const firstProduct = products.find(p => p.is_pinned) || products[0];
+    if (firstProduct) {
+      window.open(getAgentLink(firstProduct, preferredAgent), '_blank');
+    } else {
+      router.push('/products');
+    }
+  };
 
   const list = products.length >= 6 ? products : FALLBACK;
 
@@ -88,7 +128,6 @@ export default function HeroSection() {
             <h1 className={`${styles.mainTitle} ${styles.a2}`}>
               {t('hero.title')}<br />
               <span className={styles.gradientText}>{t('hero.titleSpan')}</span>
-              {t('hero.titleSuffix') ? <><br />{t('hero.titleSuffix')}</> : null}
             </h1>
 
             <p className={`${styles.description} ${styles.a3}`}>
@@ -120,7 +159,14 @@ export default function HeroSection() {
           <div className={styles.rightCol}>
             <div className={styles.marqueeHeader}>
               <span className={styles.marqueeLabel}>{t('hero.popularProducts')}</span>
-              <Link href="/products" className={styles.marqueeSeeAll}>{t('hero.seeAll')} →</Link>
+              <button onClick={handleProductsClick} className={styles.productBtn}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <path d="M16 10a4 4 0 0 1-8 0" />
+                </svg>
+                Zobacz produkty
+              </button>
             </div>
 
             <div className={styles.marqueeStack}>

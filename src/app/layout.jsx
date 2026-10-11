@@ -4,6 +4,7 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
+import '@/styles/focus.css';
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import PageTransition from '@/components/PageTransition';
@@ -14,6 +15,8 @@ import { AuthProvider } from '@/context/AuthContext';
 import SessionProviderWrapper from '@/components/SessionProviderWrapper';
 import AnalyticsTracker from '@/components/AnalyticsTracker';
 import MobileNav from '@/components/MobileNav';
+import { ToastProvider } from '@/components/Toast';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 config.autoAddCss = false;
 
@@ -65,25 +68,29 @@ export default async function RootLayout({ children }) {
         <link rel="icon" href="/images/nowelogo.png" type="image/png" />
       </head>
       <body className={inter.variable}>
-        <SessionProviderWrapper>
-          <AuthProvider>
-            <Suspense fallback={null}>
-              <AnalyticsTracker />
-            </Suspense>
-            <TopLoadingBar />
-            <LanguageProvider>
-              <Navbar />
-              <UserWidget />
-              <MobileNav />
-              <PageTransition>
-                <main>
-                  {children}
-                </main>
-              </PageTransition>
-              <Footer />
-            </LanguageProvider>
-          </AuthProvider>
-        </SessionProviderWrapper>
+        <ErrorBoundary>
+          <SessionProviderWrapper>
+            <AuthProvider>
+              <ToastProvider>
+                <Suspense fallback={null}>
+                  <AnalyticsTracker />
+                </Suspense>
+                <TopLoadingBar />
+                <LanguageProvider>
+                  <Navbar />
+                  <UserWidget />
+                  <MobileNav />
+                  <PageTransition>
+                    <main>
+                      {children}
+                    </main>
+                  </PageTransition>
+                  <Footer />
+                </LanguageProvider>
+              </ToastProvider>
+            </AuthProvider>
+          </SessionProviderWrapper>
+        </ErrorBoundary>
       </body>
     </html>
   );

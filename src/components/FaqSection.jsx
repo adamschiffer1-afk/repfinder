@@ -2,10 +2,12 @@
 
 import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from '@/styles/FaqSection.module.css';
+import useScrollAnimation from '@/hooks/useScrollAnimation';
 
 export default function FaqSection() {
   const [activeFaq, setActiveFaq] = useState(null);
   const answerRefs = useRef([]);
+  const [sectionRef, isVisible] = useScrollAnimation({ threshold: 0.15 });
 
   const toggleFaq = (index) => {
     setActiveFaq(activeFaq === index ? null : index);
@@ -45,7 +47,7 @@ export default function FaqSection() {
   }, [activeFaq]);
 
   return (
-    <section className={styles.section}>
+    <section ref={sectionRef} className={`${styles.section} ${isVisible ? styles.visible : ''}`}>
       <div className={styles.inner}>
         <div className={styles.header}>
           <p className={styles.eyebrow}>Pomoc</p>
@@ -59,6 +61,7 @@ export default function FaqSection() {
             <div
               key={index}
               className={`${styles.faqItem} ${activeFaq === index ? styles.faqItemActive : ''}`}
+              style={{ '--delay': `${index * 0.08}s` }}
             >
               <button
                 className={styles.faqQuestion}

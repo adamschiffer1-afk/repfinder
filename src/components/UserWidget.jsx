@@ -28,14 +28,21 @@ export default function UserWidget() {
   const isAdmin = session.user.isAdmin === true;
   const userRole = isAdmin ? t('auth.administrator') : t('auth.user');
 
+  const toggleExpand = () => {
+    setIsExpanded(prev => !prev);
+  };
+
   return (
     <div className={styles.widgetContainer}>
       <div 
-        className={styles.widget}
+        className={`${styles.widget} ${isExpanded ? styles.expanded : ''}`}
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
       >
-        <div className={styles.userProfile}>
+        <div 
+          className={styles.userProfile}
+          onClick={toggleExpand}
+        >
           {/* Avatar po lewej */}
           <div className={styles.avatarSection}>
             {session.user.image ? (
@@ -53,40 +60,45 @@ export default function UserWidget() {
             <div className={styles.statusDot}></div>
           </div>
 
-          {/* Info po prawej */}
-          <div className={styles.userInfo}>
-            <div className={styles.userName}>
-              {session.user.name || 'User'}
+          {/* Info po prawej - zwijana na mobile */}
+          {isExpanded && (
+            <div className={styles.userInfo}>
+              <div className={styles.userName}>
+                {session.user.name || 'User'}
+              </div>
+              <div className={styles.userEmail}>
+                {session.user.email || 'No email'}
+              </div>
+              <div className={`${styles.roleBadge} ${isAdmin ? styles.adminBadge : styles.userBadge}`}>
+                {userRole}
+              </div>
             </div>
-            <div className={styles.userEmail}>
-              {session.user.email || 'No email'}
-            </div>
-            <div className={`${styles.roleBadge} ${isAdmin ? styles.adminBadge : styles.userBadge}`}>
-              {userRole}
-            </div>
+          )}
+
+          {/* Chevron indicator */}
+          <div className={styles.expandIndicator}>
+            <FontAwesomeIcon 
+              icon={faChevronUp} 
+              className={`${styles.chevron} ${isExpanded ? styles.chevronExpanded : ''}`}
+            />
           </div>
         </div>
 
-        {/* Expanded menu on hover */}
+        {/* Expanded menu on hover/click */}
         {isExpanded && (
           <div className={styles.expandedMenu}>
             <button 
               className={styles.logoutBtn}
-              onClick={() => signOut({ callbackUrl: '/' })}
+              onClick={(e) => {
+                e.stopPropagation();
+                signOut({ callbackUrl: '/' });
+              }}
             >
               <FontAwesomeIcon icon={faSignOutAlt} />
               {t('auth.logout')}
             </button>
           </div>
         )}
-
-        {/* Chevron indicator */}
-        <div className={styles.expandIndicator}>
-          <FontAwesomeIcon 
-            icon={faChevronUp} 
-            className={`${styles.chevron} ${isExpanded ? styles.chevronExpanded : ''}`}
-          />
-        </div>
       </div>
     </div>
   );

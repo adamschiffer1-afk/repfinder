@@ -216,6 +216,15 @@
   overscroll-behavior: contain; /* Prevent scroll chaining to parent */
 }
 
+@media (max-width: 768px) {
+  .catDropdownMenu {
+    left: auto;
+    right: 0;
+    width: calc(100vw - 32px); /* Full width minus padding */
+    max-width: 260px; /* But not wider than original */
+  }
+}
+
 .catDropdownMenu::-webkit-scrollbar {
   width: 4px;
 }
@@ -326,18 +335,38 @@
   border-radius: 18px;
   overflow: hidden;
   cursor: pointer;
-  transition: border-color .2s ease, transform .2s ease, background .2s ease;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   animation: cardIn .5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   opacity: 0;
+  position: relative;
+}
+
+.productCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(255,255,255,.04), transparent 60%);
+  opacity: 0;
+  transition: opacity .3s ease;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .productCard:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255,255,255,.15);
-  background: rgba(255,255,255,.05);
-  box-shadow: 0 12px 32px rgba(0,0,0,.4);
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.06);
+  box-shadow: 0 20px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.05);
+}
+
+.productCard:hover::before {
+  opacity: 1;
+}
+
+.productCard:active {
+  transform: translateY(-2px) scale(1.01);
 }
 
 @keyframes cardIn {
@@ -381,38 +410,41 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  padding: 4px 9px;
-  background: rgba(34,197,94,.15);
-  border: 1px solid rgba(34,197,94,.25);
-  border-radius: 7px;
-  color: #4ade80;
-  font-size: 11px;
+  padding: 5px 12px;
+  background: rgba(34,197,94,.25);
+  border: 1.5px solid rgba(34,197,94,.5);
+  border-radius: 8px;
+  color: #22c55e;
+  font-size: 12px;
   font-weight: 700;
   z-index: 2;
-  letter-spacing: .2px;
+  letter-spacing: .3px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  backdrop-filter: blur(12px);
 }
 
 .popularBadge {
-  background: rgba(255,100,50,.15);
-  border-color: rgba(255,120,60,.3);
-  color: #ff9966;
+  background: rgba(255,100,50,.3);
+  border-color: rgba(255,120,60,.6);
+  color: #ff6b35;
 }
 
 .categoryBadge {
   position: absolute;
   top: 10px;
   right: 10px;
-  padding: 4px 9px;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 7px;
-  color: rgba(255,255,255,.65);
-  font-size: 11px;
-  font-weight: 600;
+  padding: 5px 12px;
+  background: rgba(0,0,0,.75);
+  border: 1.5px solid rgba(255,255,255,.25);
+  border-radius: 8px;
+  color: rgba(255,255,255,.95);
+  font-size: 12px;
+  font-weight: 700;
   z-index: 2;
-  backdrop-filter: blur(8px);
-  letter-spacing: .1px;
+  backdrop-filter: blur(12px);
+  letter-spacing: .3px;
   text-transform: capitalize;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 /* ── Card Content ── */
@@ -420,7 +452,7 @@
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   flex: 1;
 }
 
@@ -434,15 +466,12 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   letter-spacing: -.1px;
-  flex: 1;
-  min-width: 0;
 }
 
 .priceRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
   margin-top: auto;
 }
 
@@ -451,7 +480,6 @@
   font-weight: 700;
   color: #fff;
   letter-spacing: -.3px;
-  flex-shrink: 0;
 }
 
 .convertedPrice {
@@ -460,8 +488,15 @@
 }
 
 /* ── Agent Button ── */
-.agentButton {
+.buttonRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   width: 100%;
+}
+
+.agentButton {
+  flex: 1;
   padding: 10px;
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(255,255,255,.08);
@@ -473,12 +508,43 @@
   cursor: pointer;
   transition: background .15s ease, color .15s ease, border-color .15s ease;
   letter-spacing: -.1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .agentButton:hover {
   background: rgba(255,255,255,.1);
   border-color: rgba(255,255,255,.18);
   color: #fff;
+}
+
+.copyButton {
+  padding: 10px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  color: rgba(255,255,255,.65);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease, border-color .15s ease;
+  letter-spacing: -.1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.copyButton:hover {
+  background: rgba(255,255,255,.1);
+  border-color: rgba(255,255,255,.18);
+  color: #fff;
+}
+
+.copyButton:active {
+  transform: scale(0.95);
 }
 
 /* ── Skeleton ── */
@@ -649,6 +715,7 @@
   .productName { font-size: 12px; }
   .primaryPrice { font-size: 13px; }
   .agentButton { padding: 9px; font-size: 11.5px; }
+  .copyButton { padding: 9px; }
   .topBar { gap: 6px; }
   .searchWrapper { flex: 1; }
   .catBtnLabel { display: none; }

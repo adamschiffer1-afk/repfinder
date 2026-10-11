@@ -219,7 +219,7 @@ const ProductTable = memo(function ProductTable({
                       width: '100%',
                       padding: '4px 8px',
                       background: 'rgba(255,255,255,0.1)',
-                      border: '1px solid #a78bfa',
+                      border: '1px solid rgba(255,255,255,0.2)',
                       borderRadius: '4px',
                       color: 'white',
                       fontSize: '13px'
@@ -300,6 +300,12 @@ export default function ManageProducts() {
   const [showBulkScraperModal, setShowBulkScraperModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [bulkText, setBulkText] = useState('');
+  
+  // Category Grid Modal state
+  const [showCategoryGrid, setShowCategoryGrid] = useState(false);
+  const [categoryGridProducts, setCategoryGridProducts] = useState([]);
+  const [categoryGridLoading, setCategoryGridLoading] = useState(false);
+  const [selectedCategoryName, setSelectedCategoryName] = useState('');
   
   // Backup/Restore state
   const [backupData, setBackupData] = useState(null);
@@ -863,7 +869,7 @@ export default function ManageProducts() {
     const payload = {
       ...formData,
       isPinned: formData.isPinned,
-      pinnedOrder: formData.isPinned && formData.pinnedOrder !== '' ? parseInt(formData.pinnedOrder, 10) : (formData.isPinned ? 999999 : null)
+      pinnedOrder: formData.isPinned && formData.pinnedOrder !== '' ? parseInt(formData.pinnedOrder, 10) : 999999
     };
 
     const res = await fetch(url, {
@@ -882,9 +888,7 @@ export default function ManageProducts() {
       setSelectedQcIndices([]);
       setBulkColorwayText('');
     } else {
-      const errorData = await res.json();
-      console.error('Save error:', errorData);
-      showToast(`Coś poszło nie tak podczas zapisywania produktu: ${errorData.details || errorData.error || 'nieznany błąd'}`, 'error');
+      showToast('Coś poszło nie tak podczas zapisywania produktu.', 'error');
     }
   };
 
@@ -944,13 +948,50 @@ export default function ManageProducts() {
       if (res.ok) {
         showToast('Nazwa i kategoria zaktualizowane!', 'success');
         fetchProducts(currentPage);
+        // Update category grid if open
+        if (showCategoryGrid) {
+          fetchCategoryProducts(selectedCategoryName);
+        }
       } else {
         showToast('Błąd aktualizacji nazwy.', 'error');
       }
     } catch (err) {
       showToast('Błąd połączenia.', 'error');
     }
-  }, [currentPage, fetchProducts, showToast]);
+  }, [currentPage, fetchProducts, showToast, showCategoryGrid, selectedCategoryName]);
+
+  // Open category grid modal
+  const openCategoryGrid = useCallback(async (category) => {
+    setSelectedCategoryName(category);
+    setShowCategoryGrid(true);
+    setCategoryGridLoading(true);
+    
+    try {
+      const res = await fetch(`/api/products?category=${encodeURIComponent(category)}&limit=1000&admin=true`);
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      setCategoryGridProducts(Array.isArray(data) ? data : data.products || []);
+    } catch (err) {
+      showToast('Błąd pobierania produktów kategorii', 'error');
+      setCategoryGridProducts([]);
+    } finally {
+      setCategoryGridLoading(false);
+    }
+  }, [showToast]);
+
+  const fetchCategoryProducts = useCallback(async (category) => {
+    setCategoryGridLoading(true);
+    try {
+      const res = await fetch(`/api/products?category=${encodeURIComponent(category)}&limit=1000&admin=true`);
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      setCategoryGridProducts(Array.isArray(data) ? data : data.products || []);
+    } catch (err) {
+      showToast('Błąd pobierania produktów kategorii', 'error');
+    } finally {
+      setCategoryGridLoading(false);
+    }
+  }, [showToast]);
 
   // Backup & Delete All Products
   const handleBackupAndDeleteAll = useCallback(() => {
@@ -1044,103 +1085,121 @@ export default function ManageProducts() {
 
   return (
     <div className={styles.adminContainer}>
-      <header className={styles.adminHeader}>
-        <h1>Manage Products</h1>
-        <div className={styles.adminNav}>
-          <input 
-            type="text" 
-            placeholder="Szukaj produktów..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={styles.adminSearch}
-          />
-          <button className={styles.scraperBtn} onClick={() => setShowScraperModal(true)}>
-            🚀 Add via Scraper
-          </button>
-          <button className={styles.scraperBtn} onClick={() => {
-            setBulkProgress({ total: 0, current: 0, successes: 0, failures: 0, logs: [] });
-            setShowBulkScraperModal(true);
-          }}>
-            Bulk Import
-          </button>
-          <button className={styles.scraperBtn} onClick={() => setShowTemplateModal(true)} style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}>
-            📋 Template Import
-          </button>
-          <button 
-            className={styles.scraperBtn} 
-            onClick={handleBackupAndDeleteAll}
-            disabled={backupLoading}
-            style={{ background: 'linear-gradient(135deg, #ef4444, #dc2626)', opacity: backupLoading ? 0.5 : 1 }}
-            title="Tworzy backup przypiętych produktów i usuwa wszystkie produkty"
-          >
-            {backupLoading ? '⏳ Przetwarzanie...' : '💾 Backup & Delete All'}
-          </button>
-          {backupData && (
-            <button 
-              className={styles.scraperBtn} 
-              onClick={handleRestorePinned}
-              disabled={restoreLoading}
-              style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', opacity: restoreLoading ? 0.5 : 1 }}
-              title={`Przywraca ${backupData.length} przypiętych produktów z backupu`}
-            >
-              {restoreLoading ? '⏳ Przywracanie...' : `🔄 Restore ${backupData.length} Pinned`}
-            </button>
-          )}
-          <button className={styles.navLink} onClick={() => {
-            setEditingProduct(null);
-            setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '', qcImages: [] });
-            setSelectedQcIndices([]);
-            setQcScrapeUrl('');
-            setBulkColorwayText('');
-            setShowModal(true);
-          }}>
-            + Add Manually
-          </button>
-        </div>
-      </header>
+      {/* Premium Products Header */}
+      <div className={styles.productsHeader}>
+        <div className={styles.productsTopBar}>
+          <h1 className={styles.productsTitle}>
+            Manage Products
+            <span className={styles.productsBadge}>{totalProducts}</span>
+          </h1>
+          
+          <div className={styles.productsActions}>
+            <div className={styles.searchBar}>
+              <svg className={styles.searchIcon} width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M7 12a5 5 0 100-10 5 5 0 000 10zM14 14l-3-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              <input 
+                type="text" 
+                placeholder="Szukaj produktów..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
 
-      {/* Advanced Filters Section */}
-      <div className={styles.advancedFiltersCard}>
-        <div className={styles.filterSection}>
-          <span className={styles.filterLabel}>Kategoria:</span>
-          <div className={styles.filterPills}>
-            <button 
-              className={`${styles.filterPill} ${filterCategory === 'all' ? styles.filterPillActive : ''}`} 
-              onClick={() => setFilterCategory('all')}
-            >
-              Wszystkie
+            <button className={`${styles.actionBtn} ${styles.actionBtnPrimary}`} onClick={() => {
+              setEditingProduct(null);
+              setFormData({ name: '', price: '', image: '', category: 'shoes', batch: 'best', link: '', isPinned: false, pinnedOrder: '', qcImages: [] });
+              setSelectedQcIndices([]);
+              setQcScrapeUrl('');
+              setBulkColorwayText('');
+              setShowModal(true);
+            }}>
+              + Add Manually
             </button>
-            {PRODUCT_CATEGORIES.map(cat => (
+
+            <button className={styles.actionBtn} onClick={() => setShowScraperModal(true)}>
+              🚀 Scraper
+            </button>
+
+            <button className={styles.actionBtn} onClick={() => {
+              setBulkProgress({ total: 0, current: 0, successes: 0, failures: 0, logs: [] });
+              setShowBulkScraperModal(true);
+            }}>
+              Bulk Import
+            </button>
+
+            <button className={`${styles.actionBtn} ${styles.actionBtnSuccess}`} onClick={() => setShowTemplateModal(true)}>
+              📋 Template
+            </button>
+
+            <button 
+              className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
+              onClick={handleBackupAndDeleteAll}
+              disabled={backupLoading}
+              style={{ opacity: backupLoading ? 0.5 : 1 }}
+              title="Tworzy backup przypiętych produktów i usuwa wszystkie produkty"
+            >
+              {backupLoading ? '⏳' : '💾'} Backup & Delete
+            </button>
+
+            {backupData && (
               <button 
-                key={cat} 
-                className={`${styles.filterPill} ${filterCategory === cat ? styles.filterPillActive : ''}`} 
-                onClick={() => setFilterCategory(cat)}
+                className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}
+                onClick={handleRestorePinned}
+                disabled={restoreLoading}
+                style={{ opacity: restoreLoading ? 0.5 : 1 }}
+                title={`Przywraca ${backupData.length} przypiętych produktów z backupu`}
               >
-                {cat}
+                {restoreLoading ? '⏳' : '🔄'} Restore {backupData.length}
               </button>
-            ))}
+            )}
           </div>
         </div>
 
-        <div className={styles.filterSection}>
-          <span className={styles.filterLabel}>Batch tag:</span>
-          <div className={styles.filterPills}>
-            {['all', 'best', 'budget', 'random', 'popular'].map(batch => (
+        {/* Advanced Filters */}
+        <div className={styles.filtersContainer}>
+          <div className={styles.filterRow}>
+            <span className={styles.filterLabel}>Kategoria:</span>
+            <div className={styles.filterTags}>
               <button 
-                key={batch} 
-                className={`${styles.filterPill} ${filterBatch === batch ? styles.filterPillActive : ''}`} 
-                onClick={() => setFilterBatch(batch)}
+                className={`${styles.filterTag} ${filterCategory === 'all' ? styles.filterTagActive : ''}`} 
+                onClick={() => setFilterCategory('all')}
               >
-                {batch === 'all' ? 'Wszystkie' : batch}
+                Wszystkie
               </button>
-            ))}
+              {PRODUCT_CATEGORIES.map(cat => (
+                <button 
+                  key={cat} 
+                  className={`${styles.filterTag} ${filterCategory === cat ? styles.filterTagActive : ''}`} 
+                  onClick={() => setFilterCategory(cat)}
+                  onDoubleClick={() => openCategoryGrid(cat)}
+                  title="Kliknij dwukrotnie aby otworzyć grid edycji"
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className={styles.filtersBottomRow}>
-          <div className={styles.filterSectionInline}>
+          <div className={styles.filterRow}>
+            <span className={styles.filterLabel}>Batch:</span>
+            <div className={styles.filterTags}>
+              {['all', 'best', 'budget', 'random', 'popular'].map(batch => (
+                <button 
+                  key={batch} 
+                  className={`${styles.filterTag} ${filterBatch === batch ? styles.filterTagActive : ''}`} 
+                  onClick={() => setFilterBatch(batch)}
+                >
+                  {batch === 'all' ? 'Wszystkie' : batch}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className={styles.filterRow}>
             <span className={styles.filterLabel}>Status:</span>
-            <div className={styles.filterPills}>
+            <div className={styles.filterTags}>
               {[
                 { label: 'Wszystkie', value: 'all' },
                 { label: '📌 Przypięte', value: 'true' },
@@ -1148,38 +1207,39 @@ export default function ManageProducts() {
               ].map(opt => (
                 <button 
                   key={opt.value} 
-                  className={`${styles.filterPill} ${filterPinned === opt.value ? styles.filterPillActive : ''}`} 
+                  className={`${styles.filterTag} ${filterPinned === opt.value ? styles.filterTagActive : ''}`} 
                   onClick={() => setFilterPinned(opt.value)}
                 >
                   {opt.label}
                 </button>
               ))}
             </div>
-          </div>
 
-          <div className={styles.filterSectionInline}>
-            <span className={styles.filterLabel}>Sortowanie:</span>
-            <select 
-              value={sortBy} 
-              onChange={(e) => setSortBy(e.target.value)}
-              className={styles.sortSelect}
-            >
-              <option value="pinned_order">Kolejnosc przypietych</option>
-              <option value="newest">Najnowsze</option>
-              <option value="oldest">Najstarsze</option>
-              <option value="price_asc">Cena: rosnąco</option>
-              <option value="price_desc">Cena: malejąco</option>
-              <option value="clicks_desc">Najpopularniejsze (kliknięcia)</option>
-            </select>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
+              <span className={styles.filterLabel}>Sortowanie:</span>
+              <select 
+                value={sortBy} 
+                onChange={(e) => setSortBy(e.target.value)}
+                className={styles.sortSelect}
+              >
+                <option value="pinned_order">Kolejnosc przypietych</option>
+                <option value="newest">Najnowsze</option>
+                <option value="oldest">Najstarsze</option>
+                <option value="price_asc">Cena: rosnąco</option>
+                <option value="price_desc">Cena: malejąco</option>
+                <option value="clicks_desc">Najpopularniejsze (kliknięcia)</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div style={{ marginBottom: '20px', opacity: 0.8, fontSize: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span>Znaleziono produktów: <strong>{totalProducts}</strong></span>
-        {selectedIds.length > 0 && (
-          <span style={{ color: '#a78bfa' }}>Zaznaczono: <strong>{selectedIds.length}</strong></span>
-        )}
+        {/* Results Info */}
+        <div className={styles.resultsInfo}>
+          <span>Znaleziono produktów: <strong>{totalProducts}</strong></span>
+          {selectedIds.length > 0 && (
+            <span className={styles.selectedCount}>Zaznaczono: <strong>{selectedIds.length}</strong></span>
+          )}
+        </div>
       </div>
 
       {loading ? (
@@ -1188,7 +1248,7 @@ export default function ManageProducts() {
           <p style={{ marginTop: '10px' }}>Wczytywanie...</p>
         </div>
       ) : (
-        <div className={styles.tableWrapper}>
+        <div className={styles.productsTableWrapper}>
           <ProductTable 
             products={products} 
             onEdit={openEdit} 
@@ -1208,21 +1268,23 @@ export default function ManageProducts() {
       )}
 
       {!loading && totalPages > 1 && (
-        <div className={styles.pagination} style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '30px', alignItems: 'center' }}>
+        <div className={styles.paginationBar}>
           <button 
+            className={styles.paginationBtn}
             onClick={() => fetchProducts(currentPage - 1)} 
             disabled={currentPage === 1}
-            style={{ padding: '8px 15px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
           >
-            Poprzednia
+            ← Poprzednia
           </button>
-          <span style={{ color: 'white' }}>Strona {currentPage} z {totalPages}</span>
+          <span className={styles.paginationInfo}>
+            Strona <strong>{currentPage}</strong> z <strong>{totalPages}</strong>
+          </span>
           <button 
+            className={styles.paginationBtn}
             onClick={() => fetchProducts(currentPage + 1)} 
             disabled={currentPage === totalPages}
-            style={{ padding: '8px 15px', borderRadius: '5px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}
           >
-            Następna
+            Następna →
           </button>
         </div>
       )}
@@ -1402,7 +1464,7 @@ export default function ManageProducts() {
                 />
               )}
               <div style={{ marginTop: '10px', padding: '15px', background: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px dashed rgba(255,255,255,0.2)' }}>
-                <h4 style={{ margin: '0 0 10px 0', color: '#a78bfa' }}>Zdjęcia QC</h4>
+                <h4 style={{ margin: '0 0 10px 0', color: 'white' }}>Zdjęcia QC</h4>
                 
                 {/* QC Link Scraper Field */}
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -1417,7 +1479,7 @@ export default function ManageProducts() {
                     type="button" 
                     onClick={handleQcScrape} 
                     disabled={qcScrapeLoading}
-                    style={{ padding: '0 15px', background: '#a78bfa', color: 'black', border: 'none', borderRadius: '5px', cursor: qcScrapeLoading ? 'wait' : 'pointer', fontWeight: 'bold', fontSize: '13px' }}
+                    style={{ padding: '0 15px', background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '5px', cursor: qcScrapeLoading ? 'wait' : 'pointer', fontWeight: 'bold', fontSize: '13px' }}
                   >
                     {qcScrapeLoading ? '⏳ Pobieranie...' : 'Pobierz QC'}
                   </button>
@@ -1428,7 +1490,7 @@ export default function ManageProducts() {
                   <div style={{ background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '6px', marginBottom: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                       <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
-                        Wybrano: <strong style={{ color: '#a78bfa' }}>{selectedQcIndices.length}</strong> / {formData.qcImages.length} zdjęć (kliknij zdjęcie, by zaznaczyć)
+                        Wybrano: <strong style={{ color: 'white' }}>{selectedQcIndices.length}</strong> / {formData.qcImages.length} zdjęć (kliknij zdjęcie, by zaznaczyć)
                       </span>
                       <div style={{ display: 'flex', gap: '6px' }}>
                         <button 
@@ -1458,7 +1520,7 @@ export default function ManageProducts() {
                       <button 
                         type="button" 
                         onClick={handleBulkAssignColorway} 
-                        style={{ padding: '0 12px', background: '#a78bfa', color: 'black', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+                        style={{ padding: '0 12px', background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
                       >
                         Przypisz
                       </button>
@@ -1478,7 +1540,7 @@ export default function ManageProducts() {
                           padding: '4px', 
                           borderRadius: '6px', 
                           background: isSelected ? 'rgba(167, 139, 250, 0.15)' : 'transparent',
-                          border: isSelected ? '2px solid #a78bfa' : '2px solid transparent',
+                          border: isSelected ? '2px solid rgba(255,255,255,0.4)' : '2px solid transparent',
                           transition: 'all 0.15s ease'
                         }}
                       >
@@ -1504,7 +1566,7 @@ export default function ManageProducts() {
                 </div>
                 <div>
                   <input type="file" accept="image/*" onChange={(e) => handleQcUpload(e.target.files[0])} style={{ display: 'none' }} id="qc-upload" />
-                  <label htmlFor="qc-upload" style={{ display: 'block', textAlign: 'center', padding: '10px', background: 'rgba(167, 139, 250, 0.1)', color: '#a78bfa', borderRadius: '5px', cursor: qcUploadLoading ? 'wait' : 'pointer', fontWeight: 'bold' }}>
+                  <label htmlFor="qc-upload" style={{ display: 'block', textAlign: 'center', padding: '10px', background: 'rgba(255,255,255,0.08)', color: 'white', borderRadius: '5px', border: '1px solid rgba(255,255,255,0.15)', cursor: qcUploadLoading ? 'wait' : 'pointer', fontWeight: 'bold' }}>
                     {qcUploadLoading ? '⏳ Wgrywanie...' : '📸 + Dodaj zdjęcie QC'}
                   </label>
                 </div>
@@ -1535,7 +1597,7 @@ export default function ManageProducts() {
 
             <form onSubmit={handleScrape}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Weidian Link</label>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>Weidian Link</label>
                 <input 
                   type="text" 
                   placeholder="https://weidian.com/item.html?itemID=..." 
@@ -1548,7 +1610,7 @@ export default function ManageProducts() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Custom Name (Optional)</label>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>Custom Name (Optional)</label>
                 <input 
                   type="text" 
                   placeholder="Leave empty to use original name" 
@@ -1585,7 +1647,7 @@ export default function ManageProducts() {
             
             <form onSubmit={handleBulkScrape}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '15px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Linki Weidian / agent linki</label>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>Linki Weidian / agent linki</label>
                 <textarea 
                   placeholder="https://weidian.com/item.html?itemID=123&#10;https://weidian.com/item.html?itemID=456" 
                   value={bulkText} 
@@ -1601,7 +1663,7 @@ export default function ManageProducts() {
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '15px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Tryb</label>
+                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>Tryb</label>
                   <select
                     value={bulkReplaceMode}
                     disabled={bulkLoading}
@@ -1619,7 +1681,7 @@ export default function ManageProducts() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: '#a78bfa' }}>Batch</label>
+                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>Batch</label>
                   <select
                     value={bulkBatch}
                     disabled={bulkLoading}
@@ -1665,7 +1727,7 @@ export default function ManageProducts() {
                     <span style={{ color: '#ef4444' }}>Błędy: {bulkProgress.failures}</span>
                   </div>
                   <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #a78bfa, #7c3aed)', transition: 'width 0.3s ease' }} />
+                    <div style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%`, height: '100%', background: 'linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.15))', transition: 'width 0.3s ease' }} />
                   </div>
                   {bulkProgress.logs.length > 0 && (
                     <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '150px', overflow: 'auto' }}>
@@ -1814,6 +1876,175 @@ export default function ManageProducts() {
           showToast={showToast}
         />
       )}
+
+      {/* Category Grid Modal - Full Screen */}
+      {showCategoryGrid && (
+        <div className={styles.categoryGridOverlay}>
+          <div className={styles.categoryGridContainer}>
+            <div className={styles.categoryGridHeader}>
+              <h2>
+                <span style={{ textTransform: 'uppercase', fontWeight: '800' }}>{selectedCategoryName}</span>
+                <span className={styles.productsBadge}>{categoryGridProducts.length}</span>
+              </h2>
+              <button 
+                className={styles.categoryGridClose}
+                onClick={() => setShowCategoryGrid(false)}
+              >
+                × Zamknij
+              </button>
+            </div>
+
+            {categoryGridLoading ? (
+              <div className={styles.spinnerContainer}>
+                <div className={styles.loadingSpinner}></div>
+                <p style={{ marginTop: '10px' }}>Ładowanie produktów...</p>
+              </div>
+            ) : (
+              <div className={styles.categoryGridContent}>
+                {categoryGridProducts.map((product) => (
+                  <CategoryGridItem
+                    key={product._id}
+                    product={product}
+                    onNameSave={handleNameSave}
+                    onImageClick={handleImageClick}
+                    showToast={showToast}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Category Grid Item Component
+function CategoryGridItem({ product, onNameSave, onImageClick, showToast }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(product.name);
+  const [isChangingCategory, setIsChangingCategory] = useState(false);
+
+  // Extract short name (remove brand/batch info after second image link)
+  const getShortName = (fullName) => {
+    // Remove yupoo/imgur links and everything after them
+    const cleanName = fullName
+      .replace(/https?:\/\/[^\s]+/gi, '')
+      .replace(/\(.*?\)/g, '')
+      .trim();
+    return cleanName || fullName;
+  };
+
+  const shortName = getShortName(product.name);
+
+  const handleSave = () => {
+    if (editValue.trim() !== product.name && editValue.trim()) {
+      onNameSave(product._id, editValue.trim());
+      setIsEditing(false);
+    } else {
+      setIsEditing(false);
+    }
+  };
+
+  const handleCategoryChange = async (newCategory) => {
+    if (newCategory === product.category) {
+      setIsChangingCategory(false);
+      return;
+    }
+    
+    try {
+      const res = await fetch(`/api/products/${product._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: newCategory })
+      });
+      
+      if (res.ok) {
+        showToast(`Kategoria zmieniona na: ${newCategory}`, 'success');
+        // Update local state
+        product.category = newCategory;
+        setIsChangingCategory(false);
+      } else {
+        showToast('Błąd zmiany kategorii', 'error');
+      }
+    } catch (err) {
+      showToast('Błąd połączenia', 'error');
+    }
+  };
+
+  return (
+    <div className={styles.categoryGridItem}>
+      <div 
+        className={styles.categoryGridItemImage}
+        onClick={() => onImageClick(product.image)}
+      >
+        <img src={product.image} alt={shortName} />
+      </div>
+      
+      <div className={styles.categoryGridItemContent}>
+        {isEditing ? (
+          <input
+            type="text"
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={handleSave}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSave();
+              } else if (e.key === 'Escape') {
+                setEditValue(product.name);
+                setIsEditing(false);
+              }
+            }}
+            autoFocus
+            className={styles.categoryGridItemInput}
+          />
+        ) : (
+          <div className={styles.categoryGridItemInfo}>
+            <p 
+              className={styles.categoryGridItemName}
+              onClick={() => {
+                setEditValue(product.name);
+                setIsEditing(true);
+              }}
+              title="Kliknij aby edytować"
+            >
+              {shortName}
+            </p>
+            <div className={styles.categoryGridItemMeta}>
+              <span className={styles.categoryGridPrice}>${product.price}</span>
+              
+              {isChangingCategory ? (
+                <select
+                  value={product.category}
+                  onChange={(e) => handleCategoryChange(e.target.value)}
+                  onBlur={() => setIsChangingCategory(false)}
+                  autoFocus
+                  className={styles.categoryGridCategorySelect}
+                >
+                  {PRODUCT_CATEGORIES.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              ) : (
+                <span 
+                  className={styles.categoryGridCategoryBadge}
+                  onClick={() => setIsChangingCategory(true)}
+                  title="Kliknij aby zmienić kategorię"
+                >
+                  {product.category}
+                </span>
+              )}
+              
+              <span className={`${styles.badge} ${styles[`batchBadge_${product.batch}`]}`}>
+                {product.batch}
+              </span>
+              {product.isPinned && <span className={styles.categoryGridPinBadge}>📌</span>}
+              {product.isHidden && <span className={styles.categoryGridHiddenBadge}>🙈</span>}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -34,6 +34,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const ProductDB = {
   // Get all products with filters
   async find(filters = {}, options = {}) {
+    console.log('[ProductDB.find] Starting with filters:', filters, 'options:', options);
     let query = supabaseAdmin.from('products').select('*', { count: 'exact' });
 
     // Apply filters
@@ -52,6 +53,7 @@ export const ProductDB = {
     }
     // Hide hidden products from public view (admin can see them via filters.showHidden)
     if (!filters.showHidden) {
+      console.log('[ProductDB.find] Filtering out hidden products');
       query = query.or('is_hidden.is.null,is_hidden.eq.false');
     }
     if (filters.search) {
@@ -125,26 +127,13 @@ export const ProductDB = {
 
   // Create new product
   async create(productData) {
-    // Ensure default values for fields that might be missing
-    const dataToInsert = {
-      ...productData,
-      clicks: productData.clicks || 0,
-      is_pinned: productData.is_pinned || false,
-      pinned_order: productData.pinned_order || null,
-      qc_images: productData.qc_images || [],
-      is_hidden: productData.is_hidden || false
-    };
-
     const { data, error } = await supabaseAdmin
       .from('products')
-      .insert([dataToInsert])
+      .insert([productData])
       .select()
       .single();
     
-    if (error) {
-      console.error("Supabase insert error:", error);
-      throw error;
-    }
+    if (error) throw error;
     
     // Add MongoDB compatibility field
     if (data) {
@@ -152,7 +141,6 @@ export const ProductDB = {
       data.isPinned = data.is_pinned;
       data.pinnedOrder = data.pinned_order;
       data.qcImages = data.qc_images;
-      data.isHidden = data.is_hidden;
     }
     
     return data;

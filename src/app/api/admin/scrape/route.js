@@ -1,48 +1,11 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { ProductDB, supabaseAdmin } from "@/lib/supabase";
+import { ProductDB } from "@/lib/supabase";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { detectCategory } from "@/utils/categoryHelper";
 
 const AFFILIATE_CODE = 'xfrostyy';
-
-/**
- * Generate unique slug for product
- */
-async function generateUniqueSlug(name, productId = null) {
-  let baseSlug = name
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-  
-  if (!baseSlug) baseSlug = "product";
-  
-  let slug = baseSlug;
-  let counter = 1;
-  
-  while (true) {
-    let query = supabaseAdmin.from('products').select('id').eq('slug', slug);
-    
-    if (productId) {
-      query = query.neq('id', productId);
-    }
-    
-    const { data, error } = await query.limit(1);
-    if (error) throw error;
-    
-    if (!data || data.length === 0) break;
-    
-    slug = `${baseSlug}-${counter}`;
-    counter++;
-  }
-  
-  return slug;
-}
 
 // Map of Chinese/English variant labels to English clothing type words
 const VARIANT_TYPE_MAP = [
@@ -166,14 +129,7 @@ export async function POST(req) {
     // Save all variants/product to DB
     const savedProducts = [];
     for (const v of variants) {
-      const productWithSlug = {
-        ...v,
-        slug: await generateUniqueSlug(v.name),
-        clicks: 0,
-        qc_images: [],
-        is_hidden: false
-      };
-      const newProduct = await ProductDB.create(productWithSlug);
+      const newProduct = await ProductDB.create(v);
       savedProducts.push(newProduct);
     }
 

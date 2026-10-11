@@ -168,6 +168,14 @@ export default function TemplateImportModal({
     }, estimatedTimePerProduct);
 
     try {
+      console.log('🚀 Starting template import request...', {
+        endpoint: apiEndpoint,
+        productCount: dataToImport.length,
+        replaceMode: bulkReplaceMode,
+        batch: bulkBatch,
+        category: bulkCategory
+      });
+      
       const res = await fetch(apiEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -182,7 +190,15 @@ export default function TemplateImportModal({
           concurrency: 4
         })
       });
+      
+      console.log('📡 Response received:', {
+        status: res.status,
+        statusText: res.statusText,
+        ok: res.ok
+      });
+      
       const data = await res.json();
+      console.log('📦 Response data:', data);
       
       // Clear progress interval once we get response
       clearInterval(progressInterval);
@@ -198,6 +214,7 @@ export default function TemplateImportModal({
       });
 
       if (!res.ok) {
+        console.error('❌ Import failed:', data);
         if (showToast) showToast(data.error || t('Failed to execute import.'), 'error');
         return;
       }
@@ -215,13 +232,15 @@ export default function TemplateImportModal({
         onImportComplete(data);
       }
     } catch (err) {
+      console.error('❌ Template import error:', err);
+      clearInterval(progressInterval);
       setBulkProgress((prev) => ({
         ...prev,
         current: prev.total,
         failures: prev.total,
-        logs: [{ status: 'error', message: t('Server connection error') }]
+        logs: [{ status: 'error', message: `${t('Server connection error')}: ${err.message}` }]
       }));
-      if (showToast) showToast(t('Server connection error during import.'), 'error');
+      if (showToast) showToast(t('Server connection error during import.') + ': ' + err.message, 'error');
     } finally {
       setBulkLoading(false);
     }
@@ -265,7 +284,7 @@ export default function TemplateImportModal({
       backdropFilter: 'blur(4px)'
     }}>
       <div style={{
-        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+        background: '#0a0a0a',
         padding: '24px',
         borderRadius: '12px',
         width: '90%',
@@ -273,7 +292,7 @@ export default function TemplateImportModal({
         maxHeight: '90vh',
         overflowY: 'auto',
         boxShadow: '0 10px 40px rgba(0, 0, 0, 0.5)',
-        border: '1px solid rgba(255, 255, 255, 0.1)'
+        border: '1px solid rgba(255, 255, 255, 0.08)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <h2 style={{ margin: 0 }}>{t('Template Import')}</h2>
@@ -295,8 +314,8 @@ export default function TemplateImportModal({
               <label style={{
                 flex: 1,
                 padding: '10px 16px',
-                background: templateInputMode === 'text' ? 'rgba(167, 139, 250, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                border: templateInputMode === 'text' ? '1px solid #a78bfa' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: templateInputMode === 'text' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
+                border: templateInputMode === 'text' ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -321,8 +340,8 @@ export default function TemplateImportModal({
               <label style={{
                 flex: 1,
                 padding: '10px 16px',
-                background: templateInputMode === 'file' ? 'rgba(167, 139, 250, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                border: templateInputMode === 'file' ? '1px solid #a78bfa' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: templateInputMode === 'file' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
+                border: templateInputMode === 'file' ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -347,8 +366,8 @@ export default function TemplateImportModal({
               <label style={{
                 flex: 1,
                 padding: '10px 16px',
-                background: templateInputMode === 'url' ? 'rgba(167, 139, 250, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                border: templateInputMode === 'url' ? '1px solid #a78bfa' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: templateInputMode === 'url' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
+                border: templateInputMode === 'url' ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -431,7 +450,7 @@ export default function TemplateImportModal({
                   type="button"
                   onClick={handleUrlFetch}
                   disabled={bulkLoading || loadingSheets || !templateUrl.trim()}
-                  style={{ padding: '8px 16px', background: '#a78bfa', color: 'white', border: 'none', borderRadius: '4px', cursor: loadingSheets ? 'not-allowed' : 'pointer', opacity: (loadingSheets || !templateUrl.trim()) ? 0.5 : 1 }}
+                  style={{ padding: '8px 16px', background: '#fff', color: '#000', border: 'none', borderRadius: '4px', cursor: loadingSheets ? 'not-allowed' : 'pointer', opacity: (loadingSheets || !templateUrl.trim()) ? 0.5 : 1 }}
                 >
                   {loadingSheets ? '⏳' : '🔄'}
                 </button>
@@ -453,8 +472,8 @@ export default function TemplateImportModal({
               <label style={{
                 flex: 1,
                 padding: '10px 16px',
-                background: bulkReplaceMode === 'none' ? 'rgba(167, 139, 250, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                border: bulkReplaceMode === 'none' ? '1px solid #a78bfa' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: bulkReplaceMode === 'none' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
+                border: bulkReplaceMode === 'none' ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -471,8 +490,8 @@ export default function TemplateImportModal({
               <label style={{
                 flex: 1,
                 padding: '10px 16px',
-                background: bulkReplaceMode === 'pinned' ? 'rgba(167, 139, 250, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                border: bulkReplaceMode === 'pinned' ? '1px solid #a78bfa' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: bulkReplaceMode === 'pinned' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
+                border: bulkReplaceMode === 'pinned' ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -489,8 +508,8 @@ export default function TemplateImportModal({
               <label style={{
                 flex: 1,
                 padding: '10px 16px',
-                background: bulkReplaceMode === 'all' ? 'rgba(167, 139, 250, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                border: bulkReplaceMode === 'all' ? '1px solid #a78bfa' : '1px solid rgba(255, 255, 255, 0.1)',
+                background: bulkReplaceMode === 'all' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.05)',
+                border: bulkReplaceMode === 'all' ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(255, 255, 255, 0.1)',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
@@ -533,10 +552,10 @@ export default function TemplateImportModal({
                 cursor: 'pointer'
               }}
             >
-              <option value="best" style={{ background: '#1a1a2e', color: 'white' }}>{t('Best')}</option>
-              <option value="budget" style={{ background: '#1a1a2e', color: 'white' }}>{t('Budget')}</option>
-              <option value="random" style={{ background: '#1a1a2e', color: 'white' }}>{t('Random')}</option>
-              <option value="popular" style={{ background: '#1a1a2e', color: 'white' }}>{t('Popular')} 🔥</option>
+              <option value="best" style={{ background: '#0a0a0a', color: 'white' }}>{t('Best')}</option>
+              <option value="budget" style={{ background: '#0a0a0a', color: 'white' }}>{t('Budget')}</option>
+              <option value="random" style={{ background: '#0a0a0a', color: 'white' }}>{t('Random')}</option>
+              <option value="popular" style={{ background: '#0a0a0a', color: 'white' }}>{t('Popular')} 🔥</option>
             </select>
           </div>
 
@@ -558,15 +577,20 @@ export default function TemplateImportModal({
                 cursor: 'pointer'
               }}
             >
-              <option value="auto" style={{ background: '#1a1a2e', color: 'white' }}>🤖 {t('Auto-detect (AI)')}</option>
-              <option value="shoes" style={{ background: '#1a1a2e', color: 'white' }}>👟 {t('Shoes')}</option>
-              <option value="hoodies" style={{ background: '#1a1a2e', color: 'white' }}>🧥 {t('Hoodies')}</option>
-              <option value="t-shirts" style={{ background: '#1a1a2e', color: 'white' }}>👕 {t('T-Shirts')}</option>
-              <option value="pants" style={{ background: '#1a1a2e', color: 'white' }}>👖 {t('Pants')}</option>
-              <option value="shorts" style={{ background: '#1a1a2e', color: 'white' }}>🩳 {t('Shorts')}</option>
-              <option value="jackets" style={{ background: '#1a1a2e', color: 'white' }}>🧥 {t('Jackets')}</option>
-              <option value="sets" style={{ background: '#1a1a2e', color: 'white' }}>👔 {t('Sets')}</option>
-              <option value="accessories" style={{ background: '#1a1a2e', color: 'white' }}>⌚ {t('Accessories')}</option>
+              <option value="auto" style={{ background: '#0a0a0a', color: 'white' }}>🤖 {t('Auto-detect (AI)')}</option>
+              <option value="shoes" style={{ background: '#0a0a0a', color: 'white' }}>👟 Shoes</option>
+              <option value="hoodies" style={{ background: '#0a0a0a', color: 'white' }}>🧥 Hoodies</option>
+              <option value="t-shirts" style={{ background: '#0a0a0a', color: 'white' }}>👕 T-Shirts</option>
+              <option value="longsleeve" style={{ background: '#0a0a0a', color: 'white' }}>👔 Longsleeve</option>
+              <option value="pants" style={{ background: '#0a0a0a', color: 'white' }}>👖 Pants</option>
+              <option value="shorts" style={{ background: '#0a0a0a', color: 'white' }}>🩳 Shorts</option>
+              <option value="jackets" style={{ background: '#0a0a0a', color: 'white' }}>🧥 Jackets</option>
+              <option value="sets" style={{ background: '#0a0a0a', color: 'white' }}>👔 Sets</option>
+              <option value="bags" style={{ background: '#0a0a0a', color: 'white' }}>🎒 Bags & backpacks</option>
+              <option value="accessories" style={{ background: '#0a0a0a', color: 'white' }}>⌚ Accessories</option>
+              <option value="headwear" style={{ background: '#0a0a0a', color: 'white' }}>🧢 Headwear</option>
+              <option value="belts" style={{ background: '#0a0a0a', color: 'white' }}>👖 Belts</option>
+              <option value="electronics" style={{ background: '#0a0a0a', color: 'white' }}>📱 Electronics</option>
             </select>
             {bulkCategory !== 'auto' && (
               <div style={{ fontSize: '11px', color: '#60a5fa', fontStyle: 'italic' }}>
@@ -587,7 +611,7 @@ export default function TemplateImportModal({
 
           {/* Progress Display */}
           {bulkProgress.total > 0 && (
-            <div style={{ marginBottom: '20px', padding: '20px', background: 'linear-gradient(135deg, rgba(100, 100, 100, 0.4) 0%, rgba(60, 60, 60, 0.5) 100%)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.15)', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' }}>
+            <div style={{ marginBottom: '20px', padding: '20px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', fontWeight: 'bold' }}>
                 <span style={{ color: '#ffffff', fontSize: '16px' }}>
                   📦 {t('Processing:')} {bulkProgress.current} / {bulkProgress.total}
@@ -598,14 +622,14 @@ export default function TemplateImportModal({
                 </div>
               </div>
               <div style={{ width: '100%', height: '12px', background: 'rgba(0,0,0,0.4)', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                <div style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #a78bfa, #7c3aed, #6d28d9)', transition: 'width 0.3s ease', boxShadow: '0 0 10px rgba(167, 139, 250, 0.5)' }} />
+                <div style={{ width: `${(bulkProgress.current / bulkProgress.total) * 100}%`, height: '100%', background: 'linear-gradient(90deg, rgba(255,255,255,0.7), rgba(255,255,255,0.9))', transition: 'width 0.3s ease', boxShadow: '0 0 10px rgba(255, 255, 255, 0.3)' }} />
               </div>
               {bulkProgress.logs.length > 0 && (
                 <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '150px', overflow: 'auto' }}>
                   {bulkProgress.logs.slice(0, 8).map((log, index) => (
                     <div key={`${log.itemId || index}-${index}`} style={{ display: 'grid', gridTemplateColumns: '82px minmax(0, 1fr)', gap: '8px', fontSize: '13px', color: '#ffffff', padding: '4px 0' }}>
-                      <span style={{ color: log.status === 'success' ? '#34d399' : log.status === 'error' ? '#ef4444' : log.status === 'processing' ? '#60a5fa' : '#fbbf24', fontWeight: 700 }}>
-                        {log.status === 'success' ? (log.action || 'ok') : log.status === 'processing' ? '⏳' : log.status}
+                      <span style={{ color: log.status === 'success' ? '#34d399' : log.status === 'error' ? '#ef4444' : log.status === 'warning' ? '#fbbf24' : log.status === 'processing' ? '#60a5fa' : '#fbbf24', fontWeight: 700 }}>
+                        {log.status === 'success' ? (log.action || 'ok') : log.status === 'warning' ? '⚠️' : log.status === 'processing' ? '⏳' : log.status}
                       </span>
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'rgba(255, 255, 255, 0.9)' }}>
                         {log.name || log.message || log.url}
@@ -630,8 +654,8 @@ export default function TemplateImportModal({
               style={{ 
                 width: '100%',
                 padding: '12px 24px',
-                background: (bulkLoading || currentTemplateData.length === 0) ? 'rgba(167, 139, 250, 0.5)' : 'linear-gradient(135deg, #a78bfa, #7c3aed)',
-                color: 'white',
+                background: (bulkLoading || currentTemplateData.length === 0) ? 'rgba(255, 255, 255, 0.3)' : '#fff',
+                color: (bulkLoading || currentTemplateData.length === 0) ? 'rgba(255, 255, 255, 0.7)' : '#000',
                 border: 'none',
                 borderRadius: '6px',
                 cursor: (bulkLoading || currentTemplateData.length === 0) ? 'not-allowed' : 'pointer',
