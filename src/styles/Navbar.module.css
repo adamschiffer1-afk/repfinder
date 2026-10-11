@@ -16,7 +16,13 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  transition: background 0.25s ease, border-color 0.25s ease;
+  transition: 
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .navbarScrolled {
@@ -27,6 +33,7 @@
 
 .navbarHidden {
   transform: translateY(-100%);
+  opacity: 0;
   pointer-events: none;
 }
 

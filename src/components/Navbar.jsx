@@ -31,7 +31,6 @@ export default function Navbar() {
 
   const [scrolled,      setScrolled]      = useState(false);
   const [visible,       setVisible]       = useState(true);
-  const [lastY,         setLastY]         = useState(0);
   const [toolsOpen,     setToolsOpen]     = useState(false);
   const [langOpen,      setLangOpen]      = useState(false);
   const [mobileOpen,    setMobileOpen]    = useState(false);
@@ -42,15 +41,33 @@ export default function Navbar() {
   if (pathname?.startsWith('/admin-99x-hsd')) return null;
 
   useEffect(() => {
+    let lastScrollY = 0;
+    let ticking = false;
+
     const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 10);
-      setVisible(y < lastY || y < 60);
-      setLastY(y);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          setScrolled(currentScrollY > 10);
+
+          if (currentScrollY < 60) {
+            setVisible(true);
+          } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            setVisible(false);
+          } else if (currentScrollY < lastScrollY) {
+            setVisible(true);
+          }
+
+          lastScrollY = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
+
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [lastY]);
+  }, []);
 
   useEffect(() => {
     if (!localStorage.getItem('hasSeenSettings')) {
