@@ -127,9 +127,30 @@ export const ProductDB = {
 
   // Create new product
   async create(productData) {
+    // Map MongoDB field names to Supabase (snake_case)
+    const mappedData = { ...productData };
+    
+    // Handle camelCase to snake_case mapping
+    if ('isPinned' in mappedData) {
+      mappedData.is_pinned = mappedData.isPinned;
+      delete mappedData.isPinned;
+    }
+    if ('pinnedOrder' in mappedData) {
+      mappedData.pinned_order = mappedData.pinnedOrder;
+      delete mappedData.pinnedOrder;
+    }
+    if ('qcImages' in mappedData) {
+      mappedData.qc_images = mappedData.qcImages;
+      delete mappedData.qcImages;
+    }
+    if ('isHidden' in mappedData) {
+      mappedData.is_hidden = mappedData.isHidden;
+      delete mappedData.isHidden;
+    }
+    
     const { data, error } = await supabaseAdmin
       .from('products')
-      .insert([productData])
+      .insert([mappedData])
       .select()
       .single();
     
@@ -141,6 +162,7 @@ export const ProductDB = {
       data.isPinned = data.is_pinned;
       data.pinnedOrder = data.pinned_order;
       data.qcImages = data.qc_images;
+      data.isHidden = data.is_hidden;
     }
     
     return data;
@@ -148,9 +170,30 @@ export const ProductDB = {
 
   // Update product
   async update(id, updates) {
+    // Map MongoDB field names to Supabase (snake_case)
+    const mappedUpdates = { ...updates };
+    
+    // Handle camelCase to snake_case mapping
+    if ('isPinned' in mappedUpdates) {
+      mappedUpdates.is_pinned = mappedUpdates.isPinned;
+      delete mappedUpdates.isPinned;
+    }
+    if ('pinnedOrder' in mappedUpdates) {
+      mappedUpdates.pinned_order = mappedUpdates.pinnedOrder;
+      delete mappedUpdates.pinnedOrder;
+    }
+    if ('qcImages' in mappedUpdates) {
+      mappedUpdates.qc_images = mappedUpdates.qcImages;
+      delete mappedUpdates.qcImages;
+    }
+    if ('isHidden' in mappedUpdates) {
+      mappedUpdates.is_hidden = mappedUpdates.isHidden;
+      delete mappedUpdates.isHidden;
+    }
+    
     const { data, error } = await supabaseAdmin
       .from('products')
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update({ ...mappedUpdates, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
@@ -163,6 +206,7 @@ export const ProductDB = {
       data.isPinned = data.is_pinned;
       data.pinnedOrder = data.pinned_order;
       data.qcImages = data.qc_images;
+      data.isHidden = data.is_hidden;
     }
     
     return data;
