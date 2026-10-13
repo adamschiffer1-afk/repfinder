@@ -2,6 +2,12 @@
 
 const CATEGORY_MAP = {
   // NEW CATEGORIES
+  sweaters: [
+    'sweater', 'cardigan', 'knit', 'knitwear', 'pullover', 'jumper'
+  ],
+  perfume: [
+    'perfume', 'cologne', 'fragrance', 'scent', 'parfum', 'eau de toilette', 'eau de parfum', 'edt', 'edp'
+  ],
   longsleeve: [
     'longsleeve', 'long sleeve', 'long-sleeve', 'ls tee', 'ls shirt'
   ],
@@ -37,8 +43,6 @@ const CATEGORY_MAP = {
     'case', 'phone case', 'iphone case', 'samsung case',
     // Watches
     'watch', 'rolex', 'submariner', 'omega', 'patek', 'hublot', 'cartier', 'casio', 'seiko', 'citizen', 'audemars', 'ap', 'g-shock', 'zegarek',
-    // Fragrances & Personal Care
-    'perfume', 'cologne', 'fragrance', 'scent', 'eau de toilette', 'eau de parfum', 'edt', 'edp',
     // Small Accessories
     'socks', 'redbull', 'boxer', 'underwear', 'briefs', 'gloves', 'mittens'
   ],
@@ -97,12 +101,14 @@ export const PRODUCT_CATEGORIES = [
   'pants',
   'shorts',
   'jackets',
+  'sweaters',
   'longsleeve',
   'sets',
   'electronics',
   'headwear',
   'bags-backpacks',
   'belts',
+  'perfume',
   'accessories'
 ];
 
