@@ -30,6 +30,12 @@ const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink
         {product.batch === 'best' && (
           <div className={styles.batchBadge}>Best Batch</div>
         )}
+        {product.batch === 'budget' && (
+          <div className={`${styles.batchBadge} ${styles.budgetBadge}`}>Budget</div>
+        )}
+        {product.batch === 'random' && (
+          <div className={`${styles.batchBadge} ${styles.randomBadge}`}>Random</div>
+        )}
         {product.batch === 'popular' && (
           <div className={`${styles.batchBadge} ${styles.popularBadge}`}>🔥 Popular</div>
         )}
