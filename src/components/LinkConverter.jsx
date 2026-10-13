@@ -307,7 +307,7 @@ import { useLanguage } from '@/context/LanguageContext';
 export default function LinkConverter() {
     const { t } = useLanguage();
     const [inputUrl, setInputUrl] = useState('');
-    const [selectedTarget, setSelectedTarget] = useState('ossbuy');
+    const [selectedTarget, setSelectedTarget] = useState('kakobuy');
     const [targetOpen, setTargetOpen] = useState(false);
     const [result, setResult] = useState(null);
     const [status, setStatus] = useState('');
