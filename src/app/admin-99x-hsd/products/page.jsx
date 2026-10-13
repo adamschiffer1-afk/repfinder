@@ -307,10 +307,8 @@ export default function ManageProducts() {
   const [categoryGridLoading, setCategoryGridLoading] = useState(false);
   const [selectedCategoryName, setSelectedCategoryName] = useState('');
   
-  // Backup/Restore state
-  const [backupData, setBackupData] = useState(null);
+  // Backup state
   const [backupLoading, setBackupLoading] = useState(false);
-  const [restoreLoading, setRestoreLoading] = useState(false);
   const [bulkLoading, setBulkLoading] = useState(false);
   const [bulkProgress, setBulkProgress] = useState({ total: 0, current: 0, successes: 0, failures: 0, logs: [] });
   const [bulkReplaceMode, setBulkReplaceMode] = useState('none');
@@ -993,95 +991,41 @@ export default function ManageProducts() {
     }
   }, [showToast]);
 
-  // Backup & Delete All Products
-  const handleBackupAndDeleteAll = useCallback(() => {
-    askConfirmation(
-      '⚠️ Backup i Usuń Wszystkie Produkty',
-      'Ta operacja utworzy backup przypiętych produktów, a następnie USUNIE WSZYSTKIE produkty z bazy danych. Czy jesteś pewien?',
-      async () => {
-        setBackupLoading(true);
-        try {
-          const res = await fetch('/api/admin/backup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-          });
-          const data = await res.json();
+  // Backup All Products (Export without deletion)
+  const handleBackupAllProducts = useCallback(async () => {
+    setBackupLoading(true);
+    try {
+      const res = await fetch('/api/admin/export-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
 
-          if (res.ok) {
-            // Store backup in localStorage
-            localStorage.setItem('productsBackup', JSON.stringify(data.backup));
-            localStorage.setItem('productsBackupDate', new Date().toISOString());
-            setBackupData(data.backup);
-            
-            showToast(
-              `✅ Backup utworzony! Przypięte produkty: ${data.backup.length}. Usunięte: ${data.deletedCount}.`,
-              'success'
-            );
-            fetchProducts(1);
-          } else {
-            showToast(data.error || 'Błąd podczas tworzenia backupu.', 'error');
-          }
-        } catch (err) {
-          showToast('Błąd połączenia z serwerem.', 'error');
-        } finally {
-          setBackupLoading(false);
-        }
+      if (res.ok) {
+        // Create downloadable JSON file
+        const blob = new Blob([JSON.stringify(data.products, null, 2)], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `itemfinder-backup-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        showToast(
+          `✅ Backup utworzony! Wyeksportowano ${data.count} produktów.`,
+          'success'
+        );
+      } else {
+        showToast(data.error || 'Błąd podczas tworzenia backupu.', 'error');
       }
-    );
-  }, [askConfirmation, showToast, fetchProducts]);
-
-  // Restore Pinned Products from Backup
-  const handleRestorePinned = useCallback(() => {
-    const storedBackup = localStorage.getItem('productsBackup');
-    const backupDate = localStorage.getItem('productsBackupDate');
-    
-    if (!storedBackup) {
-      showToast('Brak dostępnego backupu. Najpierw wykonaj backup.', 'error');
-      return;
+    } catch (err) {
+      showToast('Błąd połączenia z serwerem.', 'error');
+    } finally {
+      setBackupLoading(false);
     }
-
-    const backup = JSON.parse(storedBackup);
-    const formattedDate = backupDate ? new Date(backupDate).toLocaleString('pl-PL') : 'nieznana data';
-    
-    askConfirmation(
-      '🔄 Przywróć Przypięte Produkty',
-      `Czy chcesz przywrócić ${backup.length} przypiętych produktów z backupu (utworzony: ${formattedDate})?`,
-      async () => {
-        setRestoreLoading(true);
-        try {
-          const res = await fetch('/api/admin/restore', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ backup })
-          });
-          const data = await res.json();
-
-          if (res.ok) {
-            showToast(`✅ Przywrócono ${data.restoredCount} przypiętych produktów!`, 'success');
-            fetchProducts(1);
-          } else {
-            showToast(data.error || 'Błąd podczas przywracania produktów.', 'error');
-          }
-        } catch (err) {
-          showToast('Błąd połączenia z serwerem.', 'error');
-        } finally {
-          setRestoreLoading(false);
-        }
-      }
-    );
-  }, [askConfirmation, showToast, fetchProducts]);
-
-  // Check for existing backup on mount
-  useEffect(() => {
-    const storedBackup = localStorage.getItem('productsBackup');
-    if (storedBackup) {
-      try {
-        setBackupData(JSON.parse(storedBackup));
-      } catch (err) {
-        console.error('Invalid backup data in localStorage');
-      }
-    }
-  }, []);
+  }, [showToast]);
 
   return (
     <div className={styles.adminContainer}>
@@ -1134,26 +1078,14 @@ export default function ManageProducts() {
             </button>
 
             <button 
-              className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
-              onClick={handleBackupAndDeleteAll}
+              className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}
+              onClick={handleBackupAllProducts}
               disabled={backupLoading}
               style={{ opacity: backupLoading ? 0.5 : 1 }}
-              title="Tworzy backup przypiętych produktów i usuwa wszystkie produkty"
+              title="Eksportuje wszystkie produkty do pliku JSON"
             >
-              {backupLoading ? '⏳' : '💾'} Backup & Delete
+              {backupLoading ? '⏳' : '💾'} Backup All Products
             </button>
-
-            {backupData && (
-              <button 
-                className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}
-                onClick={handleRestorePinned}
-                disabled={restoreLoading}
-                style={{ opacity: restoreLoading ? 0.5 : 1 }}
-                title={`Przywraca ${backupData.length} przypiętych produktów z backupu`}
-              >
-                {restoreLoading ? '⏳' : '🔄'} Restore {backupData.length}
-              </button>
-            )}
           </div>
         </div>
 

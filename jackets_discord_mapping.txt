@@ -1,0 +1,206 @@
+// ============================================
+// JACKETS DISCORD BOT MAPPING
+// Generated: 2026-10-08T15:55:02.193Z
+// Total jackets: 124
+// ============================================
+
+// ADIDAS
+"adidas down jacket 5328": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508295328&affcode=xfrostyy",  // Adidas Down Jacket
+"adidas jacket 8488": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511548488&affcode=xfrostyy",  // Adidas Jacket
+"adidas long down jacket 7338": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7513707338&affcode=xfrostyy",  // Adidas Long Down Jacket
+
+// AMI
+"ami puffer 6899": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511826899&affcode=xfrostyy",  // Ami Puffer
+
+// AMIRI
+"amiri jacket 0966": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512500966&affcode=xfrostyy",  // Amiri Jacket
+
+// ARCTERYX
+"arcteryx jacket 6100": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512556100&affcode=xfrostyy",  // Arcteryx Jacket
+
+// BALENCIAGA
+"balenciaga down jacket 3300": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509993300&affcode=xfrostyy",  // Balenciaga Down  jacket
+"balenciaga down jacket 6003": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510036003&affcode=xfrostyy",  // Balenciaga Down jacket
+"balenciaga jacket 2923": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648132923&affcode=xfrostyy",  // Balenciaga Jacket
+
+// BAPE
+"bape jacket 9910": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514729910&affcode=xfrostyy",  // Bape Jacket
+"bape jacket 3792": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651183792&affcode=xfrostyy",  // Bape Jacket
+
+// BURBERRY
+"burberry jacket 2924": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651112924&affcode=xfrostyy",  // Burberry Jacket
+"burberry jacket 4900": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7513714900&affcode=xfrostyy",  // Burberry Jacket
+"burberry puffer 0864": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514150864&affcode=xfrostyy",  // Burberry Puffer
+
+// CANADA
+"canada goose down jacket 7481": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507507481&affcode=xfrostyy",  // Canada Goose Down Jacket
+"canada goose jacket 9733": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510699733&affcode=xfrostyy",  // Canada Goose Jacket
+"canada goose jacket 0338": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508780338&affcode=xfrostyy",  // Canada Goose Jacket
+"canada goose vest 6906": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511526906&affcode=xfrostyy",  // Canada Goose Vest
+"canada goose vest 4090": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7513794090&affcode=xfrostyy",  // Canada Goose Vest
+
+// CARHARTT
+"carhartt down jacket 6333": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506896333&affcode=xfrostyy",  // Carhartt Down Jacket
+"carhartt down jacket 6995": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648126995&affcode=xfrostyy",  // Carhartt Down Jacket
+"carhartt down jacket 3658": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651193658&affcode=xfrostyy",  // Carhartt Down Jacket
+"carhartt jacket 2022": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511922022&affcode=xfrostyy",  // Carhartt Jacket
+"carhartt jacket 6960": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510856960&affcode=xfrostyy",  // Carhartt Jacket
+
+// COORTEIZ
+"coorteiz puffer 5568": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508275568&affcode=xfrostyy",  // Coorteiz Puffer
+
+// CORTEIZ
+"corteiz cargo jackets 8907": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648128907&affcode=xfrostyy",  // Corteiz Cargo Jackets
+"corteiz denim jacket 4117": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648184117&affcode=xfrostyy",  // Corteiz denim jacket
+"corteiz jacket 4766": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510044766&affcode=xfrostyy",  // Corteiz Jacket
+"corteiz jacket 6782": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514156782&affcode=xfrostyy",  // Corteiz Jacket
+"corteiz shell jacket 7483": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648097483&affcode=xfrostyy",  // Corteiz Shell Jacket
+"corteiz suit 8894": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514628894&affcode=xfrostyy",  // Corteiz suit
+"corteiz suit 6296": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507646296&affcode=xfrostyy",  // Corteiz suit
+
+// CP
+"cp jacket 1280": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651091280&affcode=xfrostyy",  // CP Jacket
+"cp jacket 7071": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508137071&affcode=xfrostyy",  // CP Jacket
+
+// DESCENTE
+"descente down jacket 4359": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512304359&affcode=xfrostyy",  // Descente Down Jacket
+"descente jacket 7333": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506407333&affcode=xfrostyy",  // Descente Jacket
+"descente jacket 0292": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651150292&affcode=xfrostyy",  // Descente Jacket
+"descente pants 7732": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651187732&affcode=xfrostyy",  // Descente Pants
+
+// DG
+"dg suit 9296": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509999296&affcode=xfrostyy",  // DG Suit
+
+// DIOR
+"dior jacket 1528": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651061528&affcode=xfrostyy",  // DIOR  Jacket
+"dior down jacket 4022": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506364022&affcode=xfrostyy",  // DIOR down Jacket
+"dior jacket 6331": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507556331&affcode=xfrostyy",  // DIOR Jacket
+"dior x stone island 2133": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507572133&affcode=xfrostyy",  // Dior x Stone Island Denim Suit
+
+// GALLERY
+"gallery dept denim jacket 2211": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511352211&affcode=xfrostyy",  // Gallery Dept Denim jacket
+"gallery dept jacket 8242": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7513238242&affcode=xfrostyy",  // Gallery Dept Jacket
+
+// GAP
+"gap jacket 8292": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509448292&affcode=xfrostyy",  // Gap Jacket
+
+// GUCCI
+"gucci down jacket 5410": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651075410&affcode=xfrostyy",  // GUCCI Down Jacket
+"gucci down jacket 1258": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514601258&affcode=xfrostyy",  // GUCCI Down Jacket
+"gucci sweater coat 4857": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648134857&affcode=xfrostyy",  // GUCCI sweater coat
+
+// KARL
+"karl lagerfeld coat 4726": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508744726&affcode=xfrostyy",  // Karl Lagerfeld Coat
+"karl lagerfeld fw22 1950": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510081950&affcode=xfrostyy",  // Karl Lagerfeld Fw22
+
+// LACOSTE
+"lacoste jacket 8910": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651108910&affcode=xfrostyy",  // Lacoste Jacket
+"lacoste jacket 3179": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506823179&affcode=xfrostyy",  // Lacoste Jacket
+
+// LOTS
+"lots of corteiz shukushuku 5561": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648085561&affcode=xfrostyy",  // Lots of Corteiz Shukushuku Jackets
+
+// LV
+"lv baseball uniform 9145": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508939145&affcode=xfrostyy",  // LV Baseball Uniform
+"lv down jacket 2232": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651152232&affcode=xfrostyy",  // LV Down Jacket
+"lv down jacket 9837": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510049837&affcode=xfrostyy",  // LV Down Jacket
+"lv down jacket 1394": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651081394&affcode=xfrostyy",  // LV Down Jacket
+"lv jacket 1527": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648081527&affcode=xfrostyy",  // LV Jacket
+"lv jacket 2716": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507602716&affcode=xfrostyy",  // LV Jacket
+"lv jacket 7832": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651177832&affcode=xfrostyy",  // LV Jacket
+"lv suit 8609": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512798609&affcode=xfrostyy",  // LV Suit
+
+// MAISON
+"maison margiela jacket 6721": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507266721&affcode=xfrostyy",  // Maison Margiela Jacket
+
+// MIUMIU
+"miumiu jacket 7593": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510597593&affcode=xfrostyy",  // Miumiu Jacket
+"miumiu jacket 7340": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7513707340&affcode=xfrostyy",  // Miumiu Jacket
+
+// MONCLER
+"moncler coat 6866": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651116866&affcode=xfrostyy",  // Moncler coat
+"moncler coat 1611": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648221611&affcode=xfrostyy",  // Moncler coat
+"moncler down jacket 9323": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511819323&affcode=xfrostyy",  // Moncler Down Jacket
+"moncler down jacket 9743": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508209743&affcode=xfrostyy",  // Moncler Down Jacket
+"moncler down jacket 2356": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508772356&affcode=xfrostyy",  // Moncler Down Jacket
+"moncler x palm angels 7486": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651077486&affcode=xfrostyy",  // Moncler x Palm Angels Glowing Jacket
+
+// MOOSE
+"moose knuckles puffer 4268": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507644268&affcode=xfrostyy",  // Moose Knuckles Puffer
+"moose knuckles vest 3062": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510833062&affcode=xfrostyy",  // Moose Knuckles Vest
+
+// NEW
+"new balance down jacket 0522": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510060522&affcode=xfrostyy",  // New Balance Down Jacket
+
+// NIKE
+"nike down jacket 0296": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507650296&affcode=xfrostyy",  // Nike Down Jacket
+"nike down jacket 4122": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510904122&affcode=xfrostyy",  // Nike Down Jacket
+"nike down jacket 7334": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514617334&affcode=xfrostyy",  // Nike Down Jacket
+"nike down jacket 8910": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514658910&affcode=xfrostyy",  // Nike Down Jacket
+"nike down jacket 4431": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648164431&affcode=xfrostyy",  // Nike Down Jacket
+"nike jacket 3597": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648223597&affcode=xfrostyy",  // Nike Jacket
+"nike jacket 0394": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507640394&affcode=xfrostyy",  // Nike Jacket
+"nike jacket 4687": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505724687&affcode=xfrostyy",  // Nike Jacket
+"nike suit 9553": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509609553&affcode=xfrostyy",  // Nike SUit
+
+// OFF
+"off  white jacket 3252": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511513252&affcode=xfrostyy",  // Off - White Jacket
+
+// PP
+"pp jacket 7645": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7504527645&affcode=xfrostyy",  // PP Jacket
+"pp suit 8155": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7504468155&affcode=xfrostyy",  // PP Suit
+
+// PRADA
+"prada down jacket 9478": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651079478&affcode=xfrostyy",  // Prada Down  Jacket
+"prada down jacket 1691": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507621691&affcode=xfrostyy",  // Prada Down  Jacket
+"prada vest 9264": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510819264&affcode=xfrostyy",  // Prada Vest
+"prada womens suits 0467": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648160467&affcode=xfrostyy",  // Prada women's suits
+
+// RALPH
+"ralph lauren jacket 5229": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509925229&affcode=xfrostyy",  // Ralph Lauren  Jacket
+"ralph lauren jacket 1593": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508911593&affcode=xfrostyy",  // Ralph Lauren  Jacket
+"ralph lauren jacket 4983": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511834983&affcode=xfrostyy",  // Ralph Lauren  Jacket
+"ralph lauren down jacket 2740": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514682740&affcode=xfrostyy",  // Ralph Lauren Down jacket
+"ralph lauren vest 0628": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510050628&affcode=xfrostyy",  // Ralph Lauren vest
+
+// STONE
+"stone island jacket 2461": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512152461&affcode=xfrostyy",  // Stone Island jacket
+"stone island jacket 8349": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509008349&affcode=xfrostyy",  // Stone Island jacket
+"stone island jacket 3683": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509703683&affcode=xfrostyy",  // Stone Island Jacket
+"stone island jacket 0494": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7508310494&affcode=xfrostyy",  // Stone Island Jacket
+"stone island jacket 8662": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511528662&affcode=xfrostyy",  // Stone Island Jacket
+"stone island jacket 0043": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511910043&affcode=xfrostyy",  // Stone Island Jacket
+"stone island jacket 9380": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509399380&affcode=xfrostyy",  // Stone Island Jacket
+"stone island vest 0871": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506160871&affcode=xfrostyy",  // Stone Island Vest
+
+// STUSSY
+"stussy baseball jacket 7485": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648097485&affcode=xfrostyy",  // Stussy  Baseball Jacket
+"stussy jacket 3733": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510073733&affcode=xfrostyy",  // Stussy  Jacket
+"stussy jacket 9956": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7511919956&affcode=xfrostyy",  // Stussy  Jacket
+"stussy coat jacket 4110": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507664110&affcode=xfrostyy",  // Stussy Coat Jacket
+"stussy down jacket 4576": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507124576&affcode=xfrostyy",  // Stussy Down Jacket
+"stussy down jacket 5933": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7648195933&affcode=xfrostyy",  // Stussy Down Jacket
+
+// SYNA
+"syna world suit 3215": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507523215&affcode=xfrostyy",  // Syna World Suit
+"syna world suit 6160": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510916160&affcode=xfrostyy",  // Syna World Suit
+
+// THE
+"north face down jacket 9641": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7506499641&affcode=xfrostyy",  // The North Face Down Jacket
+"north face down jacket 6621": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512796621&affcode=xfrostyy",  // The North Face Down Jacket
+"north face jacket 5026": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7510035026&affcode=xfrostyy",  // The North Face Jacket
+"north face jacket 0396": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507640396&affcode=xfrostyy",  // The North Face Jacket
+"north face short down 7955": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7512327955&affcode=xfrostyy",  // The North Face Short down jacket
+"north face vest 8704": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7513728704&affcode=xfrostyy",  // The North Face vest
+
+// TRAPSTAR
+"trapstar coat 6713": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7505716713&affcode=xfrostyy",  // Trapstar coat
+"trapstar down jacket 4077": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509674077&affcode=xfrostyy",  // Trapstar Down Jacket
+"trapstar jacket 6838": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7513206838&affcode=xfrostyy",  // Trapstar Jacket
+"trapstar suit 3637": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7509713637&affcode=xfrostyy",  // Trapstar Suit
+"trapstar vest 2964": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7514142964&affcode=xfrostyy",  // Trapstar Vest
+
+// UNDER
+"under armour down jacket 0866": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7507590866&affcode=xfrostyy",  // Under Armour Down Jacket
+"under armour jackets 9626": "https://www.kakobuy.com/item/details?url=https%3A%2F%2Fweidian.com%2Fitem.html%3FitemID%3D7651199626&affcode=xfrostyy",  // Under Armour Jackets
+
