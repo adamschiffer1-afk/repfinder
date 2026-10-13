@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import styles from '@/styles/OssbuyBanner.module.css';
 
 export default function OssbuyBanner() {
+  // Banner wyłączony
+  return null;
+  
   const [isVisible, setIsVisible] = useState(false);
   const [showCloseButton, setShowCloseButton] = useState(false);
 
