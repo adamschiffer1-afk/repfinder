@@ -24,7 +24,16 @@ export async function GET(req) {
     if (search) filters.search = search;
     if (category && category !== 'all') filters.category = category;
     if (batch && batch !== 'all') filters.batch = batch;
-    if (pinned && pinned !== 'all') filters.is_pinned = pinned;
+    
+    // Parse pinned parameter correctly
+    if (pinned && pinned !== 'all') {
+      if (pinned === 'true' || pinned === 'pinned') {
+        filters.is_pinned = 'pinned';
+      } else if (pinned === 'false' || pinned === 'unpinned') {
+        filters.is_pinned = 'unpinned';
+      }
+    }
+    
     // Admin can see hidden products
     if (admin) filters.showHidden = true;
 
