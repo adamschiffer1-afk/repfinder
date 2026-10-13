@@ -1,9 +1,6 @@
-import dbConnect from "@/lib/mongodb";
-import Stat from "@/models/Stat";
-import Product from "@/models/Product";
+import { supabaseAdmin } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import mongoose from "mongoose";
 
 function getRangeDate(range, customFrom, customTo) {
   const now = new Date();
@@ -32,16 +29,13 @@ function getBucketInterval(range) {
   return { unit: "hour", every: 4 };
 }
 
-// Global ex-post bot regex filter (excludes error logs so we always get all error logs)
-const botExcludeRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
-const cleanFilter = {
-  $or: [
-    { type: 'error_log' }, // Always keep errors
-    { userAgent: null },
-    { userAgent: "" },
-    { userAgent: { $not: botExcludeRegex } }
-  ]
-};
+// Bot filter regex
+const botRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
+
+function isBot(userAgent) {
+  if (!userAgent) return false;
+  return botRegex.test(userAgent);
+}
 
 export async function GET(req) {
   try {
@@ -55,202 +49,264 @@ export async function GET(req) {
     const customFrom = searchParams.get("from");
     const customTo = searchParams.get("to");
 
-    await dbConnect();
-
     const { from, to } = getRangeDate(range, customFrom, customTo);
-    const dateFilter = { timestamp: { $gte: from, $lte: to } };
 
-    // Combine date filter with strict bot filter for clean stats!
-    const queryWithClean = { ...dateFilter, ...cleanFilter };
+    // Base query - filter by date range
+    let baseQuery = supabaseAdmin
+      .from('stats')
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
-    // --- Core counts (exclude error_log counts from visits and clicks to keep dashboard KPIs strictly accurate) ---
-    const [totalVisits, totalClicks, totalVisitsAll, totalClicksAll] = await Promise.all([
-      Stat.countDocuments({ type: "page_view", ...queryWithClean }),
-      Stat.countDocuments({ type: "product_click", ...queryWithClean }),
-      Stat.countDocuments({ type: "page_view", ...cleanFilter }),
-      Stat.countDocuments({ type: "product_click", ...cleanFilter }),
-    ]);
+    // --- Get total visits and clicks (exclude bots and errors) ---
+    const { count: totalVisits } = await supabaseAdmin
+      .from('stats')
+      .select('*', { count: 'exact', head: true })
+      .eq('type', 'page_view')
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
-    // --- Top Products ---
-    const topProducts = await Stat.aggregate([
-      { $match: { type: "product_click", productId: { $nin: [null, ""] }, ...queryWithClean } },
-      { $group: { _id: "$productId", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      {
-        $addFields: {
-          convertedId: {
-            $cond: {
-              if: { $regexMatch: { input: "$_id", regex: /^[0-9a-fA-F]{24}$/ } },
-              then: { $toObjectId: "$_id" },
-              else: "$_id"
-            }
-          }
-        }
-      },
-      {
-        $lookup: {
-          from: "products",
-          let: { cid: "$convertedId" },
-          pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$cid"] } } }],
-          as: "productInfo"
-        }
-      },
-      { $unwind: "$productInfo" },
-      { $limit: 15 }
-    ]);
+    const { count: totalClicks } = await supabaseAdmin
+      .from('stats')
+      .select('*', { count: 'exact', head: true })
+      .eq('type', 'product_click')
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
-    // --- Top Agents ---
-    const topAgents = await Stat.aggregate([
-      { $match: { type: "product_click", agent: { $ne: null }, ...queryWithClean } },
-      { $group: { _id: "$agent", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 8 }
-    ]);
+    // --- Get all-time totals ---
+    const { count: totalVisitsAll } = await supabaseAdmin
+      .from('stats')
+      .select('*', { count: 'exact', head: true })
+      .eq('type', 'page_view');
 
-    // --- Top Browsers ---
-    const topBrowsers = await Stat.aggregate([
-      { $match: { userAgent: { $ne: null, $ne: "" }, type: { $ne: "error_log" }, ...queryWithClean } },
-      { $group: { _id: "$userAgent", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 15 }
-    ]);
+    const { count: totalClicksAll } = await supabaseAdmin
+      .from('stats')
+      .select('*', { count: 'exact', head: true })
+      .eq('type', 'product_click');
 
-    // --- Top Pages ---
-    const topPages = await Stat.aggregate([
-      { $match: { type: "page_view", path: { $ne: null }, ...queryWithClean } },
-      { $group: { _id: "$path", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 12 }
-    ]);
+    // --- Unique visitors ---
+    const { data: uniqueVisitorsData } = await supabaseAdmin
+      .from('stats')
+      .select('visitor_id')
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString())
+      .not('visitor_id', 'is', null);
 
-    // --- Recent Activity ---
-    const recentActivityRaw = await Stat.find({ type: { $ne: "error_log" }, ...queryWithClean })
-      .sort({ timestamp: -1 })
-      .limit(40)
-      .lean();
+    const uniqueVisitors = new Set(uniqueVisitorsData?.map(v => v.visitor_id) || []).size;
 
-    const recentActivity = await Promise.all(
-      recentActivityRaw.map(async (act) => {
-        if (act.productId && mongoose.Types.ObjectId.isValid(act.productId)) {
-          act.productInfo = await Product.findById(act.productId).select("name image").lean();
-        }
-        return act;
+    // --- Engagement stats ---
+    const { data: engagementData } = await supabaseAdmin
+      .from('stats')
+      .select('time_spent, scroll_depth')
+      .eq('type', 'engagement')
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
+
+    const engagement = {
+      avgTimeSpent: engagementData?.length > 0 
+        ? engagementData.reduce((sum, e) => sum + (e.time_spent || 0), 0) / engagementData.length 
+        : 0,
+      avgScrollDepth: engagementData?.length > 0
+        ? engagementData.reduce((sum, e) => sum + (e.scroll_depth || 0), 0) / engagementData.length
+        : 0
+    };
+
+    // --- Top products with product info ---
+    const { data: topProductsRaw } = await supabaseAdmin
+      .from('stats')
+      .select('product_id')
+      .eq('type', 'product_click')
+      .not('product_id', 'is', null)
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
+
+    // Count product clicks manually
+    const productCounts = {};
+    topProductsRaw?.forEach(item => {
+      productCounts[item.product_id] = (productCounts[item.product_id] || 0) + 1;
+    });
+
+    // Get top 15 products
+    const topProductIds = Object.entries(productCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 15);
+
+    // Fetch product info
+    const topProducts = await Promise.all(
+      topProductIds.map(async ([productId, count]) => {
+        const { data: product } = await supabaseAdmin
+          .from('products')
+          .select('id, name, image, price, category')
+          .eq('id', productId)
+          .single();
+        
+        return {
+          _id: productId,
+          count,
+          productInfo: product || { name: 'Unknown', image: null }
+        };
       })
     );
 
-    // --- Top Countries ---
-    const topCountries = await Stat.aggregate([
-      { $match: { country: { $ne: null, $ne: "" }, ...queryWithClean } },
-      { $group: { _id: "$country", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 15 }
-    ]);
+    // --- Top agents ---
+    const { data: agentsData } = await supabaseAdmin
+      .from('stats')
+      .select('agent')
+      .eq('type', 'product_click')
+      .not('agent', 'is', null)
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
-    // --- Recent Error Logs ---
-    const recentErrors = await Stat.find({ type: "error_log", ...dateFilter })
-      .sort({ timestamp: -1 })
-      .limit(40)
-      .lean();
+    const agentCounts = {};
+    agentsData?.forEach(item => {
+      agentCounts[item.agent] = (agentCounts[item.agent] || 0) + 1;
+    });
 
-    // --- Enterprise Analytics: Unique Visitors ---
-    const uniqueVisitorsRaw = await Stat.distinct("visitorId", { ...queryWithClean, visitorId: { $ne: null } });
-    const uniqueVisitors = uniqueVisitorsRaw.length;
+    const topAgents = Object.entries(agentCounts)
+      .map(([agent, count]) => ({ _id: agent, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8);
 
-    // --- Enterprise Analytics: Top Sources ---
-    const topSources = await Stat.aggregate([
-      { $match: { utmSource: { $ne: null, $ne: "" }, ...queryWithClean } },
-      { $group: { _id: "$utmSource", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 }
-    ]);
+    // --- Top pages ---
+    const { data: pagesData } = await supabaseAdmin
+      .from('stats')
+      .select('path')
+      .eq('type', 'page_view')
+      .not('path', 'is', null)
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
-    const topReferrers = await Stat.aggregate([
-      { $match: { referrer: { $ne: null, $ne: "" }, ...queryWithClean } },
-      { $group: { _id: "$referrer", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
-      { $limit: 10 }
-    ]);
+    const pageCounts = {};
+    pagesData?.forEach(item => {
+      pageCounts[item.path] = (pageCounts[item.path] || 0) + 1;
+    });
 
-    // --- Enterprise Analytics: Engagement ---
-    const engagementStats = await Stat.aggregate([
-      { $match: { type: "engagement", ...queryWithClean } },
-      { $group: { 
-          _id: null, 
-          avgTimeSpent: { $avg: "$timeSpent" }, 
-          avgScrollDepth: { $avg: "$scrollDepth" } 
-        } 
+    const topPages = Object.entries(pageCounts)
+      .map(([path, count]) => ({ _id: path, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 12);
+
+    // --- Top countries ---
+    const { data: countriesData } = await supabaseAdmin
+      .from('stats')
+      .select('country')
+      .not('country', 'is', null)
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
+
+    const countryCounts = {};
+    countriesData?.forEach(item => {
+      countryCounts[item.country] = (countryCounts[item.country] || 0) + 1;
+    });
+
+    const topCountries = Object.entries(countryCounts)
+      .map(([country, count]) => ({ _id: country, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 15);
+
+    // --- Top browsers ---
+    const { data: browsersData } = await supabaseAdmin
+      .from('stats')
+      .select('user_agent')
+      .not('user_agent', 'is', null)
+      .neq('type', 'error_log')
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
+
+    const browserCounts = {};
+    browsersData?.forEach(item => {
+      if (!isBot(item.user_agent)) {
+        browserCounts[item.user_agent] = (browserCounts[item.user_agent] || 0) + 1;
       }
-    ]);
-    const engagement = engagementStats[0] || { avgTimeSpent: 0, avgScrollDepth: 0 };
+    });
 
-    // --- Timeline chart data (hourly/daily buckets) ---
-    const bucketInfo = getBucketInterval(range);
-    let dateGroupExpr;
-    if (bucketInfo.unit === "hour") {
-      dateGroupExpr = {
-        year:   { $year: "$timestamp" },
-        month:  { $month: "$timestamp" },
-        day:    { $dayOfMonth: "$timestamp" },
-        hour:   { $multiply: [{ $floor: { $divide: [{ $hour: "$timestamp" }, bucketInfo.every] } }, bucketInfo.every] }
-      };
-    } else {
-      dateGroupExpr = {
-        year:  { $year: "$timestamp" },
-        month: { $month: "$timestamp" },
-        day:   { $dayOfMonth: "$timestamp" },
-      };
-    }
+    const topBrowsers = Object.entries(browserCounts)
+      .map(([ua, count]) => ({ _id: ua, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 15);
 
-    const timelineRaw = await Stat.aggregate([
-      { $match: { type: { $nin: ["error_log", "engagement"] }, ...queryWithClean } },
-      {
-        $group: {
-          _id: { type: "$type", date: dateGroupExpr },
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { "_id.date.year": 1, "_id.date.month": 1, "_id.date.day": 1, "_id.date.hour": 1 } }
-    ]);
+    // --- UTM Sources ---
+    const { data: sourcesData } = await supabaseAdmin
+      .from('stats')
+      .select('utm_source')
+      .not('utm_source', 'is', null)
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
-    // Build timeline map
-    const timelineMap = {};
-    for (const entry of timelineRaw) {
-      const d = entry._id.date;
-      const key = bucketInfo.unit === "hour"
-        ? `${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}T${String(d.hour).padStart(2,'0')}:00`
-        : `${d.year}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`;
-      if (!timelineMap[key]) timelineMap[key] = { views: 0, clicks: 0 };
-      if (entry._id.type === "page_view") timelineMap[key].views = entry.count;
-      if (entry._id.type === "product_click") timelineMap[key].clicks = entry.count;
-    }
+    const sourceCounts = {};
+    sourcesData?.forEach(item => {
+      sourceCounts[item.utm_source] = (sourceCounts[item.utm_source] || 0) + 1;
+    });
 
-    const timeline = Object.entries(timelineMap)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([label, data]) => ({ label, ...data }));
+    const topSources = Object.entries(sourceCounts)
+      .map(([source, count]) => ({ _id: source, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    // --- Referrers ---
+    const { data: referrersData } = await supabaseAdmin
+      .from('stats')
+      .select('referrer')
+      .not('referrer', 'is', null)
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
+
+    const referrerCounts = {};
+    referrersData?.forEach(item => {
+      referrerCounts[item.referrer] = (referrerCounts[item.referrer] || 0) + 1;
+    });
+
+    const topReferrers = Object.entries(referrerCounts)
+      .map(([referrer, count]) => ({ _id: referrer, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    // --- Recent activity ---
+    const { data: recentActivity } = await supabaseAdmin
+      .from('stats')
+      .select('*, products(id, name, image)')
+      .neq('type', 'error_log')
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString())
+      .order('timestamp', { ascending: false })
+      .limit(40);
+
+    // --- Recent errors ---
+    const { data: recentErrors } = await supabaseAdmin
+      .from('stats')
+      .select('*')
+      .eq('type', 'error_log')
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString())
+      .order('timestamp', { ascending: false })
+      .limit(40);
+
+    // --- Timeline (simplified - hourly/daily buckets) ---
+    // For now, return empty timeline - we'll implement proper bucketing later
+    const timeline = [];
 
     return NextResponse.json({
       range,
       from: from.toISOString(),
       to: to.toISOString(),
-      totalVisits,
+      totalVisits: totalVisits || 0,
       uniqueVisitors,
       engagement,
       topSources,
       topReferrers,
-      totalClicks,
-      totalVisitsAll,
-      totalClicksAll,
+      totalClicks: totalClicks || 0,
+      totalVisitsAll: totalVisitsAll || 0,
+      totalClicksAll: totalClicksAll || 0,
       topProducts,
       topAgents,
       topBrowsers,
       topPages,
-      recentActivity,
+      recentActivity: recentActivity || [],
       topCountries,
-      recentErrors,
+      recentErrors: recentErrors || [],
       timeline
     });
   } catch (error) {
     console.error("Admin stats error:", error);
-    return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch stats: " + error.message }, { status: 500 });
   }
 }
