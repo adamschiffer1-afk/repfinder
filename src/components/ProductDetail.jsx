@@ -475,7 +475,13 @@ export default function ProductDetail({ productId, initialData = null }) {
 
         {/* Back To Gallery Header */}
         <div className={styles.descModalHeaderRow}>
-          <button className={styles.backToGalleryBtn} onClick={() => router.push('/products')}>
+          <button className={styles.backToGalleryBtn} onClick={() => {
+            // Clear hash and go back to products
+            if (window.location.hash) {
+              window.history.replaceState(null, '', window.location.pathname);
+            }
+            router.push('/products');
+          }}>
             <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '8px' }} />
             {t('products.backToGallery') || 'Wróć do Galerii'}
           </button>
