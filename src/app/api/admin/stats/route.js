@@ -40,7 +40,7 @@ function isBot(userAgent) {
 export async function GET(req) {
   try {
     const session = await auth();
-    if (!session || session.user.email !== "kakobuybs209@gmail.com") {
+    if (!session || !session.user || session.user.email !== "kakobuybs209@gmail.com") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

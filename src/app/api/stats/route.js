@@ -1,9 +1,6 @@
-import dbConnect from "@/lib/mongodb";
-import Stat from "@/models/Stat";
-import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import mongoose from "mongoose";
+import { supabaseAdmin } from "@/lib/supabase";
 
 // Comprehensive bot and crawler check helper
 function isBot(ua) {
@@ -32,17 +29,6 @@ function isBot(ua) {
 
   return false;
 }
-
-// Global ex-post bot regex filter for database queries (excluding error logs so we always get errors if any)
-const botExcludeRegex = /bot|spider|crawler|scraper|yandex|baidu|slurp|duckduckgo|sogou|exabot|facebot|ia_archiver|facebookexternalhit|twitterbot|linkedinbot|embedly|redditbot|applebot|whatsapp|flipboard|tumblr|bitlybot|discordbot|lighthouse|telegrambot|screaming|semrush|ahrefs|mj12bot|dotbot|curl|wget|python|urllib|axios|fetch|go-client/i;
-const cleanFilter = {
-  $or: [
-    { type: 'error_log' }, // Always keep errors
-    { userAgent: null },
-    { userAgent: "" },
-    { userAgent: { $not: botExcludeRegex } }
-  ]
-};
 
 const duplicateCooldownByType = {
   product_click: 60 * 1000,
@@ -80,9 +66,6 @@ export async function POST(req) {
       }
     }
 
-    // Connect to DB first (needed for dedup check and session checks)
-    await dbConnect();
-
     // 2. Admin Self-Logging Exclusion (wrap in try-catch so auth errors don't kill tracking)
     if (type !== 'error_log') {
       try {
@@ -101,80 +84,55 @@ export async function POST(req) {
       const eventType = type || 'product_click';
       const cooldownMs = duplicateCooldownByType[eventType] || 15000;
       const cooldownTime = new Date(Date.now() - cooldownMs);
-      const existingStat = await Stat.findOne({
-        type: eventType,
-        productId: productId || null,
-        agent: agent || null,
-        path: path || null,
-        userAgent: finalUserAgent,
-        visitorId: visitorId || null,
-        timestamp: { $gte: cooldownTime }
-      });
+      
+      // Check for duplicate in Supabase
+      const { data: existingStats } = await supabaseAdmin
+        .from('stats')
+        .select('id')
+        .eq('type', eventType)
+        .eq('product_id', productId || null)
+        .eq('agent', agent || null)
+        .eq('path', path || null)
+        .eq('user_agent', finalUserAgent)
+        .eq('visitor_id', visitorId || null)
+        .gte('timestamp', cooldownTime.toISOString())
+        .limit(1);
 
-      if (existingStat) {
+      if (existingStats && existingStats.length > 0) {
         return NextResponse.json({ success: true, message: 'Skipped duplicate event (cooldown)' });
       }
     }
 
-    await Stat.create({
-      type: type || 'product_click',
-      productId: productId || null,
-      agent: agent || null,
-      visitorId: visitorId || null,
-      userAgent: finalUserAgent,
-      path: path || null,
-      country: country || 'PL',
-      referrer: referrer || null,
-      utmSource: utmSource || null,
-      utmCampaign: utmCampaign || null,
-      scrollDepth: scrollDepth || null,
-      timeSpent: timeSpent || null,
-      errorMessage: errorMessage || null,
-      errorStack: errorStack || null,
-      breadcrumbs: breadcrumbs || null,
-    });
+    // Insert into Supabase stats table
+    const { error: insertError } = await supabaseAdmin
+      .from('stats')
+      .insert({
+        type: type || 'product_click',
+        product_id: productId || null,
+        agent: agent || null,
+        visitor_id: visitorId || null,
+        user_agent: finalUserAgent,
+        path: path || null,
+        country: country || 'PL',
+        referrer: referrer || null,
+        utm_source: utmSource || null,
+        utm_campaign: utmCampaign || null,
+        scroll_depth: scrollDepth || null,
+        time_spent: timeSpent || null,
+        error_message: errorMessage || null,
+        error_stack: errorStack || null,
+        breadcrumbs: breadcrumbs || null,
+        timestamp: new Date().toISOString()
+      });
+
+    if (insertError) {
+      console.error("Supabase insert error:", insertError);
+      return NextResponse.json({ error: "Failed to track stat" }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Tracking error:", error);
     return NextResponse.json({ error: "Failed to track stat" }, { status: 500 });
-  }
-}
-
-export async function GET() {
-  try {
-    const session = await auth();
-    if (!session || session.user.email !== "kakobuybs209@gmail.com") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Simple stats from Supabase - just product counts for now
-    const { supabaseAdmin } = await import("@/lib/supabase");
-    
-    const { count: totalProducts } = await supabaseAdmin
-      .from('products')
-      .select('*', { count: 'exact', head: true });
-
-    const { count: pinnedProducts } = await supabaseAdmin
-      .from('products')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_pinned', true);
-
-    // Return simplified stats (full stats migration can be done later)
-    return NextResponse.json({
-      totalVisits: 0, // Stats collection needs migration
-      totalClicks: 0, // Stats collection needs migration
-      totalProducts: totalProducts || 0,
-      pinnedProducts: pinnedProducts || 0,
-      topProducts: [],
-      topAgents: [],
-      topBrowsers: [],
-      recentActivity: [],
-      topCountries: [],
-      recentErrors: []
-    });
-  } catch (error) {
-    console.error("Fetch stats error:", error);
-    return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 });
   }
 }
