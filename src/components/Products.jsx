@@ -355,6 +355,15 @@ export default function ProductsPage() {
                   pinnedOrder: p.pinned_order
                 }));
                 
+                // Apply search filter locally (in case search was added after category selection)
+                if (searchQuery.trim() !== '') {
+                  const query = searchQuery.toLowerCase();
+                  products = products.filter(product =>
+                    product.name.toLowerCase().includes(query) ||
+                    product.category.toLowerCase().includes(query)
+                  );
+                }
+                
                 // Apply price filter
                 products = applyPriceFilter(products);
                 
@@ -377,6 +386,15 @@ export default function ProductsPage() {
               filtered = allProducts.filter(product =>
                 selectedCategories.includes(product.category)
               );
+              
+              // Apply search filter
+              if (searchQuery.trim() !== '') {
+                const query = searchQuery.toLowerCase();
+                filtered = filtered.filter(product =>
+                  product.name.toLowerCase().includes(query) ||
+                  product.category.toLowerCase().includes(query)
+                );
+              }
               
               // Apply price filter
               filtered = applyPriceFilter(filtered);
