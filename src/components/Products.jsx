@@ -311,15 +311,10 @@ export default function ProductsPage() {
       // Filter by search query
       if (searchQuery.trim() !== '') {
         const query = searchQuery.toLowerCase();
-        console.log('[Products] Filtering by search query:', query);
-        console.log('[Products] Total products before search filter:', filtered.length);
-        
         filtered = filtered.filter(product =>
           product.name.toLowerCase().includes(query) ||
           product.category.toLowerCase().includes(query)
         );
-        
-        console.log('[Products] Products after search filter:', filtered.length);
       }
       
       // Filter by categories or Popular

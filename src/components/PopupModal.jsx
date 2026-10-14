@@ -8,6 +8,9 @@ import styles from '@/styles/PopupModal.module.css';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function PopupModal() {
+  // Disabled - popup is no longer needed
+  return null;
+  
   const { t } = useLanguage();
   const pathname = usePathname();
   const [showModal, setShowModal] = useState(false);
