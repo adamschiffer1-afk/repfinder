@@ -327,7 +327,14 @@ export default function ProductsPage() {
           const fetchCategoryProducts = async () => {
             try {
               const category = selectedCategories[0];
-              const res = await fetch(`/api/products?category=${category}&limit=1000`, {
+              let apiUrl = `/api/products?category=${category}&limit=1000`;
+              
+              // Add search query if exists
+              if (searchQuery.trim() !== '') {
+                apiUrl += `&search=${encodeURIComponent(searchQuery.trim())}`;
+              }
+              
+              const res = await fetch(apiUrl, {
                 cache: 'no-store',
                 headers: { 'Cache-Control': 'no-cache' }
               });
