@@ -1,8 +1,7 @@
-/* New Stats Page Styles */
+/* Stats Page Styles - matching Admin Panel theme */
 
 .container {
-  padding: 40px;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   color: #fff;
 }
@@ -11,39 +10,44 @@
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 32px;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .title {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 800;
-  margin: 0 0 8px;
-  background: linear-gradient(135deg, #fff, #a78bfa);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin: 0 0 6px;
 }
 
 .subtitle {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
   margin: 0;
 }
 
 .refreshBtn {
-  background: rgba(167, 139, 250, 0.15);
-  border: 1px solid rgba(167, 139, 250, 0.3);
-  color: #a78bfa;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
   padding: 12px 24px;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .refreshBtn:hover {
-  background: rgba(167, 139, 250, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
   transform: translateY(-1px);
 }
 
@@ -73,8 +77,8 @@
 }
 
 .rangeBtn.active {
-  background: linear-gradient(135deg, #a78bfa, #7c3aed);
-  border-color: #a78bfa;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
@@ -88,30 +92,48 @@
 
 .kpiCard {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 16px;
   padding: 24px;
   display: flex;
   align-items: center;
   gap: 20px;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpiCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(255,255,255,.03), transparent 60%);
+  opacity: 0;
+  transition: opacity .3s ease;
 }
 
 .kpiCard:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(167, 139, 250, 0.3);
+  border-color: rgba(255, 255, 255, 0.12);
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.kpiCard:hover::before {
+  opacity: 1;
 }
 
 .kpiIcon {
-  font-size: 40px;
-  width: 64px;
-  height: 64px;
+  font-size: 32px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(167, 139, 250, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
+  flex-shrink: 0;
 }
 
 .kpiContent {
