@@ -170,12 +170,24 @@ export async function GET(req) {
       .limit(10);
 
     // Timeline data for charts
-    const { data: timelineData } = await supabaseAdmin
+    const { data: timelineData, error: timelineError } = await supabaseAdmin
       .from('stats')
       .select('timestamp, type')
       .gte('timestamp', from.toISOString())
       .lte('timestamp', to.toISOString())
       .order('timestamp', { ascending: true });
+
+    console.log('📊 Stats Debug:', {
+      range,
+      from: from.toISOString(),
+      to: to.toISOString(),
+      totalVisits,
+      totalClicks,
+      uniqueVisitors,
+      timelineDataCount: timelineData?.length || 0,
+      timelineError,
+      sampleData: timelineData?.slice(0, 3)
+    });
 
     // Group by hour/day depending on range
     const diffDays = (to - from) / (1000 * 60 * 60 * 24);
