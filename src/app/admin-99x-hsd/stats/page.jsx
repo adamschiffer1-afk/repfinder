@@ -8,16 +8,24 @@ export default function NewStatsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [range, setRange] = useState('24h');
+  const [customMode, setCustomMode] = useState(false);
+  const [customFrom, setCustomFrom] = useState('');
+  const [customTo, setCustomTo] = useState('');
 
   useEffect(() => {
     fetchStats();
-  }, [range]);
+  }, [range, customMode]);
 
   const fetchStats = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/stats?range=${range}`);
+      let url = `/api/admin/stats?range=${range}`;
+      if (customMode && customFrom && customTo) {
+        url = `/api/admin/stats?from=${customFrom}&to=${customTo}`;
+      }
+      
+      const res = await fetch(url);
       if (!res.ok) throw new Error('Błąd pobierania danych');
       const data = await res.json();
       setStats(data);
@@ -26,6 +34,17 @@ export default function NewStatsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCustomApply = () => {
+    if (customFrom && customTo) {
+      fetchStats();
+    }
+  };
+
+  const handleRangeChange = (newRange) => {
+    setRange(newRange);
+    setCustomMode(false);
   };
 
   if (loading) {
@@ -69,16 +88,95 @@ export default function NewStatsPage() {
 
       {/* Time Range Selector */}
       <div className={styles.rangeSelector}>
-        {['6h', '12h', '24h', '48h', '7d', '30d'].map((r) => (
+        <div className={styles.rangeButtons}>
+          {['1h', '6h', '12h', '24h', '48h', '7d', '30d'].map((r) => (
+            <button
+              key={r}
+              onClick={() => handleRangeChange(r)}
+              className={`${styles.rangeBtn} ${range === r && !customMode ? styles.active : ''}`}
+            >
+              {r}
+            </button>
+          ))}
           <button
-            key={r}
-            onClick={() => setRange(r)}
-            className={`${styles.rangeBtn} ${range === r ? styles.active : ''}`}
+            onClick={() => setCustomMode(true)}
+            className={`${styles.rangeBtn} ${styles.customBtn} ${customMode ? styles.active : ''}`}
           >
-            {r}
+            📅 Własny zakres
           </button>
-        ))}
+        </div>
+        
+        {customMode && (
+          <div className={styles.customRange}>
+            <input
+              type="date"
+              value={customFrom}
+              onChange={(e) => setCustomFrom(e.target.value)}
+              className={styles.dateInput}
+              placeholder="Od"
+            />
+            <span className={styles.dateSeparator}>→</span>
+            <input
+              type="date"
+              value={customTo}
+              onChange={(e) => setCustomTo(e.target.value)}
+              className={styles.dateInput}
+              placeholder="Do"
+            />
+            <button onClick={handleCustomApply} className={styles.applyBtn}>
+              Zastosuj
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Timeline Chart */}
+      {stats?.timeline && stats.timeline.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>📈 Wykres aktywności w czasie</h2>
+          <div className={styles.chartContainer}>
+            <div className={styles.chart}>
+              {stats.timeline.map((point, idx) => {
+                const maxValue = Math.max(...stats.timeline.map(p => p.page_view + p.product_click));
+                const heightPercent = ((point.page_view + point.product_click) / maxValue) * 100;
+                
+                return (
+                  <div key={idx} className={styles.chartBar} title={`${point.time}: ${point.page_view + point.product_click} eventów`}>
+                    <div 
+                      className={styles.barFill} 
+                      style={{ height: `${heightPercent}%` }}
+                    >
+                      <div 
+                        className={styles.barSegmentViews} 
+                        style={{ 
+                          height: maxValue > 0 ? `${(point.page_view / (point.page_view + point.product_click)) * 100}%` : '0%' 
+                        }}
+                      />
+                      <div 
+                        className={styles.barSegmentClicks} 
+                        style={{ 
+                          height: maxValue > 0 ? `${(point.product_click / (point.page_view + point.product_click)) * 100}%` : '0%' 
+                        }}
+                      />
+                    </div>
+                    <div className={styles.chartLabel}>
+                      {point.time.split(' ')[1] || point.time.split('-').slice(1).join('/')}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className={styles.chartLegend}>
+              <span className={styles.legendItem}>
+                <span className={styles.legendColorViews}></span> Wyświetlenia
+              </span>
+              <span className={styles.legendItem}>
+                <span className={styles.legendColorClicks}></span> Kliknięcia
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className={styles.kpiGrid}>

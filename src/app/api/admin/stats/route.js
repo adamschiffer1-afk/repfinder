@@ -11,38 +11,53 @@ export async function GET(req) {
 
     const { searchParams } = new URL(req.url);
     const range = searchParams.get("range") || "24h";
+    const customFrom = searchParams.get("from");
+    const customTo = searchParams.get("to");
 
     // Calculate date range
     const now = new Date();
-    const rangeMs = {
-      "6h": 6 * 60 * 60 * 1000,
-      "12h": 12 * 60 * 60 * 1000,
-      "24h": 24 * 60 * 60 * 1000,
-      "48h": 48 * 60 * 60 * 1000,
-      "7d": 7 * 24 * 60 * 60 * 1000,
-      "30d": 30 * 24 * 60 * 60 * 1000,
-    };
-    const from = new Date(now - (rangeMs[range] || rangeMs["24h"]));
+    let from, to;
+    
+    if (customFrom && customTo) {
+      from = new Date(customFrom);
+      to = new Date(customTo);
+      to.setHours(23, 59, 59, 999);
+    } else {
+      const rangeMs = {
+        "1h": 1 * 60 * 60 * 1000,
+        "6h": 6 * 60 * 60 * 1000,
+        "12h": 12 * 60 * 60 * 1000,
+        "24h": 24 * 60 * 60 * 1000,
+        "48h": 48 * 60 * 60 * 1000,
+        "7d": 7 * 24 * 60 * 60 * 1000,
+        "30d": 30 * 24 * 60 * 60 * 1000,
+      };
+      from = new Date(now - (rangeMs[range] || rangeMs["24h"]));
+      to = now;
+    }
 
     // Total visits
     const { count: totalVisits } = await supabaseAdmin
       .from('stats')
       .select('*', { count: 'exact', head: true })
       .eq('type', 'page_view')
-      .gte('timestamp', from.toISOString());
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
     // Total clicks
     const { count: totalClicks } = await supabaseAdmin
       .from('stats')
       .select('*', { count: 'exact', head: true })
       .eq('type', 'product_click')
-      .gte('timestamp', from.toISOString());
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
     // Unique visitors
     const { data: uniqueData } = await supabaseAdmin
       .from('stats')
       .select('visitor_id')
       .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString())
       .not('visitor_id', 'is', null);
 
     const uniqueVisitors = new Set(uniqueData?.map(v => v.visitor_id) || []).size;
@@ -52,7 +67,8 @@ export async function GET(req) {
       .from('stats')
       .select('time_spent, scroll_depth')
       .eq('type', 'engagement')
-      .gte('timestamp', from.toISOString());
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
     const engagement = {
       avgTimeSpent: engagementData?.length > 0 
@@ -69,7 +85,8 @@ export async function GET(req) {
       .select('product_id')
       .eq('type', 'product_click')
       .not('product_id', 'is', null)
-      .gte('timestamp', from.toISOString());
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
     const productCounts = {};
     productClicks?.forEach(item => {
@@ -111,7 +128,8 @@ export async function GET(req) {
       .select('agent')
       .eq('type', 'product_click')
       .not('agent', 'is', null)
-      .gte('timestamp', from.toISOString());
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
     const agentCounts = {};
     agentsData?.forEach(item => {
@@ -128,7 +146,8 @@ export async function GET(req) {
       .from('stats')
       .select('country')
       .not('country', 'is', null)
-      .gte('timestamp', from.toISOString());
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
 
     const countryCounts = {};
     countriesData?.forEach(item => {
@@ -146,8 +165,44 @@ export async function GET(req) {
       .select('*')
       .neq('type', 'error_log')
       .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString())
       .order('timestamp', { ascending: false })
       .limit(10);
+
+    // Timeline data for charts
+    const { data: timelineData } = await supabaseAdmin
+      .from('stats')
+      .select('timestamp, type')
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString())
+      .order('timestamp', { ascending: true });
+
+    // Group by hour/day depending on range
+    const diffDays = (to - from) / (1000 * 60 * 60 * 24);
+    const groupByHour = diffDays <= 2;
+    
+    const timelineGroups = {};
+    timelineData?.forEach(item => {
+      const date = new Date(item.timestamp);
+      let key;
+      
+      if (groupByHour) {
+        key = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:00`;
+      } else {
+        key = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+      }
+      
+      if (!timelineGroups[key]) {
+        timelineGroups[key] = { page_view: 0, product_click: 0 };
+      }
+      
+      if (item.type === 'page_view') timelineGroups[key].page_view++;
+      if (item.type === 'product_click') timelineGroups[key].product_click++;
+    });
+
+    const timeline = Object.entries(timelineGroups)
+      .map(([time, counts]) => ({ time, ...counts }))
+      .sort((a, b) => a.time.localeCompare(b.time));
 
     return NextResponse.json({
       totalVisits: totalVisits || 0,
@@ -157,7 +212,9 @@ export async function GET(req) {
       topProducts,
       topAgents,
       topCountries,
-      recentActivity: recentActivity || []
+      recentActivity: recentActivity || [],
+      timeline,
+      dateRange: { from: from.toISOString(), to: to.toISOString() }
     });
 
   } catch (error) {
