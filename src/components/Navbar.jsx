@@ -83,7 +83,6 @@ export default function Navbar() {
   const NAV_ITEMS = [
     { href: '/',          label: t('navbar.home') },
     { href: '/products',  label: t('navbar.products') },
-    { href: '/tutorials', label: t('navbar.tutorials') },
   ];
 
   return (

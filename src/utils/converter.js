@@ -46,9 +46,9 @@ export function convertLink(originalUrl, target) {
 
     switch (target) {
         case 'ossbuy':
-            return `https://www.ossbuy.com/product-detail?url=${encodeURIComponent(cleanUrl)}&spider_token=4572&inviteCode=MJH4PLSK`;
+            return `https://www.ossbuy.com/product-detail?url=${encodeURIComponent(cleanUrl)}&spider_token=4572`;
         case 'kakobuy': 
-            return `https://www.kakobuy.com/item/details?url=${encodeURIComponent(cleanUrl)}&affcode=xfrostyy`;
+            return `https://www.kakobuy.com/item/details?url=${encodeURIComponent(cleanUrl)}`;
         case 'usfans': 
             return `https://www.usfans.com/product/3/${itemId}`;
         case 'allchinabuy': 

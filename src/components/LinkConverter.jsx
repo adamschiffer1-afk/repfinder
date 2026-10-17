@@ -232,16 +232,16 @@ function buildConvertedResult(analysis, target) {
     }
     if (!itemId || originalPlatform !== 'weidian') {
         if (target === 'ossbuy' && originalUrl.startsWith('http')) {
-            return { url: `https://www.ossbuy.com/product-detail?url=${encodeURIComponent(originalUrl)}&spider_token=4572&inviteCode=MJH4PLSK` };
+            return { url: `https://www.ossbuy.com/product-detail?url=${encodeURIComponent(originalUrl)}&spider_token=4572` };
         }
         if (target === 'kakobuy' && originalUrl.startsWith('http')) {
-            return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(originalUrl)}&affcode=xfrostyy` };
+            return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(originalUrl)}` };
         }
         return { url: '' };
     }
     switch (target) {
-        case 'ossbuy': return { url: `https://www.ossbuy.com/product-detail?url=${encodeURIComponent(buildWeidianUrl(itemId))}&spider_token=4572&inviteCode=MJH4PLSK` };
-        case 'kakobuy': return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}&affcode=xfrostyy` };
+        case 'ossbuy': return { url: `https://www.ossbuy.com/product-detail?url=${encodeURIComponent(buildWeidianUrl(itemId))}&spider_token=4572` };
+        case 'kakobuy': return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}` };
         case 'usfans': return { url: `https://www.usfans.com/product/3/${itemId}` };
         case 'allchinabuy': return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
         case 'litbuy': return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}` };

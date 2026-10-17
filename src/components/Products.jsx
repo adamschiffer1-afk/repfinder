@@ -562,7 +562,7 @@ export default function ProductsPage() {
     
     // Generate agent link
     const agentUrls = {
-      'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=xfrostyy`,
+      'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}`,
       'ACBuy': `https://www.allchinabuy.com/en/page/buy?nTag=Home-search&from=search-input&url=${encodeURIComponent(weidianUrl)}`,
       'USFans': `https://www.usfans.net/page/buy?url=${encodeURIComponent(weidianUrl)}`,
       'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,

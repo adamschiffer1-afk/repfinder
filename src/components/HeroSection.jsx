@@ -86,7 +86,7 @@ export default function HeroSection() {
     const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
     
     const agentUrls = {
-      'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}&affcode=xfrostyy`,
+      'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}`,
       'ACBuy': `https://www.allchinabuy.com/en/page/buy?nTag=Home-search&from=search-input&url=${encodeURIComponent(weidianUrl)}`,
       'USFans': `https://www.usfans.net/page/buy?url=${encodeURIComponent(weidianUrl)}`,
       'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
@@ -130,9 +130,6 @@ export default function HeroSection() {
             <div className={`${styles.actionGroup} ${styles.a4}`}>
               <button className={styles.primaryBtn} onClick={() => router.push('/products')}>
                 {t('hero.browseBtn')} <FontAwesomeIcon icon={faArrowRight} />
-              </button>
-              <button className={styles.secondaryBtn} onClick={() => router.push('/tutorials')}>
-                {t('hero.howToBuy')}
               </button>
             </div>
 
