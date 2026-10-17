@@ -40,7 +40,7 @@ export default function Calculator() {
   const [itemQty, setItemQty] = useState(1);
   const [includeBox, setIncludeBox] = useState(false);
   const [includeCoupon, setIncludeCoupon] = useState(true);
-  const [selectedCoupon, setSelectedCoupon] = useState('frostyy'); // 'frostyy' (-$15 flat) or 'frostyy20' (-20%)
+  const [selectedCoupon, setSelectedCoupon] = useState('standard'); // 'standard' (-$15 flat) or 'standard20' (-20%)
   const [isAiActive, setIsAiActive] = useState(false);
   const [savedPackages, setSavedPackages] = useState([]);
   const [saveFlash, setSaveFlash] = useState(false);
@@ -233,10 +233,10 @@ export default function Calculator() {
     if (rawUsd === 0) return 0;
     if (!includeCoupon) return rawUsd;
     
-    if (couponType === 'frostyy') {
+    if (couponType === 'standard') {
       // -$15 USD coupon, min cost is $1
       return Math.max(1, rawUsd - 15);
-    } else if (couponType === 'frostyy20') {
+    } else if (couponType === 'standard20') {
       // -20% coupon
       return rawUsd * 0.8;
     }
@@ -266,9 +266,9 @@ export default function Calculator() {
   const rawEmsUsdPln = rawEmsUsd * USD_TO_PLN;
 
   // Coupon performance logic to show "LEPIEJ" (better) badge dynamically
-  const zthDhlDiscount = activeCheapestRawUsd - calculateDiscountedPrice(activeCheapestRawUsd, 'frostyy');
-  const zth20DhlDiscount = activeCheapestRawUsd - calculateDiscountedPrice(activeCheapestRawUsd, 'frostyy20');
-  const betterCoupon = zthDhlDiscount >= zth20DhlDiscount ? 'frostyy' : 'frostyy20';
+  const zthDhlDiscount = activeCheapestRawUsd - calculateDiscountedPrice(activeCheapestRawUsd, 'standard');
+  const zth20DhlDiscount = activeCheapestRawUsd - calculateDiscountedPrice(activeCheapestRawUsd, 'standard20');
+  const betterCoupon = zthDhlDiscount >= zth20DhlDiscount ? 'standard' : 'standard20';
 
   const selectedDiscountAmountUsd = activeCheapestRawUsd - finalDhlUsd;
   const selectedDiscountAmountPln = selectedDiscountAmountUsd * USD_TO_PLN;
@@ -518,18 +518,18 @@ export default function Calculator() {
                     <div className={styles.couponsTabs}>
                       <button 
                         type="button" 
-                        className={`${styles.couponTabBtn} ${selectedCoupon === 'frostyy' ? styles.couponTabActive : ''}`} 
-                        onClick={() => setSelectedCoupon('frostyy')}
+                        className={`${styles.couponTabBtn} ${selectedCoupon === 'standard' ? styles.couponTabActive : ''}`} 
+                        onClick={() => setSelectedCoupon('standard')}
                       >
-                        <span className={styles.tabCode}>frostyy</span>
+                        <span className={styles.tabCode}>DISCOUNT15</span>
                         <span className={styles.tabBenefit}>{language === 'pl' ? '-15 USD' : '-$15 USD'}</span>
                       </button>
                       <button 
                         type="button" 
-                        className={`${styles.couponTabBtn} ${selectedCoupon === 'frostyy20' ? styles.couponTabActive : ''}`} 
-                        onClick={() => setSelectedCoupon('frostyy20')}
+                        className={`${styles.couponTabBtn} ${selectedCoupon === 'standard20' ? styles.couponTabActive : ''}`} 
+                        onClick={() => setSelectedCoupon('standard20')}
                       >
-                        <span className={styles.tabCode}>frostyy20</span>
+                        <span className={styles.tabCode}>SAVE20</span>
                         <span className={styles.tabBenefit}>-20%</span>
                       </button>
                     </div>
@@ -555,7 +555,7 @@ export default function Calculator() {
                     <h4 className={styles.referralTitleInline}>{t('calculator.referralTitle')}</h4>
                     <p className={styles.referralDescInline}>{t('calculator.referralDesc')}</p>
                   </div>
-                  <a href="https://ikako.vip/r/xfrostyy" target="_blank" rel="noopener noreferrer" className={styles.referralLinkInline}>
+                  <a href="https://www.kakobuy.com/register" target="_blank" rel="noopener noreferrer" className={styles.referralLinkInline}>
                     {t('calculator.referralBtn')} →
                   </a>
                 </div>

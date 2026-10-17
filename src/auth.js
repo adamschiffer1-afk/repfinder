@@ -3,7 +3,7 @@ import Google from "next-auth/providers/google";
 import Discord from "next-auth/providers/discord";
 
 const ADMIN_EMAIL = "kakobuybs209@gmail.com";
-const ADMIN_DISCORD_ID = "1464343590586290287"; // frostyy | frostyyreps
+const ADMIN_DISCORD_ID = "1464343590586290287"; // Admin user
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
