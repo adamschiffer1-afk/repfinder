@@ -43,6 +43,13 @@ export default function AgentModal({ isOpen, product, onClose }) {
     const link = convertLink(product.link, selectedAgent);
     window.open(link, '_blank');
     
+    // Get or create visitor ID
+    let visitorId = localStorage.getItem('visitor_id');
+    if (!visitorId) {
+      visitorId = 'v_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('visitor_id', visitorId);
+    }
+    
     // Track click
     try {
       fetch('/api/stats', {
@@ -52,6 +59,9 @@ export default function AgentModal({ isOpen, product, onClose }) {
           productId: product._id,
           type: 'product_click',
           agent: selectedAgent,
+          visitorId: visitorId,
+          path: window.location.pathname,
+          userAgent: navigator.userAgent
         })
       });
     } catch (err) {
