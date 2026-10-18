@@ -1423,6 +1423,10 @@ export default function ManageProducts() {
                     showToast('Błąd uploadu', 'error');
                   }
                 }}
+                onClick={() => {
+                  // Open file picker only when clicking on the image zone
+                  document.getElementById('imageUploadInput').click();
+                }}
                 style={{
                   border: '2px dashed rgba(255,255,255,0.2)',
                   borderRadius: '10px',
@@ -1431,18 +1435,19 @@ export default function ManageProducts() {
                   background: 'rgba(255,255,255,0.05)',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
-                  marginBottom: '10px'
+                  marginBottom: '10px',
+                  position: 'relative'
                 }}
               >
                 {formData.image ? (
-                  <div style={{ position: 'relative' }}>
+                  <div style={{ position: 'relative', pointerEvents: 'none' }}>
                     <img src={formData.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} />
                     <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
                       📷 Przeciągnij nowe zdjęcie aby zamienić
                     </p>
                   </div>
                 ) : (
-                  <div>
+                  <div style={{ pointerEvents: 'none' }}>
                     <p style={{ fontSize: '32px', margin: '0 0 10px' }}>📷</p>
                     <p style={{ color: 'white', margin: '0 0 5px', fontWeight: 600 }}>Przeciągnij zdjęcie tutaj</p>
                     <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>
@@ -1481,14 +1486,6 @@ export default function ManageProducts() {
                   }}
                   style={{ display: 'none' }}
                   id="imageUploadInput"
-                />
-                <label 
-                  htmlFor="imageUploadInput" 
-                  style={{ 
-                    position: 'absolute',
-                    inset: 0,
-                    cursor: 'pointer'
-                  }}
                 />
               </div>
               <input 
