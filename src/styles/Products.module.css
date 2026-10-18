@@ -768,9 +768,58 @@
   color: #fff;
 }
 
+@media (max-width: 768px) {
+  /* Smaller badges on tablets and larger phones */
+  .batchBadge {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+  
+  .categoryBadge {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+  
+  .productName {
+    font-size: 12.5px;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+    max-height: 2.8em;
+  }
+}
+
 @media (max-width: 480px) {
   .productsSection { padding: 65px 10px 36px; }
-  .productName { font-size: 12px; }
+  
+  /* Product name - allow wrapping */
+  .productName { 
+    font-size: 12px; 
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+    max-height: 2.8em;
+  }
+  
+  /* Smaller badges to prevent overlap */
+  .batchBadge {
+    padding: 4px 8px;
+    font-size: 10px;
+    top: 8px;
+    left: 8px;
+  }
+  
+  .categoryBadge {
+    padding: 4px 8px;
+    font-size: 10px;
+    top: 8px;
+    right: 8px;
+  }
+  
   .primaryPrice { font-size: 13px; }
   .agentButton { padding: 9px; font-size: 11.5px; }
   .copyButton { padding: 9px; }
