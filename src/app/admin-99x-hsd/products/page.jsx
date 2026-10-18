@@ -808,14 +808,17 @@ export default function ManageProducts() {
       });
       
       const data = await res.json();
+      console.log('Remove BG response:', res.status, data);
       
-      if (res.ok && data.nobgUrl) {
-        setFormData({ ...formData, image: data.nobgUrl });
+      if (res.ok && (data.nobgUrl || data.url)) {
+        setFormData({ ...formData, image: data.nobgUrl || data.url });
         showToast('✅ Usunięto tło!', 'success');
       } else {
+        console.error('Remove BG error:', data);
         showToast(data.error || 'Błąd usuwania tła', 'error');
       }
     } catch (err) {
+      console.error('Remove BG fetch error:', err);
       showToast('Błąd połączenia z serwerem', 'error');
     } finally {
       setRemoveBgLoading(false);
