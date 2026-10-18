@@ -549,7 +549,7 @@
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: background .15s ease, color .15s ease, border-color .15s ease;
+  transition: all .2s ease;
   letter-spacing: -.1px;
   display: flex;
   align-items: center;
@@ -565,6 +565,40 @@
 
 .copyButton:active {
   transform: scale(0.95);
+}
+
+.copyButton.copied {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: rgb(34, 197, 94);
+  animation: checkPulse 0.4s ease;
+}
+
+.checkIcon {
+  animation: checkDraw 0.3s ease forwards;
+}
+
+@keyframes checkPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes checkDraw {
+  0% {
+    stroke-dasharray: 0, 100;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dasharray: 100, 0;
+    opacity: 1;
+  }
 }
 
 /* ── Skeleton ── */

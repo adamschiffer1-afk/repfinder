@@ -13,6 +13,14 @@ import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTs
 
 // Memoized ProductCard component
 const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink }) => {
+  const [copied, setCopied] = useState(false);
+  
+  const handleCopy = () => {
+    onCopyLink(product);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  
   return (
     <div className={styles.productCard} style={{ animationDelay: `${index * 0.03}s` }}>
       {/* Product Image — click opens agent */}
@@ -65,14 +73,20 @@ const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink
             Zobacz produkt
           </button>
           <button 
-            className={styles.copyButton}
-            onClick={() => onCopyLink(product)}
+            className={`${styles.copyButton} ${copied ? styles.copied : ''}`}
+            onClick={handleCopy}
             title="Copy product link"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-            </svg>
+            {copied ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.checkIcon}>
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
@@ -579,13 +593,33 @@ export default function ProductsPage() {
   };
 
   const handleCopyLink = (product) => {
+    // Get preferred agent from localStorage
+    const preferredAgent = localStorage.getItem('preferredAgent') || 'KakoBuy';
+    
     // Extract weidian URL from product.link
     const weidianMatch = product.link?.match(/url=([^&]+)/);
     const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
     
+    // Generate agent link
+    const agentUrls = {
+      'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}`,
+      'ACBuy': `https://www.allchinabuy.com/en/page/buy?nTag=Home-search&from=search-input&url=${encodeURIComponent(weidianUrl)}`,
+      'USFans': `https://www.usfans.net/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'GTBuy': `https://www.gtbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'OopBuy': `https://www.oopbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'MuleBuy': `https://www.mulebuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'HipoBuy': `https://www.hipobuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`
+    };
+    
+    const agentLink = agentUrls[preferredAgent] || agentUrls['KakoBuy'];
+    
     // Copy to clipboard
-    navigator.clipboard.writeText(weidianUrl).then(() => {
-      toast.success('Link skopiowany do schowka!');
+    navigator.clipboard.writeText(agentLink).then(() => {
+      toast.success(`Link ${preferredAgent} skopiowany!`, {
+        icon: '✓',
+        duration: 2000
+      });
     }).catch((err) => {
       console.error('Failed to copy:', err);
       toast.error('Nie udało się skopiować linku');
