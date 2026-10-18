@@ -52,7 +52,6 @@ const ProductTable = memo(function ProductTable({
   onReorderPinned,
   isReordering,
   onImageClick,
-  onImageDrop,
   onNameDoubleClick,
   onNameSave
 }) {
@@ -60,7 +59,6 @@ const ProductTable = memo(function ProductTable({
   const [dragOverId, setDragOverId] = useState(null);
   const [editingNameId, setEditingNameId] = useState(null);
   const [editingNameValue, setEditingNameValue] = useState('');
-  const [dragOverImage, setDragOverImage] = useState(null);
 
   const handleDragStart = useCallback((event, product) => {
     if (!product.isPinned || isReordering) {
@@ -182,49 +180,8 @@ const ProductTable = memo(function ProductTable({
                 </label>
               </td>
               <td>
-                <div 
-                  className={styles.tableImgContainer} 
-                  onClick={() => onImageClick(product.image)} 
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setDragOverImage(product._id);
-                  }}
-                  onDragLeave={(e) => {
-                    e.preventDefault();
-                    setDragOverImage(null);
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setDragOverImage(null);
-                    onImageDrop(e, product._id);
-                  }}
-                  style={{ 
-                    cursor: 'pointer',
-                    position: 'relative',
-                    border: dragOverImage === product._id ? '2px dashed #10b981' : '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '8px',
-                    transition: 'all 0.2s'
-                  }}
-                  title="Kliknij aby powiększyć lub przeciągnij nowe zdjęcie"
-                >
+                <div className={styles.tableImgContainer} onClick={() => onImageClick(product.image)} style={{ cursor: 'pointer' }}>
                   <img src={product.image} alt="" className={styles.tableImg} />
-                  {dragOverImage === product._id && (
-                    <div style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'rgba(16, 185, 129, 0.2)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: '6px',
-                      fontSize: '24px',
-                      pointerEvents: 'none'
-                    }}>
-                      📷
-                    </div>
-                  )}
                 </div>
               </td>
               <td 
@@ -962,43 +919,6 @@ export default function ManageProducts() {
     setLightboxImage(imageUrl);
   }, []);
 
-  const handleImageDrop = useCallback(async (event, productId) => {
-    event.preventDefault();
-    event.stopPropagation();
-    
-    const file = event.dataTransfer.files[0];
-    if (!file || !file.type.startsWith('image/')) {
-      showToast('Proszę przeciągnij plik obrazu', 'error');
-      return;
-    }
-
-    // Show loading toast
-    showToast('Uploading zdjęcia...', 'info');
-
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('productId', productId);
-
-      const res = await fetch('/api/admin/upload-image', {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        showToast('Zdjęcie zaktualizowane!', 'success');
-        fetchProducts(currentPage);
-      } else {
-        showToast(data.error || 'Błąd uploadu', 'error');
-      }
-    } catch (err) {
-      console.error('Upload error:', err);
-      showToast('Błąd uploadu zdjęcia', 'error');
-    }
-  }, [currentPage, fetchProducts, showToast]);
-
   const handleNameSave = useCallback(async (productId, newName) => {
     if (!newName.trim()) {
       showToast('Nazwa nie może być pusta', 'error');
@@ -1263,7 +1183,6 @@ export default function ManageProducts() {
             onReorderPinned={handleReorderPinned}
             isReordering={isReordering}
             onImageClick={handleImageClick}
-            onImageDrop={handleImageDrop}
             onNameDoubleClick={() => {}}
             onNameSave={handleNameSave}
           />
