@@ -1333,12 +1333,126 @@ export default function ManageProducts() {
                 onChange={(e) => setFormData({...formData, price: e.target.value})} 
                 required 
               />
+              {/* Image Upload - Drag & Drop */}
+              <div 
+                className={styles.imageUploadZone}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.style.borderColor = '#10b981';
+                  e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)';
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                }}
+                onDrop={async (e) => {
+                  e.preventDefault();
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                  
+                  const file = e.dataTransfer.files[0];
+                  if (!file || !file.type.startsWith('image/')) {
+                    showToast('Proszę przeciągnij plik obrazu', 'error');
+                    return;
+                  }
+
+                  showToast('Uploading...', 'info');
+                  
+                  const formDataUpload = new FormData();
+                  formDataUpload.append('file', file);
+                  
+                  try {
+                    const res = await fetch('/api/admin/upload-image', {
+                      method: 'POST',
+                      body: formDataUpload
+                    });
+                    const data = await res.json();
+                    
+                    if (res.ok) {
+                      setFormData({...formData, image: data.url});
+                      showToast('Zdjęcie uploaded!', 'success');
+                    } else {
+                      showToast(data.error || 'Błąd uploadu', 'error');
+                    }
+                  } catch (err) {
+                    showToast('Błąd uploadu', 'error');
+                  }
+                }}
+                style={{
+                  border: '2px dashed rgba(255,255,255,0.2)',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  textAlign: 'center',
+                  background: 'rgba(255,255,255,0.05)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  marginBottom: '10px'
+                }}
+              >
+                {formData.image ? (
+                  <div style={{ position: 'relative' }}>
+                    <img src={formData.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} />
+                    <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
+                      📷 Przeciągnij nowe zdjęcie aby zamienić
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <p style={{ fontSize: '32px', margin: '0 0 10px' }}>📷</p>
+                    <p style={{ color: 'white', margin: '0 0 5px', fontWeight: 600 }}>Przeciągnij zdjęcie tutaj</p>
+                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>
+                      lub kliknij żeby wybrać plik
+                    </p>
+                  </div>
+                )}
+                <input 
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    showToast('Uploading...', 'info');
+                    
+                    const formDataUpload = new FormData();
+                    formDataUpload.append('file', file);
+                    
+                    try {
+                      const res = await fetch('/api/admin/upload-image', {
+                        method: 'POST',
+                        body: formDataUpload
+                      });
+                      const data = await res.json();
+                      
+                      if (res.ok) {
+                        setFormData({...formData, image: data.url});
+                        showToast('Zdjęcie uploaded!', 'success');
+                      } else {
+                        showToast(data.error || 'Błąd uploadu', 'error');
+                      }
+                    } catch (err) {
+                      showToast('Błąd uploadu', 'error');
+                    }
+                  }}
+                  style={{ display: 'none' }}
+                  id="imageUploadInput"
+                />
+                <label 
+                  htmlFor="imageUploadInput" 
+                  style={{ 
+                    position: 'absolute',
+                    inset: 0,
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
               <input 
                 type="text" 
-                placeholder="Image URL" 
+                placeholder="Image URL (opcjonalnie - możesz też wkleić link)" 
                 value={formData.image} 
                 onChange={(e) => setFormData({...formData, image: e.target.value})} 
-                required 
+                style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}
               />
               <input 
                 type="text" 
