@@ -300,6 +300,20 @@ export default function ManageProducts() {
   const [showBulkScraperModal, setShowBulkScraperModal] = useState(false);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [bulkText, setBulkText] = useState('');
+
+  // Add spin animation to document head if not exists
+  useEffect(() => {
+    if (!document.getElementById('spin-animation')) {
+      const style = document.createElement('style');
+      style.id = 'spin-animation';
+      style.textContent = `
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
   
   // Category Grid Modal state
   const [showCategoryGrid, setShowCategoryGrid] = useState(false);
@@ -331,6 +345,7 @@ export default function ManageProducts() {
   const [qcScrapeLoading, setQcScrapeLoading] = useState(false);
   const [selectedQcIndices, setSelectedQcIndices] = useState([]);
   const [bulkColorwayText, setBulkColorwayText] = useState('');
+  const [removeBgLoading, setRemoveBgLoading] = useState(false);
   
   // Lightbox state
   const [lightboxImage, setLightboxImage] = useState(null);
@@ -776,6 +791,35 @@ export default function ManageProducts() {
       newQc.splice(index, 1);
       return { ...prev, qcImages: newQc };
     });
+  };
+
+  const handleRemoveBackground = async () => {
+    if (!formData.image) {
+      showToast('Brak zdjęcia do przetworzenia', 'error');
+      return;
+    }
+    
+    setRemoveBgLoading(true);
+    try {
+      const res = await fetch('/api/admin/remove-bg', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl: formData.image })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok && data.nobgUrl) {
+        setFormData({ ...formData, image: data.nobgUrl });
+        showToast('✅ Usunięto tło!', 'success');
+      } else {
+        showToast(data.error || 'Błąd usuwania tła', 'error');
+      }
+    } catch (err) {
+      showToast('Błąd połączenia z serwerem', 'error');
+    } finally {
+      setRemoveBgLoading(false);
+    }
   };
 
   const handleQcScrape = async () => {
@@ -1454,6 +1498,53 @@ export default function ManageProducts() {
                 onChange={(e) => setFormData({...formData, image: e.target.value})} 
                 style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)' }}
               />
+              {/* Remove Background Button */}
+              {formData.image && (
+                <button
+                  type="button"
+                  onClick={handleRemoveBackground}
+                  disabled={removeBgLoading}
+                  style={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '12px 20px',
+                    borderRadius: '8px',
+                    cursor: removeBgLoading ? 'not-allowed' : 'pointer',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    justifyContent: 'center',
+                    opacity: removeBgLoading ? 0.6 : 1,
+                    transition: 'all 0.2s',
+                    margin: '-5px 0 10px'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!removeBgLoading) {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 16px rgba(102, 126, 234, 0.3)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  {removeBgLoading ? (
+                    <>
+                      <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⚙️</span>
+                      <span>Usuwanie tła...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>🎨</span>
+                      <span>Remove Background</span>
+                    </>
+                  )}
+                </button>
+              )}
               <input 
                 type="text" 
                 placeholder="Product Link" 
