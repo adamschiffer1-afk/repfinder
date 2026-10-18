@@ -346,6 +346,7 @@ export default function ManageProducts() {
   const [selectedQcIndices, setSelectedQcIndices] = useState([]);
   const [bulkColorwayText, setBulkColorwayText] = useState('');
   const [removeBgLoading, setRemoveBgLoading] = useState(false);
+  const [bulkRemoveBgProgress, setBulkRemoveBgProgress] = useState({ total: 0, current: 0, successes: 0, failures: 0 });
   
   // Lightbox state
   const [lightboxImage, setLightboxImage] = useState(null);
@@ -656,6 +657,75 @@ export default function ManageProducts() {
       }
     );
   }, [selectedIds, currentPage, fetchProducts, showToast, askConfirmation]);
+
+  const handleBulkRemoveBackground = useCallback(async () => {
+    if (selectedIds.length === 0) {
+      showToast('Zaznacz produkty do usunięcia tła', 'error');
+      return;
+    }
+
+    askConfirmation(
+      'Masowe usuwanie tła',
+      `Czy chcesz usunąć tło dla ${selectedIds.length} zaznaczonych produktów? To użyje ${selectedIds.length} z 50 darmowych usunięć miesięcznie.`,
+      async () => {
+        setRemoveBgLoading(true);
+        setBulkRemoveBgProgress({ total: selectedIds.length, current: 0, successes: 0, failures: 0 });
+
+        const selectedProducts = products.filter(p => selectedIds.includes(p._id));
+        let successes = 0;
+        let failures = 0;
+
+        for (let i = 0; i < selectedProducts.length; i++) {
+          const product = selectedProducts[i];
+          
+          try {
+            const res = await fetch('/api/admin/remove-bg', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ imageUrl: product.image })
+            });
+
+            const data = await res.json();
+
+            if (res.ok && (data.nobgUrl || data.url)) {
+              // Update product with new image
+              const updateRes = await fetch(`/api/products/${product._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: data.nobgUrl || data.url })
+              });
+
+              if (updateRes.ok) {
+                successes++;
+              } else {
+                failures++;
+              }
+            } else {
+              failures++;
+            }
+          } catch (err) {
+            console.error(`Failed to remove bg for ${product.name}:`, err);
+            failures++;
+          }
+
+          setBulkRemoveBgProgress({
+            total: selectedIds.length,
+            current: i + 1,
+            successes,
+            failures
+          });
+        }
+
+        setRemoveBgLoading(false);
+        showToast(
+          `Ukończono! Sukces: ${successes}, Błędy: ${failures}`,
+          failures === 0 ? 'success' : 'error'
+        );
+        setSelectedIds([]);
+        fetchProducts(currentPage);
+      }
+    );
+  }, [selectedIds, products, currentPage, fetchProducts, showToast, askConfirmation]);
 
   const handleScrape = async (e) => {
     e.preventDefault();
@@ -1333,6 +1403,22 @@ export default function ManageProducts() {
                   👁️ Pokaż
                 </button>
               </div>
+
+              <button 
+                className={styles.bulkPinBtn} 
+                onClick={handleBulkRemoveBackground}
+                disabled={removeBgLoading}
+                style={{
+                  opacity: removeBgLoading ? 0.6 : 1,
+                  cursor: removeBgLoading ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {removeBgLoading ? (
+                  <>⚙️ Usuwanie tła... ({bulkRemoveBgProgress.current}/{bulkRemoveBgProgress.total})</>
+                ) : (
+                  <>🎨 Usuń tło</>
+                )}
+              </button>
 
               <button 
                 className={styles.bulkDeleteBtn} 
