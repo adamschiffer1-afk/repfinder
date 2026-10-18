@@ -990,10 +990,6 @@ export default function ManageProducts() {
       if (res.ok) {
         showToast('Zdjęcie zaktualizowane!', 'success');
         fetchProducts(currentPage);
-        // Update category grid if open
-        if (showCategoryGrid) {
-          fetchCategoryProducts(selectedCategoryName);
-        }
       } else {
         showToast(data.error || 'Błąd uploadu', 'error');
       }
@@ -1001,7 +997,7 @@ export default function ManageProducts() {
       console.error('Upload error:', err);
       showToast('Błąd uploadu zdjęcia', 'error');
     }
-  }, [currentPage, fetchProducts, showToast, showCategoryGrid, selectedCategoryName, fetchCategoryProducts]);
+  }, [currentPage, fetchProducts, showToast]);
 
   const handleNameSave = useCallback(async (productId, newName) => {
     if (!newName.trim()) {
