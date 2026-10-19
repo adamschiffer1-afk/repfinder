@@ -588,6 +588,27 @@ export default function ProductsPage() {
     
     const agentLink = agentUrls[preferredAgent] || agentUrls['KakoBuy'];
     
+    // Track product click
+    const visitorId = localStorage.getItem('visitorId') || 
+      (() => {
+        const id = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('visitorId', id);
+        return id;
+      })();
+    
+    fetch('/api/stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'product_click',
+        productId: product.id || product._id,
+        agent: preferredAgent,
+        visitorId: visitorId,
+        path: window.location.pathname,
+        userAgent: navigator.userAgent
+      })
+    }).catch(err => console.error('Track error:', err));
+    
     // Open in new tab
     window.open(agentLink, '_blank');
   };
@@ -614,11 +635,32 @@ export default function ProductsPage() {
     
     const agentLink = agentUrls[preferredAgent] || agentUrls['KakoBuy'];
     
+    // Track product click (copy is also a click)
+    const visitorId = localStorage.getItem('visitorId') || 
+      (() => {
+        const id = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        localStorage.setItem('visitorId', id);
+        return id;
+      })();
+    
+    fetch('/api/stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'product_click',
+        productId: product.id || product._id,
+        agent: preferredAgent,
+        visitorId: visitorId,
+        path: window.location.pathname,
+        userAgent: navigator.userAgent
+      })
+    }).catch(err => console.error('Track error:', err));
+    
     // Copy to clipboard
     navigator.clipboard.writeText(agentLink).then(() => {
-      toast.success(`Link ${preferredAgent} skopiowany!`, {
+      toast.success(`Skopiowano link ${preferredAgent}`, {
         icon: '✓',
-        duration: 2000
+        duration: 1500
       });
     }).catch((err) => {
       console.error('Failed to copy:', err);

@@ -17,13 +17,26 @@ export function useToast() {
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
-  const addToast = useCallback((message, type = 'info', duration = 3000) => {
+  const addToast = useCallback((message, type = 'info', options = {}) => {
+    const duration = options.duration ?? 3000;
     const id = Date.now();
-    setToasts(prev => [...prev, { id, message, type }]);
+    
+    // Remove existing toasts of same type before adding new one
+    setToasts(prev => {
+      const filtered = type === 'success' 
+        ? prev.filter(t => t.type !== 'success') 
+        : prev;
+      return [...filtered, { id, message, type, removing: false }];
+    });
     
     if (duration > 0) {
       setTimeout(() => {
-        removeToast(id);
+        // Add removing class first
+        setToasts(prev => prev.map(t => t.id === id ? { ...t, removing: true } : t));
+        // Then remove after animation
+        setTimeout(() => {
+          removeToast(id);
+        }, 200);
       }, duration);
     }
     
@@ -31,21 +44,26 @@ export function ToastProvider({ children }) {
   }, []);
 
   const removeToast = useCallback((id) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
+    // Add removing class first
+    setToasts(prev => prev.map(t => t.id === id ? { ...t, removing: true } : t));
+    // Then remove after animation
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 200);
   }, []);
 
   const toast = {
-    success: (msg, duration) => addToast(msg, 'success', duration),
-    error: (msg, duration) => addToast(msg, 'error', duration),
-    info: (msg, duration) => addToast(msg, 'info', duration),
+    success: (msg, options) => addToast(msg, 'success', options),
+    error: (msg, options) => addToast(msg, 'error', options),
+    info: (msg, options) => addToast(msg, 'info', options),
   };
 
   return (
     <ToastContext.Provider value={toast}>
       {children}
       <div className={styles.toastContainer}>
-        {toasts.map(({ id, message, type }) => (
-          <div key={id} className={`${styles.toast} ${styles[type]}`}>
+        {toasts.map(({ id, message, type, removing }) => (
+          <div key={id} className={`${styles.toast} ${styles[type]} ${removing ? styles.removing : ''}`}>
             <FontAwesomeIcon 
               icon={type === 'success' ? faCheckCircle : type === 'error' ? faExclamationCircle : faInfoCircle} 
               className={styles.toastIcon}
