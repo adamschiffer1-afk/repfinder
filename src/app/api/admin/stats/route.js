@@ -159,6 +159,25 @@ export async function GET(req) {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
+    // Top countries for product clicks only
+    const { data: countriesClicksData} = await supabaseAdmin
+      .from('stats')
+      .select('country')
+      .eq('type', 'product_click')
+      .not('country', 'is', null)
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
+
+    const countryClicksCounts = {};
+    countriesClicksData?.forEach(item => {
+      countryClicksCounts[item.country] = (countryClicksCounts[item.country] || 0) + 1;
+    });
+
+    const topCountriesClicks = Object.entries(countryClicksCounts)
+      .map(([country, count]) => ({ _id: country, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
     // Recent activity - simple version WITHOUT JOIN
     const { data: recentActivity } = await supabaseAdmin
       .from('stats')
@@ -168,6 +187,26 @@ export async function GET(req) {
       .lte('timestamp', to.toISOString())
       .order('timestamp', { ascending: false })
       .limit(10);
+
+    // Fetch product names for recent activity
+    const enrichedActivity = await Promise.all(
+      (recentActivity || []).map(async (activity) => {
+        if (activity.type === 'product_click' && activity.product_id) {
+          try {
+            const { data: product } = await supabaseAdmin
+              .from('products')
+              .select('name')
+              .eq('id', activity.product_id)
+              .single();
+            
+            return { ...activity, productName: product?.name || null };
+          } catch (e) {
+            return activity;
+          }
+        }
+        return activity;
+      })
+    );
 
     // Timeline data for charts
     const { data: timelineData, error: timelineError } = await supabaseAdmin
@@ -224,7 +263,8 @@ export async function GET(req) {
       topProducts,
       topAgents,
       topCountries,
-      recentActivity: recentActivity || [],
+      topCountriesClicks,
+      recentActivity: enrichedActivity,
       timeline,
       dateRange: { from: from.toISOString(), to: to.toISOString() }
     });

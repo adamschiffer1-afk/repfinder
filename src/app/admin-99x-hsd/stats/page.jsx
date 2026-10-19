@@ -12,6 +12,20 @@ export default function NewStatsPage() {
   const [customFrom, setCustomFrom] = useState('');
   const [customTo, setCustomTo] = useState('');
 
+  // Helper to format path names
+  const formatPath = (path) => {
+    if (!path || path === '/') return 'Wejście na stronę główną';
+    if (path === '/products') return 'Przeglądanie produktów';
+    if (path === '/calculator') return 'Kalkulator wysyłki';
+    if (path === '/tracking') return 'Śledzenie przesyłki';
+    if (path === '/qc') return 'Zdjęcia QC';
+    if (path === '/link-converter') return 'Konwerter linków';
+    if (path === '/promotions') return 'Promocje';
+    if (path.startsWith('/products/')) return 'Szczegóły produktu';
+    if (path.startsWith('/profile/')) return 'Profil użytkownika';
+    return `Wizyta na: ${path}`;
+  };
+
   useEffect(() => {
     fetchStats();
   }, [range, customMode]);
@@ -260,7 +274,7 @@ export default function NewStatsPage() {
         </div>
 
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>🌍 Top kraje</h2>
+          <h2 className={styles.sectionTitle}>🌍 Top kraje - wszystkie wizyty</h2>
           <div className={styles.listItems}>
             {stats?.topCountries?.slice(0, 5).map((country, index) => (
               <div key={index} className={styles.listItem}>
@@ -270,6 +284,20 @@ export default function NewStatsPage() {
               </div>
             )) || <div className={styles.noData}>Brak danych</div>}
           </div>
+        </div>
+      </div>
+
+      {/* Top Countries for Product Clicks */}
+      <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>🌍 Top kraje - kliknięcia w produkty</h2>
+        <div className={styles.listItems}>
+          {stats?.topCountriesClicks?.slice(0, 5).map((country, index) => (
+            <div key={index} className={styles.listItem}>
+              <span className={styles.listRank}>#{index + 1}</span>
+              <span className={styles.listLabel}>{country._id || 'Unknown'}</span>
+              <span className={styles.listValue}>{country.count}</span>
+            </div>
+          )) || <div className={styles.noData}>Brak danych</div>}
         </div>
       </div>
 
@@ -285,8 +313,8 @@ export default function NewStatsPage() {
               <div className={styles.activityContent}>
                 <div className={styles.activityText}>
                   {activity.type === 'product_click'
-                    ? `Kliknięcie produktu: ${activity.products?.name || activity.product_id}`
-                    : `Wizyta na: ${activity.path}`}
+                    ? `Kliknięcie produktu: ${activity.productName || activity.product_name || 'Nieznany produkt'}`
+                    : formatPath(activity.path)}
                 </div>
                 <div className={styles.activityTime}>
                   {new Date(activity.timestamp).toLocaleString('pl-PL')}
