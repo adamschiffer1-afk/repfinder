@@ -255,6 +255,67 @@ export async function GET(req) {
       .map(([time, counts]) => ({ time, ...counts }))
       .sort((a, b) => a.time.localeCompare(b.time));
 
+    // Top active users (by product clicks)
+    const { data: userClicksData } = await supabaseAdmin
+      .from('stats')
+      .select('visitor_id, product_id, timestamp, country, user_agent')
+      .eq('type', 'product_click')
+      .not('visitor_id', 'is', null)
+      .gte('timestamp', from.toISOString())
+      .lte('timestamp', to.toISOString());
+
+    const userStats = {};
+    userClicksData?.forEach(click => {
+      if (!userStats[click.visitor_id]) {
+        userStats[click.visitor_id] = {
+          visitorId: click.visitor_id,
+          clicks: 0,
+          products: new Set(),
+          country: click.country,
+          firstSeen: click.timestamp,
+          lastSeen: click.timestamp
+        };
+      }
+      userStats[click.visitor_id].clicks++;
+      userStats[click.visitor_id].products.add(click.product_id);
+      if (new Date(click.timestamp) < new Date(userStats[click.visitor_id].firstSeen)) {
+        userStats[click.visitor_id].firstSeen = click.timestamp;
+      }
+      if (new Date(click.timestamp) > new Date(userStats[click.visitor_id].lastSeen)) {
+        userStats[click.visitor_id].lastSeen = click.timestamp;
+      }
+    });
+
+    const topUsers = Object.values(userStats)
+      .map(user => ({
+        ...user,
+        uniqueProducts: user.products.size,
+        products: Array.from(user.products)
+      }))
+      .sort((a, b) => b.clicks - a.clicks)
+      .slice(0, 10);
+
+    // Fetch product names for top users
+    const enrichedTopUsers = await Promise.all(
+      topUsers.map(async (user) => {
+        const productNames = await Promise.all(
+          user.products.slice(0, 5).map(async (productId) => {
+            try {
+              const { data: product } = await supabaseAdmin
+                .from('products')
+                .select('name, image')
+                .eq('id', productId)
+                .single();
+              return { id: productId, name: product?.name, image: product?.image };
+            } catch (e) {
+              return { id: productId, name: null, image: null };
+            }
+          })
+        );
+        return { ...user, productDetails: productNames };
+      })
+    );
+
     return NextResponse.json({
       totalVisits: totalVisits || 0,
       uniqueVisitors,
@@ -264,6 +325,7 @@ export async function GET(req) {
       topAgents,
       topCountries,
       topCountriesClicks,
+      topUsers: enrichedTopUsers,
       recentActivity: enrichedActivity,
       timeline,
       dateRange: { from: from.toISOString(), to: to.toISOString() }

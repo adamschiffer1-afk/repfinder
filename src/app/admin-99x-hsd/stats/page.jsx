@@ -11,6 +11,9 @@ export default function NewStatsPage() {
   const [customMode, setCustomMode] = useState(false);
   const [customFrom, setCustomFrom] = useState('');
   const [customTo, setCustomTo] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userDetailsLoading, setUserDetailsLoading] = useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
 
   // Helper to format path names
   const formatPath = (path) => {
@@ -59,6 +62,21 @@ export default function NewStatsPage() {
   const handleRangeChange = (newRange) => {
     setRange(newRange);
     setCustomMode(false);
+  };
+
+  const fetchUserDetails = async (visitorId) => {
+    setUserDetailsLoading(true);
+    try {
+      const res = await fetch(`/api/admin/stats/user/${encodeURIComponent(visitorId)}`);
+      if (!res.ok) throw new Error('Błąd pobierania danych użytkownika');
+      const data = await res.json();
+      setSelectedUser(data);
+      setShowUserModal(true);
+    } catch (err) {
+      alert('Nie udało się pobrać danych użytkownika: ' + err.message);
+    } finally {
+      setUserDetailsLoading(false);
+    }
   };
 
   if (loading) {
@@ -301,6 +319,53 @@ export default function NewStatsPage() {
         </div>
       </div>
 
+      {/* Top Active Users */}
+      {stats?.topUsers && stats.topUsers.length > 0 && (
+        <div className={styles.section}>
+          <h2 className={styles.sectionTitle}>👥 Najaktywniejsi użytkownicy</h2>
+          <div className={styles.usersGrid}>
+            {stats.topUsers.map((user, index) => (
+              <div 
+                key={user.visitorId} 
+                className={styles.userCard}
+                onClick={() => fetchUserDetails(user.visitorId)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className={styles.userRank}>#{index + 1}</div>
+                <div className={styles.userInfo}>
+                  <div className={styles.userId}>
+                    🔑 {user.visitorId.substring(0, 20)}...
+                  </div>
+                  <div className={styles.userStats}>
+                    <span>🖱️ {user.clicks} kliknięć</span>
+                    <span>📦 {user.uniqueProducts} produktów</span>
+                    <span>🌍 {user.country || 'Unknown'}</span>
+                  </div>
+                  {user.productDetails && user.productDetails.length > 0 && (
+                    <div className={styles.userProducts}>
+                      <div className={styles.userProductsLabel}>Ostatnio klikał:</div>
+                      <div className={styles.userProductsList}>
+                        {user.productDetails.slice(0, 3).map((product, idx) => (
+                          <div key={idx} className={styles.userProduct}>
+                            {product.image && (
+                              <img src={product.image} alt={product.name} className={styles.userProductImg} />
+                            )}
+                            <span className={styles.userProductName}>
+                              {product.name || 'Nieznany produkt'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className={styles.userArrow}>→</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Recent Activity */}
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>🕒 Ostatnia aktywność</h2>
@@ -324,6 +389,95 @@ export default function NewStatsPage() {
           )) || <div className={styles.noData}>Brak ostatniej aktywności</div>}
         </div>
       </div>
+
+      {/* User Details Modal */}
+      {showUserModal && selectedUser && (
+        <div className={styles.modalOverlay} onClick={() => setShowUserModal(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>📊 Szczegóły użytkownika</h2>
+              <button onClick={() => setShowUserModal(false)} className={styles.modalClose}>✕</button>
+            </div>
+            
+            <div className={styles.modalContent}>
+              {/* Summary Cards */}
+              <div className={styles.userSummaryGrid}>
+                <div className={styles.summaryCard}>
+                  <div className={styles.summaryIcon}>👁️</div>
+                  <div className={styles.summaryValue}>{selectedUser.summary.pageViews}</div>
+                  <div className={styles.summaryLabel}>Wyświetlenia</div>
+                </div>
+                <div className={styles.summaryCard}>
+                  <div className={styles.summaryIcon}>🖱️</div>
+                  <div className={styles.summaryValue}>{selectedUser.summary.productClicks}</div>
+                  <div className={styles.summaryLabel}>Kliknięcia</div>
+                </div>
+                <div className={styles.summaryCard}>
+                  <div className={styles.summaryIcon}>📦</div>
+                  <div className={styles.summaryValue}>{selectedUser.summary.uniqueProducts}</div>
+                  <div className={styles.summaryLabel}>Unikalne produkty</div>
+                </div>
+                <div className={styles.summaryCard}>
+                  <div className={styles.summaryIcon}>⏱️</div>
+                  <div className={styles.summaryValue}>{selectedUser.summary.timeSpent}s</div>
+                  <div className={styles.summaryLabel}>Czas na stronie</div>
+                </div>
+              </div>
+
+              {/* User Details */}
+              <div className={styles.userDetails}>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>🆔 Visitor ID:</span>
+                  <span className={styles.detailValue}>{selectedUser.visitorId}</span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>🌍 Kraj:</span>
+                  <span className={styles.detailValue}>{selectedUser.summary.country || 'Unknown'}</span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>🌐 Przeglądarka:</span>
+                  <span className={styles.detailValue}>{selectedUser.summary.browser}</span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>📅 Pierwsza wizyta:</span>
+                  <span className={styles.detailValue}>
+                    {new Date(selectedUser.summary.firstVisit).toLocaleString('pl-PL')}
+                  </span>
+                </div>
+                <div className={styles.detailRow}>
+                  <span className={styles.detailLabel}>📅 Ostatnia wizyta:</span>
+                  <span className={styles.detailValue}>
+                    {new Date(selectedUser.summary.lastVisit).toLocaleString('pl-PL')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Products Clicked */}
+              {selectedUser.products && selectedUser.products.length > 0 && (
+                <div className={styles.userProductsSection}>
+                  <h3 className={styles.sectionSubtitle}>📦 Kliknięte produkty</h3>
+                  <div className={styles.userProductsGrid}>
+                    {selectedUser.products.map((product, idx) => (
+                      <div key={idx} className={styles.productDetailCard}>
+                        {product.image && (
+                          <img src={product.image} alt={product.name} className={styles.productDetailImg} />
+                        )}
+                        <div className={styles.productDetailInfo}>
+                          <div className={styles.productDetailName}>{product.name || 'Nieznany'}</div>
+                          <div className={styles.productDetailStats}>
+                            <span>🖱️ {product.clicks} kliknięć</span>
+                            {product.category && <span>📁 {product.category}</span>}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
