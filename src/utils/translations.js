@@ -89,7 +89,10 @@ export const translations = {
       likes: "polubień",
       bestBatchLabel: "Best Batch",
       budgetBatchLabel: "Budget Batch",
-      noQcPhotos: "Brak zdjęć QC dla tego produktu."
+      noQcPhotos: "Brak zdjęć QC dla tego produktu.",
+      viewProduct: "Zobacz produkt",
+      copyLink: "Kopiuj",
+      linkCopied: "Skopiowano link"
     },
     features: {
       title: "WIĘCEJ",
@@ -130,6 +133,19 @@ export const translations = {
       community: "SPOŁECZNOŚĆ",
       info: "INFORMACJE",
       copyright: "RepFinder © 2026"
+    },
+    faq: {
+      eyebrow: "Pomoc",
+      title: "Frequently Asked",
+      titleHighlight: "Questions",
+      q1: "Jak działa zamawianie przez chińskiego agenta?",
+      a1: "Chiński agent pomaga w zakupie towarów z lokalnych platform (np. 1688, Taobao, Weidian), kontaktuje się ze sprzedawcą, sprawdza jakość produktu, konsoliduje paczki i wysyła je do ciebie.",
+      q2: "Jak znaleźć najlepsze jakościowo itemy?",
+      a2: "Nie musisz szukać na ślepo — wyselekcjonowane, sprawdzone jakościowo produkty znajdziesz w zakładce Products na naszej stronie. Regularnie aktualizujemy ją o topowe itemy z dobrym stosunkiem ceny do jakości.",
+      q3: "Ile trwa dostawa z Chin?",
+      a3: "Dostawa zazwyczaj zajmuje 8–15 dni roboczych od momentu nadania paczki. Czas zależy od wybranej metody wysyłki i kraju docelowego.",
+      q4: "Czy moja paczka może zostać złapana przez urząd celny?",
+      a4: "Ryzyko jest minimalne, jeśli korzystasz ze sprawdzonych i bezpiecznych linii wysyłkowych, takich jak DPD, DHL, ETL czy InPost. Te metody mają dobre statystyki dostarczalności i są regularnie używane do przesyłek międzynarodowych."
     },
     tutorials: {
       title: "Poradniki Wkrótce",
@@ -424,7 +440,10 @@ export const translations = {
       likes: "likes",
       bestBatchLabel: "Best Batch",
       budgetBatchLabel: "Budget Batch",
-      noQcPhotos: "No QC photos found for this product."
+      noQcPhotos: "No QC photos found for this product.",
+      viewProduct: "View product",
+      copyLink: "Copy",
+      linkCopied: "Link copied"
     },
     features: {
       title: "MORE",
@@ -465,6 +484,19 @@ export const translations = {
       community: "COMMUNITY",
       info: "INFORMATION",
       copyright: "RepFinder © 2026"
+    },
+    faq: {
+      eyebrow: "Help",
+      title: "Frequently Asked",
+      titleHighlight: "Questions",
+      q1: "How does ordering through a Chinese agent work?",
+      a1: "A Chinese agent helps you purchase goods from local platforms (e.g., 1688, Taobao, Weidian), contacts the seller, checks product quality, consolidates packages, and ships them to you.",
+      q2: "How to find the best quality items?",
+      a2: "You don't have to search blindly — you'll find curated, quality-checked products in the Products tab on our website. We regularly update it with top items with a good price-to-quality ratio.",
+      q3: "How long does delivery from China take?",
+      a3: "Delivery usually takes 8-15 business days from the moment the package is shipped. The time depends on the shipping method chosen and the destination country.",
+      q4: "Can my package be caught by customs?",
+      a4: "The risk is minimal if you use proven and safe shipping lines such as DPD, DHL, ETL or InPost. These methods have good delivery statistics and are regularly used for international shipments."
     },
     tutorials: {
       title: "Tutorials Coming Soon",
@@ -705,7 +737,10 @@ export const translations = {
       likes: "收藏",
       bestBatchLabel: "最佳批次",
       budgetBatchLabel: "经济批次",
-      noQcPhotos: "未找到该产品的质量检查照片。"
+      noQcPhotos: "未找到该产品的质量检查照片。",
+      viewProduct: "查看产品",
+      copyLink: "复制",
+      linkCopied: "链接已复制"
     },
     features: {
       title: "更多",
@@ -746,6 +781,19 @@ export const translations = {
       community: "社区",
       info: "信息",
       copyright: "RepFinder © 2026"
+    },
+    faq: {
+      eyebrow: "帮助",
+      title: "常见",
+      titleHighlight: "问题",
+      q1: "通过中国代理订购如何运作？",
+      a1: "中国代理帮助您从本地平台（如 1688、淘宝、微店）购买商品，联系卖家，检查产品质量，合并包裹并发货给您。",
+      q2: "如何找到最好的质量产品？",
+      a2: "您无需盲目搜索 — 在我们网站的产品标签中可以找到精选的、经过质量检查的产品。我们定期更新具有良好性价比的顶级产品。",
+      q3: "从中国发货需要多长时间？",
+      a3: "从包裹发货时起，配送通常需要 8-15 个工作日。时间取决于所选的配送方式和目的地国家。",
+      q4: "我的包裹会被海关扣留吗？",
+      a4: "如果您使用经过验证的安全配送线路，如 DPD、DHL、ETL 或 InPost，风险很小。这些方法具有良好的配送统计数据，并经常用于国际配送。"
     },
     tutorials: {
       title: "教程即将推出",
@@ -980,7 +1028,10 @@ export const translations = {
       likes: "Gefällt mir",
       bestBatchLabel: "Best Batch",
       budgetBatchLabel: "Budget Batch",
-      noQcPhotos: "Keine QC-Fotos für dieses Produkt gefunden."
+      noQcPhotos: "Keine QC-Fotos für dieses Produkt gefunden.",
+      viewProduct: "Produkt ansehen",
+      copyLink: "Kopieren",
+      linkCopied: "Link kopiert"
     },
     features: {
       title: "MEHR",
@@ -1021,6 +1072,19 @@ export const translations = {
       community: "COMMUNITY",
       info: "INFORMATIONEN",
       copyright: "RepFinder © 2026"
+    },
+    faq: {
+      eyebrow: "Hilfe",
+      title: "Häufig gestellte",
+      titleHighlight: "Fragen",
+      q1: "Wie funktioniert die Bestellung über einen chinesischen Agenten?",
+      a1: "Ein chinesischer Agent hilft Ihnen beim Kauf von Waren von lokalen Plattformen (z. B. 1688, Taobao, Weidian), kontaktiert den Verkäufer, überprüft die Produktqualität, konsolidiert Pakete und versendet sie an Sie.",
+      q2: "Wie findet man die besten Qualitätsprodukte?",
+      a2: "Sie müssen nicht blind suchen — Sie finden kuratierte, qualitätsgeprüfte Produkte auf der Registerkarte Produkte auf unserer Website. Wir aktualisieren sie regelmäßig mit Top-Produkten mit gutem Preis-Leistungs-Verhältnis.",
+      q3: "Wie lange dauert die Lieferung aus China?",
+      a3: "Die Lieferung dauert normalerweise 8-15 Werktage ab dem Moment, in dem das Paket verschickt wird. Die Zeit hängt von der gewählten Versandmethode und dem Zielland ab.",
+      q4: "Kann mein Paket vom Zoll abgefangen werden?",
+      a4: "Das Risiko ist minimal, wenn Sie bewährte und sichere Versandlinien wie DPD, DHL, ETL oder InPost verwenden. Diese Methoden haben gute Lieferstatistiken und werden regelmäßig für internationale Sendungen verwendet."
     },
     tutorials: {
       title: "Anleitungen folgen in Kürze",
@@ -1204,7 +1268,10 @@ export const translations = {
       likes: "me gusta",
       bestBatchLabel: "Best Batch",
       budgetBatchLabel: "Budget Batch",
-      noQcPhotos: "No se encontraron fotos de control de calidad para este producto."
+      noQcPhotos: "No se encontraron fotos de control de calidad para este producto.",
+      viewProduct: "Ver producto",
+      copyLink: "Copiar",
+      linkCopied: "Enlace copiado"
     },
     features: {
       title: "MÁS",
@@ -1245,6 +1312,19 @@ export const translations = {
       community: "COMUNIDAD",
       info: "INFORMACIÓN",
       copyright: "RepFinder © 2026"
+    },
+    faq: {
+      eyebrow: "Ayuda",
+      title: "Preguntas",
+      titleHighlight: "Frecuentes",
+      q1: "¿Cómo funciona pedir a través de un agente chino?",
+      a1: "Un agente chino te ayuda a comprar productos de plataformas locales (por ejemplo, 1688, Taobao, Weidian), contacta al vendedor, verifica la calidad del producto, consolida paquetes y los envía a ti.",
+      q2: "¿Cómo encontrar los mejores productos de calidad?",
+      a2: "No necesitas buscar a ciegas: encontrarás productos seleccionados y verificados en la pestaña de Productos de nuestro sitio web. Actualizamos regularmente con los mejores artículos con una buena relación calidad-precio.",
+      q3: "¿Cuánto tarda la entrega desde China?",
+      a3: "La entrega generalmente toma de 8 a 15 días hábiles desde el momento en que se envía el paquete. El tiempo depende del método de envío elegido y del país de destino.",
+      q4: "¿Puede mi paquete ser retenido por la aduana?",
+      a4: "El riesgo es mínimo si utilizas líneas de envío probadas y seguras como DPD, DHL, ETL o InPost. Estos métodos tienen buenas estadísticas de entrega y se utilizan regularmente para envíos internacionales."
     },
     tutorials: {
       title: "Tutoriales muy pronto",

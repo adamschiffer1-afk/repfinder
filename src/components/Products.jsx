@@ -8,11 +8,12 @@ import EmptyState from '@/components/EmptyState';
 import { useToast } from '@/components/Toast';
 import { categoriesData } from '@/data/productsData';
 import { useCurrency } from '@/hooks/useCurrency';
+import { useLanguage } from '@/context/LanguageContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTshirt, faSocks, faRunning, faGlasses, faShoppingBag, faBriefcase, faRing, faBolt, faFire, faBoxOpen, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
 
 // Memoized ProductCard component
-const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink }) => {
+const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink, t }) => {
   const [copied, setCopied] = useState(false);
   
   const handleCopy = () => {
@@ -36,13 +37,13 @@ const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink
           blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIvPjwvc3ZnPg=="
         />
         {product.batch === 'best' && (
-          <div className={styles.batchBadge}>Best Batch</div>
+          <div className={styles.batchBadge}>{t('products.bestBatch')}</div>
         )}
         {product.batch === 'budget' && (
-          <div className={`${styles.batchBadge} ${styles.budgetBadge}`}>Budget</div>
+          <div className={`${styles.batchBadge} ${styles.budgetBadge}`}>{t('products.budgetBatch')}</div>
         )}
         {product.batch === 'random' && (
-          <div className={`${styles.batchBadge} ${styles.randomBadge}`}>Random</div>
+          <div className={`${styles.batchBadge} ${styles.randomBadge}`}>{t('products.randomBatch')}</div>
         )}
         {product.batch === 'popular' && (
           <div className={`${styles.batchBadge} ${styles.popularBadge}`}>🔥 Popular</div>
@@ -70,12 +71,12 @@ const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink
               <line x1="3" y1="6" x2="21" y2="6" />
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
-            Zobacz produkt
+            {t('products.viewProduct')}
           </button>
           <button 
             className={`${styles.copyButton} ${copied ? styles.copied : ''}`}
             onClick={handleCopy}
-            title="Copy product link"
+            title={t('products.copyLink')}
           >
             {copied ? (
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.checkIcon}>
@@ -115,6 +116,7 @@ const CATEGORY_ICONS = {
 
 export default function ProductsPage() {
   const toast = useToast();
+  const { t } = useLanguage();
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -658,7 +660,7 @@ export default function ProductsPage() {
     
     // Copy to clipboard
     navigator.clipboard.writeText(agentLink).then(() => {
-      toast.success(`Skopiowano link ${preferredAgent}`, {
+      toast.success(t('products.linkCopied') + ` ${preferredAgent}`, {
         icon: '✓',
         duration: 1500
       });
@@ -1014,6 +1016,7 @@ export default function ProductsPage() {
                 formatPrice={formatPrice}
                 onOpenModal={handleOpenAgentModal}
                 onCopyLink={handleCopyLink}
+                t={t}
               />
             ))
           )}

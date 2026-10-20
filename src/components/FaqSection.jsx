@@ -3,8 +3,10 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from '@/styles/FaqSection.module.css';
 import useScrollAnimation from '@/hooks/useScrollAnimation';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function FaqSection() {
+  const { t } = useLanguage();
   const [activeFaq, setActiveFaq] = useState(null);
   const answerRefs = useRef([]);
   const [sectionRef, isVisible] = useScrollAnimation({ threshold: 0.15 });
@@ -16,23 +18,23 @@ export default function FaqSection() {
   const faqs = useMemo(
     () => [
       { 
-        question: 'Jak działa zamawianie przez chińskiego agenta?', 
-        answer: 'Chiński agent pomaga w zakupie towarów z lokalnych platform (np. 1688, Taobao, Weidian), kontaktuje się ze sprzedawcą, sprawdza jakość produktu, konsoliduje paczki i wysyła je do ciebie.' 
+        question: t('faq.q1'), 
+        answer: t('faq.a1') 
       },
       { 
-        question: 'Jak znaleźć najlepsze jakościowo itemy?', 
-        answer: 'Nie musisz szukać na ślepo — wyselekcjonowane, sprawdzone jakościowo produkty znajdziesz w zakładce Products na naszej stronie. Regularnie aktualizujemy ją o topowe itemy z dobrym stosunkiem ceny do jakości.' 
+        question: t('faq.q2'), 
+        answer: t('faq.a2') 
       },
       { 
-        question: 'Ile trwa dostawa z Chin?', 
-        answer: 'Dostawa zazwyczaj zajmuje 8–15 dni roboczych od momentu nadania paczki. Czas zależy od wybranej metody wysyłki i kraju docelowego.' 
+        question: t('faq.q3'), 
+        answer: t('faq.a3') 
       },
       { 
-        question: 'Czy moja paczka może zostać złapana przez urząd celny?', 
-        answer: 'Ryzyko jest minimalne, jeśli korzystasz ze sprawdzonych i bezpiecznych linii wysyłkowych, takich jak DPD, DHL, ETL czy InPost. Te metody mają dobre statystyki dostarczalności i są regularnie używane do przesyłek międzynarodowych.' 
+        question: t('faq.q4'), 
+        answer: t('faq.a4') 
       },
     ],
-    []
+    [t]
   );
 
   useEffect(() => {
@@ -50,9 +52,9 @@ export default function FaqSection() {
     <section ref={sectionRef} className={`${styles.section} ${isVisible ? styles.visible : ''}`}>
       <div className={styles.inner}>
         <div className={styles.header}>
-          <p className={styles.eyebrow}>Pomoc</p>
+          <p className={styles.eyebrow}>{t('faq.eyebrow')}</p>
           <h2 className={styles.title}>
-            Frequently Asked <span className={styles.titleHighlight}>Questions</span>
+            {t('faq.title')} <span className={styles.titleHighlight}>{t('faq.titleHighlight')}</span>
           </h2>
         </div>
 
