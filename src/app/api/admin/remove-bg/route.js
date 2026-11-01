@@ -16,37 +16,36 @@ export async function POST(req) {
       return NextResponse.json({ error: "No image URL provided" }, { status: 400 });
     }
 
-    const REMOVE_BG_API_KEY = process.env.REMOVE_BG_API_KEY;
+    const PHOTOROOM_API_KEY = process.env.PHOTOROOM_API_KEY;
     
-    if (!REMOVE_BG_API_KEY) {
+    if (!PHOTOROOM_API_KEY) {
       return NextResponse.json({ 
-        error: "Remove.bg API key not configured. Add REMOVE_BG_API_KEY to .env.local" 
+        error: "PhotoRoom API key not configured. Add PHOTOROOM_API_KEY to .env.local" 
       }, { status: 500 });
     }
 
-    // Call Remove.bg API
+    // Call PhotoRoom API
     const formData = new FormData();
     formData.append('image_url', imageUrl);
-    formData.append('size', 'auto');
 
-    const removeBgResponse = await fetch('https://api.remove.bg/v1.0/removebg', {
+    const photoRoomResponse = await fetch('https://sdk.photoroom.com/v1/segment', {
       method: 'POST',
       headers: {
-        'X-Api-Key': REMOVE_BG_API_KEY,
+        'x-api-key': PHOTOROOM_API_KEY,
       },
       body: formData
     });
 
-    if (!removeBgResponse.ok) {
-      const error = await removeBgResponse.text();
-      console.error('Remove.bg error:', error);
+    if (!photoRoomResponse.ok) {
+      const error = await photoRoomResponse.text();
+      console.error('PhotoRoom error:', error);
       return NextResponse.json({ 
-        error: `Remove.bg API error: ${removeBgResponse.status}` 
+        error: `PhotoRoom API error: ${photoRoomResponse.status}` 
       }, { status: 500 });
     }
 
     // Get image without background
-    const imageBuffer = await removeBgResponse.arrayBuffer();
+    const imageBuffer = await photoRoomResponse.arrayBuffer();
     const buffer = Buffer.from(imageBuffer);
 
     // Upload to Supabase Storage
