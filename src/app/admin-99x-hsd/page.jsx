@@ -23,13 +23,89 @@ export default async function AdminDashboard() {
     
     productCount = count || 0;
     
-    // Stats tracking will be migrated later - for now just show product count
-    totalVisits = 0;
-    totalClicks = 0;
-    topProducts = [];
-    topAgents = [];
-    topBrowsers = [];
-    recentActivity = [];
+    // Get total visits (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const { count: visitsCount } = await supabaseAdmin
+      .from('stats')
+      .select('*', { count: 'exact', head: true })
+      .eq('type', 'page_view')
+      .gte('timestamp', thirtyDaysAgo.toISOString());
+    
+    totalVisits = visitsCount || 0;
+    
+    // Get total clicks (last 30 days)
+    const { count: clicksCount } = await supabaseAdmin
+      .from('stats')
+      .select('*', { count: 'exact', head: true })
+      .eq('type', 'product_click')
+      .gte('timestamp', thirtyDaysAgo.toISOString());
+    
+    totalClicks = clicksCount || 0;
+    
+    // Get top 5 products (last 30 days)
+    const { data: productClicks } = await supabaseAdmin
+      .from('stats')
+      .select('product_id')
+      .eq('type', 'product_click')
+      .not('product_id', 'is', null)
+      .gte('timestamp', thirtyDaysAgo.toISOString());
+    
+    const productCounts = {};
+    productClicks?.forEach(item => {
+      productCounts[item.product_id] = (productCounts[item.product_id] || 0) + 1;
+    });
+    
+    const topProductIds = Object.entries(productCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([productId, count]) => ({ productId, count }));
+    
+    // Get product details
+    for (const item of topProductIds) {
+      const { data: product } = await supabaseAdmin
+        .from('products')
+        .select('id, name, image')
+        .eq('id', item.productId)
+        .single();
+      
+      if (product) {
+        topProducts.push({
+          count: item.count,
+          productInfo: product
+        });
+      }
+    }
+    
+    // Get top agents (last 30 days)
+    const { data: agentClicks } = await supabaseAdmin
+      .from('stats')
+      .select('agent')
+      .eq('type', 'product_click')
+      .not('agent', 'is', null)
+      .gte('timestamp', thirtyDaysAgo.toISOString());
+    
+    const agentCounts = {};
+    agentClicks?.forEach(item => {
+      agentCounts[item.agent] = (agentCounts[item.agent] || 0) + 1;
+    });
+    
+    topAgents = Object.entries(agentCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([agent, count]) => ({ _id: agent, count }));
+    
+    // Get recent activity (last 20)
+    const { data: recentStats } = await supabaseAdmin
+      .from('stats')
+      .select('*')
+      .in('type', ['page_view', 'product_click'])
+      .order('timestamp', { ascending: false })
+      .limit(20);
+    
+    recentActivity = recentStats || [];
+    
   } catch (err) {
     console.error("Admin dashboard DB error:", err);
   }
