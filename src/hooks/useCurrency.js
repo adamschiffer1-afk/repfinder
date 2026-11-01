@@ -17,13 +17,16 @@ export function useCurrency() {
     }
 
     // Nasłuchuj zmian ustawień (z SettingsModal)
-    const handleStorage = () => {
+    const handleStorageChange = () => {
       const updatedCurrency = localStorage.getItem('preferredCurrency');
       if (updatedCurrency) {
         setCurrency(updatedCurrency);
       }
     };
-    window.addEventListener('storage', handleStorage);
+    
+    // Listen to both storage (cross-tab) and custom event (same tab)
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('currencyChange', handleStorageChange);
 
     // Pobierz aktualne kursy walut z otwartego API
     const fetchRates = async () => {
@@ -44,7 +47,10 @@ export function useCurrency() {
     
     fetchRates();
 
-    return () => window.removeEventListener('storage', handleStorage);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('currencyChange', handleStorageChange);
+    };
   }, []);
 
   const formatPrice = useCallback((priceInUSD) => {
