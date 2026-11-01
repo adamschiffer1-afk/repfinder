@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from '@/styles/NewStats.module.css';
+import LineChart from '@/components/admin/LineChart';
 
 export default function NewStatsPage() {
   const [stats, setStats] = useState(null);
@@ -167,45 +168,7 @@ export default function NewStatsPage() {
         <div className={styles.section}>
           <h2 className={styles.sectionTitle}>📈 Wykres aktywności w czasie</h2>
           <div className={styles.chartContainer}>
-            <div className={styles.chart}>
-              {stats.timeline.map((point, idx) => {
-                const maxValue = Math.max(...stats.timeline.map(p => p.page_view + p.product_click));
-                const heightPercent = ((point.page_view + point.product_click) / maxValue) * 100;
-                
-                return (
-                  <div key={idx} className={styles.chartBar} title={`${point.time}: ${point.page_view + point.product_click} eventów`}>
-                    <div 
-                      className={styles.barFill} 
-                      style={{ height: `${heightPercent}%` }}
-                    >
-                      <div 
-                        className={styles.barSegmentViews} 
-                        style={{ 
-                          height: maxValue > 0 ? `${(point.page_view / (point.page_view + point.product_click)) * 100}%` : '0%' 
-                        }}
-                      />
-                      <div 
-                        className={styles.barSegmentClicks} 
-                        style={{ 
-                          height: maxValue > 0 ? `${(point.product_click / (point.page_view + point.product_click)) * 100}%` : '0%' 
-                        }}
-                      />
-                    </div>
-                    <div className={styles.chartLabel}>
-                      {point.time.split(' ')[1] || point.time.split('-').slice(1).join('/')}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className={styles.chartLegend}>
-              <span className={styles.legendItem}>
-                <span className={styles.legendColorViews}></span> Wyświetlenia
-              </span>
-              <span className={styles.legendItem}>
-                <span className={styles.legendColorClicks}></span> Kliknięcia
-              </span>
-            </div>
+            <LineChart data={stats.timeline} />
           </div>
         </div>
       )}
