@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import styles from './LineChart.module.css';
 
 export default function LineChart({ data }) {
-  const [hoveredPoint, setHoveredPoint] = useState(null);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const svgRef = useRef(null);
 
@@ -18,68 +18,79 @@ export default function LineChart({ data }) {
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
-  // Prepare data
-  const viewsData = data.map(d => d.page_view || 0);
-  const clicksData = data.map(d => d.product_click || 0);
-  const maxViews = Math.max(...viewsData, 1);
-  const maxClicks = Math.max(...clicksData, 1);
-  const maxValue = Math.max(maxViews, maxClicks);
+  // Combine views + clicks into total
+  const totalData = data.map(d => (d.page_view || 0) + (d.product_click || 0));
+  const maxValue = Math.max(...totalData, 1);
 
-  // Generate points
-  const generatePoints = (values) => {
-    return values.map((value, i) => {
-      const x = padding.left + (i / (data.length - 1)) * chartWidth;
-      const y = padding.top + chartHeight - (value / maxValue) * chartHeight;
-      return `${x},${y}`;
-    }).join(' ');
+  // Generate smooth curve path (Bezier)
+  const generateSmoothPath = (values) => {
+    if (values.length === 0) return '';
+    
+    const points = values.map((value, i) => ({
+      x: padding.left + (i / (data.length - 1)) * chartWidth,
+      y: padding.top + chartHeight - (value / maxValue) * chartHeight
+    }));
+
+    let path = `M ${points[0].x},${points[0].y}`;
+    
+    for (let i = 0; i < points.length - 1; i++) {
+      const current = points[i];
+      const next = points[i + 1];
+      
+      // Calculate control points for smooth curve
+      const xMid = (current.x + next.x) / 2;
+      const yMid = (current.y + next.y) / 2;
+      
+      path += ` Q ${current.x},${current.y} ${xMid},${yMid}`;
+      
+      if (i === points.length - 2) {
+        path += ` Q ${next.x},${next.y} ${next.x},${next.y}`;
+      }
+    }
+    
+    return path;
   };
 
-  const viewsPoints = generatePoints(viewsData);
-  const clicksPoints = generatePoints(clicksData);
-
-  // Generate area path
+  const linePath = generateSmoothPath(totalData);
+  
+  // Area path
   const generateAreaPath = (values) => {
-    let path = `M ${padding.left},${padding.top + chartHeight}`;
-    
-    values.forEach((value, i) => {
-      const x = padding.left + (i / (data.length - 1)) * chartWidth;
-      const y = padding.top + chartHeight - (value / maxValue) * chartHeight;
-      if (i === 0) {
-        path += ` L ${x},${y}`;
-      } else {
-        path += ` L ${x},${y}`;
-      }
-    });
-    
+    let path = generateSmoothPath(values);
     path += ` L ${padding.left + chartWidth},${padding.top + chartHeight}`;
+    path += ` L ${padding.left},${padding.top + chartHeight}`;
     path += ' Z';
     return path;
   };
 
-  const viewsArea = generateAreaPath(viewsData);
-  const clicksArea = generateAreaPath(clicksData);
+  const areaPath = generateAreaPath(totalData);
 
-  const handleMouseMove = (e, index) => {
-    if (svgRef.current) {
-      const rect = svgRef.current.getBoundingClientRect();
-      setTooltipPos({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
-    }
-    setHoveredPoint(index);
+  const handleMouseMove = (e) => {
+    if (!svgRef.current) return;
+    
+    const rect = svgRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    
+    // Find closest point
+    const relativeX = mouseX - padding.left;
+    const index = Math.round((relativeX / chartWidth) * (data.length - 1));
+    const clampedIndex = Math.max(0, Math.min(data.length - 1, index));
+    
+    setHoveredIndex(clampedIndex);
+    setTooltipPos({
+      x: mouseX,
+      y: e.clientY - rect.top
+    });
   };
 
   const handleMouseLeave = () => {
-    setHoveredPoint(null);
+    setHoveredIndex(null);
   };
 
-  // Format time label
   const formatTime = (timeStr) => {
     if (timeStr.includes(' ')) {
-      return timeStr.split(' ')[1]; // Hour
+      return timeStr.split(' ')[1];
     }
-    return timeStr.split('-').slice(1).join('/'); // Date
+    return timeStr.split('-').slice(1).join('/');
   };
 
   return (
@@ -88,6 +99,7 @@ export default function LineChart({ data }) {
         ref={svgRef}
         viewBox={`0 0 ${width} ${height}`} 
         className={styles.svg}
+        onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
         {/* Grid lines */}
@@ -116,138 +128,113 @@ export default function LineChart({ data }) {
           );
         })}
 
-        {/* Area fills */}
+        {/* Gradient area */}
         <path
-          d={viewsArea}
-          fill="url(#viewsGradient)"
-          opacity="0.3"
-        />
-        <path
-          d={clicksArea}
-          fill="url(#clicksGradient)"
-          opacity="0.3"
+          d={areaPath}
+          fill="url(#areaGradient)"
+          opacity="0.5"
         />
 
-        {/* Lines */}
-        <polyline
-          points={viewsPoints}
+        {/* Main line */}
+        <path
+          d={linePath}
           fill="none"
-          stroke="rgba(59, 130, 246, 1)"
+          stroke="url(#lineGradient)"
           strokeWidth="3"
           strokeLinecap="round"
           strokeLinejoin="round"
-        />
-        <polyline
-          points={clicksPoints}
-          fill="none"
-          stroke="rgba(34, 197, 94, 1)"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          style={{
+            filter: 'drop-shadow(0 2px 8px rgba(255, 255, 255, 0.2))'
+          }}
         />
 
-        {/* Data points */}
-        {data.map((point, i) => {
-          const x = padding.left + (i / (data.length - 1)) * chartWidth;
-          const yViews = padding.top + chartHeight - (viewsData[i] / maxValue) * chartHeight;
-          const yClicks = padding.top + chartHeight - (clicksData[i] / maxValue) * chartHeight;
-
+        {/* Hover indicator */}
+        {hoveredIndex !== null && (() => {
+          const x = padding.left + (hoveredIndex / (data.length - 1)) * chartWidth;
+          const y = padding.top + chartHeight - (totalData[hoveredIndex] / maxValue) * chartHeight;
+          
           return (
-            <g key={i}>
-              {/* Invisible hover area */}
-              <rect
-                x={x - 10}
-                y={padding.top}
-                width={20}
-                height={chartHeight}
-                fill="transparent"
-                onMouseMove={(e) => handleMouseMove(e, i)}
-                style={{ cursor: 'pointer' }}
+            <g>
+              {/* Vertical line */}
+              <line
+                x1={x}
+                y1={padding.top}
+                x2={x}
+                y2={padding.top + chartHeight}
+                stroke="rgba(255, 255, 255, 0.2)"
+                strokeWidth="1"
+                strokeDasharray="4 4"
               />
-              
-              {/* Points */}
+              {/* Point */}
               <circle
                 cx={x}
-                cy={yViews}
-                r={hoveredPoint === i ? 6 : 4}
-                fill="rgba(59, 130, 246, 1)"
-                stroke="white"
-                strokeWidth="2"
-                style={{ transition: 'all 0.2s ease' }}
+                cy={y}
+                r="6"
+                fill="white"
+                stroke="rgba(100, 100, 100, 1)"
+                strokeWidth="3"
               />
-              <circle
-                cx={x}
-                cy={yClicks}
-                r={hoveredPoint === i ? 6 : 4}
-                fill="rgba(34, 197, 94, 1)"
-                stroke="white"
-                strokeWidth="2"
-                style={{ transition: 'all 0.2s ease' }}
-              />
-
-              {/* X-axis labels */}
-              {(i % Math.ceil(data.length / 10) === 0 || i === data.length - 1) && (
-                <text
-                  x={x}
-                  y={height - padding.bottom + 20}
-                  textAnchor="middle"
-                  fill="rgba(255, 255, 255, 0.5)"
-                  fontSize="11"
-                >
-                  {formatTime(point.time)}
-                </text>
-              )}
             </g>
+          );
+        })()}
+
+        {/* X-axis labels */}
+        {data.map((point, i) => {
+          if (i % Math.ceil(data.length / 8) !== 0 && i !== data.length - 1) return null;
+          const x = padding.left + (i / (data.length - 1)) * chartWidth;
+          
+          return (
+            <text
+              key={i}
+              x={x}
+              y={height - padding.bottom + 20}
+              textAnchor="middle"
+              fill="rgba(255, 255, 255, 0.5)"
+              fontSize="11"
+            >
+              {formatTime(point.time)}
+            </text>
           );
         })}
 
         {/* Gradients */}
         <defs>
-          <linearGradient id="viewsGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="rgba(59, 130, 246, 0.8)" />
-            <stop offset="100%" stopColor="rgba(59, 130, 246, 0)" />
+          <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(180, 180, 180, 1)" />
+            <stop offset="50%" stopColor="rgba(220, 220, 220, 1)" />
+            <stop offset="100%" stopColor="rgba(160, 160, 160, 1)" />
           </linearGradient>
-          <linearGradient id="clicksGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="rgba(34, 197, 94, 0.8)" />
-            <stop offset="100%" stopColor="rgba(34, 197, 94, 0)" />
+          <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="rgba(200, 200, 200, 0.4)" />
+            <stop offset="100%" stopColor="rgba(100, 100, 100, 0)" />
           </linearGradient>
         </defs>
       </svg>
 
       {/* Tooltip */}
-      {hoveredPoint !== null && (
+      {hoveredIndex !== null && (
         <div 
           className={styles.tooltip}
           style={{
             left: tooltipPos.x + 10,
-            top: tooltipPos.y - 80
+            top: tooltipPos.y - 100
           }}
         >
-          <div className={styles.tooltipTime}>{data[hoveredPoint].time}</div>
+          <div className={styles.tooltipTime}>{data[hoveredIndex].time}</div>
           <div className={styles.tooltipRow}>
-            <span className={styles.tooltipDot} style={{ background: 'rgba(59, 130, 246, 1)' }}></span>
-            <span>Wyświetlenia:</span>
-            <strong>{data[hoveredPoint].page_view}</strong>
+            <span>👁️ Wyświetlenia:</span>
+            <strong>{data[hoveredIndex].page_view}</strong>
           </div>
           <div className={styles.tooltipRow}>
-            <span className={styles.tooltipDot} style={{ background: 'rgba(34, 197, 94, 1)' }}></span>
-            <span>Kliknięcia:</span>
-            <strong>{data[hoveredPoint].product_click}</strong>
+            <span>🖱️ Kliknięcia:</span>
+            <strong>{data[hoveredIndex].product_click}</strong>
+          </div>
+          <div className={styles.tooltipTotal}>
+            <span>Razem:</span>
+            <strong>{totalData[hoveredIndex]}</strong>
           </div>
         </div>
       )}
-
-      {/* Legend */}
-      <div className={styles.legend}>
-        <div className={styles.legendItem}>
-          <span className={styles.legendDot} style={{ background: 'rgba(59, 130, 246, 1)' }}></span>
-          Wyświetlenia
-        </div>
-        <div className={styles.legendItem}>
-          <span className={styles.legendDot} style={{ background: 'rgba(34, 197, 94, 1)' }}></span>
-          Kliknięcia
-        </div>
-      </div>
     </div>
   );
 }
