@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import styles from './LineChart.module.css';
 
 export default function LineChart({ data }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const svgRef = useRef(null);
+  const throttleRef = useRef(null);
 
   if (!data || data.length === 0) {
     return <div className={styles.noData}>Brak danych do wyświetlenia</div>;
@@ -64,8 +65,14 @@ export default function LineChart({ data }) {
 
   const areaPath = generateAreaPath(totalData);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (!svgRef.current) return;
+    
+    // Throttle to every 16ms (60fps)
+    if (throttleRef.current) return;
+    throttleRef.current = setTimeout(() => {
+      throttleRef.current = null;
+    }, 16);
     
     const rect = svgRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
@@ -102,10 +109,14 @@ export default function LineChart({ data }) {
       exactX: padding.left + relativeX,
       exactY: padding.top + chartHeight - (interpolatedValue / maxValue) * chartHeight
     });
-  };
+  }, [data.length, chartWidth, chartHeight, padding, totalData, maxValue]);
 
   const handleMouseLeave = () => {
     setHoveredIndex(null);
+    if (throttleRef.current) {
+      clearTimeout(throttleRef.current);
+      throttleRef.current = null;
+    }
   };
 
   const formatTime = (timeStr) => {
@@ -179,27 +190,28 @@ export default function LineChart({ data }) {
               y1={padding.top}
               x2={tooltipPos.exactX}
               y2={padding.top + chartHeight}
-              stroke="rgba(255, 255, 255, 0.2)"
-              strokeWidth="1"
-              strokeDasharray="4 4"
+              stroke="rgba(255, 255, 255, 0.3)"
+              strokeWidth="2"
+              strokeDasharray="6 6"
+            />
+            {/* Outer glow */}
+            <circle
+              cx={tooltipPos.exactX}
+              cy={tooltipPos.exactY}
+              r="12"
+              fill="rgba(255, 255, 255, 0.1)"
             />
             {/* Point on line */}
             <circle
               cx={tooltipPos.exactX}
               cy={tooltipPos.exactY}
-              r="6"
+              r="7"
               fill="white"
               stroke="rgba(100, 100, 100, 1)"
               strokeWidth="3"
-            />
-            {/* Glow effect */}
-            <circle
-              cx={tooltipPos.exactX}
-              cy={tooltipPos.exactY}
-              r="10"
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.3)"
-              strokeWidth="2"
+              style={{
+                filter: 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))'
+              }}
             />
           </g>
         )}
@@ -242,7 +254,7 @@ export default function LineChart({ data }) {
         <div 
           className={styles.tooltip}
           style={{
-            left: tooltipPos.x + 10,
+            left: Math.min(tooltipPos.x + 10, window.innerWidth - 220),
             top: tooltipPos.y - 100
           }}
         >
