@@ -16,17 +16,17 @@ export async function POST(req) {
       return NextResponse.json({ error: "No image URL provided" }, { status: 400 });
     }
 
-    const PHOTOROOM_API_KEY = process.env.PHOTOROOM_API_KEY;
+    const CLIPDROP_API_KEY = process.env.CLIPDROP_API_KEY;
     
-    if (!PHOTOROOM_API_KEY) {
+    if (!CLIPDROP_API_KEY) {
       return NextResponse.json({ 
-        error: "PhotoRoom API key not configured. Add PHOTOROOM_API_KEY to .env.local" 
+        error: "Clipdrop API key not configured. Add CLIPDROP_API_KEY to .env.local" 
       }, { status: 500 });
     }
 
     console.log('Fetching image from URL:', imageUrl);
 
-    // Download the image first (PhotoRoom might not support direct URLs)
+    // Download the image first
     const imageResponse = await fetch(imageUrl);
     if (!imageResponse.ok) {
       return NextResponse.json({ 
@@ -37,32 +37,32 @@ export async function POST(req) {
     const imageBlob = await imageResponse.blob();
     console.log('Image downloaded, size:', imageBlob.size);
 
-    // Call PhotoRoom API with image file
+    // Call Clipdrop API
     const formData = new FormData();
     formData.append('image_file', imageBlob, 'image.jpg');
 
-    console.log('Calling PhotoRoom API...');
+    console.log('Calling Clipdrop API...');
 
-    const photoRoomResponse = await fetch('https://sdk.photoroom.com/v1/segment', {
+    const clipdropResponse = await fetch('https://clipdrop-api.co/remove-background/v1', {
       method: 'POST',
       headers: {
-        'x-api-key': PHOTOROOM_API_KEY,
+        'x-api-key': CLIPDROP_API_KEY,
       },
       body: formData
     });
 
-    console.log('PhotoRoom response status:', photoRoomResponse.status);
+    console.log('Clipdrop response status:', clipdropResponse.status);
 
-    if (!photoRoomResponse.ok) {
-      const errorText = await photoRoomResponse.text();
-      console.error('PhotoRoom error response:', errorText);
+    if (!clipdropResponse.ok) {
+      const errorText = await clipdropResponse.text();
+      console.error('Clipdrop error response:', errorText);
       return NextResponse.json({ 
-        error: `PhotoRoom API error: ${photoRoomResponse.status} - ${errorText}` 
+        error: `Clipdrop API error: ${clipdropResponse.status} - ${errorText}` 
       }, { status: 500 });
     }
 
     // Get image without background
-    const imageBuffer = await photoRoomResponse.arrayBuffer();
+    const imageBuffer = await clipdropResponse.arrayBuffer();
     const buffer = Buffer.from(imageBuffer);
 
     // Upload to Supabase Storage
