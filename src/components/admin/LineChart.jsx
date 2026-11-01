@@ -250,12 +250,12 @@ export default function LineChart({ data }) {
       </svg>
 
       {/* Tooltip */}
-      {hoveredIndex !== null && (
+      {hoveredIndex !== null && tooltipPos.exactY && (
         <div 
           className={styles.tooltip}
           style={{
             left: Math.min(tooltipPos.x + 10, window.innerWidth - 220),
-            top: tooltipPos.y - 100
+            top: tooltipPos.exactY - 120 // Always above the point
           }}
         >
           <div className={styles.tooltipTime}>{data[hoveredIndex].time}</div>
