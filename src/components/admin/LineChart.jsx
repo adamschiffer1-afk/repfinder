@@ -70,15 +70,37 @@ export default function LineChart({ data }) {
     const rect = svgRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     
-    // Find closest point
+    // Calculate position relative to chart
     const relativeX = mouseX - padding.left;
-    const index = Math.round((relativeX / chartWidth) * (data.length - 1));
-    const clampedIndex = Math.max(0, Math.min(data.length - 1, index));
     
-    setHoveredIndex(clampedIndex);
+    // Clamp to chart bounds
+    if (relativeX < 0 || relativeX > chartWidth) {
+      setHoveredIndex(null);
+      return;
+    }
+    
+    // Find exact position on line (interpolated)
+    const exactPosition = (relativeX / chartWidth) * (data.length - 1);
+    
+    // Get surrounding indices for interpolation
+    const lowerIndex = Math.floor(exactPosition);
+    const upperIndex = Math.ceil(exactPosition);
+    const fraction = exactPosition - lowerIndex;
+    
+    // Interpolate Y value
+    const lowerValue = totalData[lowerIndex] || 0;
+    const upperValue = totalData[upperIndex] || lowerValue;
+    const interpolatedValue = lowerValue + (upperValue - lowerValue) * fraction;
+    
+    // Get data for tooltip (use closest point)
+    const closestIndex = Math.round(exactPosition);
+    
+    setHoveredIndex(closestIndex);
     setTooltipPos({
       x: mouseX,
-      y: e.clientY - rect.top
+      y: e.clientY - rect.top,
+      exactX: padding.left + relativeX,
+      exactY: padding.top + chartHeight - (interpolatedValue / maxValue) * chartHeight
     });
   };
 
@@ -149,34 +171,38 @@ export default function LineChart({ data }) {
         />
 
         {/* Hover indicator */}
-        {hoveredIndex !== null && (() => {
-          const x = padding.left + (hoveredIndex / (data.length - 1)) * chartWidth;
-          const y = padding.top + chartHeight - (totalData[hoveredIndex] / maxValue) * chartHeight;
-          
-          return (
-            <g>
-              {/* Vertical line */}
-              <line
-                x1={x}
-                y1={padding.top}
-                x2={x}
-                y2={padding.top + chartHeight}
-                stroke="rgba(255, 255, 255, 0.2)"
-                strokeWidth="1"
-                strokeDasharray="4 4"
-              />
-              {/* Point */}
-              <circle
-                cx={x}
-                cy={y}
-                r="6"
-                fill="white"
-                stroke="rgba(100, 100, 100, 1)"
-                strokeWidth="3"
-              />
-            </g>
-          );
-        })()}
+        {hoveredIndex !== null && tooltipPos.exactX && tooltipPos.exactY && (
+          <g>
+            {/* Vertical line */}
+            <line
+              x1={tooltipPos.exactX}
+              y1={padding.top}
+              x2={tooltipPos.exactX}
+              y2={padding.top + chartHeight}
+              stroke="rgba(255, 255, 255, 0.2)"
+              strokeWidth="1"
+              strokeDasharray="4 4"
+            />
+            {/* Point on line */}
+            <circle
+              cx={tooltipPos.exactX}
+              cy={tooltipPos.exactY}
+              r="6"
+              fill="white"
+              stroke="rgba(100, 100, 100, 1)"
+              strokeWidth="3"
+            />
+            {/* Glow effect */}
+            <circle
+              cx={tooltipPos.exactX}
+              cy={tooltipPos.exactY}
+              r="10"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.3)"
+              strokeWidth="2"
+            />
+          </g>
+        )}
 
         {/* X-axis labels */}
         {data.map((point, i) => {
