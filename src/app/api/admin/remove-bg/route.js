@@ -24,9 +24,24 @@ export async function POST(req) {
       }, { status: 500 });
     }
 
-    // Call PhotoRoom API
+    console.log('Fetching image from URL:', imageUrl);
+
+    // Download the image first (PhotoRoom might not support direct URLs)
+    const imageResponse = await fetch(imageUrl);
+    if (!imageResponse.ok) {
+      return NextResponse.json({ 
+        error: `Failed to fetch image: ${imageResponse.status}` 
+      }, { status: 500 });
+    }
+
+    const imageBlob = await imageResponse.blob();
+    console.log('Image downloaded, size:', imageBlob.size);
+
+    // Call PhotoRoom API with image file
     const formData = new FormData();
-    formData.append('image_url', imageUrl);
+    formData.append('image_file', imageBlob, 'image.jpg');
+
+    console.log('Calling PhotoRoom API...');
 
     const photoRoomResponse = await fetch('https://sdk.photoroom.com/v1/segment', {
       method: 'POST',
@@ -36,11 +51,13 @@ export async function POST(req) {
       body: formData
     });
 
+    console.log('PhotoRoom response status:', photoRoomResponse.status);
+
     if (!photoRoomResponse.ok) {
-      const error = await photoRoomResponse.text();
-      console.error('PhotoRoom error:', error);
+      const errorText = await photoRoomResponse.text();
+      console.error('PhotoRoom error response:', errorText);
       return NextResponse.json({ 
-        error: `PhotoRoom API error: ${photoRoomResponse.status}` 
+        error: `PhotoRoom API error: ${photoRoomResponse.status} - ${errorText}` 
       }, { status: 500 });
     }
 
