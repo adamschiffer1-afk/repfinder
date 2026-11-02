@@ -16,11 +16,11 @@ export async function POST(req) {
       return NextResponse.json({ error: "No image URL provided" }, { status: 400 });
     }
 
-    const CLIPDROP_API_KEY = process.env.CLIPDROP_API_KEY;
+    const SENTISIGHT_API_KEY = process.env.SENTISIGHT_API_KEY;
     
-    if (!CLIPDROP_API_KEY) {
+    if (!SENTISIGHT_API_KEY) {
       return NextResponse.json({ 
-        error: "Clipdrop API key not configured. Add CLIPDROP_API_KEY to .env.local" 
+        error: "SentiSight API key not configured. Add SENTISIGHT_API_KEY to .env.local" 
       }, { status: 500 });
     }
 
@@ -34,36 +34,43 @@ export async function POST(req) {
       }, { status: 500 });
     }
 
-    const imageBlob = await imageResponse.blob();
-    console.log('Image downloaded, size:', imageBlob.size);
+    const imageBuffer = await imageResponse.arrayBuffer();
+    console.log('Image downloaded, size:', imageBuffer.byteLength);
 
-    // Call Clipdrop API
-    const formData = new FormData();
-    formData.append('image_file', imageBlob, 'image.jpg');
+    // Call SentiSight API
+    console.log('Calling SentiSight API...');
 
-    console.log('Calling Clipdrop API...');
-
-    const clipdropResponse = await fetch('https://clipdrop-api.co/remove-background/v1', {
+    const sentisightResponse = await fetch('https://platform.sentisight.ai/api/pm-predict/Background-removal/', {
       method: 'POST',
       headers: {
-        'x-api-key': CLIPDROP_API_KEY,
+        'X-Auth-token': SENTISIGHT_API_KEY,
+        'Content-Type': 'application/octet-stream'
       },
-      body: formData
+      body: imageBuffer
     });
 
-    console.log('Clipdrop response status:', clipdropResponse.status);
+    console.log('SentiSight response status:', sentisightResponse.status);
 
-    if (!clipdropResponse.ok) {
-      const errorText = await clipdropResponse.text();
-      console.error('Clipdrop error response:', errorText);
+    if (!sentisightResponse.ok) {
+      const errorText = await sentisightResponse.text();
+      console.error('SentiSight error response:', errorText);
       return NextResponse.json({ 
-        error: `Clipdrop API error: ${clipdropResponse.status} - ${errorText}` 
+        error: `SentiSight API error: ${sentisightResponse.status} - ${errorText}` 
       }, { status: 500 });
     }
 
-    // Get image without background
-    const imageBuffer = await clipdropResponse.arrayBuffer();
-    const buffer = Buffer.from(imageBuffer);
+    // Parse JSON response containing base64 encoded PNG
+    const responseData = await sentisightResponse.json();
+    
+    // SentiSight returns base64 encoded image in the response
+    // Extract base64 data (format: "data:image/png;base64,...")
+    let base64Data = responseData.result || responseData.image || responseData;
+    
+    if (typeof base64Data === 'string' && base64Data.includes('base64,')) {
+      base64Data = base64Data.split('base64,')[1];
+    }
+    
+    const buffer = Buffer.from(base64Data, 'base64');
 
     // Upload to Supabase Storage
     const fileName = `nobg_${Date.now()}_${Math.random().toString(36).substring(7)}.png`;
