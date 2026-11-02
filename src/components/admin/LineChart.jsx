@@ -65,6 +65,48 @@ export default function LineChart({ data }) {
 
   const areaPath = generateAreaPath(totalData);
 
+  // Helper: Get Y coordinate on the Bezier curve at specific X
+  const getYOnCurve = useCallback((targetX) => {
+    // Convert data points to actual coordinates
+    const points = totalData.map((value, i) => ({
+      x: padding.left + (i / (data.length - 1)) * chartWidth,
+      y: padding.top + chartHeight - (value / maxValue) * chartHeight,
+      value: value
+    }));
+
+    // Find which segment the X is in
+    let segmentIndex = 0;
+    for (let i = 0; i < points.length - 1; i++) {
+      if (targetX >= points[i].x && targetX <= points[i + 1].x) {
+        segmentIndex = i;
+        break;
+      }
+    }
+
+    const p0 = points[segmentIndex];
+    const p1 = points[segmentIndex + 1] || p0;
+
+    // For quadratic bezier: control point is at the current point
+    // and we go to midpoint, then from midpoint to next point
+    const xMid = (p0.x + p1.x) / 2;
+    const yMid = (p0.y + p1.y) / 2;
+
+    // Determine which half of the bezier curve we're on
+    if (targetX <= xMid) {
+      // First half: from p0 to midpoint
+      const t = (targetX - p0.x) / (xMid - p0.x);
+      // Quadratic bezier: B(t) = (1-t)²P0 + 2(1-t)tP1 + t²P2
+      // where P1 is control point (p0 in this case)
+      const oneMinusT = 1 - t;
+      return oneMinusT * oneMinusT * p0.y + 2 * oneMinusT * t * p0.y + t * t * yMid;
+    } else {
+      // Second half: from midpoint to p1
+      const t = (targetX - xMid) / (p1.x - xMid);
+      const oneMinusT = 1 - t;
+      return oneMinusT * oneMinusT * yMid + 2 * oneMinusT * t * p1.y + t * t * p1.y;
+    }
+  }, [totalData, data.length, chartWidth, chartHeight, padding, maxValue]);
+
   const handleMouseMove = useCallback((e) => {
     if (!svgRef.current) return;
     
@@ -88,28 +130,20 @@ export default function LineChart({ data }) {
     
     // Find exact position on line (interpolated)
     const exactPosition = (relativeX / chartWidth) * (data.length - 1);
-    
-    // Get surrounding indices for interpolation
-    const lowerIndex = Math.floor(exactPosition);
-    const upperIndex = Math.ceil(exactPosition);
-    const fraction = exactPosition - lowerIndex;
-    
-    // Interpolate Y value
-    const lowerValue = totalData[lowerIndex] || 0;
-    const upperValue = totalData[upperIndex] || lowerValue;
-    const interpolatedValue = lowerValue + (upperValue - lowerValue) * fraction;
-    
-    // Get data for tooltip (use closest point)
     const closestIndex = Math.round(exactPosition);
+    
+    // Calculate exact X and Y on the curve
+    const exactX = padding.left + relativeX;
+    const exactY = getYOnCurve(exactX);
     
     setHoveredIndex(closestIndex);
     setTooltipPos({
       x: mouseX,
       y: e.clientY - rect.top,
-      exactX: padding.left + relativeX,
-      exactY: padding.top + chartHeight - (interpolatedValue / maxValue) * chartHeight
+      exactX: exactX,
+      exactY: exactY
     });
-  }, [data.length, chartWidth, chartHeight, padding, totalData, maxValue]);
+  }, [data.length, chartWidth, chartHeight, padding, getYOnCurve]);
 
   const handleMouseLeave = () => {
     setHoveredIndex(null);

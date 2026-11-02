@@ -37,7 +37,9 @@ export default function SettingsModal({ isOpen, onClose, isInitial = false }) {
       changeLanguage(selectedLanguage);
     }
     onClose();
+    // Dispatch both events: storage (for cross-tab) and currencyChange (for same tab)
     window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new Event('currencyChange'));
   };
 
   useEffect(() => {
