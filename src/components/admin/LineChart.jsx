@@ -65,46 +65,29 @@ export default function LineChart({ data }) {
 
   const areaPath = generateAreaPath(totalData);
 
-  // Helper: Get Y coordinate on the Bezier curve at specific X
+  // Helper: Get Y coordinate on curve at specific X (linear interpolation)
   const getYOnCurve = useCallback((targetX) => {
     // Convert data points to actual coordinates
     const points = totalData.map((value, i) => ({
       x: padding.left + (i / (data.length - 1)) * chartWidth,
       y: padding.top + chartHeight - (value / maxValue) * chartHeight,
-      value: value
     }));
 
-    // Find which segment the X is in
-    let segmentIndex = 0;
+    // Find surrounding points
+    let leftPoint = points[0];
+    let rightPoint = points[points.length - 1];
+    
     for (let i = 0; i < points.length - 1; i++) {
       if (targetX >= points[i].x && targetX <= points[i + 1].x) {
-        segmentIndex = i;
+        leftPoint = points[i];
+        rightPoint = points[i + 1];
         break;
       }
     }
 
-    const p0 = points[segmentIndex];
-    const p1 = points[segmentIndex + 1] || p0;
-
-    // For quadratic bezier: control point is at the current point
-    // and we go to midpoint, then from midpoint to next point
-    const xMid = (p0.x + p1.x) / 2;
-    const yMid = (p0.y + p1.y) / 2;
-
-    // Determine which half of the bezier curve we're on
-    if (targetX <= xMid) {
-      // First half: from p0 to midpoint
-      const t = (targetX - p0.x) / (xMid - p0.x);
-      // Quadratic bezier: B(t) = (1-t)²P0 + 2(1-t)tP1 + t²P2
-      // where P1 is control point (p0 in this case)
-      const oneMinusT = 1 - t;
-      return oneMinusT * oneMinusT * p0.y + 2 * oneMinusT * t * p0.y + t * t * yMid;
-    } else {
-      // Second half: from midpoint to p1
-      const t = (targetX - xMid) / (p1.x - xMid);
-      const oneMinusT = 1 - t;
-      return oneMinusT * oneMinusT * yMid + 2 * oneMinusT * t * p1.y + t * t * p1.y;
-    }
+    // Linear interpolation
+    const t = (targetX - leftPoint.x) / (rightPoint.x - leftPoint.x);
+    return leftPoint.y + (rightPoint.y - leftPoint.y) * t;
   }, [totalData, data.length, chartWidth, chartHeight, padding, maxValue]);
 
   const handleMouseMove = useCallback((e) => {
@@ -224,28 +207,18 @@ export default function LineChart({ data }) {
               y1={padding.top}
               x2={tooltipPos.exactX}
               y2={padding.top + chartHeight}
-              stroke="rgba(255, 255, 255, 0.3)"
-              strokeWidth="2"
-              strokeDasharray="6 6"
-            />
-            {/* Outer glow */}
-            <circle
-              cx={tooltipPos.exactX}
-              cy={tooltipPos.exactY}
-              r="12"
-              fill="rgba(255, 255, 255, 0.1)"
+              stroke="rgba(255, 255, 255, 0.2)"
+              strokeWidth="1"
+              strokeDasharray="4 4"
             />
             {/* Point on line */}
             <circle
               cx={tooltipPos.exactX}
               cy={tooltipPos.exactY}
-              r="7"
+              r="4"
               fill="white"
-              stroke="rgba(100, 100, 100, 1)"
-              strokeWidth="3"
-              style={{
-                filter: 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))'
-              }}
+              stroke="rgba(80, 80, 80, 1)"
+              strokeWidth="2"
             />
           </g>
         )}
@@ -288,18 +261,16 @@ export default function LineChart({ data }) {
         <div 
           className={styles.tooltip}
           style={{
-            left: Math.min(tooltipPos.x + 10, window.innerWidth - 220),
-            top: tooltipPos.exactY - 120 // Always above the point
+            left: Math.min(tooltipPos.x + 15, window.innerWidth - 150),
+            top: tooltipPos.exactY - 80
           }}
         >
           <div className={styles.tooltipTime}>{data[hoveredIndex].time}</div>
           <div className={styles.tooltipRow}>
-            <span>👁️ Wyświetlenia:</span>
-            <strong>{data[hoveredIndex].page_view}</strong>
+            <span>👁️ {data[hoveredIndex].page_view}</span>
           </div>
           <div className={styles.tooltipRow}>
-            <span>🖱️ Kliknięcia:</span>
-            <strong>{data[hoveredIndex].product_click}</strong>
+            <span>🖱️ {data[hoveredIndex].product_click}</span>
           </div>
           <div className={styles.tooltipTotal}>
             <span>Razem:</span>
