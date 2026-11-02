@@ -33,8 +33,10 @@ export async function GET(req, { params }) {
     
     const firstVisit = activities[activities.length - 1].timestamp;
     const lastVisit = activities[0].timestamp;
+    
+    // Sum time from engagement events
     const timeSpent = activities
-      .filter(a => a.time_spent)
+      .filter(a => a.type === 'engagement' && a.time_spent)
       .reduce((sum, a) => sum + (a.time_spent || 0), 0);
 
     // Get product details
