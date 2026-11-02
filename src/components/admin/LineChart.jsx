@@ -23,7 +23,7 @@ export default function LineChart({ data }) {
   const totalData = data.map(d => (d.page_view || 0) + (d.product_click || 0));
   const maxValue = Math.max(...totalData, 1);
 
-  // Generate smooth curve path (Bezier)
+  // Generate path (straight lines between points)
   const generateSmoothPath = (values) => {
     if (values.length === 0) return '';
     
@@ -34,19 +34,8 @@ export default function LineChart({ data }) {
 
     let path = `M ${points[0].x},${points[0].y}`;
     
-    for (let i = 0; i < points.length - 1; i++) {
-      const current = points[i];
-      const next = points[i + 1];
-      
-      // Calculate control points for smooth curve
-      const xMid = (current.x + next.x) / 2;
-      const yMid = (current.y + next.y) / 2;
-      
-      path += ` Q ${current.x},${current.y} ${xMid},${yMid}`;
-      
-      if (i === points.length - 2) {
-        path += ` Q ${next.x},${next.y} ${next.x},${next.y}`;
-      }
+    for (let i = 1; i < points.length; i++) {
+      path += ` L ${points[i].x},${points[i].y}`;
     }
     
     return path;
