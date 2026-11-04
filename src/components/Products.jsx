@@ -580,7 +580,7 @@ export default function ProductsPage() {
     const agentUrls = {
       'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}`,
       'ACBuy': `https://www.allchinabuy.com/en/page/buy?nTag=Home-search&from=search-input&url=${encodeURIComponent(weidianUrl)}`,
-      'USFans': `https://www.usfans.com/product/3/${itemId}?ref=BWJC3K`,
+      'USFans': `https://www.usfans.com/product/3/${itemId}`,
       'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
       'GTBuy': `https://www.gtbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
       'OopBuy': `https://www.oopbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
@@ -627,7 +627,7 @@ export default function ProductsPage() {
     const agentUrls = {
       'KakoBuy': `https://www.kakobuy.com/item/details?url=${encodeURIComponent(weidianUrl)}`,
       'ACBuy': `https://www.allchinabuy.com/en/page/buy?nTag=Home-search&from=search-input&url=${encodeURIComponent(weidianUrl)}`,
-      'USFans': `https://www.usfans.com/product/3/${itemId}?ref=BWJC3K`,
+      'USFans': `https://www.usfans.com/product/3/${itemId}`,
       'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
       'GTBuy': `https://www.gtbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
       'OopBuy': `https://www.oopbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
