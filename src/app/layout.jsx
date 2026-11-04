@@ -38,10 +38,10 @@ export const metadata = {
     siteName: 'RepFinder',
     images: [
       {
-        url: '/images/nowelogo.png',
-        width: 800,
-        height: 600,
-        alt: 'RepFinder Logo',
+        url: '/images/og-repfinder.png',
+        width: 1672,
+        height: 941,
+        alt: 'RepFinder - Your center for Links',
       },
     ],
     locale: 'en_US',
