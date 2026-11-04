@@ -572,9 +572,13 @@ export default function ProductsPage() {
     // Get preferred agent from localStorage
     const preferredAgent = localStorage.getItem('preferredAgent') || 'KakoBuy';
     
-    // Extract weidian URL from product.link
+    // Extract weidian URL and itemId from product.link
     const weidianMatch = product.link?.match(/url=([^&]+)/);
     const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
+    
+    // Extract itemId for USFans
+    const itemIdMatch = weidianUrl?.match(/itemID[=:](\d+)/i);
+    const itemId = itemIdMatch ? itemIdMatch[1] : '';
     
     // Generate agent link
     const agentUrls = {
@@ -619,9 +623,13 @@ export default function ProductsPage() {
     // Get preferred agent from localStorage
     const preferredAgent = localStorage.getItem('preferredAgent') || 'KakoBuy';
     
-    // Extract weidian URL from product.link
+    // Extract weidian URL and itemId from product.link
     const weidianMatch = product.link?.match(/url=([^&]+)/);
     const weidianUrl = weidianMatch ? decodeURIComponent(weidianMatch[1]) : product.link;
+    
+    // Extract itemId for USFans
+    const itemIdMatch = weidianUrl?.match(/itemID[=:](\d+)/i);
+    const itemId = itemIdMatch ? itemIdMatch[1] : '';
     
     // Generate agent link
     const agentUrls = {
