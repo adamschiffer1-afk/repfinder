@@ -242,7 +242,7 @@ function buildConvertedResult(analysis, target) {
     switch (target) {
         case 'ossbuy': return { url: `https://www.ossbuy.com/product-detail?url=${encodeURIComponent(buildWeidianUrl(itemId))}&spider_token=4572` };
         case 'kakobuy': return { url: `https://www.kakobuy.com/item/details?url=${encodeURIComponent(buildWeidianUrl(itemId))}` };
-        case 'usfans': return { url: `https://www.usfans.com/product/3/${itemId}` };
+        case 'usfans': return { url: `https://www.usfans.com/product/3/${itemId}?ref=BWJC3K` };
         case 'allchinabuy': return { url: `https://www.acbuy.com/product/?id=${encodeURIComponent(itemId)}&source=WD` };
         case 'litbuy': return { url: `https://litbuy.com/product/weidian/${encodeURIComponent(itemId)}` };
         case 'mulebuy': return { url: `https://mulebuy.com/product?id=${itemId}&platform=WEIDIAN` };

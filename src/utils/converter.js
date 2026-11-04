@@ -50,7 +50,7 @@ export function convertLink(originalUrl, target) {
         case 'kakobuy': 
             return `https://www.kakobuy.com/item/details?url=${encodeURIComponent(cleanUrl)}`;
         case 'usfans': 
-            return `https://www.usfans.com/product/3/${itemId}`;
+            return `https://www.usfans.com/product/3/${itemId}?ref=BWJC3K`;
         case 'allchinabuy': 
             return `https://www.acbuy.com/product/?id=${itemId}&source=WD`;
         case 'litbuy': 
