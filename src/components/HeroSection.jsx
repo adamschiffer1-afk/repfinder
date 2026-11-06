@@ -92,6 +92,7 @@ export default function HeroSection() {
       'LitBuy': `https://www.litbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
       'GTBuy': `https://www.gtbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
       'OopBuy': `https://www.oopbuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
+      'OssBuy': `https://www.ossbuy.com/product-detail?url=${encodeURIComponent(weidianUrl)}&spider_token=4572`,
       'MuleBuy': `https://www.mulebuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`,
       'HipoBuy': `https://www.hipobuy.com/en/page/buy?url=${encodeURIComponent(weidianUrl)}`
     };

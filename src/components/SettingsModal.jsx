@@ -60,6 +60,7 @@ export default function SettingsModal({ isOpen, onClose, isInitial = false }) {
     { name: 'LitBuy', image: '/images/litbuy.png' },
     { name: 'GTBuy', image: '/images/gtbuy.png' },
     { name: 'OopBuy', image: '/images/oopbuy.png' },
+    { name: 'OssBuy', image: '/images/ossbuy.png' },
     { name: 'MuleBuy', image: '/images/Mulebuy.jpg' },
     { name: 'HipoBuy', image: '/images/Hipobuy.png' }
   ];
