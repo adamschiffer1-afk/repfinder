@@ -440,18 +440,24 @@ async function fetchFromApi(apiUrl, trackingCode) {
             const date = $(element).find('td:nth-child(1)').text().trim();
             const location = $(element).find('td:nth-child(2)').text().trim();
             const record = $(element).find('td:nth-child(3)').text().trim();
-            const recipient = $(element).find('td:nth-child(5)').text().trim(); // Dodaj kolumnę "收件人"
+            const recipient = $(element).find('td:nth-child(5)').text().trim() || ''; // Optional field
 
             if (date && record) {
-                trackingInfo.push({ 
+                const event = { 
                     Data: date, 
                     Lokalizacja: formatLocation(location), 
                     Status: translateStatus(record, date),
-                    Odbiorca: recipient || '', // Dodaj odbiorcę do każdego wydarzenia
                     OriginalDate: date,
                     OriginalLocation: location,
                     OriginalStatus: record
-                });
+                };
+                
+                // Only add recipient if it exists and is not empty
+                if (recipient) {
+                    event.Odbiorca = recipient;
+                }
+                
+                trackingInfo.push(event);
             }
         });
 
