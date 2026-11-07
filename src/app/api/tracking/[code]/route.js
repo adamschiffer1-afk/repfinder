@@ -440,12 +440,14 @@ async function fetchFromApi(apiUrl, trackingCode) {
             const date = $(element).find('td:nth-child(1)').text().trim();
             const location = $(element).find('td:nth-child(2)').text().trim();
             const record = $(element).find('td:nth-child(3)').text().trim();
+            const recipient = $(element).find('td:nth-child(5)').text().trim(); // Dodaj kolumnę "收件人"
 
             if (date && record) {
                 trackingInfo.push({ 
                     Data: date, 
                     Lokalizacja: formatLocation(location), 
                     Status: translateStatus(record, date),
+                    Odbiorca: recipient || '', // Dodaj odbiorcę do każdego wydarzenia
                     OriginalDate: date,
                     OriginalLocation: location,
                     OriginalStatus: record
@@ -468,17 +470,6 @@ async function fetchFromApi(apiUrl, trackingCode) {
             if (index === 2) mainInfo['Kraj'] = text;
             if (index === 3) mainInfo['Data'] = text;
             if (index === 4) mainInfo['Ostatni status'] = translateStatus(text.split('/')[0].trim());
-            if (index === 5) {
-                // Clean up recipient field - remove status prefixes
-                let recipient = text;
-                // Remove Chinese delivery confirmation character
-                recipient = recipient.replace(/^签收/, '').trim();
-                // Remove status text patterns
-                recipient = recipient.replace(/Poland,\s*The shipment has been successfully delivered\s*\/?\s*/gi, '').trim();
-                recipient = recipient.replace(/Poland\s*$/i, '').trim();
-                recipient = recipient.replace(/\s*\/\s*Poland\s*$/i, '').trim();
-                mainInfo['Odbiorca'] = recipient || 'Brak danych';
-            }
         });
 
         // Dodaj informację o przewidywanym czasie dostawy
@@ -488,9 +479,24 @@ async function fetchFromApi(apiUrl, trackingCode) {
             mainInfo['Data dostawy'] = deliveryEstimate.estimatedDate || 'Brak danych';
         }
 
-        // Dodaj aktualną lokalizację paczki
+        // Dodaj aktualną lokalizację paczki i odbiorcę
         if (trackingInfo.length > 0) {
             mainInfo['Aktualna lokalizacja'] = trackingInfo[0].Lokalizacja || 'Brak danych';
+            
+            // Znajdź odbiorcę z trackingu (zwykle ostatnie wydarzenie z dostawą)
+            const recipientEvent = trackingInfo.find(e => e.Odbiorca && e.Odbiorca.trim());
+            if (recipientEvent) {
+                let recipient = recipientEvent.Odbiorca;
+                // Clean up recipient field
+                recipient = recipient.replace(/^签收/, '').trim();
+                recipient = recipient.replace(/Poland,\s*The shipment has been successfully delivered\s*\/?\s*/gi, '').trim();
+                recipient = recipient.replace(/Poland\s*$/i, '').trim();
+                recipient = recipient.replace(/\s*\/\s*Poland\s*$/i, '').trim();
+                recipient = recipient.replace(/转运中拆板\/Dismantling the board\//, '').trim();
+                if (recipient) {
+                    mainInfo['Odbiorca'] = recipient;
+                }
+            }
         }
 
         return trackingInfo.length > 0 ? { 
