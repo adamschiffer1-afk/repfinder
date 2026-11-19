@@ -35,12 +35,14 @@ function BarChart({ entries, field, color, labelFn }) {
   );
 }
 
-function KpiCard({ icon, value, label, sub, color = '#a78bfa', accent }) {
+function KpiCard({ value, label, sub, color = '#a78bfa' }) {
   return (
-    <div className={e.kpiCard} style={{ '--accent': accent || color }}>
-      <div className={e.kpiIcon}>{icon}</div>
-      <div className={e.kpiValue} style={{ color }}>{value}</div>
-      <div className={e.kpiLabel}>{label}</div>
+    <div className={e.kpiCard}>
+      <div className={e.kpiLabel}>
+        <span className={e.kpiDot} style={{ background: color }} />
+        {label}
+      </div>
+      <div className={e.kpiValue}>{value}</div>
       {sub && <div className={e.kpiSub}>{sub}</div>}
     </div>
   );
@@ -246,9 +248,9 @@ export default function EarningsPage() {
       {/* ── Header ── */}
       <header className={styles.adminHeader}>
         <div>
-          <h1>💰 Zarobki — Kalkulator i Analizy</h1>
-          <p style={{ color: 'rgba(255,255,255,0.45)', marginTop: 4, fontSize: 14 }}>
-            Wpisz sprzedaż w CNY — automatycznie przeliczamy Twoją prowizję
+          <h1>Zarobki</h1>
+          <p className={styles.headerSubtitle}>
+            Wpisz sprzedaż w CNY — prowizja przeliczy się automatycznie
           </p>
         </div>
         <button className={styles.scraperBtn} onClick={() => { setEditEntry(null); setForm(emptyForm); setShowModal(true); }}>
@@ -258,33 +260,36 @@ export default function EarningsPage() {
 
       {/* ── KPI strip ── */}
       <div className={e.kpiGrid}>
-        <KpiCard icon="🏪" value={`¥${fmt(totalSaleCNY)}`} label="Sprzedaż brutto (CNY)" color="#f59e0b" accent="#f59e0b" />
-        <KpiCard icon="🔴" value={`¥${fmt(totalReturnsCNY)}`} label="Zwroty (CNY)" sub={`${returns.length} zwrotów`} color="#ef4444" accent="#ef4444" />
-        <KpiCard icon="✅" value={`¥${fmt(netSaleCNY)}`} label="Sprzedaż netto (CNY)" sub="Po odliczeniu zwrotów" color="#10b981" accent="#10b981" />
-        <KpiCard icon="💴" value={`¥${fmt(netCommCNY)}`} label="Prowizja netto (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#a78bfa" accent="#a78bfa" />
-        <KpiCard icon="🇵🇱" value={netCommPLN != null ? `${fmt(netCommPLN)} zł` : '—'}
-          label="Prowizja netto (PLN)" sub={rates.CNY_TO_PLN ? `1 CNY = ${rates.CNY_TO_PLN.toFixed(4)} PLN` : null} color="#34d399" accent="#34d399" />
-        <KpiCard icon="🇺🇸" value={netCommUSD != null ? `$${fmt(netCommUSD)}` : '—'}
-          label="Prowizja netto (USD)" sub={rates.CNY_TO_USD ? `1 CNY = ${rates.CNY_TO_USD.toFixed(4)} USD` : null} color="#60a5fa" accent="#60a5fa" />
+        <KpiCard value={`¥${fmt(totalSaleCNY)}`} label="Sprzedaż brutto (CNY)" color="#f59e0b" />
+        <KpiCard value={`¥${fmt(totalReturnsCNY)}`} label="Zwroty (CNY)" sub={`${returns.length} zwrotów`} color="#ef4444" />
+        <KpiCard value={`¥${fmt(netSaleCNY)}`} label="Sprzedaż netto (CNY)" sub="Po odliczeniu zwrotów" color="#10b981" />
+        <KpiCard value={`¥${fmt(netCommCNY)}`} label="Prowizja netto (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#a78bfa" />
+        <KpiCard value={netCommPLN != null ? `${fmt(netCommPLN)} zł` : '—'}
+          label="Prowizja netto (PLN)" sub={rates.CNY_TO_PLN ? `1 CNY = ${rates.CNY_TO_PLN.toFixed(4)} PLN` : null} color="#34d399" />
+        <KpiCard value={netCommUSD != null ? `$${fmt(netCommUSD)}` : '—'}
+          label="Prowizja netto (USD)" sub={rates.CNY_TO_USD ? `1 CNY = ${rates.CNY_TO_USD.toFixed(4)} USD` : null} color="#60a5fa" />
       </div>
 
       {/* ── Live converter ── */}
       <div className={e.converterCard}>
-        <h3>🔄 Przelicznik CNY na żywo</h3>
+        <h3>Przelicznik CNY</h3>
         <div className={e.converterRow}>
-          <input className={e.converterInput} type="number" min="0" step="0.01" placeholder="0.00"
-            value={convCNY} onChange={ev => setConvCNY(ev.target.value)} style={{ maxWidth: 180 }} />
+          <div className={e.converterInputWrap}>
+            <span className={e.converterPrefix}>¥</span>
+            <input className={e.converterInput} type="number" min="0" step="0.01" placeholder="0.00"
+              value={convCNY} onChange={ev => setConvCNY(ev.target.value)} aria-label="Kwota w CNY" />
+          </div>
           <span className={e.converterArrow}>→</span>
           <div className={e.converterResults}>
             <div className={e.converterResult}>
-              <div className={e.converterResultLabel}>PLN 🇵🇱</div>
-              <div className={e.converterResultValue} style={{ color: '#34d399' }}>
+              <div className={e.converterResultLabel}>PLN</div>
+              <div className={e.converterResultValue}>
                 {convPLN != null ? `${fmt(convPLN)} zł` : '—'}
               </div>
             </div>
             <div className={e.converterResult}>
-              <div className={e.converterResultLabel}>USD 🇺🇸</div>
-              <div className={e.converterResultValue} style={{ color: '#60a5fa' }}>
+              <div className={e.converterResultLabel}>USD</div>
+              <div className={e.converterResultValue}>
                 {convUSD != null ? `$${fmt(convUSD)}` : '—'}
               </div>
             </div>
@@ -293,9 +298,9 @@ export default function EarningsPage() {
         <div className={e.rateInfo}>
           {rates.CNY_TO_PLN && <span className={e.rateTag}>1 CNY = {rates.CNY_TO_PLN.toFixed(4)} PLN</span>}
           {rates.CNY_TO_USD && <span className={e.rateTag}>1 CNY = {rates.CNY_TO_USD.toFixed(4)} USD</span>}
-          {ratesFallback && <span className={e.rateTag} style={{ color: '#fbbf24' }}>⚠️ Kursy przybliżone</span>}
+          {ratesFallback && <span className={`${e.rateTag} ${e.rateTagWarn}`}>Kursy przybliżone</span>}
           <button className={e.rateRefresh} onClick={fetchRates} disabled={ratesLoading}>
-            {ratesLoading ? '⟳' : '🔄 Odśwież kursy'}
+            {ratesLoading ? 'Odświeżanie…' : 'Odśwież kursy'}
           </button>
         </div>
       </div>
@@ -304,17 +309,17 @@ export default function EarningsPage() {
       {enriched.length > 1 && (
         <div className={e.chartsRow}>
           <div className={e.chartCard}>
-            <h3>🏪 Sprzedaż CNY w czasie</h3>
-            <BarChart entries={enriched} field="saleCNY" color="linear-gradient(180deg,#f59e0b,#d97706)" labelFn={v => `¥${fmt(v)}`} />
+            <h3>Sprzedaż (CNY) w czasie</h3>
+            <BarChart entries={enriched} field="saleCNY" color="#71717a" labelFn={v => `¥${fmt(v)}`} />
           </div>
           <div className={e.chartCard}>
-            <h3>💴 Prowizja CNY w czasie</h3>
-            <BarChart entries={enriched} field="commCNY" color="linear-gradient(180deg,#a78bfa,#7c3aed)" labelFn={v => `¥${fmt(v)}`} />
+            <h3>Prowizja (CNY) w czasie</h3>
+            <BarChart entries={enriched} field="commCNY" color="#a78bfa" labelFn={v => `¥${fmt(v)}`} />
           </div>
           {totalCommPLN != null && (
             <div className={e.chartCard}>
-              <h3>🇵🇱 Prowizja PLN w czasie</h3>
-              <BarChart entries={enriched} field="commPLN" color="linear-gradient(180deg,#34d399,#059669)" labelFn={v => `${fmt(v)} zł`} />
+              <h3>Prowizja (PLN) w czasie</h3>
+              <BarChart entries={enriched} field="commPLN" color="#34d399" labelFn={v => `${fmt(v)} zł`} />
             </div>
           )}
         </div>
@@ -324,42 +329,42 @@ export default function EarningsPage() {
       {enriched.length > 0 && (
         <div className={e.summaryRow}>
           <div className={e.summaryCard}>
-            <h4>📊 Podsumowanie łączne</h4>
+            <h4>Podsumowanie łączne</h4>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Sprzedaż brutto (CNY)</span>
-              <span className={e.summaryLineVal} style={{ color: '#f59e0b' }}>¥{fmt(totalSaleCNY)}</span>
+              <span className={e.summaryLineVal}>¥{fmt(totalSaleCNY)}</span>
             </div>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Zwroty (CNY)</span>
-              <span className={e.summaryLineVal} style={{ color: '#ef4444' }}>-¥{fmt(totalReturnsCNY)}</span>
+              <span className={`${e.summaryLineVal} ${e.negative}`}>-¥{fmt(totalReturnsCNY)}</span>
             </div>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Sprzedaż netto (CNY)</span>
-              <span className={e.summaryLineVal} style={{ color: '#10b981' }}>¥{fmt(netSaleCNY)}</span>
+              <span className={e.summaryLineVal}>¥{fmt(netSaleCNY)}</span>
             </div>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Prowizja netto (CNY)</span>
-              <span className={e.summaryLineVal} style={{ color: '#a78bfa' }}>¥{fmt(netCommCNY)}</span>
+              <span className={e.summaryLineVal}>¥{fmt(netCommCNY)}</span>
             </div>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Prowizja netto (PLN)</span>
-              <span className={e.summaryLineVal} style={{ color: '#34d399' }}>{netCommPLN != null ? `${fmt(netCommPLN)} zł` : '—'}</span>
+              <span className={e.summaryLineVal}>{netCommPLN != null ? `${fmt(netCommPLN)} zł` : '—'}</span>
             </div>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Prowizja netto (USD)</span>
-              <span className={e.summaryLineVal} style={{ color: '#60a5fa' }}>{netCommUSD != null ? `$${fmt(netCommUSD)}` : '—'}</span>
+              <span className={e.summaryLineVal}>{netCommUSD != null ? `$${fmt(netCommUSD)}` : '—'}</span>
             </div>
           </div>
           <div className={e.summaryCard}>
-            <h4>📅 Ostatni wpis</h4>
+            <h4>Ostatni wpis</h4>
             {(() => {
               const latest = enriched[enriched.length - 1];
               if (!latest) return null;
               return (<>
                 <div className={e.summaryLine}><span className={e.summaryLineKey}>Data</span><span className={e.summaryLineVal}>{fmtDate(latest.date)}</span></div>
-                <div className={e.summaryLine}><span className={e.summaryLineKey}>Sprzedaż</span><span className={e.summaryLineVal} style={{ color: '#f59e0b' }}>¥{fmt(latest.saleCNY)}</span></div>
-                <div className={e.summaryLine}><span className={e.summaryLineKey}>Prowizja %</span><span className={e.summaryLineVal} style={{ color: '#a78bfa' }}>{latest.commissionRate}%</span></div>
-                <div className={e.summaryLine}><span className={e.summaryLineKey}>Prowizja PLN</span><span className={e.summaryLineVal} style={{ color: '#34d399' }}>{latest.commPLN != null ? `${fmt(latest.commPLN)} zł` : '—'}</span></div>
+                <div className={e.summaryLine}><span className={e.summaryLineKey}>Sprzedaż</span><span className={e.summaryLineVal}>¥{fmt(latest.saleCNY)}</span></div>
+                <div className={e.summaryLine}><span className={e.summaryLineKey}>Prowizja %</span><span className={e.summaryLineVal}>{latest.commissionRate}%</span></div>
+                <div className={e.summaryLine}><span className={e.summaryLineKey}>Prowizja PLN</span><span className={e.summaryLineVal}>{latest.commPLN != null ? `${fmt(latest.commPLN)} zł` : '—'}</span></div>
               </>);
             })()}
           </div>
@@ -368,11 +373,16 @@ export default function EarningsPage() {
 
       {/* ── Table ── */}
       <div className={e.tableSection}>
-        <h2 style={{ marginBottom: 16, fontSize: 18, color: 'rgba(255,255,255,0.8)' }}>📅 Historia wpisów</h2>
+        <div className={styles.sectionBar}>
+          <h2 className={styles.sectionHeading}>Historia wpisów</h2>
+        </div>
         {loading ? (
-          <div className={styles.spinnerContainer}><div className={styles.loadingSpinner} /><p style={{ marginTop: 10 }}>Ładowanie...</p></div>
+          <div className={styles.spinnerContainer}><div className={styles.loadingSpinner} /><p>Ładowanie...</p></div>
         ) : entries.length === 0 ? (
-          <div className={styles.noProductsPlaceholder}>📭 Brak wpisów. Dodaj pierwszy klikając przycisk powyżej.</div>
+          <div className={styles.noProductsPlaceholder}>
+            <span className={styles.emptyTitle}>Brak wpisów</span>
+            <span className={styles.emptyHint}>Dodaj pierwszy wpis przyciskiem „Dodaj wpis”.</span>
+          </div>
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.adminTable}>
@@ -386,13 +396,13 @@ export default function EarningsPage() {
               <tbody>
                 {[...enriched].reverse().map((en) => (
                   <tr key={en._id}>
-                    <td style={{ fontWeight: 700, color: '#a78bfa' }}>{fmtDate(en.date)}</td>
-                    <td><span className={e.numBadge} style={{ '--c': '#f59e0b' }}>¥{fmt(en.saleCNY)}</span></td>
-                    <td style={{ color: '#a78bfa', fontWeight: 700 }}>{en.commissionRate}%</td>
-                    <td><span className={e.numBadge} style={{ '--c': '#a78bfa' }}>¥{fmt(en.commCNY)}</span></td>
-                    <td><span className={e.numBadge} style={{ '--c': '#34d399' }}>{en.commPLN != null ? `${fmt(en.commPLN)} zł` : '—'}</span></td>
-                    <td><span className={e.numBadge} style={{ '--c': '#60a5fa' }}>{en.commUSD != null ? `$${fmt(en.commUSD)}` : '—'}</span></td>
-                    <td style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>{en.note || '—'}</td>
+                    <td className={styles.cellStrong}>{fmtDate(en.date)}</td>
+                    <td><span className={e.numBadge}>¥{fmt(en.saleCNY)}</span></td>
+                    <td className={styles.numCell}>{en.commissionRate}%</td>
+                    <td><span className={e.numBadge}>¥{fmt(en.commCNY)}</span></td>
+                    <td><span className={e.numBadge}>{en.commPLN != null ? `${fmt(en.commPLN)} zł` : '—'}</span></td>
+                    <td><span className={e.numBadge}>{en.commUSD != null ? `$${fmt(en.commUSD)}` : '—'}</span></td>
+                    <td className={styles.cellMuted} title={en.note || ''}>{en.note || '—'}</td>
                     <td className={styles.actions}>
                       <button className={styles.editBtn} onClick={() => openEdit(en)}>Edytuj</button>
                       <button className={styles.deleteBtn} onClick={() => handleDelete(en._id)}>Usuń</button>
@@ -406,19 +416,20 @@ export default function EarningsPage() {
       </div>
 
       {/* ── Returns Section ── */}
-      <div className={e.tableSection} style={{ marginTop: 40 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 18, color: 'rgba(255,255,255,0.8)' }}>🔴 Zwroty produktów</h2>
-          <button 
-            className={styles.scraperBtn} 
+      <div className={`${e.tableSection} ${styles.sectionSpacer}`}>
+        <div className={styles.sectionBar}>
+          <h2 className={styles.sectionHeading}>Zwroty produktów</h2>
+          <button
+            className={styles.actionBtn}
             onClick={() => { setEditReturn(null); setReturnForm(emptyReturnForm); setShowReturnModal(true); }}
-            style={{ background: '#ef4444' }}
           >
             + Dodaj zwrot
           </button>
         </div>
         {returns.length === 0 ? (
-          <div className={styles.noProductsPlaceholder}>📭 Brak zwrotów.</div>
+          <div className={styles.noProductsPlaceholder}>
+            <span className={styles.emptyTitle}>Brak zwrotów</span>
+          </div>
         ) : (
           <div className={styles.tableWrapper}>
             <table className={styles.adminTable}>
@@ -434,10 +445,10 @@ export default function EarningsPage() {
               <tbody>
                 {[...returns].reverse().map((ret) => (
                   <tr key={ret._id}>
-                    <td style={{ fontWeight: 700, color: '#ef4444' }}>{fmtDate(ret.date)}</td>
-                    <td><span className={e.numBadge} style={{ '--c': '#ef4444' }}>-¥{fmt(ret.returnAmountCNY)}</span></td>
-                    <td style={{ color: 'rgba(255,255,255,0.7)' }}>{ret.productRef || '—'}</td>
-                    <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>{ret.reason || '—'}</td>
+                    <td className={styles.cellStrong}>{fmtDate(ret.date)}</td>
+                    <td><span className={`${e.numBadge} ${e.negative}`}>-¥{fmt(ret.returnAmountCNY)}</span></td>
+                    <td>{ret.productRef || '—'}</td>
+                    <td className={styles.cellMuted} title={ret.reason || ''}>{ret.reason || '—'}</td>
                     <td className={styles.actions}>
                       <button className={styles.editBtn} onClick={() => openEditReturn(ret)}>Edytuj</button>
                       <button className={styles.deleteBtn} onClick={() => handleDeleteReturn(ret._id)}>Usuń</button>
@@ -453,32 +464,30 @@ export default function EarningsPage() {
       {/* ── Modal ── */}
       {showModal && (
         <div className={styles.modalOverlay}>
-          <div className={styles.adminModal} style={{ maxWidth: 480 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 style={{ margin: 0 }}>{editEntry ? '✏️ Edytuj wpis' : '➕ Nowy wpis'}</h2>
-              <span style={{ fontSize: 24, cursor: 'pointer', opacity: 0.4 }} onClick={closeModal}>&times;</span>
+          <div className={`${styles.adminModal} ${styles.modalMd}`}>
+            <div className={styles.modalHeader}>
+              <h2>{editEntry ? 'Edytuj wpis' : 'Nowy wpis'}</h2>
+              <button type="button" className={styles.iconBtn} onClick={closeModal} aria-label="Zamknij">&times;</button>
             </div>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <form onSubmit={handleSubmit}>
               <div>
-                <label className={e.formLabel}>📅 Data</label>
-                <input type="date" value={form.date} required onChange={ev => setForm({ ...form, date: ev.target.value })}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff', colorScheme: 'dark' }} />
+                <label className={e.formLabel}>Data</label>
+                <input type="date" value={form.date} required onChange={ev => setForm({ ...form, date: ev.target.value })} />
               </div>
               <div>
-                <label className={e.formLabel}>🏪 Sprzedaż od sprzedawcy (CNY ¥)</label>
+                <label className={e.formLabel}>Sprzedaż od sprzedawcy (CNY ¥)</label>
                 <input type="number" min="0" step="0.01" placeholder="0.00" value={form.saleCNY} required
-                  onChange={ev => setForm({ ...form, saleCNY: ev.target.value })}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff' }} />
+                  onChange={ev => setForm({ ...form, saleCNY: ev.target.value })} />
                 {form.saleCNY > 0 && (
-                  <div style={{ marginTop: 8, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                    <span>Twoja prowizja ({form.commissionRate}%): <strong style={{ color: '#a78bfa' }}>¥{fmt((form.saleCNY * form.commissionRate) / 100)}</strong></span>
-                    {rates.CNY_TO_PLN && <span>= <strong style={{ color: '#34d399' }}>{fmt((form.saleCNY * form.commissionRate / 100) * rates.CNY_TO_PLN)} zł</strong></span>}
-                    {rates.CNY_TO_USD && <span>= <strong style={{ color: '#60a5fa' }}>${fmt((form.saleCNY * form.commissionRate / 100) * rates.CNY_TO_USD)}</strong></span>}
+                  <div className={e.formPreview}>
+                    <span>Twoja prowizja ({form.commissionRate}%): <strong>¥{fmt((form.saleCNY * form.commissionRate) / 100)}</strong></span>
+                    {rates.CNY_TO_PLN && <span>= <strong>{fmt((form.saleCNY * form.commissionRate / 100) * rates.CNY_TO_PLN)} zł</strong></span>}
+                    {rates.CNY_TO_USD && <span>= <strong>${fmt((form.saleCNY * form.commissionRate / 100) * rates.CNY_TO_USD)}</strong></span>}
                   </div>
                 )}
               </div>
               <div>
-                <label className={e.formLabel}>💹 Twoja prowizja (%)</label>
+                <label className={e.formLabel}>Twoja prowizja (%)</label>
                 <div className={e.sliderWrap}>
                   <input type="range" min="1" max="100" value={form.commissionRate}
                     onChange={ev => setForm({ ...form, commissionRate: Number(ev.target.value) })} className={e.slider} />
@@ -486,16 +495,15 @@ export default function EarningsPage() {
                 </div>
               </div>
               <div>
-                <label className={e.formLabel}>📝 Notatka</label>
+                <label className={e.formLabel}>Notatka</label>
                 <textarea placeholder="Opcjonalna notatka..." value={form.note}
-                  onChange={ev => setForm({ ...form, note: ev.target.value })} rows={2}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff', resize: 'vertical', font: 'inherit' }} />
+                  onChange={ev => setForm({ ...form, note: ev.target.value })} rows={2} />
               </div>
               <div className={styles.modalActions}>
-                <button type="submit" style={{ background: '#a78bfa', color: '#000', padding: 12, borderRadius: 8, border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
+                <button type="submit">
                   {editEntry ? 'Zapisz zmiany' : 'Dodaj wpis'}
                 </button>
-                <button type="button" onClick={closeModal} style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: 12, borderRadius: 8, border: 'none', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                <button type="button" onClick={closeModal}>
                   Anuluj
                 </button>
               </div>
@@ -521,47 +529,43 @@ export default function EarningsPage() {
       {/* ── Return Modal ── */}
       {showReturnModal && (
         <div className={styles.modalOverlay}>
-          <div className={styles.adminModal} style={{ maxWidth: 480 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 style={{ margin: 0 }}>{editReturn ? '✏️ Edytuj zwrot' : '🔴 Nowy zwrot'}</h2>
-              <span style={{ fontSize: 24, cursor: 'pointer', opacity: 0.4 }} onClick={closeReturnModal}>&times;</span>
+          <div className={`${styles.adminModal} ${styles.modalMd}`}>
+            <div className={styles.modalHeader}>
+              <h2>{editReturn ? 'Edytuj zwrot' : 'Nowy zwrot'}</h2>
+              <button type="button" className={styles.iconBtn} onClick={closeReturnModal} aria-label="Zamknij">&times;</button>
             </div>
-            <form onSubmit={handleReturnSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <form onSubmit={handleReturnSubmit}>
               <div>
-                <label className={e.formLabel}>📅 Data zwrotu</label>
-                <input type="date" value={returnForm.date} required onChange={ev => setReturnForm({ ...returnForm, date: ev.target.value })}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff', colorScheme: 'dark' }} />
+                <label className={e.formLabel}>Data zwrotu</label>
+                <input type="date" value={returnForm.date} required onChange={ev => setReturnForm({ ...returnForm, date: ev.target.value })} />
               </div>
               <div>
-                <label className={e.formLabel}>💸 Kwota zwrotu (CNY ¥)</label>
+                <label className={e.formLabel}>Kwota zwrotu (CNY ¥)</label>
                 <input type="number" min="0" step="0.01" placeholder="0.00" value={returnForm.returnAmountCNY} required
-                  onChange={ev => setReturnForm({ ...returnForm, returnAmountCNY: ev.target.value })}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff' }} />
+                  onChange={ev => setReturnForm({ ...returnForm, returnAmountCNY: ev.target.value })} />
                 {returnForm.returnAmountCNY > 0 && (
-                  <div style={{ marginTop: 8, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                    <span>Odliczenie: <strong style={{ color: '#ef4444' }}>-¥{fmt(returnForm.returnAmountCNY)}</strong></span>
-                    {rates.CNY_TO_PLN && <span>= <strong style={{ color: '#ef4444' }}>-{fmt(returnForm.returnAmountCNY * rates.CNY_TO_PLN)} zł</strong></span>}
-                    {rates.CNY_TO_USD && <span>= <strong style={{ color: '#ef4444' }}>-${fmt(returnForm.returnAmountCNY * rates.CNY_TO_USD)}</strong></span>}
+                  <div className={`${e.formPreview} ${e.formPreviewNegative}`}>
+                    <span>Odliczenie: <strong>-¥{fmt(returnForm.returnAmountCNY)}</strong></span>
+                    {rates.CNY_TO_PLN && <span>= <strong>-{fmt(returnForm.returnAmountCNY * rates.CNY_TO_PLN)} zł</strong></span>}
+                    {rates.CNY_TO_USD && <span>= <strong>-${fmt(returnForm.returnAmountCNY * rates.CNY_TO_USD)}</strong></span>}
                   </div>
                 )}
               </div>
               <div>
-                <label className={e.formLabel}>📦 Produkt / Numer zamówienia</label>
+                <label className={e.formLabel}>Produkt / numer zamówienia</label>
                 <input type="text" placeholder="np. Zamówienie #12345 lub Yeezy 350" value={returnForm.productRef}
-                  onChange={ev => setReturnForm({ ...returnForm, productRef: ev.target.value })}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff' }} />
+                  onChange={ev => setReturnForm({ ...returnForm, productRef: ev.target.value })} />
               </div>
               <div>
-                <label className={e.formLabel}>📝 Powód zwrotu</label>
+                <label className={e.formLabel}>Powód zwrotu</label>
                 <textarea placeholder="Opcjonalny powód zwrotu..." value={returnForm.reason}
-                  onChange={ev => setReturnForm({ ...returnForm, reason: ev.target.value })} rows={2}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff', resize: 'vertical', font: 'inherit' }} />
+                  onChange={ev => setReturnForm({ ...returnForm, reason: ev.target.value })} rows={2} />
               </div>
               <div className={styles.modalActions}>
-                <button type="submit" style={{ background: '#ef4444', color: '#fff', padding: 12, borderRadius: 8, border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
+                <button type="submit">
                   {editReturn ? 'Zapisz zmiany' : 'Dodaj zwrot'}
                 </button>
-                <button type="button" onClick={closeReturnModal} style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: 12, borderRadius: 8, border: 'none', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                <button type="button" onClick={closeReturnModal}>
                   Anuluj
                 </button>
               </div>
@@ -574,7 +578,7 @@ export default function EarningsPage() {
       <div className={styles.toastContainer}>
         {toasts.map(toast => (
           <div key={toast.id} className={`${styles.toast} ${toast.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
-            <span className={styles.toastIcon}>{toast.type === 'success' ? '⚡' : '⚠️'}</span>
+            <span className={styles.toastIcon} aria-hidden="true" />
             <span className={styles.toastMessage}>{toast.msg}</span>
             <button className={styles.toastClose} onClick={() => setToasts(p => p.filter(t => t.id !== toast.id))}>&times;</button>
           </div>

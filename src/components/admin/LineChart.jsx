@@ -256,10 +256,10 @@ export default function LineChart({ data }) {
         >
           <div className={styles.tooltipTime}>{data[hoveredIndex].time}</div>
           <div className={styles.tooltipRow}>
-            <span>👁️ {data[hoveredIndex].page_view}</span>
+            <span>Wyświetlenia</span><strong>{data[hoveredIndex].page_view}</strong>
           </div>
           <div className={styles.tooltipRow}>
-            <span>🖱️ {data[hoveredIndex].product_click}</span>
+            <span>Kliknięcia</span><strong>{data[hoveredIndex].product_click}</strong>
           </div>
           <div className={styles.tooltipTotal}>
             <span>Razem:</span>

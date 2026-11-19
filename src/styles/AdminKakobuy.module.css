@@ -1,54 +1,55 @@
 /* ============================================================
-   AdminKakobuy.module.css
-   Styles for the Kakobuy admin analytics page
+   AdminKakobuy.module.css — /admin-99x-hsd/kakobuy
+   Uses the --adm-* tokens defined on .adminWrapper (Admin.module.css).
    ============================================================ */
 
 /* ── KPI grid ─────────────────────────────────────────────── */
 .kpiGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .kpiCard {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 18px;
-  padding: 24px 20px;
-  text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.kpiCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.kpiIcon {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.kpiValue {
-  font-size: 34px;
-  font-weight: 800;
-  line-height: 1;
-  margin-bottom: 6px;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-lg);
+  padding: 16px 20px;
+  min-width: 0;
 }
 
 .kpiLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--adm-text-2);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.kpiDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  background: var(--adm-text-3);
+}
+
+.kpiValue {
+  font-size: 26px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: var(--adm-text);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
 }
 
 .kpiSub {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.35);
-  margin-top: 6px;
+  color: var(--adm-text-3);
+  margin-top: 4px;
 }
 
 /* ── Mini bar charts row ──────────────────────────────────── */
@@ -56,23 +57,21 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .chartCard {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 20px 16px 16px;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-lg);
+  padding: 16px 20px 20px;
 }
 
 .chartCard h3 {
-  font-size: 14px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--adm-text-2);
+  margin: 0 0 16px;
 }
 
 .miniBarChart {
@@ -80,7 +79,7 @@
   align-items: flex-end;
   gap: 4px;
   height: 90px;
-  padding-bottom: 22px;
+  padding-bottom: 20px;
   position: relative;
 }
 
@@ -91,23 +90,29 @@
   align-items: center;
   justify-content: flex-end;
   height: 100%;
-  gap: 4px;
   position: relative;
 }
 
 .miniBar {
   width: 100%;
-  min-height: 3px;
-  border-radius: 4px 4px 0 0;
-  transition: height 0.4s ease;
+  max-width: 28px;
+  min-height: 2px;
+  border-radius: 3px 3px 0 0;
+  opacity: 0.85;
+  transition: height 0.4s ease, opacity 0.15s ease;
+}
+
+.miniBarCol:hover .miniBar {
+  opacity: 1;
 }
 
 .miniBarLabel {
   position: absolute;
   bottom: -18px;
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.3);
+  font-size: 10px;
+  color: var(--adm-text-3);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Gauge / progress bars ────────────────────────────────── */
@@ -119,129 +124,131 @@
 }
 
 .gaugeCard {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 22px 20px;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-lg);
+  padding: 16px 20px;
 }
 
 .gaugeCard h3 {
-  font-size: 14px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--adm-text-2);
+  margin: 0 0 14px;
 }
 
 .gaugeTrack {
   width: 100%;
-  height: 12px;
+  height: 6px;
   background: rgba(255, 255, 255, 0.06);
   border-radius: 99px;
   overflow: hidden;
   margin-bottom: 8px;
 }
 
-.gaugeFill {
+.gaugeFill,
+.gaugeFillBlue {
   height: 100%;
-  background: linear-gradient(90deg, #a78bfa, #34d399);
   border-radius: 99px;
   transition: width 0.6s ease;
   min-width: 3px;
 }
 
+.gaugeFill {
+  background: var(--adm-success);
+}
+
 .gaugeFillBlue {
-  height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
-  border-radius: 99px;
-  transition: width 0.6s ease;
-  min-width: 3px;
+  background: var(--adm-accent);
 }
 
 .gaugeLabels {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--adm-text-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.gaugeValue {
+  color: var(--adm-text);
+  font-weight: 500;
 }
 
 /* ── Table section ────────────────────────────────────────── */
 .tableSection {
-  margin-top: 8px;
+  margin-top: 0;
 }
 
-/* Coloured number badges in table cells */
 .numBadge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 700;
-  background: color-mix(in srgb, var(--c, #a78bfa) 15%, transparent);
-  color: var(--c, #a78bfa);
-  border: 1px solid color-mix(in srgb, var(--c, #a78bfa) 30%, transparent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--adm-text);
 }
 
-/* Inline mini conversion bar inside table */
+/* Inline conversion bar inside table */
 .convBar {
-  position: relative;
-  width: 100%;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  overflow: visible;
   display: flex;
   align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.convTrack {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
 }
 
 .convFill {
   height: 100%;
-  background: linear-gradient(90deg, #34d399, #059669);
-  border-radius: 20px;
-  min-width: 3px;
+  background: var(--adm-success);
+  border-radius: 99px;
+  min-width: 2px;
   transition: width 0.4s ease;
 }
 
 .convLabel {
-  position: absolute;
-  right: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--adm-text-2);
+  min-width: 40px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Form modal helpers ───────────────────────────────────── */
 .formLabel {
   display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: #a78bfa;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--adm-text-2);
   margin-bottom: 6px;
 }
 
 .formGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 560px) {
   .formGrid {
     grid-template-columns: 1fr;
   }
 }
 
 /* ── Responsive ───────────────────────────────────────────── */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .kpiGrid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
 
-  .chartsRow {
-    grid-template-columns: 1fr;
-  }
-
+@media (max-width: 768px) {
+  .chartsRow,
   .gaugeRow {
     grid-template-columns: 1fr;
   }

@@ -164,7 +164,7 @@ export default function UsersPage() {
       {/* Statistics */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%)' }}>
+          <div className={styles.statIcon}>
             <FontAwesomeIcon icon={faCrown} />
           </div>
           <div className={styles.statInfo}>
@@ -173,7 +173,7 @@ export default function UsersPage() {
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)' }}>
+          <div className={styles.statIcon}>
             <FontAwesomeIcon icon={faUser} />
           </div>
           <div className={styles.statInfo}>
@@ -182,7 +182,7 @@ export default function UsersPage() {
           </div>
         </div>
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)' }}>
+          <div className={styles.statIcon}>
             <FontAwesomeIcon icon={faShieldAlt} />
           </div>
           <div className={styles.statInfo}>

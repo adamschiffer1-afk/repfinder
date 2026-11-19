@@ -106,7 +106,8 @@ const ProductTable = memo(function ProductTable({
   if (products.length === 0) {
     return (
       <div className={styles.noProductsPlaceholder}>
-        📭 Brak produktów spełniających podane kryteria.
+        <span className={styles.emptyTitle}>Brak produktów</span>
+        <span className={styles.emptyHint}>Żaden produkt nie spełnia wybranych kryteriów.</span>
       </div>
     );
   }
@@ -115,8 +116,8 @@ const ProductTable = memo(function ProductTable({
     <table className={styles.adminTable}>
       <thead>
         <tr>
-          <th style={{ width: '36px', textAlign: 'center' }}></th>
-          <th style={{ width: '40px', textAlign: 'center' }}>
+          <th className={styles.cellCenter} style={{ width: '36px' }}></th>
+          <th className={styles.cellCenter} style={{ width: '40px' }}>
             <label className={styles.checkboxContainer}>
               <input 
                 type="checkbox" 
@@ -156,7 +157,7 @@ const ProductTable = memo(function ProductTable({
               onDrop={(event) => handleDrop(event, product)}
               onDragLeave={() => setDragOverId(current => current === product._id ? null : current)}
             >
-              <td style={{ textAlign: 'center' }}>
+              <td className={styles.cellCenter}>
                 <button
                   type="button"
                   className={styles.dragHandle}
@@ -169,7 +170,7 @@ const ProductTable = memo(function ProductTable({
                   ::
                 </button>
               </td>
-              <td style={{ textAlign: 'center' }}>
+              <td className={styles.cellCenter}>
                 <label className={styles.checkboxContainer}>
                   <input 
                     type="checkbox" 
@@ -180,7 +181,7 @@ const ProductTable = memo(function ProductTable({
                 </label>
               </td>
               <td>
-                <div className={styles.tableImgContainer} onClick={() => onImageClick(product.image)} style={{ cursor: 'pointer' }}>
+                <div className={styles.tableImgContainer} onClick={() => onImageClick(product.image)}>
                   <img src={product.image} alt="" className={styles.tableImg} />
                 </div>
               </td>
@@ -215,15 +216,7 @@ const ProductTable = memo(function ProductTable({
                       }
                     }}
                     autoFocus
-                    style={{
-                      width: '100%',
-                      padding: '4px 8px',
-                      background: 'rgba(255,255,255,0.1)',
-                      border: '1px solid rgba(255,255,255,0.2)',
-                      borderRadius: '4px',
-                      color: 'white',
-                      fontSize: '13px'
-                    }}
+                    className={styles.inlineNameInput}
                   />
                 ) : (
                   product.name
@@ -238,16 +231,16 @@ const ProductTable = memo(function ProductTable({
                   {product.batch}
                 </span>
               </td>
-              <td className={styles.clicksCell}>📊 {product.clicks || 0}</td>
+              <td className={styles.clicksCell}>{product.clicks || 0}</td>
               <td>
                 {product.isPinned ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <span className={styles.pinnedBadge} style={{ padding: '4px 8px' }}>📌</span>
+                  <div className={styles.pinnedCell}>
+                    <span className={styles.pinnedBadge}>Tak</span>
                     <input 
                       type="number" 
                       defaultValue={product.pinnedOrder !== 999999 ? product.pinnedOrder : ''}
                       onBlur={(e) => onUpdatePinnedOrder(product._id, e.target.value)}
-                      style={{ width: '50px', padding: '2px 4px', fontSize: '12px', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', borderRadius: '4px' }}
+                      className={styles.pinnedOrderInput}
                       title="Kolejność (niższy = wyżej)"
                       placeholder="Auto"
                     />
@@ -256,30 +249,16 @@ const ProductTable = memo(function ProductTable({
                   <span className={styles.unpinnedBadge}>Nie</span>
                 )}
               </td>
-              <td style={{ textAlign: 'center' }}>
+              <td>
                 {product.isHidden ? (
-                  <span style={{ 
-                    background: 'rgba(239,68,68,0.15)', 
-                    color: '#f87171', 
-                    padding: '3px 8px', 
-                    borderRadius: '4px', 
-                    fontSize: '12px',
-                    fontWeight: 600
-                  }}>🙈 Ukryty</span>
+                  <span className={`${styles.statusBadge} ${styles.statusHidden}`}>Ukryty</span>
                 ) : (
-                  <span style={{ 
-                    background: 'rgba(34,197,94,0.15)', 
-                    color: '#4ade80', 
-                    padding: '3px 8px', 
-                    borderRadius: '4px', 
-                    fontSize: '12px',
-                    fontWeight: 600
-                  }}>👁️ Widoczny</span>
+                  <span className={`${styles.statusBadge} ${styles.statusVisible}`}>Widoczny</span>
                 )}
               </td>
               <td className={styles.actions}>
-                <button className={styles.editBtn} onClick={() => onEdit(product)}>Edit</button>
-                <button className={styles.deleteBtn} onClick={() => onDelete(product._id)}>Delete</button>
+                <button className={styles.editBtn} onClick={() => onEdit(product)}>Edytuj</button>
+                <button className={styles.deleteBtn} onClick={() => onDelete(product._id)}>Usuń</button>
               </td>
             </tr>
           );
@@ -882,7 +861,7 @@ export default function ManageProducts() {
       
       if (res.ok && (data.nobgUrl || data.url)) {
         setFormData({ ...formData, image: data.nobgUrl || data.url });
-        showToast('✅ Usunięto tło!', 'success');
+        showToast('Usunięto tło.', 'success');
       } else {
         console.error('Remove BG error:', data);
         showToast(data.error || 'Błąd usuwania tła', 'error');
@@ -1121,7 +1100,7 @@ export default function ManageProducts() {
         window.URL.revokeObjectURL(url);
         
         showToast(
-          `✅ Backup utworzony! Wyeksportowano ${data.count} produktów.`,
+          `Backup utworzony. Wyeksportowano ${data.count} produktów.`,
           'success'
         );
       } else {
@@ -1140,7 +1119,7 @@ export default function ManageProducts() {
       <div className={styles.productsHeader}>
         <div className={styles.productsTopBar}>
           <h1 className={styles.productsTitle}>
-            Manage Products
+            Produkty
             <span className={styles.productsBadge}>{totalProducts}</span>
           </h1>
           
@@ -1170,7 +1149,7 @@ export default function ManageProducts() {
             </button>
 
             <button className={styles.actionBtn} onClick={() => setShowScraperModal(true)}>
-              🚀 Scraper
+              Scraper
             </button>
 
             <button className={styles.actionBtn} onClick={() => {
@@ -1181,17 +1160,16 @@ export default function ManageProducts() {
             </button>
 
             <button className={`${styles.actionBtn} ${styles.actionBtnSuccess}`} onClick={() => setShowTemplateModal(true)}>
-              📋 Template
+              Template
             </button>
 
             <button 
               className={`${styles.actionBtn} ${styles.actionBtnSuccess}`}
               onClick={handleBackupAllProducts}
               disabled={backupLoading}
-              style={{ opacity: backupLoading ? 0.5 : 1 }}
               title="Eksportuje wszystkie produkty do pliku JSON"
             >
-              {backupLoading ? '⏳' : '💾'} Backup All Products
+              {backupLoading ? 'Tworzenie backupu…' : 'Backup All Products'}
             </button>
           </div>
         </div>
@@ -1199,7 +1177,7 @@ export default function ManageProducts() {
         {/* Advanced Filters */}
         <div className={styles.filtersContainer}>
           <div className={styles.filterRow}>
-            <span className={styles.filterLabel}>Kategoria:</span>
+            <span className={styles.filterLabel}>Kategoria</span>
             <div className={styles.filterTags}>
               <button 
                 className={`${styles.filterTag} ${filterCategory === 'all' ? styles.filterTagActive : ''}`} 
@@ -1222,7 +1200,7 @@ export default function ManageProducts() {
           </div>
 
           <div className={styles.filterRow}>
-            <span className={styles.filterLabel}>Batch:</span>
+            <span className={styles.filterLabel}>Batch</span>
             <div className={styles.filterTags}>
               {['all', 'best', 'budget', 'random', 'popular'].map(batch => (
                 <button 
@@ -1237,12 +1215,12 @@ export default function ManageProducts() {
           </div>
 
           <div className={styles.filterRow}>
-            <span className={styles.filterLabel}>Status:</span>
+            <span className={styles.filterLabel}>Status</span>
             <div className={styles.filterTags}>
               {[
                 { label: 'Wszystkie', value: 'all' },
-                { label: '📌 Przypięte', value: 'true' },
-                { label: '📍 Zwykłe', value: 'false' }
+                { label: 'Przypięte', value: 'true' },
+                { label: 'Zwykłe', value: 'false' }
               ].map(opt => (
                 <button 
                   key={opt.value} 
@@ -1254,14 +1232,14 @@ export default function ManageProducts() {
               ))}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
-              <span className={styles.filterLabel}>Sortowanie:</span>
+            <div className={styles.filterSort}>
+              <span className={styles.filterLabel}>Sortowanie</span>
               <select 
                 value={sortBy} 
                 onChange={(e) => setSortBy(e.target.value)}
                 className={styles.sortSelect}
               >
-                <option value="pinned_order">Kolejnosc przypietych</option>
+                <option value="pinned_order">Kolejność przypiętych</option>
                 <option value="newest">Najnowsze</option>
                 <option value="oldest">Najstarsze</option>
                 <option value="price_asc">Cena: rosnąco</option>
@@ -1284,7 +1262,7 @@ export default function ManageProducts() {
       {loading ? (
         <div className={styles.spinnerContainer}>
           <div className={styles.loadingSpinner}></div>
-          <p style={{ marginTop: '10px' }}>Wczytywanie...</p>
+          <p>Wczytywanie...</p>
         </div>
       ) : (
         <div className={styles.productsTableWrapper}>
@@ -1333,7 +1311,7 @@ export default function ManageProducts() {
         <div className={styles.bulkBar}>
           <div className={styles.bulkBarInner}>
             <div className={styles.bulkCount}>
-              <span>⚡ Wybrano <strong>{selectedIds.length}</strong> produktów</span>
+              <span>Wybrano <strong>{selectedIds.length}</strong> produktów</span>
             </div>
             
             <div className={styles.bulkActions}>
@@ -1379,13 +1357,13 @@ export default function ManageProducts() {
                   className={styles.bulkPinBtn} 
                   onClick={() => handleBulkPinChange(true)}
                 >
-                  📌 Przypnij
+                  Przypnij
                 </button>
                 <button 
                   className={styles.bulkUnpinBtn} 
                   onClick={() => handleBulkPinChange(false)}
                 >
-                  📍 Odepnij
+                  Odepnij
                 </button>
               </div>
 
@@ -1394,13 +1372,13 @@ export default function ManageProducts() {
                   className={styles.bulkUnpinBtn} 
                   onClick={() => handleBulkVisibilityChange(true)}
                 >
-                  🙈 Ukryj
+                  Ukryj
                 </button>
                 <button 
                   className={styles.bulkPinBtn} 
                   onClick={() => handleBulkVisibilityChange(false)}
                 >
-                  👁️ Pokaż
+                  Pokaż
                 </button>
               </div>
 
@@ -1408,15 +1386,11 @@ export default function ManageProducts() {
                 className={styles.bulkPinBtn} 
                 onClick={handleBulkRemoveBackground}
                 disabled={removeBgLoading}
-                style={{
-                  opacity: removeBgLoading ? 0.6 : 1,
-                  cursor: removeBgLoading ? 'not-allowed' : 'pointer'
-                }}
               >
                 {removeBgLoading ? (
-                  <>⚙️ Usuwanie tła... ({bulkRemoveBgProgress.current}/{bulkRemoveBgProgress.total})</>
+                  <>Usuwanie tła… ({bulkRemoveBgProgress.current}/{bulkRemoveBgProgress.total})</>
                 ) : (
-                  <>🎨 Usuń tło</>
+                  <>Usuń tło</>
                 )}
               </button>
 
@@ -1424,7 +1398,7 @@ export default function ManageProducts() {
                 className={styles.bulkDeleteBtn} 
                 onClick={handleBulkDelete}
               >
-                🗑️ Usuń zaznaczone
+                Usuń zaznaczone
               </button>
               
               <button 
@@ -1532,12 +1506,11 @@ export default function ManageProducts() {
                   <div style={{ position: 'relative', pointerEvents: 'none' }}>
                     <img src={formData.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px' }} />
                     <p style={{ margin: '10px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>
-                      📷 Przeciągnij nowe zdjęcie aby zamienić
+                      Przeciągnij nowe zdjęcie, aby zamienić
                     </p>
                   </div>
                 ) : (
                   <div style={{ pointerEvents: 'none' }}>
-                    <p style={{ fontSize: '32px', margin: '0 0 10px' }}>📷</p>
                     <p style={{ color: 'white', margin: '0 0 5px', fontWeight: 600 }}>Przeciągnij zdjęcie tutaj</p>
                     <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>
                       lub kliknij żeby wybrać plik
@@ -1590,42 +1563,16 @@ export default function ManageProducts() {
                   type="button"
                   onClick={handleRemoveBackground}
                   disabled={removeBgLoading}
-                  style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    color: 'white',
-                    border: 'none',
-                    padding: '12px 20px',
-                    borderRadius: '8px',
-                    cursor: removeBgLoading ? 'not-allowed' : 'pointer',
-                    fontSize: '14px',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    justifyContent: 'center',
-                    opacity: removeBgLoading ? 0.6 : 1,
-                    transition: 'all 0.2s',
-                    margin: '-5px 0 10px'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!removeBgLoading) {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 8px 16px rgba(102, 126, 234, 0.3)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
+                  className={styles.actionBtn}
+                  style={{ width: '100%', margin: '-4px 0 8px' }}
                 >
                   {removeBgLoading ? (
                     <>
-                      <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⚙️</span>
+                      <span className={styles.loadingSpinner} />
                       <span>Usuwanie tła...</span>
                     </>
                   ) : (
                     <>
-                      <span>🎨</span>
                       <span>Remove Background</span>
                     </>
                   )}
@@ -1683,7 +1630,7 @@ export default function ManageProducts() {
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
                   <input 
                     type="text" 
-                    placeholder={formData.link ? "🔗 Wklej link lub zostaw puste (użyje linku produktu)..." : "🔗 Wklej link Weidian/Kakobuy..."}
+                    placeholder={formData.link ? "Wklej link lub zostaw puste (użyje linku produktu)..." : "Wklej link Weidian/Kakobuy..."}
                     value={qcScrapeUrl} 
                     onChange={(e) => setQcScrapeUrl(e.target.value)} 
                     style={{ flex: 1, margin: 0, padding: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '5px', color: 'white', fontSize: '13px' }}
@@ -1780,7 +1727,7 @@ export default function ManageProducts() {
                 <div>
                   <input type="file" accept="image/*" onChange={(e) => handleQcUpload(e.target.files[0])} style={{ display: 'none' }} id="qc-upload" />
                   <label htmlFor="qc-upload" style={{ display: 'block', textAlign: 'center', padding: '10px', background: 'rgba(255,255,255,0.08)', color: 'white', borderRadius: '5px', border: '1px solid rgba(255,255,255,0.15)', cursor: qcUploadLoading ? 'wait' : 'pointer', fontWeight: 'bold' }}>
-                    {qcUploadLoading ? '⏳ Wgrywanie...' : '📸 + Dodaj zdjęcie QC'}
+                    {qcUploadLoading ? 'Wgrywanie...' : '+ Dodaj zdjęcie QC'}
                   </label>
                 </div>
               </div>
@@ -1841,7 +1788,7 @@ export default function ManageProducts() {
                       <div className={styles.loadingSpinner}></div>
                       Scraping...
                     </>
-                  ) : '🚀 Start Scraping'}
+                  ) : 'Start Scraping'}
                 </button>
               </div>
             </form>
@@ -1983,9 +1930,7 @@ export default function ManageProducts() {
       <div className={styles.toastContainer}>
         {toasts.map(toast => (
           <div key={toast.id} className={`${styles.toast} ${toast.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
-            <span className={styles.toastIcon}>
-              {toast.type === 'success' ? '⚡' : '⚠️'}
-            </span>
+            <span className={styles.toastIcon} aria-hidden="true" />
             <span className={styles.toastMessage}>{toast.message}</span>
             <button className={styles.toastClose} onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}>&times;</button>
           </div>
@@ -2252,8 +2197,8 @@ function CategoryGridItem({ product, onNameSave, onImageClick, showToast }) {
               <span className={`${styles.badge} ${styles[`batchBadge_${product.batch}`]}`}>
                 {product.batch}
               </span>
-              {product.isPinned && <span className={styles.categoryGridPinBadge}>📌</span>}
-              {product.isHidden && <span className={styles.categoryGridHiddenBadge}>🙈</span>}
+              {product.isPinned && <span className={styles.categoryGridPinBadge}>Przypięty</span>}
+              {product.isHidden && <span className={styles.categoryGridHiddenBadge}>Ukryty</span>}
             </div>
           </div>
         )}

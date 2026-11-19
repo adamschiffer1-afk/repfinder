@@ -13,23 +13,39 @@ export default async function AdminLayout({ children }) {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh',
-        background: '#0b0b0d',
-        color: '#fff',
-        gap: '20px'
+        minHeight: '100vh',
+        padding: '24px',
+        background: '#09090b',
+        color: '#ededef',
+        textAlign: 'center',
       }}>
-        <h1>Brak dostępu 🛑</h1>
-        <p>Musisz się zalogować jako administrator.</p>
-        <Link href="/api/auth/signin" style={{
-          background: '#a78bfa',
-          color: '#000',
-          padding: '10px 20px',
-          borderRadius: '8px',
-          fontWeight: '700',
-          textDecoration: 'none'
+        <div style={{
+          width: '100%',
+          maxWidth: '360px',
+          padding: '32px 24px',
+          background: '#111113',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: '12px',
         }}>
-          Zaloguj się
-        </Link>
+          <h1 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 8px' }}>Brak dostępu</h1>
+          <p style={{ fontSize: '14px', color: '#a1a1aa', margin: '0 0 24px' }}>
+            Musisz się zalogować jako administrator.
+          </p>
+          <Link href="/api/auth/signin" style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            height: '36px',
+            padding: '0 16px',
+            background: '#ededef',
+            color: '#09090b',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: 500,
+            textDecoration: 'none'
+          }}>
+            Zaloguj się
+          </Link>
+        </div>
       </div>
     );
   }
