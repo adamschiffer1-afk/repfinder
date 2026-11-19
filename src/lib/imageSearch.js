@@ -13,9 +13,26 @@ let nextId = 1;
 const pending = new Map();
 const statusListeners = new Set();
 
+// Bump when public/image-search-worker.js changes, so browsers never keep an old copy.
+const WORKER_VERSION = '3';
+
+/** Drop a failed worker so the next attempt starts clean (and picks up fresh code). */
+function resetWorker() {
+  worker?.terminate();
+  worker = null;
+}
+
+function failAll(err) {
+  console.error('[ImageSearch]', err.message);
+  pending.forEach(p => p.reject(err));
+  pending.clear();
+  statusListeners.forEach(fn => fn({ type: 'status', stage: 'error', message: err.message }));
+  resetWorker();
+}
+
 function getWorker() {
   if (worker) return worker;
-  worker = new Worker('/image-search-worker.js', { type: 'module' });
+  worker = new Worker(`/image-search-worker.js?v=${WORKER_VERSION}`, { type: 'module' });
   worker.onmessage = (e) => {
     const msg = e.data;
     if (msg.type === 'status') {
@@ -24,20 +41,12 @@ function getWorker() {
       pending.get(msg.id)?.resolve(msg.results);
       pending.delete(msg.id);
     } else if (msg.type === 'error') {
-      if (msg.id && pending.has(msg.id)) {
-        pending.get(msg.id).reject(new Error(msg.message));
-        pending.delete(msg.id);
-      } else {
-        pending.forEach(p => p.reject(new Error(msg.message)));
-        pending.clear();
-        statusListeners.forEach(fn => fn({ type: 'status', stage: 'error', message: msg.message }));
-      }
+      failAll(new Error(msg.message));
     }
   };
   worker.onerror = (e) => {
-    const err = new Error(e.message || 'Worker error');
-    pending.forEach(p => p.reject(err));
-    pending.clear();
+    e.preventDefault?.();
+    failAll(new Error(e.message || 'Image search worker failed to start'));
   };
   return worker;
 }
