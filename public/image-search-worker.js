@@ -71,13 +71,15 @@ async function loadIndex(indexUrl) {
 }
 
 async function loadModels() {
-  const opts = { progress_callback: onProgress };
+  // A fresh options object per call: from_pretrained mutates it (e.g. CLIP sets
+  // model_file_name = 'vision_model'), which would break the other models.
+  const opts = () => ({ progress_callback: onProgress });
   const [clipProc, clip, dinoProc, dino, rmbg, rmbgProc] = await Promise.all([
     AutoProcessor.from_pretrained(CLIP_ID),
-    CLIPVisionModelWithProjection.from_pretrained(CLIP_ID, opts),
+    CLIPVisionModelWithProjection.from_pretrained(CLIP_ID, opts()),
     AutoProcessor.from_pretrained(DINO_ID),
-    AutoModel.from_pretrained(DINO_ID, opts),
-    AutoModel.from_pretrained(RMBG_ID, { ...opts, config: { model_type: 'custom' } }),
+    AutoModel.from_pretrained(DINO_ID, opts()),
+    AutoModel.from_pretrained(RMBG_ID, { ...opts(), config: { model_type: 'custom' } }),
     AutoProcessor.from_pretrained(RMBG_ID, {
       config: {
         do_normalize: true, do_pad: false, do_rescale: true, do_resize: true,
