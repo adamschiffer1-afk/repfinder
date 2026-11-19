@@ -5,12 +5,13 @@ import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
 import ProductSkeleton from '@/components/ProductSkeleton';
 import EmptyState from '@/components/EmptyState';
+import ImageSearchModal from '@/components/ImageSearchModal';
 import { useToast } from '@/components/Toast';
 import { categoriesData } from '@/data/productsData';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useLanguage } from '@/context/LanguageContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTshirt, faSocks, faRunning, faGlasses, faShoppingBag, faBriefcase, faRing, faBolt, faFire, faBoxOpen, faLayerGroup } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faCheck, faTh, faSearch, faShoePrints, faHatCowboy, faTshirt, faSocks, faRunning, faGlasses, faShoppingBag, faBriefcase, faRing, faBolt, faFire, faBoxOpen, faLayerGroup, faCamera, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 // Memoized ProductCard component
 const ProductCard = memo(({ product, index, formatPrice, onOpenModal, onCopyLink, t }) => {
@@ -531,6 +532,32 @@ export default function ProductsPage() {
     return sorted;
   };
 
+  // Search-by-image results override the normal (filtered) grid
+  const [imageSearchOpen, setImageSearchOpen] = useState(false);
+  const [imageResults, setImageResults] = useState(null); // { items, preview }
+  const gridProducts = imageResults ? imageResults.items : filteredProducts;
+
+  const handleImageResults = useCallback((results, preview) => {
+    const byId = new Map(allProducts.map(p => [String(p._id), p]));
+    const items = results
+      .map(r => byId.get(String(r.id)))
+      .filter(Boolean);
+    setImageResults(prev => {
+      if (prev?.preview) URL.revokeObjectURL(prev.preview);
+      return { items, preview };
+    });
+    setDisplayCount(PRODUCTS_PER_LOAD);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [allProducts]);
+
+  const clearImageResults = () => {
+    setImageResults(prev => {
+      if (prev?.preview) URL.revokeObjectURL(prev.preview);
+      return null;
+    });
+    setDisplayCount(PRODUCTS_PER_LOAD);
+  };
+
   // Infinite scroll observer
   useEffect(() => {
     if (observerRef.current) {
@@ -540,12 +567,12 @@ export default function ProductsPage() {
     observerRef.current = new IntersectionObserver(
       (entries) => {
         const firstEntry = entries[0];
-        if (firstEntry.isIntersecting && !isLoadingMore && displayCount < filteredProducts.length) {
+        if (firstEntry.isIntersecting && !isLoadingMore && displayCount < gridProducts.length) {
           setIsLoadingMore(true);
           
           // Simulate loading delay for smooth experience
           setTimeout(() => {
-            setDisplayCount(prev => Math.min(prev + PRODUCTS_PER_LOAD, filteredProducts.length));
+            setDisplayCount(prev => Math.min(prev + PRODUCTS_PER_LOAD, gridProducts.length));
             setIsLoadingMore(false);
           }, 300);
         }
@@ -562,11 +589,11 @@ export default function ProductsPage() {
         observerRef.current.disconnect();
       }
     };
-  }, [displayCount, filteredProducts.length, isLoadingMore]);
+  }, [displayCount, gridProducts.length, isLoadingMore]);
 
   // Get products to display
-  const displayedProducts = filteredProducts.slice(0, displayCount);
-  const hasMore = displayCount < filteredProducts.length;
+  const displayedProducts = gridProducts.slice(0, displayCount);
+  const hasMore = displayCount < gridProducts.length;
 
   const handleOpenAgentModal = (product) => {
     // Get preferred agent from localStorage
@@ -696,6 +723,7 @@ export default function ProductsPage() {
   };
 
   const handleSearchChange = (e) => {
+    if (imageResults) clearImageResults();
     setSearchQuery(e.target.value);
     setShowSuggestions(true);
   };
@@ -708,8 +736,8 @@ export default function ProductsPage() {
           {/* Page title + count */}
           <div className={styles.pageTitle}>
             <span className={styles.pageTitleText}>Produkty</span>
-            {!loading && filteredProducts.length > 0 && (
-              <span className={styles.pageTitleCount}>{filteredProducts.length} produktów</span>
+            {!loading && gridProducts.length > 0 && (
+              <span className={styles.pageTitleCount}>{gridProducts.length} produktów</span>
             )}
           </div>
 
@@ -727,8 +755,17 @@ export default function ProductsPage() {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onFocus={handleSearchFocus}
-                className={styles.searchInput}
+                className={`${styles.searchInput} ${styles.searchInputWithCamera}`}
               />
+              <button
+                type="button"
+                className={styles.cameraBtn}
+                onClick={() => setImageSearchOpen(true)}
+                title={t('imageSearch.button')}
+                aria-label={t('imageSearch.button')}
+              >
+                <FontAwesomeIcon icon={faCamera} />
+              </button>
               {showSuggestions && suggestions.length > 0 && (
                 <div className={styles.suggestionsDropdown}>
                   {suggestions.map((suggestion, index) => (
@@ -1001,6 +1038,22 @@ export default function ProductsPage() {
           </div>
         </div>
 
+        {imageResults && (
+          <div className={styles.imageResultsBar}>
+            <img src={imageResults.preview} alt="" className={styles.imageResultsThumb} />
+            <div className={styles.imageResultsText}>
+              <span className={styles.imageResultsTitle}>{t('imageSearch.resultsFor')}</span>
+              <span className={styles.imageResultsCount}>{imageResults.items.length} produktów</span>
+            </div>
+            <button type="button" className={styles.imageResultsAgain} onClick={() => setImageSearchOpen(true)}>
+              <FontAwesomeIcon icon={faCamera} /> {t('imageSearch.change')}
+            </button>
+            <button type="button" className={styles.imageResultsClear} onClick={clearImageResults} aria-label={t('imageSearch.clear')}>
+              <FontAwesomeIcon icon={faTimes} /> <span>{t('imageSearch.clear')}</span>
+            </button>
+          </div>
+        )}
+
         {/* Products Grid */}
         <div className={`${styles.productsGrid} ${isTransitioning ? styles.fadeOut : styles.fadeIn}`}>
           {loading ? (
@@ -1012,7 +1065,7 @@ export default function ProductsPage() {
             // No results message
             <div style={{ gridColumn: '1 / -1' }}>
               <EmptyState 
-                title={searchQuery ? `No products found for "${searchQuery}"` : "No products found"}
+                title={imageResults ? t('imageSearch.noResults') : searchQuery ? `No products found for "${searchQuery}"` : "No products found"}
                 description="Try adjusting your filters or search query to find what you're looking for."
               />
             </div>
@@ -1048,6 +1101,11 @@ export default function ProductsPage() {
           </div>
         )}
       </div>
+      <ImageSearchModal
+        isOpen={imageSearchOpen}
+        onClose={() => setImageSearchOpen(false)}
+        onResults={handleImageResults}
+      />
     </>
   );
 }

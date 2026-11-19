@@ -1,161 +1,158 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faUpload, faCamera, faSpinner, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faCamera, faImage, faExclamationCircle, faLock } from '@fortawesome/free-solid-svg-icons';
 import styles from '@/styles/ImageSearchModal.module.css';
 import { useLanguage } from '@/context/LanguageContext';
+import { searchByImage, warmUpImageSearch, onImageSearchStatus } from '@/lib/imageSearch';
 
-export default function ImageSearchModal({ isOpen, onClose }) {
+/**
+ * Lets the user pick/drop/paste a photo, runs the search in the browser and
+ * hands results back via onResults(results, previewUrl).
+ */
+export default function ImageSearchModal({ isOpen, onClose, onResults }) {
   const { t } = useLanguage();
-  const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [modelProgress, setModelProgress] = useState(null); // null = not downloading
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (!isOpen) return;
+    warmUpImageSearch();
+    return onImageSearchStatus((s) => {
+      if (s.stage === 'model') setModelProgress(s.progress ?? 0);
+      if (s.stage === 'ready') setModelProgress(null);
+      if (s.stage === 'error') {
+        setModelProgress(null);
+        setBusy(false);
+        setError(t('imageSearch.failed'));
+      }
+    });
+  }, [isOpen, t]);
 
-  const handleClose = () => {
-    setFile(null);
+  const reset = () => {
     setPreview(null);
-    setResults([]);
+    setBusy(false);
     setError(null);
+  };
+
+  const handleClose = useCallback(() => {
+    reset();
     onClose();
-  };
+  }, [onClose]);
 
-  const handleFileChange = (e) => {
-    const selected = e.target.files[0];
-    if (selected) {
-      processFile(selected);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const dropped = e.dataTransfer.files[0];
-    if (dropped) {
-      processFile(dropped);
-    }
-  };
-
-  const processFile = (file) => {
-    if (!file.type.startsWith('image/')) {
-      setError('Please upload an image file.');
+  const runSearch = useCallback(async (file) => {
+    if (!file || !file.type.startsWith('image/')) {
+      setError(t('imageSearch.notImage'));
       return;
     }
     setError(null);
-    setFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => setPreview(e.target.result);
-    reader.readAsDataURL(file);
-    
-    // Auto submit
-    handleSearch(file);
-  };
-
-  const handleSearch = async (fileToSearch) => {
-    setLoading(true);
-    setError(null);
-    setResults([]);
-
-    const formData = new FormData();
-    formData.append('image', fileToSearch);
-
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    setBusy(true);
     try {
-      const res = await fetch('/api/search/image', {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      
-      if (!res.ok || data.error) {
-        throw new Error(data.error || 'Search failed');
-      }
-
-      setResults(data.products || []);
+      const results = await searchByImage(file);
+      setBusy(false);
+      onResults(results, url);
+      setPreview(null);
+      onClose();
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      console.error('[ImageSearch]', err);
+      setBusy(false);
+      setError(t('imageSearch.failed'));
     }
-  };
+  }, [onResults, onClose, t]);
+
+  // Paste from clipboard + Escape to close
+  useEffect(() => {
+    if (!isOpen) return;
+    const onPaste = (e) => {
+      const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'));
+      if (item) runSearch(item.getAsFile());
+    };
+    const onKey = (e) => { if (e.key === 'Escape' && !busy) handleClose(); };
+    window.addEventListener('paste', onPaste);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('paste', onPaste);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [isOpen, busy, runSearch, handleClose]);
+
+  if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={handleClose}>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
-        <button className={styles.closeBtn} onClick={handleClose}>
+    <div className={styles.overlay} onClick={() => !busy && handleClose()}>
+      <div className={styles.modal} role="dialog" aria-modal="true" aria-labelledby="img-search-title" onClick={e => e.stopPropagation()}>
+        <button className={styles.closeBtn} onClick={handleClose} aria-label="Close">
           <FontAwesomeIcon icon={faTimes} />
         </button>
 
-        <h2 className={styles.title}>
+        <h2 id="img-search-title" className={styles.title}>
           <FontAwesomeIcon icon={faCamera} className={styles.titleIcon} />
-          Image Search
+          {t('imageSearch.title')}
         </h2>
-        <p className={styles.subtitle}>Upload a photo to find similar products in our database.</p>
+        <p className={styles.subtitle}>{t('imageSearch.subtitle')}</p>
 
-        {!preview && (
-          <div 
+        {!preview ? (
+          <div
             className={styles.dropzone}
+            role="button"
+            tabIndex={0}
             onDragOver={e => e.preventDefault()}
-            onDrop={handleDrop}
+            onDrop={e => { e.preventDefault(); runSearch(e.dataTransfer.files[0]); }}
             onClick={() => fileInputRef.current?.click()}
+            onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
           >
-            <input 
-              type="file" 
-              accept="image/*" 
-              ref={fileInputRef} 
-              style={{ display: 'none' }} 
-              onChange={handleFileChange}
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              hidden
+              onChange={e => { runSearch(e.target.files[0]); e.target.value = ''; }}
             />
-            <div className={styles.dropzoneContent}>
-              <FontAwesomeIcon icon={faUpload} className={styles.uploadIcon} />
-              <p>Click or drag an image here</p>
-              <span className={styles.smallText}>Supports JPG, PNG</span>
-            </div>
+            <FontAwesomeIcon icon={faImage} className={styles.uploadIcon} />
+            <p className={styles.dropText}>{t('imageSearch.drop')}</p>
+            <span className={styles.smallText}>{t('imageSearch.formats')}</span>
           </div>
-        )}
-
-        {preview && (
+        ) : (
           <div className={styles.previewContainer}>
-            <img src={preview} alt="Preview" className={styles.previewImg} />
-            <button className={styles.changeBtn} onClick={() => {
-              setPreview(null);
-              setFile(null);
-              setResults([]);
-            }}>Change Image</button>
+            <img src={preview} alt="" className={styles.previewImg} />
+            {busy && (
+              <div className={styles.previewOverlay}>
+                <div className={styles.spinner} />
+                <p>
+                  {modelProgress !== null
+                    ? `${t('imageSearch.loadingModel')} ${modelProgress}%`
+                    : t('imageSearch.analyzing')}
+                </p>
+                {modelProgress !== null && (
+                  <>
+                    <div className={styles.progressTrack}>
+                      <div className={styles.progressBar} style={{ width: `${modelProgress}%` }} />
+                    </div>
+                    <span className={styles.smallText}>{t('imageSearch.firstTime')}</span>
+                  </>
+                )}
+              </div>
+            )}
+            {!busy && (
+              <button className={styles.changeBtn} onClick={reset}>{t('imageSearch.change')}</button>
+            )}
           </div>
         )}
 
         {error && (
-          <div className={styles.errorBox}>
+          <div className={styles.errorBox} role="alert">
             <FontAwesomeIcon icon={faExclamationCircle} /> {error}
           </div>
         )}
 
-        {loading && (
-          <div className={styles.loadingBox}>
-            <FontAwesomeIcon icon={faSpinner} spin className={styles.spinner} />
-            <p>Analyzing image & searching database...</p>
-          </div>
-        )}
-
-        {results.length > 0 && (
-          <div className={styles.resultsContainer}>
-            <h3 className={styles.resultsTitle}>Found {results.length} matches:</h3>
-            <div className={styles.resultsGrid}>
-              {results.map((product) => (
-                <a key={product._id} href={`/products?search=${encodeURIComponent(product.name)}`} className={styles.resultCard}>
-                  <img src={product.image} alt={product.name} className={styles.resultImg} />
-                  <div className={styles.resultInfo}>
-                    <p className={styles.resultName}>{product.name}</p>
-                    <p className={styles.resultPrice}>¥{product.price}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
+        <p className={styles.privacy}>
+          <FontAwesomeIcon icon={faLock} /> {t('imageSearch.privacy')}
+        </p>
       </div>
     </div>
   );

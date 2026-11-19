@@ -134,6 +134,23 @@ export const translations = {
       info: "INFORMACJE",
       copyright: "RepFinder © 2026"
     },
+    imageSearch: {
+      button: "Szukaj zdjęciem",
+      title: "Wyszukiwanie zdjęciem",
+      subtitle: "Wrzuć zdjęcie ubrania lub butów, a znajdziemy podobne produkty.",
+      drop: "Kliknij, przeciągnij lub wklej zdjęcie (Ctrl+V)",
+      formats: "JPG, PNG, WEBP",
+      privacy: "Zdjęcie jest analizowane w Twojej przeglądarce i nigdzie nie jest wysyłane.",
+      loadingModel: "Pobieranie modelu",
+      firstTime: "tylko za pierwszym razem",
+      analyzing: "Analizuję zdjęcie...",
+      notImage: "To nie jest plik graficzny.",
+      failed: "Nie udało się wyszukać. Spróbuj ponownie.",
+      resultsFor: "Wyniki dla zdjęcia",
+      clear: "Wyczyść",
+      change: "Inne zdjęcie",
+      noResults: "Nie znaleziono podobnych produktów."
+    },
     faq: {
       eyebrow: "Pomoc",
       title: "Frequently Asked",
@@ -485,6 +502,23 @@ export const translations = {
       info: "INFORMATION",
       copyright: "RepFinder © 2026"
     },
+    imageSearch: {
+      button: "Search by image",
+      title: "Search by image",
+      subtitle: "Upload a photo of clothing or shoes and we'll find similar products.",
+      drop: "Click, drag or paste an image (Ctrl+V)",
+      formats: "JPG, PNG, WEBP",
+      privacy: "Your photo is analyzed in your browser and never uploaded.",
+      loadingModel: "Downloading model",
+      firstTime: "first time only",
+      analyzing: "Analyzing image...",
+      notImage: "That file is not an image.",
+      failed: "Search failed. Please try again.",
+      resultsFor: "Results for image",
+      clear: "Clear",
+      change: "Another image",
+      noResults: "No similar products found."
+    },
     faq: {
       eyebrow: "Help",
       title: "Frequently Asked",
@@ -782,6 +816,23 @@ export const translations = {
       info: "信息",
       copyright: "RepFinder © 2026"
     },
+    imageSearch: {
+      button: "以图搜索",
+      title: "以图搜索",
+      subtitle: "上传服装或鞋子的照片，我们会找到相似的商品。",
+      drop: "点击、拖拽或粘贴图片 (Ctrl+V)",
+      formats: "JPG、PNG、WEBP",
+      privacy: "图片仅在您的浏览器中分析，不会上传。",
+      loadingModel: "正在下载模型",
+      firstTime: "仅首次",
+      analyzing: "正在分析图片...",
+      notImage: "该文件不是图片。",
+      failed: "搜索失败，请重试。",
+      resultsFor: "图片搜索结果",
+      clear: "清除",
+      change: "换一张",
+      noResults: "未找到相似商品。"
+    },
     faq: {
       eyebrow: "帮助",
       title: "常见",
@@ -1073,6 +1124,23 @@ export const translations = {
       info: "INFORMATIONEN",
       copyright: "RepFinder © 2026"
     },
+    imageSearch: {
+      button: "Bildersuche",
+      title: "Suche per Bild",
+      subtitle: "Lade ein Foto von Kleidung oder Schuhen hoch und wir finden ähnliche Produkte.",
+      drop: "Klicken, ziehen oder Bild einfügen (Strg+V)",
+      formats: "JPG, PNG, WEBP",
+      privacy: "Dein Foto wird in deinem Browser analysiert und nicht hochgeladen.",
+      loadingModel: "Modell wird geladen",
+      firstTime: "nur beim ersten Mal",
+      analyzing: "Bild wird analysiert...",
+      notImage: "Diese Datei ist kein Bild.",
+      failed: "Suche fehlgeschlagen. Bitte erneut versuchen.",
+      resultsFor: "Ergebnisse für Bild",
+      clear: "Zurücksetzen",
+      change: "Anderes Bild",
+      noResults: "Keine ähnlichen Produkte gefunden."
+    },
     faq: {
       eyebrow: "Hilfe",
       title: "Häufig gestellte",
@@ -1312,6 +1380,23 @@ export const translations = {
       community: "COMUNIDAD",
       info: "INFORMACIÓN",
       copyright: "RepFinder © 2026"
+    },
+    imageSearch: {
+      button: "Buscar por imagen",
+      title: "Buscar por imagen",
+      subtitle: "Sube una foto de ropa o zapatillas y encontraremos productos similares.",
+      drop: "Haz clic, arrastra o pega una imagen (Ctrl+V)",
+      formats: "JPG, PNG, WEBP",
+      privacy: "Tu foto se analiza en tu navegador y nunca se sube.",
+      loadingModel: "Descargando modelo",
+      firstTime: "solo la primera vez",
+      analyzing: "Analizando imagen...",
+      notImage: "Ese archivo no es una imagen.",
+      failed: "La búsqueda falló. Inténtalo de nuevo.",
+      resultsFor: "Resultados para la imagen",
+      clear: "Borrar",
+      change: "Otra imagen",
+      noResults: "No se encontraron productos similares."
     },
     faq: {
       eyebrow: "Ayuda",

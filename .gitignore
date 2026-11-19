@@ -47,3 +47,7 @@ check.js
 scratch-test.js
 *.html
 /scratch/
+
+# image search index cache (scripts/build_image_index.mjs)
+scripts/.image-index-cache.json
+test-zdjecia/
