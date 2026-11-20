@@ -14,7 +14,7 @@ const pending = new Map();
 const statusListeners = new Set();
 
 // Bump when public/image-search-worker.js changes, so browsers never keep an old copy.
-const WORKER_VERSION = '3';
+const WORKER_VERSION = '4';
 
 /** Drop a failed worker so the next attempt starts clean (and picks up fresh code). */
 function resetWorker() {

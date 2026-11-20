@@ -12,6 +12,7 @@
  * Run after adding/changing products:
  *   node scripts/build_image_index.mjs          (only new/changed images)
  *   node scripts/build_image_index.mjs --full   (recompute everything)
+ *   node scripts/build_image_index.mjs --finalize (only recompute hubness, no models)
  *
  * public/image-search-worker.js uses the SAME models, version and preprocessing.
  */
@@ -127,14 +128,23 @@ async function fetchProducts() {
       .not('image', 'is', null)
       .range(from, from + 999);
     if (error) throw error;
-    all.push(...data.filter(p => p.image));
+    all.push(...data.filter(p => p.image && !isPlaceholder(p.image)));
     if (data.length < 1000) break;
   }
   return all;
 }
 
+const isPlaceholder = (url) => /placeholder|text=No\+Image|no-image/i.test(url || '');
+
 async function main() {
   const full = process.argv.includes('--full');
+  if (process.argv.includes('--finalize')) {
+    // Recompute hubness / drop placeholders on the existing index without re-embedding.
+    const existing = await loadExistingIndex();
+    if (existing?.version !== INDEX_VERSION) throw new Error('No compatible index to finalize');
+    await saveIndex(existing.items.filter(it => !isPlaceholder(it.image)));
+    return;
+  }
   console.log(`Loading models ${CLIP_ID} + ${DINO_ID}...`);
   const clipProc = await AutoProcessor.from_pretrained(CLIP_ID);
   const clip = await CLIPVisionModelWithProjection.from_pretrained(CLIP_ID);
@@ -190,6 +200,34 @@ async function main() {
   }
   await Promise.all(Array.from({ length: CONCURRENCY }, worker));
 
+  await saveIndex(items, failed);
+}
+
+/**
+ * "Hubness" of each item = mean similarity to its 10 nearest catalog neighbours.
+ * Generic or collage-like images are close to everything and would otherwise
+ * show up for almost any query; the browser subtracts a share of this score.
+ */
+function computeHubness(items) {
+  const D = PARTS.reduce((a, p) => a + p.dim, 0);
+  const vecs = items.map(it => { const b = Buffer.from(it.v, 'base64'); return new Int8Array(b.buffer, b.byteOffset, b.length).slice(); });
+  const K = 10, scale = 127 * 127 * PARTS.length;
+  for (let i = 0; i < items.length; i++) {
+    const sims = [];
+    for (let j = 0; j < items.length; j++) {
+      if (i === j) continue;
+      let d = 0;
+      const a = vecs[i], b = vecs[j];
+      for (let k = 0; k < D; k++) d += a[k] * b[k];
+      sims.push(d / scale);
+    }
+    sims.sort((x, y) => y - x);
+    items[i].h = +(sims.slice(0, K).reduce((s, x) => s + x, 0) / K).toFixed(4);
+  }
+}
+
+async function saveIndex(items, failed = 0) {
+  computeHubness(items);
   const index = { version: INDEX_VERSION, models: { clip: CLIP_ID, dino: DINO_ID }, parts: PARTS, updatedAt: new Date().toISOString(), items };
   const body = Buffer.from(JSON.stringify(index));
   fs.writeFileSync(LOCAL_CACHE, body);

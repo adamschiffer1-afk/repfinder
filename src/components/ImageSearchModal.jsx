@@ -15,6 +15,7 @@ export default function ImageSearchModal({ isOpen, onClose, onResults }) {
   const [preview, setPreview] = useState(null);
   const [busy, setBusy] = useState(false);
   const [modelProgress, setModelProgress] = useState(null); // null = not downloading
+  const [compareProgress, setCompareProgress] = useState(null); // null = not in detail stage
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -24,6 +25,8 @@ export default function ImageSearchModal({ isOpen, onClose, onResults }) {
     return onImageSearchStatus((s) => {
       if (s.stage === 'model') setModelProgress(s.progress ?? 0);
       if (s.stage === 'ready') setModelProgress(null);
+      if (s.stage === 'analyzing') { setModelProgress(null); setCompareProgress(null); }
+      if (s.stage === 'comparing') setCompareProgress(s.progress ?? 0);
       if (s.stage === 'error') {
         setModelProgress(null);
         setBusy(false);
@@ -51,10 +54,12 @@ export default function ImageSearchModal({ isOpen, onClose, onResults }) {
     setError(null);
     const url = URL.createObjectURL(file);
     setPreview(url);
+    setCompareProgress(null);
     setBusy(true);
     try {
       const results = await searchByImage(file);
       setBusy(false);
+      setCompareProgress(null);
       onResults(results, url);
       setPreview(null);
       onClose();
@@ -126,15 +131,17 @@ export default function ImageSearchModal({ isOpen, onClose, onResults }) {
                 <p>
                   {modelProgress !== null
                     ? `${t('imageSearch.loadingModel')} ${modelProgress}%`
-                    : t('imageSearch.analyzing')}
+                    : compareProgress !== null
+                      ? t('imageSearch.comparing')
+                      : t('imageSearch.analyzing')}
                 </p>
+                {(modelProgress !== null || compareProgress !== null) && (
+                  <div className={styles.progressTrack}>
+                    <div className={styles.progressBar} style={{ width: `${modelProgress ?? compareProgress}%` }} />
+                  </div>
+                )}
                 {modelProgress !== null && (
-                  <>
-                    <div className={styles.progressTrack}>
-                      <div className={styles.progressBar} style={{ width: `${modelProgress}%` }} />
-                    </div>
-                    <span className={styles.smallText}>{t('imageSearch.firstTime')}</span>
-                  </>
+                  <span className={styles.smallText}>{t('imageSearch.firstTime')}</span>
                 )}
               </div>
             )}
