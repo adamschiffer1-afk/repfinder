@@ -20,8 +20,8 @@
   --adm-text: #ededef;
   --adm-text-2: #a1a1aa;
   --adm-text-3: #71717a;
-  --adm-accent: #a78bfa;
-  --adm-accent-soft: rgba(167, 139, 250, 0.12);
+  --adm-accent: #e5e5e5;
+  --adm-accent-soft: rgba(229, 229, 229, 0.12);
   --adm-success: #34d399;
   --adm-success-soft: rgba(52, 211, 153, 0.1);
   --adm-danger: #f87171;
@@ -773,7 +773,7 @@
 }
 
 .selectedRow {
-  background: rgba(167, 139, 250, 0.06) !important;
+  background: rgba(229, 229, 229, 0.06) !important;
   box-shadow: inset 2px 0 0 var(--adm-accent);
 }
 
@@ -1004,8 +1004,8 @@
 .adminModal select:focus,
 .adminModal textarea:focus {
   outline: none;
-  border-color: rgba(167, 139, 250, 0.6);
-  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.12);
+  border-color: rgba(229, 229, 229, 0.6);
+  box-shadow: 0 0 0 3px rgba(229, 229, 229, 0.12);
 }
 
 .adminModal input::placeholder,
@@ -1240,8 +1240,8 @@
 }
 
 .searchBar:focus-within {
-  border-color: rgba(167, 139, 250, 0.6);
-  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.12);
+  border-color: rgba(229, 229, 229, 0.6);
+  box-shadow: 0 0 0 3px rgba(229, 229, 229, 0.12);
 }
 
 .searchIcon {
@@ -1354,7 +1354,7 @@
 
 .sortSelect:focus,
 .bulkSelect:focus {
-  border-color: rgba(167, 139, 250, 0.6);
+  border-color: rgba(229, 229, 229, 0.6);
 }
 
 .sortSelect option,
@@ -1495,7 +1495,7 @@
 }
 
 .checkboxContainer input:focus-visible ~ .checkboxCustom {
-  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.25);
+  box-shadow: 0 0 0 3px rgba(229, 229, 229, 0.25);
 }
 
 .checkboxCustom::after {
@@ -2104,8 +2104,8 @@
 
 .settingsSelect:focus {
   outline: none;
-  border-color: rgba(167, 139, 250, 0.6);
-  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.12);
+  border-color: rgba(229, 229, 229, 0.6);
+  box-shadow: 0 0 0 3px rgba(229, 229, 229, 0.12);
 }
 
 .settingsSelect option {

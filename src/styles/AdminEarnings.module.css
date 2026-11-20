@@ -112,8 +112,8 @@
 }
 
 .converterInput:focus {
-  border-color: rgba(167, 139, 250, 0.6);
-  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.12);
+  border-color: rgba(229, 229, 229, 0.6);
+  box-shadow: 0 0 0 3px rgba(229, 229, 229, 0.12);
 }
 
 .converterArrow {

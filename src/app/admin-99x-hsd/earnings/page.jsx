@@ -35,7 +35,7 @@ function BarChart({ entries, field, color, labelFn }) {
   );
 }
 
-function KpiCard({ value, label, sub, color = '#a78bfa' }) {
+function KpiCard({ value, label, sub, color = '#e5e5e5' }) {
   return (
     <div className={e.kpiCard}>
       <div className={e.kpiLabel}>
@@ -263,7 +263,7 @@ export default function EarningsPage() {
         <KpiCard value={`¥${fmt(totalSaleCNY)}`} label="Sprzedaż brutto (CNY)" color="#f59e0b" />
         <KpiCard value={`¥${fmt(totalReturnsCNY)}`} label="Zwroty (CNY)" sub={`${returns.length} zwrotów`} color="#ef4444" />
         <KpiCard value={`¥${fmt(netSaleCNY)}`} label="Sprzedaż netto (CNY)" sub="Po odliczeniu zwrotów" color="#10b981" />
-        <KpiCard value={`¥${fmt(netCommCNY)}`} label="Prowizja netto (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#a78bfa" />
+        <KpiCard value={`¥${fmt(netCommCNY)}`} label="Prowizja netto (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#e5e5e5" />
         <KpiCard value={netCommPLN != null ? `${fmt(netCommPLN)} zł` : '—'}
           label="Prowizja netto (PLN)" sub={rates.CNY_TO_PLN ? `1 CNY = ${rates.CNY_TO_PLN.toFixed(4)} PLN` : null} color="#34d399" />
         <KpiCard value={netCommUSD != null ? `$${fmt(netCommUSD)}` : '—'}
@@ -314,7 +314,7 @@ export default function EarningsPage() {
           </div>
           <div className={e.chartCard}>
             <h3>Prowizja (CNY) w czasie</h3>
-            <BarChart entries={enriched} field="commCNY" color="#a78bfa" labelFn={v => `¥${fmt(v)}`} />
+            <BarChart entries={enriched} field="commCNY" color="#e5e5e5" labelFn={v => `¥${fmt(v)}`} />
           </div>
           {totalCommPLN != null && (
             <div className={e.chartCard}>

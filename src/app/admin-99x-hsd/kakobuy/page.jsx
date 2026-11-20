@@ -21,7 +21,7 @@ function calcGrowthRate(entries) {
   return (((last - first) / first) * 100).toFixed(1);
 }
 
-function KpiCard({ value, label, sub, color = '#a78bfa' }) {
+function KpiCard({ value, label, sub, color = '#e5e5e5' }) {
   return (
     <div className={kakoStyles.kpiCard}>
       <div className={kakoStyles.kpiLabel}>
@@ -194,7 +194,7 @@ export default function KakobuyPage() {
 
       <div className={kakoStyles.kpiGrid}>
         <KpiCard value={totalRegistrations.toLocaleString()} label="Łączne rejestracje"
-          sub={growth !== null ? `${growth > 0 ? '▲' : '▼'} ${Math.abs(growth)}% wzrost` : null} color="#a78bfa" />
+          sub={growth !== null ? `${growth > 0 ? '▲' : '▼'} ${Math.abs(growth)}% wzrost` : null} color="#e5e5e5" />
         <KpiCard value={activeNow.toLocaleString()} label="Aktywni członkowie"
           sub={`Konwersja: ${conversionRate}%`} color="#34d399" />
         <KpiCard value={predicted.toLocaleString()} label="Przewidywani członkowie"
@@ -207,7 +207,7 @@ export default function KakobuyPage() {
         <div className={kakoStyles.chartsRow}>
           <div className={kakoStyles.chartCard}>
             <h3>Rejestracje w czasie</h3>
-            <MiniBarChart entries={sorted} field="registrations" color="#a78bfa" />
+            <MiniBarChart entries={sorted} field="registrations" color="#e5e5e5" />
           </div>
           <div className={kakoStyles.chartCard}>
             <h3>Aktywni w czasie</h3>

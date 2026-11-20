@@ -111,12 +111,12 @@
 }
 
 .navLink.active .navIcon {
-  color: var(--adm-accent, #a78bfa);
+  color: var(--adm-accent, #e5e5e5);
 }
 
 .navLink:focus-visible,
 .logoutBtn:focus-visible {
-  outline: 2px solid var(--adm-accent, #a78bfa);
+  outline: 2px solid var(--adm-accent, #e5e5e5);
   outline-offset: -2px;
 }
 

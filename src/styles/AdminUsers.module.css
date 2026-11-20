@@ -192,11 +192,11 @@
 }
 
 .adminCard {
-  border-color: rgba(167, 139, 250, 0.25);
+  border-color: rgba(229, 229, 229, 0.25);
 }
 
 .adminCard:hover {
-  border-color: rgba(167, 139, 250, 0.4);
+  border-color: rgba(229, 229, 229, 0.4);
 }
 
 .regularCard {
