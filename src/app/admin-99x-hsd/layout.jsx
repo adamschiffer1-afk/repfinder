@@ -21,7 +21,7 @@ export default async function AdminLayout({ children }) {
         <h1>Brak dostępu 🛑</h1>
         <p>Musisz się zalogować jako administrator.</p>
         <Link href="/api/auth/signin" style={{
-          background: '#a78bfa',
+          background: '#e5e5e5',
           color: '#000',
           padding: '10px 20px',
           borderRadius: '8px',

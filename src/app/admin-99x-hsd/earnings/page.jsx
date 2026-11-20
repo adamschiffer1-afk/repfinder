@@ -35,7 +35,7 @@ function BarChart({ entries, field, color, labelFn }) {
   );
 }
 
-function KpiCard({ icon, value, label, sub, color = '#a78bfa', accent }) {
+function KpiCard({ icon, value, label, sub, color = '#e5e5e5', accent }) {
   return (
     <div className={e.kpiCard} style={{ '--accent': accent || color }}>
       <div className={e.kpiIcon}>{icon}</div>
@@ -261,7 +261,7 @@ export default function EarningsPage() {
         <KpiCard icon="🏪" value={`¥${fmt(totalSaleCNY)}`} label="Sprzedaż brutto (CNY)" color="#f59e0b" accent="#f59e0b" />
         <KpiCard icon="🔴" value={`¥${fmt(totalReturnsCNY)}`} label="Zwroty (CNY)" sub={`${returns.length} zwrotów`} color="#ef4444" accent="#ef4444" />
         <KpiCard icon="✅" value={`¥${fmt(netSaleCNY)}`} label="Sprzedaż netto (CNY)" sub="Po odliczeniu zwrotów" color="#10b981" accent="#10b981" />
-        <KpiCard icon="💴" value={`¥${fmt(netCommCNY)}`} label="Prowizja netto (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#a78bfa" accent="#a78bfa" />
+        <KpiCard icon="💴" value={`¥${fmt(netCommCNY)}`} label="Prowizja netto (CNY)" sub={`${avgCommRate}% śr. prowizja`} color="#e5e5e5" accent="#e5e5e5" />
         <KpiCard icon="🇵🇱" value={netCommPLN != null ? `${fmt(netCommPLN)} zł` : '—'}
           label="Prowizja netto (PLN)" sub={rates.CNY_TO_PLN ? `1 CNY = ${rates.CNY_TO_PLN.toFixed(4)} PLN` : null} color="#34d399" accent="#34d399" />
         <KpiCard icon="🇺🇸" value={netCommUSD != null ? `$${fmt(netCommUSD)}` : '—'}
@@ -309,7 +309,7 @@ export default function EarningsPage() {
           </div>
           <div className={e.chartCard}>
             <h3>💴 Prowizja CNY w czasie</h3>
-            <BarChart entries={enriched} field="commCNY" color="linear-gradient(180deg,#a78bfa,#7c3aed)" labelFn={v => `¥${fmt(v)}`} />
+            <BarChart entries={enriched} field="commCNY" color="linear-gradient(180deg,#e5e5e5,#737373)" labelFn={v => `¥${fmt(v)}`} />
           </div>
           {totalCommPLN != null && (
             <div className={e.chartCard}>
@@ -339,7 +339,7 @@ export default function EarningsPage() {
             </div>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Prowizja netto (CNY)</span>
-              <span className={e.summaryLineVal} style={{ color: '#a78bfa' }}>¥{fmt(netCommCNY)}</span>
+              <span className={e.summaryLineVal} style={{ color: '#e5e5e5' }}>¥{fmt(netCommCNY)}</span>
             </div>
             <div className={e.summaryLine}>
               <span className={e.summaryLineKey}>Prowizja netto (PLN)</span>
@@ -358,7 +358,7 @@ export default function EarningsPage() {
               return (<>
                 <div className={e.summaryLine}><span className={e.summaryLineKey}>Data</span><span className={e.summaryLineVal}>{fmtDate(latest.date)}</span></div>
                 <div className={e.summaryLine}><span className={e.summaryLineKey}>Sprzedaż</span><span className={e.summaryLineVal} style={{ color: '#f59e0b' }}>¥{fmt(latest.saleCNY)}</span></div>
-                <div className={e.summaryLine}><span className={e.summaryLineKey}>Prowizja %</span><span className={e.summaryLineVal} style={{ color: '#a78bfa' }}>{latest.commissionRate}%</span></div>
+                <div className={e.summaryLine}><span className={e.summaryLineKey}>Prowizja %</span><span className={e.summaryLineVal} style={{ color: '#e5e5e5' }}>{latest.commissionRate}%</span></div>
                 <div className={e.summaryLine}><span className={e.summaryLineKey}>Prowizja PLN</span><span className={e.summaryLineVal} style={{ color: '#34d399' }}>{latest.commPLN != null ? `${fmt(latest.commPLN)} zł` : '—'}</span></div>
               </>);
             })()}
@@ -386,10 +386,10 @@ export default function EarningsPage() {
               <tbody>
                 {[...enriched].reverse().map((en) => (
                   <tr key={en._id}>
-                    <td style={{ fontWeight: 700, color: '#a78bfa' }}>{fmtDate(en.date)}</td>
+                    <td style={{ fontWeight: 700, color: '#e5e5e5' }}>{fmtDate(en.date)}</td>
                     <td><span className={e.numBadge} style={{ '--c': '#f59e0b' }}>¥{fmt(en.saleCNY)}</span></td>
-                    <td style={{ color: '#a78bfa', fontWeight: 700 }}>{en.commissionRate}%</td>
-                    <td><span className={e.numBadge} style={{ '--c': '#a78bfa' }}>¥{fmt(en.commCNY)}</span></td>
+                    <td style={{ color: '#e5e5e5', fontWeight: 700 }}>{en.commissionRate}%</td>
+                    <td><span className={e.numBadge} style={{ '--c': '#e5e5e5' }}>¥{fmt(en.commCNY)}</span></td>
                     <td><span className={e.numBadge} style={{ '--c': '#34d399' }}>{en.commPLN != null ? `${fmt(en.commPLN)} zł` : '—'}</span></td>
                     <td><span className={e.numBadge} style={{ '--c': '#60a5fa' }}>{en.commUSD != null ? `$${fmt(en.commUSD)}` : '—'}</span></td>
                     <td style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'rgba(255,255,255,0.45)', fontSize: 13 }}>{en.note || '—'}</td>
@@ -471,7 +471,7 @@ export default function EarningsPage() {
                   style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff' }} />
                 {form.saleCNY > 0 && (
                   <div style={{ marginTop: 8, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                    <span>Twoja prowizja ({form.commissionRate}%): <strong style={{ color: '#a78bfa' }}>¥{fmt((form.saleCNY * form.commissionRate) / 100)}</strong></span>
+                    <span>Twoja prowizja ({form.commissionRate}%): <strong style={{ color: '#e5e5e5' }}>¥{fmt((form.saleCNY * form.commissionRate) / 100)}</strong></span>
                     {rates.CNY_TO_PLN && <span>= <strong style={{ color: '#34d399' }}>{fmt((form.saleCNY * form.commissionRate / 100) * rates.CNY_TO_PLN)} zł</strong></span>}
                     {rates.CNY_TO_USD && <span>= <strong style={{ color: '#60a5fa' }}>${fmt((form.saleCNY * form.commissionRate / 100) * rates.CNY_TO_USD)}</strong></span>}
                   </div>
@@ -492,7 +492,7 @@ export default function EarningsPage() {
                   style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: 12, borderRadius: 8, color: '#fff', resize: 'vertical', font: 'inherit' }} />
               </div>
               <div className={styles.modalActions}>
-                <button type="submit" style={{ background: '#a78bfa', color: '#000', padding: 12, borderRadius: 8, border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
+                <button type="submit" style={{ background: '#e5e5e5', color: '#000', padding: 12, borderRadius: 8, border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
                   {editEntry ? 'Zapisz zmiany' : 'Dodaj wpis'}
                 </button>
                 <button type="button" onClick={closeModal} style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: 12, borderRadius: 8, border: 'none', fontWeight: 600, cursor: 'pointer', flex: 1 }}>

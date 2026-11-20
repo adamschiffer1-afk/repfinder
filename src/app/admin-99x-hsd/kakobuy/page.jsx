@@ -21,7 +21,7 @@ function calcGrowthRate(entries) {
   return (((last - first) / first) * 100).toFixed(1);
 }
 
-function KpiCard({ icon, value, label, sub, color = '#a78bfa' }) {
+function KpiCard({ icon, value, label, sub, color = '#e5e5e5' }) {
   return (
     <div className={kakoStyles.kpiCard}>
       <div className={kakoStyles.kpiIcon}>{icon}</div>
@@ -193,7 +193,7 @@ export default function KakobuyPage() {
 
       <div className={kakoStyles.kpiGrid}>
         <KpiCard icon="📋" value={totalRegistrations.toLocaleString()} label="Łączne rejestracje"
-          sub={growth !== null ? `${growth > 0 ? '▲' : '▼'} ${Math.abs(growth)}% wzrost` : null} color="#a78bfa" />
+          sub={growth !== null ? `${growth > 0 ? '▲' : '▼'} ${Math.abs(growth)}% wzrost` : null} color="#e5e5e5" />
         <KpiCard icon="✅" value={activeNow.toLocaleString()} label="Aktywni członkowie"
           sub={`Konwersja: ${conversionRate}%`} color="#34d399" />
         <KpiCard icon="🔮" value={predicted.toLocaleString()} label="Przewidywani członkowie"
@@ -206,7 +206,7 @@ export default function KakobuyPage() {
         <div className={kakoStyles.chartsRow}>
           <div className={kakoStyles.chartCard}>
             <h3>📋 Rejestracje w czasie</h3>
-            <MiniBarChart entries={sorted} field="registrations" color="linear-gradient(180deg,#a78bfa,#7c3aed)" />
+            <MiniBarChart entries={sorted} field="registrations" color="linear-gradient(180deg,#e5e5e5,#737373)" />
           </div>
           <div className={kakoStyles.chartCard}>
             <h3>✅ Aktywni w czasie</h3>
@@ -277,8 +277,8 @@ export default function KakobuyPage() {
                     ? ((entry.activeMembers / entry.registrations) * 100).toFixed(1) : '0.0';
                   return (
                     <tr key={entry._id}>
-                      <td style={{ fontWeight: 700, color: '#a78bfa' }}>{formatDate(entry.date)}</td>
-                      <td><span className={kakoStyles.numBadge} style={{ '--c': '#a78bfa' }}>{(entry.registrations || 0).toLocaleString()}</span></td>
+                      <td style={{ fontWeight: 700, color: '#e5e5e5' }}>{formatDate(entry.date)}</td>
+                      <td><span className={kakoStyles.numBadge} style={{ '--c': '#e5e5e5' }}>{(entry.registrations || 0).toLocaleString()}</span></td>
                       <td><span className={kakoStyles.numBadge} style={{ '--c': '#34d399' }}>{(entry.activeMembers || 0).toLocaleString()}</span></td>
                       <td><span className={kakoStyles.numBadge} style={{ '--c': '#60a5fa' }}>{(entry.predictedMembers || 0).toLocaleString()}</span></td>
                       <td style={{ color: '#fbbf24', fontWeight: 700 }}>${(entry.revenue || 0).toLocaleString()}</td>
@@ -344,7 +344,7 @@ export default function KakobuyPage() {
                   style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff', resize: 'vertical', font: 'inherit' }} />
               </div>
               <div className={styles.modalActions}>
-                <button type="submit" style={{ background: '#a78bfa', color: '#000', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
+                <button type="submit" style={{ background: '#e5e5e5', color: '#000', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
                   {editingEntry ? 'Zapisz zmiany' : 'Dodaj wpis'}
                 </button>
                 <button type="button" onClick={closeModal} style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', flex: 1 }}>

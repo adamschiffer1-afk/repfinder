@@ -1752,7 +1752,7 @@ export default function ManageProducts() {
                           minWidth: '80px', 
                           padding: '4px', 
                           borderRadius: '6px', 
-                          background: isSelected ? 'rgba(167, 139, 250, 0.15)' : 'transparent',
+                          background: isSelected ? 'rgba(229, 229, 229, 0.15)' : 'transparent',
                           border: isSelected ? '2px solid rgba(255,255,255,0.4)' : '2px solid transparent',
                           transition: 'all 0.15s ease'
                         }}

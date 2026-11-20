@@ -102,8 +102,8 @@
 }
 
 .converterInput:focus {
-  border-color: #a78bfa;
-  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+  border-color: #e5e5e5;
+  box-shadow: 0 0 0 3px rgba(229, 229, 229, 0.15);
 }
 
 .converterArrow {
@@ -173,8 +173,8 @@
 }
 
 .rateRefresh:hover {
-  border-color: #a78bfa;
-  color: #a78bfa;
+  border-color: #e5e5e5;
+  color: #e5e5e5;
 }
 
 .rateRefresh:disabled {
@@ -302,9 +302,9 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 700;
-  background: color-mix(in srgb, var(--c, #a78bfa) 15%, transparent);
-  color: var(--c, #a78bfa);
-  border: 1px solid color-mix(in srgb, var(--c, #a78bfa) 30%, transparent);
+  background: color-mix(in srgb, var(--c, #e5e5e5) 15%, transparent);
+  color: var(--c, #e5e5e5);
+  border: 1px solid color-mix(in srgb, var(--c, #e5e5e5) 30%, transparent);
 }
 
 /* ── Form grid ──────────────────────────────────────────── */
@@ -312,7 +312,7 @@
   display: block;
   font-size: 12px;
   font-weight: 700;
-  color: #a78bfa;
+  color: #e5e5e5;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 6px;
@@ -352,14 +352,14 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #a78bfa;
+  background: #e5e5e5;
   cursor: pointer;
-  box-shadow: 0 0 8px rgba(167, 139, 250, 0.5);
+  box-shadow: 0 0 8px rgba(229, 229, 229, 0.5);
   transition: box-shadow 0.2s;
 }
 
 .slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 14px rgba(167, 139, 250, 0.8);
+  box-shadow: 0 0 14px rgba(229, 229, 229, 0.8);
 }
 
 .sliderValue {
@@ -367,7 +367,7 @@
   text-align: right;
   font-size: 15px;
   font-weight: 800;
-  color: #a78bfa;
+  color: #e5e5e5;
 }
 
 /* ── Responsive ─────────────────────────────────────────── */

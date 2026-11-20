@@ -782,7 +782,7 @@
 
 .draggingRow {
   opacity: 0.45;
-  background: rgba(167, 139, 250, 0.1) !important;
+  background: rgba(229, 229, 229, 0.1) !important;
 }
 
 .dragOverRow {
@@ -867,9 +867,9 @@
 }
 
 .categoryBadge {
-  background: rgba(167, 139, 250, 0.12);
-  color: #c084fc;
-  border: 1px solid rgba(167, 139, 250, 0.2);
+  background: rgba(229, 229, 229, 0.12);
+  color: #e5e5e5;
+  border: 1px solid rgba(229, 229, 229, 0.2);
 }
 
 .batchBadge {
@@ -988,7 +988,7 @@
 }
 
 .checkboxContainer:hover input ~ .checkboxCustom {
-  border-color: rgba(167, 139, 250, 0.5);
+  border-color: rgba(229, 229, 229, 0.5);
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -1030,10 +1030,10 @@
   background: rgba(12, 11, 14, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(167, 139, 250, 0.25);
+  border: 1px solid rgba(229, 229, 229, 0.25);
   border-radius: 16px;
   padding: 16px 24px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(167, 139, 250, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(229, 229, 229, 0.1);
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: transform;
 }
@@ -1366,9 +1366,9 @@
 }
 
 .scraperBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #9333ea, #6d28d9);
+  background: linear-gradient(135deg, #737373, #737373);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.4);
+  box-shadow: 0 4px 12px rgba(229, 229, 229, 0.4);
 }
 
 .scraperBtn:disabled {
@@ -2212,17 +2212,17 @@
 .barFill {
   width: 100%;
   max-width: 40px;
-  background: linear-gradient(180deg, rgba(99, 102, 241, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%);
+  background: linear-gradient(180deg, rgba(229, 229, 229, 0.8) 0%, rgba(229, 229, 229, 0.8) 100%);
   border-radius: 6px 6px 0 0;
   position: relative;
   transition: all 0.3s ease;
   min-height: 4px;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 12px rgba(229, 229, 229, 0.3);
 }
 
 .chartBar:hover .barFill {
   transform: scaleY(1.05);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 6px 16px rgba(229, 229, 229, 0.5);
 }
 
 .barSegmentViews {

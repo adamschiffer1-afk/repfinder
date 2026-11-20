@@ -164,7 +164,7 @@ export default function UsersPage() {
       {/* Statistics */}
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%)' }}>
+          <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #e5e5e5 0%, #e5e5e5 100%)' }}>
             <FontAwesomeIcon icon={faCrown} />
           </div>
           <div className={styles.statInfo}>

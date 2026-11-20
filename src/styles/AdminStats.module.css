@@ -21,7 +21,7 @@
 .pageTitle {
   font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(135deg, #fff 0%, #a78bfa 100%);
+  background: linear-gradient(135deg, #fff 0%, #e5e5e5 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -38,9 +38,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(167, 139, 250, 0.12);
-  border: 1px solid rgba(167, 139, 250, 0.3);
-  color: #a78bfa;
+  background: rgba(229, 229, 229, 0.12);
+  border: 1px solid rgba(229, 229, 229, 0.3);
+  color: #e5e5e5;
   padding: 10px 20px;
   border-radius: 10px;
   font-weight: 600;
@@ -50,7 +50,7 @@
 }
 
 .refreshBtn:hover {
-  background: rgba(167, 139, 250, 0.22);
+  background: rgba(229, 229, 229, 0.22);
   transform: translateY(-1px);
 }
 
@@ -64,8 +64,8 @@
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(167, 139, 250, 0.3);
-  border-top-color: #a78bfa;
+  border: 2px solid rgba(229, 229, 229, 0.3);
+  border-top-color: #e5e5e5;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
@@ -99,16 +99,16 @@
 }
 
 .rangePill:hover {
-  background: rgba(167, 139, 250, 0.12);
-  border-color: rgba(167, 139, 250, 0.4);
-  color: #a78bfa;
+  background: rgba(229, 229, 229, 0.12);
+  border-color: rgba(229, 229, 229, 0.4);
+  color: #e5e5e5;
 }
 
 .rangePillActive {
-  background: rgba(167, 139, 250, 0.2);
-  border-color: #a78bfa;
-  color: #a78bfa;
-  box-shadow: 0 0 12px rgba(167, 139, 250, 0.2);
+  background: rgba(229, 229, 229, 0.2);
+  border-color: #e5e5e5;
+  color: #e5e5e5;
+  box-shadow: 0 0 12px rgba(229, 229, 229, 0.2);
 }
 
 .customRange {
@@ -141,12 +141,12 @@
 }
 
 .dateInput:focus {
-  border-color: #a78bfa;
+  border-color: #e5e5e5;
 }
 
 .applyBtn {
-  background: linear-gradient(135deg, #a78bfa, #7c3aed);
-  color: #fff;
+  background: #f5f5f5;
+  color: #0a0a0a;
   border: none;
   padding: 9px 20px;
   border-radius: 8px;
@@ -158,7 +158,7 @@
 
 .applyBtn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(167, 139, 250, 0.3);
+  box-shadow: 0 6px 16px rgba(229, 229, 229, 0.3);
 }
 
 .applyBtn:disabled {
@@ -208,9 +208,9 @@
 }
 
 .tabBtnActive {
-  background: rgba(167, 139, 250, 0.2);
-  color: #a78bfa;
-  box-shadow: 0 2px 10px rgba(167, 139, 250, 0.15);
+  background: rgba(229, 229, 229, 0.2);
+  color: #e5e5e5;
+  box-shadow: 0 2px 10px rgba(229, 229, 229, 0.15);
 }
 
 /* ---- Loading ---- */
@@ -228,8 +228,8 @@
 .loadingSpinner {
   width: 40px;
   height: 40px;
-  border: 3px solid rgba(167, 139, 250, 0.2);
-  border-top-color: #a78bfa;
+  border: 3px solid rgba(229, 229, 229, 0.2);
+  border-top-color: #e5e5e5;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -257,14 +257,14 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at top, rgba(167,139,250,0.06), transparent 70%);
+  background: radial-gradient(ellipse at top, rgba(229, 229, 229,0.06), transparent 70%);
   pointer-events: none;
 }
 
 .kpiCard:hover {
-  border-color: rgba(167, 139, 250, 0.3);
+  border-color: rgba(229, 229, 229, 0.3);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(167, 139, 250, 0.1);
+  box-shadow: 0 8px 24px rgba(229, 229, 229, 0.1);
 }
 
 .kpiIcon {
@@ -275,7 +275,7 @@
 .kpiValue {
   font-size: 36px;
   font-weight: 800;
-  color: #a78bfa;
+  color: #e5e5e5;
   line-height: 1;
   margin-bottom: 8px;
   word-break: break-word;
@@ -322,7 +322,7 @@
   font-weight: 600;
 }
 
-.legendViews { color: #a78bfa; }
+.legendViews { color: #e5e5e5; }
 .legendClicks { color: #34d399; }
 
 /* ---- Overview Grid ---- */
@@ -363,7 +363,7 @@
 
 .rank {
   font-size: 11px;
-  color: #a78bfa;
+  color: #e5e5e5;
   font-weight: 700;
   width: 24px;
   flex-shrink: 0;
@@ -386,13 +386,13 @@
 }
 
 .miniBadge {
-  background: rgba(167, 139, 250, 0.15);
-  color: #a78bfa;
+  background: rgba(229, 229, 229, 0.15);
+  color: #e5e5e5;
   padding: 3px 10px;
   border-radius: 20px;
   font-size: 11px;
   font-weight: 700;
-  border: 1px solid rgba(167, 139, 250, 0.25);
+  border: 1px solid rgba(229, 229, 229, 0.25);
   flex-shrink: 0;
 }
 
@@ -415,14 +415,14 @@
 }
 
 .productStatCard:hover {
-  border-color: rgba(167, 139, 250, 0.3);
-  background: rgba(167, 139, 250, 0.05);
+  border-color: rgba(229, 229, 229, 0.3);
+  background: rgba(229, 229, 229, 0.05);
 }
 
 .productRank {
   font-size: 20px;
   font-weight: 800;
-  color: rgba(167, 139, 250, 0.5);
+  color: rgba(229, 229, 229, 0.5);
   width: 36px;
   text-align: center;
   flex-shrink: 0;
@@ -466,7 +466,7 @@
 .bigCount {
   font-size: 28px;
   font-weight: 800;
-  color: #a78bfa;
+  color: #e5e5e5;
   line-height: 1;
 }
 
@@ -497,13 +497,13 @@
 }
 
 .agentCard:hover {
-  border-color: rgba(167, 139, 250, 0.3);
+  border-color: rgba(229, 229, 229, 0.3);
 }
 
 .agentRank {
   font-size: 11px;
   font-weight: 700;
-  color: #a78bfa;
+  color: #e5e5e5;
 }
 
 .agentName {
@@ -523,7 +523,7 @@
 
 .agentBarFill {
   height: 100%;
-  background: linear-gradient(90deg, #a78bfa, #7c3aed);
+  background: linear-gradient(90deg, #e5e5e5, #737373);
   border-radius: 4px;
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -561,7 +561,7 @@
 
 .pageRank {
   font-size: 11px;
-  color: #a78bfa;
+  color: #e5e5e5;
   font-weight: 700;
   width: 32px;
   flex-shrink: 0;
@@ -575,13 +575,13 @@
 }
 
 .pageBadge {
-  background: rgba(167, 139, 250, 0.12);
-  color: #a78bfa;
+  background: rgba(229, 229, 229, 0.12);
+  color: #e5e5e5;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 11px;
   font-weight: 700;
-  border: 1px solid rgba(167, 139, 250, 0.2);
+  border: 1px solid rgba(229, 229, 229, 0.2);
 }
 
 /* ---- Browsers Tab ---- */
@@ -601,7 +601,7 @@
 }
 
 .browserCard:hover {
-  border-color: rgba(167, 139, 250, 0.3);
+  border-color: rgba(229, 229, 229, 0.3);
   transform: translateY(-2px);
 }
 
@@ -620,7 +620,7 @@
 .browserCount {
   font-size: 24px;
   font-weight: 800;
-  color: #a78bfa;
+  color: #e5e5e5;
   margin-bottom: 2px;
 }
 
@@ -639,7 +639,7 @@
 
 .browserBarFill {
   height: 100%;
-  background: linear-gradient(90deg, #a78bfa, #7c3aed);
+  background: linear-gradient(90deg, #e5e5e5, #737373);
   border-radius: 2px;
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -709,7 +709,7 @@
 .activityProduct {
   margin-top: 6px;
   font-size: 12px;
-  color: #a78bfa;
+  color: #e5e5e5;
   font-weight: 600;
 }
 
@@ -757,7 +757,7 @@
 
 .barFill {
   height: 100%;
-  background: linear-gradient(90deg, #a78bfa, #7c3aed);
+  background: linear-gradient(90deg, #e5e5e5, #737373);
   border-radius: 4px;
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }

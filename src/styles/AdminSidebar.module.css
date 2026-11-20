@@ -32,16 +32,16 @@
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+  background: #f5f5f5;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   font-weight: 900;
-  color: #fff;
+  color: #0a0a0a;
   letter-spacing: -0.5px;
   flex-shrink: 0;
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
 .logoText {
@@ -116,13 +116,13 @@
 }
 
 .navLink.active {
-  background: rgba(167, 139, 250, 0.12);
-  color: #a78bfa;
-  border: 1px solid rgba(167, 139, 250, 0.2);
+  background: rgba(229, 229, 229, 0.12);
+  color: #e5e5e5;
+  border: 1px solid rgba(229, 229, 229, 0.2);
 }
 
 .navLink.active:hover {
-  background: rgba(167, 139, 250, 0.18);
+  background: rgba(229, 229, 229, 0.18);
 }
 
 /* ── Nav icon ─────────────────────────────────────────────── */
@@ -142,8 +142,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #a78bfa;
-  box-shadow: 0 0 6px rgba(167, 139, 250, 0.8);
+  background: #e5e5e5;
+  box-shadow: 0 0 6px rgba(229, 229, 229, 0.8);
   flex-shrink: 0;
 }
 
