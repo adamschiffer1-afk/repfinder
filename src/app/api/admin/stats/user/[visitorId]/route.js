@@ -34,10 +34,16 @@ export async function GET(req, { params }) {
     const firstVisit = activities[activities.length - 1].timestamp;
     const lastVisit = activities[0].timestamp;
     
-    // Sum time from engagement events
-    const timeSpent = activities
-      .filter(a => a.type === 'engagement' && a.time_spent)
-      .reduce((sum, a) => sum + (a.time_spent || 0), 0);
+    // Time on site: older tracker versions sent the same measurement many times with
+    // growing values, so keep one value per page + hour (the smallest) and ignore
+    // anything over 30 minutes before summing.
+    const perVisit = new Map();
+    for (const a of activities) {
+      if (a.type !== 'engagement' || !a.time_spent || a.time_spent > 30 * 60) continue;
+      const key = `${a.path}|${String(a.timestamp).slice(0, 13)}`;
+      if (!perVisit.has(key) || a.time_spent < perVisit.get(key)) perVisit.set(key, a.time_spent);
+    }
+    const timeSpent = [...perVisit.values()].reduce((sum, t) => sum + t, 0);
 
     // Get product details
     const productIds = Array.from(uniqueProducts);

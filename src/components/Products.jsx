@@ -5,6 +5,7 @@ import Image from 'next/image';
 import styles from '@/styles/Products.module.css';
 import ProductSkeleton from '@/components/ProductSkeleton';
 import EmptyState from '@/components/EmptyState';
+import { getVisitorId } from '@/lib/visitorId';
 import { useToast } from '@/components/Toast';
 import { categoriesData } from '@/data/productsData';
 import { useCurrency } from '@/hooks/useCurrency';
@@ -596,12 +597,7 @@ export default function ProductsPage() {
     const agentLink = agentUrls[preferredAgent] || agentUrls['KakoBuy'];
     
     // Track product click
-    const visitorId = localStorage.getItem('visitorId') || 
-      (() => {
-        const id = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        localStorage.setItem('visitorId', id);
-        return id;
-      })();
+    const visitorId = getVisitorId();
     
     fetch('/api/stats', {
       method: 'POST',
@@ -648,12 +644,7 @@ export default function ProductsPage() {
     const agentLink = agentUrls[preferredAgent] || agentUrls['KakoBuy'];
     
     // Track product click (copy is also a click)
-    const visitorId = localStorage.getItem('visitorId') || 
-      (() => {
-        const id = `visitor_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        localStorage.setItem('visitorId', id);
-        return id;
-      })();
+    const visitorId = getVisitorId();
     
     fetch('/api/stats', {
       method: 'POST',

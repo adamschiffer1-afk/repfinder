@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import styles from '@/styles/AgentModal.module.css';
 import { convertLink, SUPPORTED_AGENTS } from '@/utils/converter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getVisitorId } from '@/lib/visitorId';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 export default function AgentModal({ isOpen, product, onClose }) {
@@ -43,12 +44,7 @@ export default function AgentModal({ isOpen, product, onClose }) {
     const link = convertLink(product.link, selectedAgent);
     window.open(link, '_blank');
     
-    // Get or create visitor ID
-    let visitorId = localStorage.getItem('visitor_id');
-    if (!visitorId) {
-      visitorId = 'v_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      localStorage.setItem('visitor_id', visitorId);
-    }
+    const visitorId = getVisitorId();
     
     // Track click
     try {

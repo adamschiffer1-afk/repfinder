@@ -17,35 +17,13 @@ import styles from '@/styles/Products.module.css';
 import { useAuth } from '@/context/AuthContext';
 import { useCurrency } from '@/hooks/useCurrency';
 import { useLanguage } from '@/context/LanguageContext';
+import { getVisitorId } from '@/lib/visitorId';
 import { convertLink, SUPPORTED_AGENTS } from '@/utils/converter';
 
 const CLICK_TRACK_COOLDOWN_MS = 60 * 1000;
-const ANALYTICS_VISITOR_KEY = '__vf_visitor_id';
 
-const generateAnalyticsVisitorId = () => {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
-    const random = Math.random() * 16 | 0;
-    const value = char === 'x' ? random : (random & 0x3 | 0x8);
-    return value.toString(16);
-  });
-};
 
-const getAnalyticsVisitorId = () => {
-  if (typeof window === 'undefined') return null;
-  try {
-    let visitorId = localStorage.getItem(ANALYTICS_VISITOR_KEY);
-    if (!visitorId) {
-      visitorId = generateAnalyticsVisitorId();
-      localStorage.setItem(ANALYTICS_VISITOR_KEY, visitorId);
-    }
-    return visitorId;
-  } catch (err) {
-    return null;
-  }
-};
+const getAnalyticsVisitorId = () => getVisitorId();
 
 const getEstimatedWeight = (category, productName = '') => {
   const cat = (category || '').toLowerCase();

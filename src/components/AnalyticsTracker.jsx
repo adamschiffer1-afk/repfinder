@@ -2,18 +2,12 @@
 
 import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { getVisitorId } from '@/lib/visitorId';
 
 export default function AnalyticsTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Helper to generate UUID v4
-  const generateUUID = () => {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  };
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -42,11 +36,7 @@ export default function AnalyticsTracker() {
     const on = (target, ev, fn, opts) => { target.addEventListener(ev, fn, opts); cleanups.push(() => target.removeEventListener(ev, fn, opts)); };
 
     // 1. Visitor ID (Fingerprinting)
-    let visitorId = localStorage.getItem('__vf_visitor_id');
-    if (!visitorId) {
-      visitorId = generateUUID();
-      localStorage.setItem('__vf_visitor_id', visitorId);
-    }
+    const visitorId = getVisitorId();
 
     // 2. UTM & Referrer
     const urlParams = new URLSearchParams(window.location.search);
