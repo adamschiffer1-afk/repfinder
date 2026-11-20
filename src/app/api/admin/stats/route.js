@@ -65,18 +65,33 @@ export async function GET(req) {
     // Engagement
     const { data: engagementData } = await supabaseAdmin
       .from('stats')
-      .select('time_spent, scroll_depth')
+      .select('time_spent, scroll_depth, visitor_id, path, timestamp')
       .eq('type', 'engagement')
       .gte('timestamp', from.toISOString())
       .lte('timestamp', to.toISOString());
 
+    // Older tracker versions sent the same measurement many times (growing values,
+    // including time the tab was in the background). Keep one record per
+    // visitor + page + hour, drop impossible values and use a trimmed mean.
+    const MAX_SECONDS = 30 * 60;
+    const perVisit = new Map();
+    for (const e of engagementData || []) {
+      const key = `${e.visitor_id}|${e.path}|${String(e.timestamp).slice(0, 13)}`;
+      const prev = perVisit.get(key);
+      // the first (smallest) value is the closest to the real visible time
+      if (!prev || (e.time_spent || 0) < (prev.time_spent || 0)) perVisit.set(key, e);
+    }
+    const visits = [...perVisit.values()];
+    const times = visits.map(v => v.time_spent || 0).filter(t => t > 0 && t <= MAX_SECONDS).sort((a, b) => a - b);
+    const trim = Math.floor(times.length * 0.1);
+    const core = times.length >= 10 ? times.slice(trim, times.length - trim) : times;
+    const mean = arr => (arr.length ? arr.reduce((s, x) => s + x, 0) / arr.length : 0);
+
     const engagement = {
-      avgTimeSpent: engagementData?.length > 0 
-        ? engagementData.reduce((sum, e) => sum + (e.time_spent || 0), 0) / engagementData.length 
-        : 0,
-      avgScrollDepth: engagementData?.length > 0
-        ? engagementData.reduce((sum, e) => sum + (e.scroll_depth || 0), 0) / engagementData.length
-        : 0
+      avgTimeSpent: mean(core),
+      medianTimeSpent: times.length ? times[Math.floor(times.length / 2)] : 0,
+      avgScrollDepth: mean(visits.map(v => v.scroll_depth || 0)),
+      visits: visits.length,
     };
 
     // Top products - WITHOUT JOIN to avoid errors
