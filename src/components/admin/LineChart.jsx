@@ -90,9 +90,12 @@ export default function LineChart({ data }) {
     
     const rect = svgRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
-    
+    // The SVG is drawn in viewBox units (width x height) but rendered at the
+    // container's size: convert the mouse position from screen px to viewBox units.
+    const svgX = mouseX * (width / rect.width);
+
     // Calculate position relative to chart
-    const relativeX = mouseX - padding.left;
+    const relativeX = svgX - padding.left;
     
     // Clamp to chart bounds
     if (relativeX < 0 || relativeX > chartWidth) {
