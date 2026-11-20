@@ -39,6 +39,12 @@ const MARGIN = 0.05;
 const RERANK_N = 30;
 const WEIGHTS = { global: 1.0, local: 1.0, color: 0.35 };
 // Penalty for "hub" images (collages, generic shots) that are close to everything.
+// Brand recognition: CLIP compares the photo with each brand's text embedding (logo /
+// lettering / product prompts). Products of the recognised brand get a bonus and the
+// top brand-matching products are always included in the detailed comparison.
+const BRAND_WEIGHT = 1.5;      // bonus (in z-units) = BRAND_WEIGHT * P(brand of product)
+const BRAND_PULL = 10;         // extra candidates of the top brand pulled into stage 2
+const BRAND_SURE = 0.5;        // probability above which the brand is reported to the UI
 const HUB_ALPHA = 0; // catalog-neighbour hubness hurt accuracy in tests; kept for experiments
 
 env.allowLocalModels = false;
@@ -48,6 +54,10 @@ let ready = null;
 let models = null;
 let ids = [];
 let images = [];
+let brandNames = [];
+let brandVecs = null; // Int8Array, brands * 512
+let itemBrand = null; // Int16Array, brand index per item (-1 = unknown)
+let brandCount = null; // catalog items per brand
 let hub = null; // Float32Array, per-item hubness (mean sim to 10 nearest catalog items)
 let matrix = null; // Int8Array, rows * dim
 let dim = 0;
@@ -83,6 +93,12 @@ async function loadIndex(indexUrl) {
   ids = index.items.map(i => i.id);
   images = index.items.map(i => i.image);
   hub = Float32Array.from(index.items, i => i.h ?? 0);
+  brandNames = (index.brands || []).map(b => b.name);
+  brandVecs = new Int8Array(brandNames.length * 512);
+  (index.brands || []).forEach((b, i) => brandVecs.set(decodeBase64(b.v), i * 512));
+  itemBrand = Int16Array.from(index.items, i => i.b ?? -1);
+  brandCount = new Int32Array(brandNames.length);
+  itemBrand.forEach(b => { if (b >= 0) brandCount[b]++; });
   matrix = new Int8Array(ids.length * dim);
   index.items.forEach((item, row) => matrix.set(decodeBase64(item.v), row * dim));
 }
@@ -318,7 +334,23 @@ async function detailFor(row) {
 
 // ── Search ───────────────────────────────────────────────────────────────────
 
-async function search({ id, pixels, width, height, topK = 40, indexUrl, debug = false, rerankN = RERANK_N, hubAlpha = HUB_ALPHA, weights = WEIGHTS }) {
+/** P(brand | photo) from the CLIP image embedding (first 512 dims of q, unit length). */
+function brandProbs(q) {
+  const n = brandNames.length;
+  const logits = new Float32Array(n);
+  for (let b = 0; b < n; b++) {
+    let d = 0; const off = b * 512;
+    for (let i = 0; i < 512; i++) d += q[i] * brandVecs[off + i];
+    logits[b] = 100 * d / 127; // CLIP logit scale
+  }
+  const mx = Math.max(...logits);
+  let sum = 0; const p = new Float32Array(n);
+  for (let b = 0; b < n; b++) { p[b] = Math.exp(logits[b] - mx); sum += p[b]; }
+  for (let b = 0; b < n; b++) p[b] /= sum;
+  return p;
+}
+
+async function search({ id, pixels, width, height, topK = 40, indexUrl, debug = false, rerankN = RERANK_N, hubAlpha = HUB_ALPHA, weights = WEIGHTS, brandWeight = BRAND_WEIGHT, brandPull = BRAND_PULL }) {
   await init(indexUrl);
   self.postMessage({ type: 'status', stage: 'analyzing' });
   const subject = await isolateSubject(new RawImage(pixels, width, height, 3));
@@ -337,8 +369,22 @@ async function search({ id, pixels, width, height, topK = 40, indexUrl, debug = 
   for (let row = 0; row < ids.length; row++) g[row] -= hubAlpha * hub[row];
   const order = Array.from(g.keys()).sort((a, b) => g[b] - g[a]);
 
-  // Stage 2: detailed comparison of the top candidates.
+  // Brand recognition.
+  const pb = brandNames.length ? brandProbs(q) : new Float32Array(0);
+  let topBrand = -1;
+  for (let b = 0; b < pb.length; b++) if (topBrand < 0 || pb[b] > pb[topBrand]) topBrand = b;
+  const brandOf = row => (itemBrand[row] >= 0 ? pb[itemBrand[row]] : 0);
+
+  // Stage 2: detailed comparison of the top candidates (+ best matches of the recognised brand).
   const cand = order.slice(0, rerankN);
+  if (topBrand >= 0 && brandPull > 0) {
+    const inCand = new Set(cand);
+    let pulled = 0;
+    for (const row of order.slice(rerankN, 300)) {
+      if (pulled >= brandPull) break;
+      if (itemBrand[row] === topBrand && !inCand.has(row)) { cand.push(row); pulled++; }
+    }
+  }
   const qFeat = await patchFeatures(subject);
   const qHist = colorHist(subject);
   const comps = [];
@@ -360,17 +406,21 @@ async function search({ id, pixels, width, height, topK = 40, indexUrl, debug = 
     comps.forEach(x => { x['z' + key] = x.failed ? -3 : (x[key] - m) / sd; });
   };
   z('g'); z('l'); z('c');
-  for (const x of comps) x.score = weights.global * x.zg + weights.local * x.zl + weights.color * x.zc;
+  for (const x of comps) x.score = weights.global * x.zg + weights.local * x.zl + weights.color * x.zc + brandWeight * brandOf(x.row);
   comps.sort((a, b) => b.score - a.score);
 
   const reranked = comps.map(x => ({ id: ids[x.row], score: x.score }));
   const rest = order.slice(rerankN, topK).map(row => ({ id: ids[row], score: -10 + g[row] }));
   const results = [...reranked, ...rest].slice(0, Math.max(topK, rerankN));
-  const msg = { type: 'results', id, results };
+  const detected = topBrand >= 0 && pb[topBrand] >= BRAND_SURE
+    ? { name: brandNames[topBrand], confidence: +pb[topBrand].toFixed(2), inCatalog: brandCount[topBrand] > 0 }
+    : null;
+  const msg = { type: 'results', id, results, brand: detected };
   if (debug) {
     msg.debug = {
       stage1: order.slice(0, 200).map(row => ids[row]),
       comps: comps.map(x => ({ id: ids[x.row], g: gRaw[x.row], l: x.l, c: x.c, failed: !!x.failed })),
+      brandP: Array.from(pb).map(v => +v.toFixed(4)), itemBrand: Array.from(itemBrand), brandNames,
       gRaw, ids, hub: Array.from(hub),
     };
   }

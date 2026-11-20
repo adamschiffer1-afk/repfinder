@@ -20,7 +20,8 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import { createRequire } from 'module';
 import { createClient } from '@supabase/supabase-js';
-import { AutoModel, AutoProcessor, CLIPVisionModelWithProjection, RawImage, env } from '@xenova/transformers';
+import { AutoModel, AutoProcessor, AutoTokenizer, CLIPTextModelWithProjection, CLIPVisionModelWithProjection, RawImage, env } from '@xenova/transformers';
+import { brandOfName, brandPrompts, uniqueBrands } from './lib/brands.mjs';
 
 // Use the same sharp/libvips copy that @xenova/transformers loads; two libvips
 // versions in one process crash on Windows.
@@ -226,9 +227,49 @@ function computeHubness(items) {
   }
 }
 
+/**
+ * Brand recognition data: CLIP text embeddings for every brand (logo / lettering / product
+ * prompts, averaged) and the brand of each catalog item, taken from its product name.
+ */
+async function computeBrands(items) {
+  const names = new Map();
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await supabase.from('products').select('id, name').range(from, from + 999);
+    if (error) throw error;
+    data.forEach(p => names.set(p.id, p.name));
+    if (data.length < 1000) break;
+  }
+  const brands = uniqueBrands();
+  const tokenizer = await AutoTokenizer.from_pretrained(CLIP_ID);
+  const textModel = await CLIPTextModelWithProjection.from_pretrained(CLIP_ID);
+  const out = [];
+  for (const b of brands) {
+    const prompts = brandPrompts(b);
+    const inputs = tokenizer(prompts, { padding: true, truncation: true });
+    const { text_embeds } = await textModel(inputs);
+    const [n, d] = text_embeds.dims;
+    const sum = new Float32Array(d);
+    for (let i = 0; i < n; i++) {
+      const row = normalize(text_embeds.data.slice(i * d, (i + 1) * d));
+      row.forEach((x, k) => { sum[k] += x; });
+    }
+    out.push({ name: b, v: toInt8Base64(normalize(sum)) });
+  }
+  const idx = new Map(brands.map((b, i) => [b, i]));
+  let tagged = 0;
+  for (const it of items) {
+    const b = brandOfName(names.get(it.id));
+    it.b = b ? idx.get(b) : -1;
+    if (b) tagged++;
+  }
+  console.log(`Brands: ${brands.length}, catalog items with a brand: ${tagged}/${items.length}`);
+  return out;
+}
+
 async function saveIndex(items, failed = 0) {
   computeHubness(items);
-  const index = { version: INDEX_VERSION, models: { clip: CLIP_ID, dino: DINO_ID }, parts: PARTS, updatedAt: new Date().toISOString(), items };
+  const brands = await computeBrands(items);
+  const index = { version: INDEX_VERSION, models: { clip: CLIP_ID, dino: DINO_ID }, parts: PARTS, brands, updatedAt: new Date().toISOString(), items };
   const body = Buffer.from(JSON.stringify(index));
   fs.writeFileSync(LOCAL_CACHE, body);
   await ensureBucket();

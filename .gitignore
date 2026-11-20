@@ -51,3 +51,8 @@ scratch-test.js
 # image search index cache (scripts/build_image_index.mjs)
 scripts/.image-index-cache.json
 test-zdjecia/
+promo-tiktok/
+scripts/.collage-*
+scripts/.cutout-*
+scripts/.fix-*
+scripts/.image-index-cache.json

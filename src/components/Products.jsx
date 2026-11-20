@@ -537,14 +537,14 @@ export default function ProductsPage() {
   const [imageResults, setImageResults] = useState(null); // { items, preview }
   const gridProducts = imageResults ? imageResults.items : filteredProducts;
 
-  const handleImageResults = useCallback((results, preview) => {
+  const handleImageResults = useCallback((results, preview, brand = null) => {
     const byId = new Map(allProducts.map(p => [String(p._id), p]));
     const items = results
       .map(r => byId.get(String(r.id)))
       .filter(Boolean);
     setImageResults(prev => {
       if (prev?.preview) URL.revokeObjectURL(prev.preview);
-      return { items, preview };
+      return { items, preview, brand };
     });
     setDisplayCount(PRODUCTS_PER_LOAD);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1043,7 +1043,13 @@ export default function ProductsPage() {
             <img src={imageResults.preview} alt="" className={styles.imageResultsThumb} />
             <div className={styles.imageResultsText}>
               <span className={styles.imageResultsTitle}>{t('imageSearch.resultsFor')}</span>
-              <span className={styles.imageResultsCount}>{imageResults.items.length} produktów</span>
+              <span className={styles.imageResultsCount}>
+                {imageResults.brand
+                  ? (imageResults.brand.inCatalog
+                    ? `${t('imageSearch.brandDetected')}: ${imageResults.brand.name}`
+                    : `${t('imageSearch.brandDetected')}: ${imageResults.brand.name} · ${t('imageSearch.brandMissing')}`)
+                  : `${imageResults.items.length} produktów`}
+              </span>
             </div>
             <button type="button" className={styles.imageResultsAgain} onClick={() => setImageSearchOpen(true)}>
               <FontAwesomeIcon icon={faCamera} /> {t('imageSearch.change')}

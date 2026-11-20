@@ -14,7 +14,7 @@ const pending = new Map();
 const statusListeners = new Set();
 
 // Bump when public/image-search-worker.js changes, so browsers never keep an old copy.
-const WORKER_VERSION = '4';
+const WORKER_VERSION = '5';
 
 /** Drop a failed worker so the next attempt starts clean (and picks up fresh code). */
 function resetWorker() {
@@ -38,7 +38,7 @@ function getWorker() {
     if (msg.type === 'status') {
       statusListeners.forEach(fn => fn(msg));
     } else if (msg.type === 'results') {
-      pending.get(msg.id)?.resolve(msg.results);
+      pending.get(msg.id)?.resolve({ results: msg.results, brand: msg.brand || null });
       pending.delete(msg.id);
     } else if (msg.type === 'error') {
       failAll(new Error(msg.message));
@@ -87,7 +87,7 @@ async function fileToRgb(file) {
   return { pixels: rgb, width, height };
 }
 
-/** Returns [{ id, score }] sorted by similarity (best first). */
+/** Returns { results: [{ id, score }] best first, brand: { name, confidence, inCatalog } | null }. */
 export async function searchByImage(file, topK = 40) {
   const { pixels, width, height } = await fileToRgb(file);
   const w = getWorker();

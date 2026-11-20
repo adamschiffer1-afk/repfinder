@@ -57,10 +57,10 @@ export default function ImageSearchModal({ isOpen, onClose, onResults }) {
     setCompareProgress(null);
     setBusy(true);
     try {
-      const results = await searchByImage(file);
+      const { results, brand } = await searchByImage(file);
       setBusy(false);
       setCompareProgress(null);
-      onResults(results, url);
+      onResults(results, url, brand);
       setPreview(null);
       onClose();
     } catch (err) {
