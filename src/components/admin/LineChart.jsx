@@ -90,9 +90,12 @@ export default function LineChart({ data }) {
     
     const rect = svgRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
-    
+    // The SVG is drawn in viewBox units (width x height) but rendered at the
+    // container's size: convert the mouse position from screen px to viewBox units.
+    const svgX = mouseX * (width / rect.width);
+
     // Calculate position relative to chart
-    const relativeX = mouseX - padding.left;
+    const relativeX = svgX - padding.left;
     
     // Clamp to chart bounds
     if (relativeX < 0 || relativeX > chartWidth) {
@@ -256,10 +259,10 @@ export default function LineChart({ data }) {
         >
           <div className={styles.tooltipTime}>{data[hoveredIndex].time}</div>
           <div className={styles.tooltipRow}>
-            <span>👁️ {data[hoveredIndex].page_view}</span>
+            <span>Wyświetlenia</span><strong>{data[hoveredIndex].page_view}</strong>
           </div>
           <div className={styles.tooltipRow}>
-            <span>🖱️ {data[hoveredIndex].product_click}</span>
+            <span>Kliknięcia</span><strong>{data[hoveredIndex].product_click}</strong>
           </div>
           <div className={styles.tooltipTotal}>
             <span>Razem:</span>

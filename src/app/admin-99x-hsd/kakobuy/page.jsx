@@ -21,12 +21,14 @@ function calcGrowthRate(entries) {
   return (((last - first) / first) * 100).toFixed(1);
 }
 
-function KpiCard({ icon, value, label, sub, color = '#a78bfa' }) {
+function KpiCard({ value, label, sub, color = '#e5e5e5' }) {
   return (
     <div className={kakoStyles.kpiCard}>
-      <div className={kakoStyles.kpiIcon}>{icon}</div>
-      <div className={kakoStyles.kpiValue} style={{ color }}>{value ?? '—'}</div>
-      <div className={kakoStyles.kpiLabel}>{label}</div>
+      <div className={kakoStyles.kpiLabel}>
+        <span className={kakoStyles.kpiDot} style={{ background: color }} />
+        {label}
+      </div>
+      <div className={kakoStyles.kpiValue}>{value ?? '—'}</div>
       {sub && <div className={kakoStyles.kpiSub}>{sub}</div>}
     </div>
   );
@@ -172,18 +174,17 @@ export default function KakobuyPage() {
     <div className={styles.adminContainer}>
       <header className={styles.adminHeader}>
         <div>
-          <h1>🛒 Kakobuy — Rejestry i Analizy</h1>
-          <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: '4px', fontSize: '14px' }}>
-            Śledź rejestracje, aktywnych członków i prognozy
+          <h1>Kakobuy</h1>
+          <p className={styles.headerSubtitle}>
+            Rejestracje, aktywni członkowie i prognozy
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button 
-            className={styles.scraperBtn} 
+        <div className={styles.headerActions}>
+          <button
+            className={styles.actionBtn}
             onClick={() => setShowGoalModal(true)}
-            style={{ background: 'rgba(96, 165, 250, 0.2)', border: '1px solid #60a5fa' }}
           >
-            🎯 Ustaw cel
+            Ustaw cel
           </button>
           <button className={styles.scraperBtn} onClick={() => { setEditingEntry(null); setFormData(emptyForm); setShowModal(true); }}>
             + Dodaj wpis
@@ -192,54 +193,54 @@ export default function KakobuyPage() {
       </header>
 
       <div className={kakoStyles.kpiGrid}>
-        <KpiCard icon="📋" value={totalRegistrations.toLocaleString()} label="Łączne rejestracje"
-          sub={growth !== null ? `${growth > 0 ? '▲' : '▼'} ${Math.abs(growth)}% wzrost` : null} color="#a78bfa" />
-        <KpiCard icon="✅" value={activeNow.toLocaleString()} label="Aktywni członkowie"
+        <KpiCard value={totalRegistrations.toLocaleString()} label="Łączne rejestracje"
+          sub={growth !== null ? `${growth > 0 ? '▲' : '▼'} ${Math.abs(growth)}% wzrost` : null} color="#e5e5e5" />
+        <KpiCard value={activeNow.toLocaleString()} label="Aktywni członkowie"
           sub={`Konwersja: ${conversionRate}%`} color="#34d399" />
-        <KpiCard icon="🔮" value={predicted.toLocaleString()} label="Przewidywani członkowie"
+        <KpiCard value={predicted.toLocaleString()} label="Przewidywani członkowie"
           sub="Cel / prognoza" color="#60a5fa" />
-        <KpiCard icon="💰" value={`$${revenue.toLocaleString()}`} label="Szacowany przychód"
+        <KpiCard value={`$${revenue.toLocaleString()}`} label="Szacowany przychód"
           sub="Automatycznie obliczony" color="#fbbf24" />
       </div>
 
       {sorted.length > 1 && (
         <div className={kakoStyles.chartsRow}>
           <div className={kakoStyles.chartCard}>
-            <h3>📋 Rejestracje w czasie</h3>
-            <MiniBarChart entries={sorted} field="registrations" color="linear-gradient(180deg,#a78bfa,#7c3aed)" />
+            <h3>Rejestracje w czasie</h3>
+            <MiniBarChart entries={sorted} field="registrations" color="#e5e5e5" />
           </div>
           <div className={kakoStyles.chartCard}>
-            <h3>✅ Aktywni w czasie</h3>
-            <MiniBarChart entries={sorted} field="activeMembers" color="linear-gradient(180deg,#34d399,#059669)" />
+            <h3>Aktywni w czasie</h3>
+            <MiniBarChart entries={sorted} field="activeMembers" color="#34d399" />
           </div>
           <div className={kakoStyles.chartCard}>
-            <h3>🔮 Przewidywani w czasie</h3>
-            <MiniBarChart entries={sorted} field="predictedMembers" color="linear-gradient(180deg,#60a5fa,#2563eb)" />
+            <h3>Przewidywani w czasie</h3>
+            <MiniBarChart entries={sorted} field="predictedMembers" color="#71717a" />
           </div>
         </div>
       )}
 
       <div className={kakoStyles.gaugeRow}>
         <div className={kakoStyles.gaugeCard}>
-          <h3>📊 Wskaźnik konwersji (rejestracja → aktywny)</h3>
+          <h3>Konwersja (rejestracja → aktywny)</h3>
           <div className={kakoStyles.gaugeTrack}>
             <div className={kakoStyles.gaugeFill} style={{ width: `${Math.min(parseFloat(conversionRate), 100)}%` }} />
           </div>
           <div className={kakoStyles.gaugeLabels}>
             <span>0%</span>
-            <span style={{ color: '#34d399', fontWeight: 700 }}>{conversionRate}%</span>
+            <span className={kakoStyles.gaugeValue}>{conversionRate}%</span>
             <span>100%</span>
           </div>
         </div>
         {predicted > 0 && (
           <div className={kakoStyles.gaugeCard}>
-            <h3>🎯 Postęp do celu</h3>
+            <h3>Postęp do celu</h3>
             <div className={kakoStyles.gaugeTrack}>
               <div className={kakoStyles.gaugeFillBlue} style={{ width: `${predicted > 0 ? Math.min((activeNow / predicted) * 100, 100) : 0}%` }} />
             </div>
             <div className={kakoStyles.gaugeLabels}>
               <span>0</span>
-              <span style={{ color: '#60a5fa', fontWeight: 700 }}>
+              <span className={kakoStyles.gaugeValue}>
                 {activeNow.toLocaleString()} / {predicted.toLocaleString()} ({predicted > 0 ? Math.min(((activeNow / predicted) * 100), 100).toFixed(1) : 0}%)
               </span>
               <span>{predicted.toLocaleString()}</span>
@@ -249,17 +250,18 @@ export default function KakobuyPage() {
       </div>
 
       <div className={kakoStyles.tableSection}>
-        <h2 style={{ marginBottom: '16px', fontSize: '18px', color: 'rgba(255,255,255,0.8)' }}>
-          📅 Historia wpisów
-        </h2>
+        <div className={styles.sectionBar}>
+          <h2 className={styles.sectionHeading}>Historia wpisów</h2>
+        </div>
         {loading ? (
           <div className={styles.spinnerContainer}>
             <div className={styles.loadingSpinner} />
-            <p style={{ marginTop: '10px' }}>Ładowanie...</p>
+            <p>Ładowanie...</p>
           </div>
         ) : entries.length === 0 ? (
           <div className={styles.noProductsPlaceholder}>
-            📭 Brak wpisów. Dodaj pierwszy wpis klikając przycisk powyżej.
+            <span className={styles.emptyTitle}>Brak wpisów</span>
+            <span className={styles.emptyHint}>Dodaj pierwszy wpis przyciskiem „Dodaj wpis”.</span>
           </div>
         ) : (
           <div className={styles.tableWrapper}>
@@ -277,20 +279,20 @@ export default function KakobuyPage() {
                     ? ((entry.activeMembers / entry.registrations) * 100).toFixed(1) : '0.0';
                   return (
                     <tr key={entry._id}>
-                      <td style={{ fontWeight: 700, color: '#a78bfa' }}>{formatDate(entry.date)}</td>
-                      <td><span className={kakoStyles.numBadge} style={{ '--c': '#a78bfa' }}>{(entry.registrations || 0).toLocaleString()}</span></td>
-                      <td><span className={kakoStyles.numBadge} style={{ '--c': '#34d399' }}>{(entry.activeMembers || 0).toLocaleString()}</span></td>
-                      <td><span className={kakoStyles.numBadge} style={{ '--c': '#60a5fa' }}>{(entry.predictedMembers || 0).toLocaleString()}</span></td>
-                      <td style={{ color: '#fbbf24', fontWeight: 700 }}>${(entry.revenue || 0).toLocaleString()}</td>
+                      <td className={styles.cellStrong}>{formatDate(entry.date)}</td>
+                      <td><span className={kakoStyles.numBadge}>{(entry.registrations || 0).toLocaleString()}</span></td>
+                      <td><span className={kakoStyles.numBadge}>{(entry.activeMembers || 0).toLocaleString()}</span></td>
+                      <td><span className={kakoStyles.numBadge}>{(entry.predictedMembers || 0).toLocaleString()}</span></td>
+                      <td className={styles.numCell}>${(entry.revenue || 0).toLocaleString()}</td>
                       <td>
                         <div className={kakoStyles.convBar}>
-                          <div className={kakoStyles.convFill} style={{ width: `${Math.min(parseFloat(conv), 100)}%` }} />
+                          <div className={kakoStyles.convTrack}>
+                            <div className={kakoStyles.convFill} style={{ width: `${Math.min(parseFloat(conv), 100)}%` }} />
+                          </div>
                           <span className={kakoStyles.convLabel}>{conv}%</span>
                         </div>
                       </td>
-                      <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'rgba(255,255,255,0.5)', fontSize: '13px' }}>
-                        {entry.notes || '—'}
-                      </td>
+                      <td className={styles.cellMuted} title={entry.notes || ''}>{entry.notes || '—'}</td>
                       <td className={styles.actions}>
                         <button className={styles.editBtn} onClick={() => openEdit(entry)}>Edytuj</button>
                         <button className={styles.deleteBtn} onClick={() => handleDelete(entry._id)}>Usuń</button>
@@ -306,48 +308,43 @@ export default function KakobuyPage() {
 
       {showModal && (
         <div className={styles.modalOverlay}>
-          <div className={styles.adminModal} style={{ maxWidth: '520px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0 }}>{editingEntry ? '✏️ Edytuj wpis' : '➕ Nowy wpis'}</h2>
-              <span style={{ fontSize: '24px', cursor: 'pointer', opacity: 0.5 }} onClick={closeModal}>&times;</span>
+          <div className={`${styles.adminModal} ${styles.modalMd}`}>
+            <div className={styles.modalHeader}>
+              <h2>{editingEntry ? 'Edytuj wpis' : 'Nowy wpis'}</h2>
+              <button type="button" className={styles.iconBtn} onClick={closeModal} aria-label="Zamknij">&times;</button>
             </div>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <form onSubmit={handleSubmit}>
               <div>
                 <label className={kakoStyles.formLabel}>Data</label>
-                <input type="date" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} required
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff', colorScheme: 'dark' }} />
+                <input type="date" value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} required />
               </div>
               <div className={kakoStyles.formGrid}>
                 <div>
-                  <label className={kakoStyles.formLabel}>📋 Rejestracje</label>
+                  <label className={kakoStyles.formLabel}>Rejestracje</label>
                   <input type="number" min="0" placeholder="0" value={formData.registrations}
-                    onChange={e => setFormData({ ...formData, registrations: e.target.value })}
-                    style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff' }} />
+                    onChange={e => setFormData({ ...formData, registrations: e.target.value })} />
                 </div>
                 <div>
-                  <label className={kakoStyles.formLabel}>✅ Aktywni członkowie</label>
+                  <label className={kakoStyles.formLabel}>Aktywni członkowie</label>
                   <input type="number" min="0" placeholder="0" value={formData.activeMembers}
-                    onChange={e => setFormData({ ...formData, activeMembers: e.target.value })}
-                    style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff' }} />
+                    onChange={e => setFormData({ ...formData, activeMembers: e.target.value })} />
                 </div>
                 <div>
-                  <label className={kakoStyles.formLabel}>🔮 Przewidywani członkowie</label>
+                  <label className={kakoStyles.formLabel}>Przewidywani członkowie</label>
                   <input type="number" min="0" placeholder="0" value={formData.predictedMembers}
-                    onChange={e => setFormData({ ...formData, predictedMembers: e.target.value })}
-                    style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff' }} />
+                    onChange={e => setFormData({ ...formData, predictedMembers: e.target.value })} />
                 </div>
               </div>
               <div>
-                <label className={kakoStyles.formLabel}>📝 Notatki</label>
+                <label className={kakoStyles.formLabel}>Notatki</label>
                 <textarea placeholder="Opcjonalne notatki..." value={formData.notes}
-                  onChange={e => setFormData({ ...formData, notes: e.target.value })} rows={3}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff', resize: 'vertical', font: 'inherit' }} />
+                  onChange={e => setFormData({ ...formData, notes: e.target.value })} rows={3} />
               </div>
               <div className={styles.modalActions}>
-                <button type="submit" style={{ background: '#a78bfa', color: '#000', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
+                <button type="submit">
                   {editingEntry ? 'Zapisz zmiany' : 'Dodaj wpis'}
                 </button>
-                <button type="button" onClick={closeModal} style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                <button type="button" onClick={closeModal}>
                   Anuluj
                 </button>
               </div>
@@ -371,35 +368,34 @@ export default function KakobuyPage() {
 
       {showGoalModal && (
         <div className={styles.modalOverlay}>
-          <div className={styles.adminModal} style={{ maxWidth: '400px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0 }}>🎯 Ustaw cel</h2>
-              <span style={{ fontSize: '24px', cursor: 'pointer', opacity: 0.5 }} onClick={() => setShowGoalModal(false)}>&times;</span>
+          <div className={`${styles.adminModal} ${styles.modalSm}`}>
+            <div className={styles.modalHeader}>
+              <h2>Ustaw cel</h2>
+              <button type="button" className={styles.iconBtn} onClick={() => setShowGoalModal(false)} aria-label="Zamknij">&times;</button>
             </div>
             <form onSubmit={(e) => {
               e.preventDefault();
               setShowGoalModal(false);
               showToast('Cel zaktualizowany!', 'success');
-            }} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            }}>
               <div>
-                <label className={kakoStyles.formLabel}>🔮 Cel aktywnych członków</label>
+                <label className={kakoStyles.formLabel}>Cel aktywnych członków</label>
                 <input 
                   type="number" 
                   min="0" 
                   placeholder="0" 
                   value={goalValue}
-                  onChange={e => setGoalValue(Number(e.target.value))}
-                  style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '12px', borderRadius: '8px', color: '#fff', fontSize: '18px', fontWeight: '700' }} 
+                  onChange={e => setGoalValue(Number(e.target.value))} 
                 />
-                <p style={{ marginTop: '8px', fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>
+                <p className={styles.formHint}>
                   Aktualnie: {activeNow.toLocaleString()} / {goalValue.toLocaleString()} członków
                 </p>
               </div>
               <div className={styles.modalActions}>
-                <button type="submit" style={{ background: '#60a5fa', color: '#000', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 700, cursor: 'pointer', flex: 1 }}>
+                <button type="submit">
                   Zapisz cel
                 </button>
-                <button type="button" onClick={() => setShowGoalModal(false)} style={{ background: 'rgba(255,255,255,0.08)', color: '#fff', padding: '12px', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                <button type="button" onClick={() => setShowGoalModal(false)}>
                   Anuluj
                 </button>
               </div>
@@ -411,7 +407,7 @@ export default function KakobuyPage() {
       <div className={styles.toastContainer}>
         {toasts.map(toast => (
           <div key={toast.id} className={`${styles.toast} ${toast.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
-            <span className={styles.toastIcon}>{toast.type === 'success' ? '⚡' : '⚠️'}</span>
+            <span className={styles.toastIcon} aria-hidden="true" />
             <span className={styles.toastMessage}>{toast.message}</span>
             <button className={styles.toastClose} onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}>&times;</button>
           </div>

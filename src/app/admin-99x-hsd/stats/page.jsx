@@ -3,6 +3,18 @@
 import { useState, useEffect } from 'react';
 import styles from '@/styles/NewStats.module.css';
 import LineChart from '@/components/admin/LineChart';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faEye,
+  faUsers,
+  faArrowPointer,
+  faClock,
+  faRotateRight,
+  faCalendarDays,
+  faTriangleExclamation,
+  faChevronRight,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function NewStatsPage() {
   const [stats, setStats] = useState(null);
@@ -95,8 +107,8 @@ export default function NewStatsPage() {
     return (
       <div className={styles.container}>
         <div className={styles.error}>
-          <span className={styles.errorIcon}>⚠️</span>
-          <h2>Błąd</h2>
+          <span className={styles.errorIcon}><FontAwesomeIcon icon={faTriangleExclamation} /></span>
+          <h2>Nie udało się wczytać statystyk</h2>
           <p>{error}</p>
           <button onClick={fetchStats} className={styles.retryBtn}>
             Spróbuj ponownie
@@ -111,11 +123,12 @@ export default function NewStatsPage() {
       {/* Header */}
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>📊 Statystyki</h1>
+          <h1 className={styles.title}>Statystyki</h1>
           <p className={styles.subtitle}>Analityka ruchu i produktów</p>
         </div>
         <button onClick={fetchStats} className={styles.refreshBtn}>
-          🔄 Odśwież
+          <FontAwesomeIcon icon={faRotateRight} className={styles.btnIcon} />
+          Odśwież
         </button>
       </div>
 
@@ -135,7 +148,8 @@ export default function NewStatsPage() {
             onClick={() => setCustomMode(true)}
             className={`${styles.rangeBtn} ${styles.customBtn} ${customMode ? styles.active : ''}`}
           >
-            📅 Własny zakres
+            <FontAwesomeIcon icon={faCalendarDays} />
+            Własny zakres
           </button>
         </div>
         
@@ -148,7 +162,7 @@ export default function NewStatsPage() {
               className={styles.dateInput}
               placeholder="Od"
             />
-            <span className={styles.dateSeparator}>→</span>
+            <span className={styles.dateSeparator}>–</span>
             <input
               type="date"
               value={customTo}
@@ -166,7 +180,7 @@ export default function NewStatsPage() {
       {/* Timeline Chart */}
       {stats?.timeline && stats.timeline.length > 0 && (
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>📈 Wykres aktywności w czasie</h2>
+          <h2 className={styles.sectionTitle}>Aktywność w czasie</h2>
           <div className={styles.chartContainer}>
             <LineChart data={stats.timeline} />
           </div>
@@ -176,7 +190,7 @@ export default function NewStatsPage() {
       {/* KPI Cards */}
       <div className={styles.kpiGrid}>
         <div className={styles.kpiCard}>
-          <div className={styles.kpiIcon}>👁️</div>
+          <div className={styles.kpiIcon}><FontAwesomeIcon icon={faEye} fixedWidth /></div>
           <div className={styles.kpiContent}>
             <div className={styles.kpiValue}>{stats?.totalVisits?.toLocaleString() || 0}</div>
             <div className={styles.kpiLabel}>Wyświetlenia</div>
@@ -184,7 +198,7 @@ export default function NewStatsPage() {
         </div>
 
         <div className={styles.kpiCard}>
-          <div className={styles.kpiIcon}>👥</div>
+          <div className={styles.kpiIcon}><FontAwesomeIcon icon={faUsers} fixedWidth /></div>
           <div className={styles.kpiContent}>
             <div className={styles.kpiValue}>{stats?.uniqueVisitors?.toLocaleString() || 0}</div>
             <div className={styles.kpiLabel}>Unikalni użytkownicy</div>
@@ -192,7 +206,7 @@ export default function NewStatsPage() {
         </div>
 
         <div className={styles.kpiCard}>
-          <div className={styles.kpiIcon}>🖱️</div>
+          <div className={styles.kpiIcon}><FontAwesomeIcon icon={faArrowPointer} fixedWidth /></div>
           <div className={styles.kpiContent}>
             <div className={styles.kpiValue}>{stats?.totalClicks?.toLocaleString() || 0}</div>
             <div className={styles.kpiLabel}>Kliknięcia produktów</div>
@@ -200,7 +214,7 @@ export default function NewStatsPage() {
         </div>
 
         <div className={styles.kpiCard}>
-          <div className={styles.kpiIcon}>⏱️</div>
+          <div className={styles.kpiIcon}><FontAwesomeIcon icon={faClock} fixedWidth /></div>
           <div className={styles.kpiContent}>
             <div className={styles.kpiValue}>
               {Math.round(stats?.engagement?.avgTimeSpent || 0)}s
@@ -212,9 +226,9 @@ export default function NewStatsPage() {
 
       {/* Top Products */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>🔥 Najpopularniejsze produkty</h2>
+        <h2 className={styles.sectionTitle}>Najpopularniejsze produkty</h2>
         <div className={styles.productGrid}>
-          {stats?.topProducts?.slice(0, 8).map((product, index) => (
+          {stats?.topProducts?.length ? stats.topProducts.slice(0, 8).map((product, index) => (
             <div key={index} className={styles.productCard}>
               <div className={styles.productRank}>#{index + 1}</div>
               {product.productInfo?.image && (
@@ -233,7 +247,7 @@ export default function NewStatsPage() {
                 </div>
               </div>
             </div>
-          )) || (
+          )) : (
             <div className={styles.noData}>Brak danych o produktach</div>
           )}
         </div>
@@ -242,50 +256,50 @@ export default function NewStatsPage() {
       {/* Top Agents & Countries */}
       <div className={styles.twoColumns}>
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>📦 Najpopularniejsze agencje</h2>
+          <h2 className={styles.sectionTitle}>Najpopularniejsze agencje</h2>
           <div className={styles.listItems}>
-            {stats?.topAgents?.slice(0, 5).map((agent, index) => (
+            {stats?.topAgents?.length ? stats.topAgents.slice(0, 5).map((agent, index) => (
               <div key={index} className={styles.listItem}>
                 <span className={styles.listRank}>#{index + 1}</span>
                 <span className={styles.listLabel}>{agent._id || 'Nieznany'}</span>
                 <span className={styles.listValue}>{agent.count}</span>
               </div>
-            )) || <div className={styles.noData}>Brak danych</div>}
+            )) : <div className={styles.noData}>Brak danych</div>}
           </div>
         </div>
 
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>🌍 Top kraje - wszystkie wizyty</h2>
+          <h2 className={styles.sectionTitle}>Top kraje — wszystkie wizyty</h2>
           <div className={styles.listItems}>
-            {stats?.topCountries?.slice(0, 5).map((country, index) => (
+            {stats?.topCountries?.length ? stats.topCountries.slice(0, 5).map((country, index) => (
               <div key={index} className={styles.listItem}>
                 <span className={styles.listRank}>#{index + 1}</span>
                 <span className={styles.listLabel}>{country._id || 'Unknown'}</span>
                 <span className={styles.listValue}>{country.count}</span>
               </div>
-            )) || <div className={styles.noData}>Brak danych</div>}
+            )) : <div className={styles.noData}>Brak danych</div>}
           </div>
         </div>
       </div>
 
       {/* Top Countries for Product Clicks */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>🌍 Top kraje - kliknięcia w produkty</h2>
+        <h2 className={styles.sectionTitle}>Top kraje — kliknięcia w produkty</h2>
         <div className={styles.listItems}>
-          {stats?.topCountriesClicks?.slice(0, 5).map((country, index) => (
+          {stats?.topCountriesClicks?.length ? stats.topCountriesClicks.slice(0, 5).map((country, index) => (
             <div key={index} className={styles.listItem}>
               <span className={styles.listRank}>#{index + 1}</span>
               <span className={styles.listLabel}>{country._id || 'Unknown'}</span>
               <span className={styles.listValue}>{country.count}</span>
             </div>
-          )) || <div className={styles.noData}>Brak danych</div>}
+          )) : <div className={styles.noData}>Brak danych</div>}
         </div>
       </div>
 
       {/* Top Active Users */}
       {stats?.topUsers && stats.topUsers.length > 0 && (
         <div className={styles.section}>
-          <h2 className={styles.sectionTitle}>👥 Najaktywniejsi użytkownicy</h2>
+          <h2 className={styles.sectionTitle}>Najaktywniejsi użytkownicy</h2>
           <div className={styles.usersGrid}>
             {stats.topUsers.map((user, index) => (
               <div 
@@ -297,12 +311,12 @@ export default function NewStatsPage() {
                 <div className={styles.userRank}>#{index + 1}</div>
                 <div className={styles.userInfo}>
                   <div className={styles.userId}>
-                    🔑 {user.visitorId.substring(0, 20)}...
+                    {user.visitorId.substring(0, 20)}…
                   </div>
                   <div className={styles.userStats}>
-                    <span>🖱️ {user.clicks} kliknięć</span>
-                    <span>📦 {user.uniqueProducts} produktów</span>
-                    <span>🌍 {user.country || 'Unknown'}</span>
+                    <span><strong>{user.clicks}</strong> kliknięć</span>
+                    <span><strong>{user.uniqueProducts}</strong> produktów</span>
+                    <span>{user.country || 'Unknown'}</span>
                   </div>
                   {user.productDetails && user.productDetails.length > 0 && (
                     <div className={styles.userProducts}>
@@ -322,7 +336,7 @@ export default function NewStatsPage() {
                     </div>
                   )}
                 </div>
-                <div className={styles.userArrow}>→</div>
+                <div className={styles.userArrow}><FontAwesomeIcon icon={faChevronRight} /></div>
               </div>
             ))}
           </div>
@@ -331,13 +345,11 @@ export default function NewStatsPage() {
 
       {/* Recent Activity */}
       <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>🕒 Ostatnia aktywność</h2>
+        <h2 className={styles.sectionTitle}>Ostatnia aktywność</h2>
         <div className={styles.activityList}>
-          {stats?.recentActivity?.slice(0, 10).map((activity, index) => (
+          {stats?.recentActivity?.length ? stats.recentActivity.slice(0, 10).map((activity, index) => (
             <div key={index} className={styles.activityItem}>
-              <div className={styles.activityIcon}>
-                {activity.type === 'product_click' ? '🖱️' : '👁️'}
-              </div>
+              <span className={`${styles.activityIcon} ${activity.type === 'product_click' ? styles.activityIconClick : ''}`} />
               <div className={styles.activityContent}>
                 <div className={styles.activityText}>
                   {activity.type === 'product_click'
@@ -349,7 +361,7 @@ export default function NewStatsPage() {
                 </div>
               </div>
             </div>
-          )) || <div className={styles.noData}>Brak ostatniej aktywności</div>}
+          )) : <div className={styles.noData}>Brak ostatniej aktywności</div>}
         </div>
       </div>
 
@@ -358,31 +370,27 @@ export default function NewStatsPage() {
         <div className={styles.modalOverlay} onClick={() => setShowUserModal(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <h2>📊 Szczegóły użytkownika</h2>
-              <button onClick={() => setShowUserModal(false)} className={styles.modalClose}>✕</button>
+              <h2>Szczegóły użytkownika</h2>
+              <button onClick={() => setShowUserModal(false)} className={styles.modalClose} aria-label="Zamknij"><FontAwesomeIcon icon={faXmark} /></button>
             </div>
             
             <div className={styles.modalContent}>
               {/* Summary Cards */}
               <div className={styles.userSummaryGrid}>
                 <div className={styles.summaryCard}>
-                  <div className={styles.summaryIcon}>👁️</div>
-                  <div className={styles.summaryValue}>{selectedUser.summary.pageViews}</div>
+                                    <div className={styles.summaryValue}>{selectedUser.summary.pageViews}</div>
                   <div className={styles.summaryLabel}>Wyświetlenia</div>
                 </div>
                 <div className={styles.summaryCard}>
-                  <div className={styles.summaryIcon}>🖱️</div>
-                  <div className={styles.summaryValue}>{selectedUser.summary.productClicks}</div>
+                                    <div className={styles.summaryValue}>{selectedUser.summary.productClicks}</div>
                   <div className={styles.summaryLabel}>Kliknięcia</div>
                 </div>
                 <div className={styles.summaryCard}>
-                  <div className={styles.summaryIcon}>📦</div>
-                  <div className={styles.summaryValue}>{selectedUser.summary.uniqueProducts}</div>
+                                    <div className={styles.summaryValue}>{selectedUser.summary.uniqueProducts}</div>
                   <div className={styles.summaryLabel}>Unikalne produkty</div>
                 </div>
                 <div className={styles.summaryCard}>
-                  <div className={styles.summaryIcon}>⏱️</div>
-                  <div className={styles.summaryValue}>{selectedUser.summary.timeSpent}s</div>
+                                    <div className={styles.summaryValue}>{selectedUser.summary.timeSpent}s</div>
                   <div className={styles.summaryLabel}>Czas na stronie</div>
                 </div>
               </div>
@@ -390,25 +398,25 @@ export default function NewStatsPage() {
               {/* User Details */}
               <div className={styles.userDetails}>
                 <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>🆔 Visitor ID:</span>
+                  <span className={styles.detailLabel}>Visitor ID</span>
                   <span className={styles.detailValue}>{selectedUser.visitorId}</span>
                 </div>
                 <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>🌍 Kraj:</span>
+                  <span className={styles.detailLabel}>Kraj</span>
                   <span className={styles.detailValue}>{selectedUser.summary.country || 'Unknown'}</span>
                 </div>
                 <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>🌐 Przeglądarka:</span>
+                  <span className={styles.detailLabel}>Przeglądarka</span>
                   <span className={styles.detailValue}>{selectedUser.summary.browser}</span>
                 </div>
                 <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>📅 Pierwsza wizyta:</span>
+                  <span className={styles.detailLabel}>Pierwsza wizyta</span>
                   <span className={styles.detailValue}>
                     {new Date(selectedUser.summary.firstVisit).toLocaleString('pl-PL')}
                   </span>
                 </div>
                 <div className={styles.detailRow}>
-                  <span className={styles.detailLabel}>📅 Ostatnia wizyta:</span>
+                  <span className={styles.detailLabel}>Ostatnia wizyta</span>
                   <span className={styles.detailValue}>
                     {new Date(selectedUser.summary.lastVisit).toLocaleString('pl-PL')}
                   </span>
@@ -418,7 +426,7 @@ export default function NewStatsPage() {
               {/* Products Clicked */}
               {selectedUser.products && selectedUser.products.length > 0 && (
                 <div className={styles.userProductsSection}>
-                  <h3 className={styles.sectionSubtitle}>📦 Kliknięte produkty</h3>
+                  <h3 className={styles.sectionSubtitle}>Kliknięte produkty</h3>
                   <div className={styles.userProductsGrid}>
                     {selectedUser.products.map((product, idx) => (
                       <div key={idx} className={styles.productDetailCard}>
@@ -428,8 +436,8 @@ export default function NewStatsPage() {
                         <div className={styles.productDetailInfo}>
                           <div className={styles.productDetailName}>{product.name || 'Nieznany'}</div>
                           <div className={styles.productDetailStats}>
-                            <span>🖱️ {product.clicks} kliknięć</span>
-                            {product.category && <span>📁 {product.category}</span>}
+                            <span>{product.clicks} kliknięć</span>
+                            {product.category && <span>· {product.category}</span>}
                           </div>
                         </div>
                       </div>

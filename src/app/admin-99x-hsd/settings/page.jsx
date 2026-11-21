@@ -131,8 +131,9 @@ export default function SettingsPage() {
             <p className={styles.headerSubtitle}>Zarządzaj ustawieniami strony</p>
           </div>
         </div>
-        <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
-          Ładowanie...
+        <div className={styles.spinnerContainer}>
+          <div className={styles.loadingSpinner} />
+          <p>Ładowanie...</p>
         </div>
       </div>
     );
@@ -151,13 +152,13 @@ export default function SettingsPage() {
       <div className={styles.settingsSection}>
         <div className={styles.sectionHeader}>
           <div>
-            <h2 className={styles.sectionTitle}>Popular Products</h2>
+            <h2 className={styles.sectionTitle}>Popularne produkty</h2>
             <p className={styles.sectionSubtitle}>
               Produkty wyświetlane w sekcji "Popular Products" na głównej stronie
             </p>
           </div>
           <button 
-            className={styles.actionBtn}
+            className={`${styles.actionBtn} ${styles.btnPrimary}`}
             onClick={() => setShowAddModal(true)}
             disabled={saving}
           >
@@ -168,10 +169,9 @@ export default function SettingsPage() {
         <div className={styles.popularProductsGrid}>
           {popularProducts.length === 0 ? (
             <div className={styles.emptyState}>
-              <span style={{ fontSize: '48px', marginBottom: '16px' }}>📦</span>
-              <p>Brak produktów w sekcji Popular Products</p>
-              <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)', marginTop: '8px' }}>
-                Kliknij "Dodaj produkt" aby dodać pierwszy produkt
+              <p className={styles.emptyTitle}>Brak produktów w sekcji Popular Products</p>
+              <p className={styles.emptyHint}>
+                Kliknij „Dodaj produkt”, aby dodać pierwszy produkt.
               </p>
             </div>
           ) : (
@@ -204,36 +204,40 @@ export default function SettingsPage() {
       {/* Add Product Modal */}
       {showAddModal && (
         <div className={styles.modalOverlay} onClick={() => setShowAddModal(false)}>
-          <div className={styles.adminModal} style={{ maxWidth: '800px', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }} onClick={(e) => e.stopPropagation()}>
-            <h2 style={{ marginBottom: '16px' }}>Dodaj produkty do Popular Products</h2>
+          <div className={`${styles.adminModal} ${styles.modalLg} ${styles.modalColumn}`} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h2>Dodaj produkt do Popular Products</h2>
+              <button
+                type="button"
+                className={styles.iconBtn}
+                aria-label="Zamknij"
+                onClick={() => {
+                  setShowAddModal(false);
+                  setSelectedProductId('');
+                  setSearchQuery('');
+                }}
+              >
+                &times;
+              </button>
+            </div>
             
             {/* Search Input */}
-            <div style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom: '12px' }}>
               <input
                 type="text"
-                placeholder="🔍 Szukaj produktu..."
+                placeholder="Szukaj produktu po nazwie lub kategorii..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={styles.settingsSelect}
-                style={{ width: '100%' }}
               />
             </div>
 
             {/* Product List */}
-            <div style={{ 
-              flex: 1, 
-              overflowY: 'auto', 
-              marginBottom: '16px',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '8px',
-              background: 'rgba(255,255,255,0.03)'
-            }}>
+            <div className={styles.pickList}>
               {availableProducts.length === 0 ? (
-                <div style={{ padding: '40px', textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
-                  <p>Wszystkie produkty zostały już dodane</p>
-                </div>
+                <p className={styles.emptyText}>Wszystkie produkty zostały już dodane</p>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div>
                   {availableProducts
                     .filter(p => 
                       searchQuery === '' || 
@@ -250,41 +254,12 @@ export default function SettingsPage() {
                             setSelectedProductId(product.id);
                           }
                         }}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '12px',
-                          padding: '12px',
-                          cursor: 'pointer',
-                          background: selectedProductId === product.id ? 'rgba(255,255,255,0.1)' : 'transparent',
-                          borderBottom: '1px solid rgba(255,255,255,0.05)',
-                          transition: 'background 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (selectedProductId !== product.id) {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (selectedProductId !== product.id) {
-                            e.currentTarget.style.background = 'transparent';
-                          }
-                        }}
+                        className={`${styles.pickItem} ${selectedProductId === product.id ? styles.pickItemSelected : ''}`}
                       >
                         {/* Checkbox */}
-                        <div style={{
-                          width: '20px',
-                          height: '20px',
-                          border: '2px solid rgba(255,255,255,0.3)',
-                          borderRadius: '4px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          background: selectedProductId === product.id ? '#fff' : 'transparent',
-                          flexShrink: 0
-                        }}>
+                        <div className={styles.pickCheck}>
                           {selectedProductId === product.id && (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#09090b" strokeWidth="3.5">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
                           )}
@@ -294,33 +269,16 @@ export default function SettingsPage() {
                         <img 
                           src={product.image} 
                           alt={product.name}
-                          style={{
-                            width: '50px',
-                            height: '50px',
-                            objectFit: 'cover',
-                            borderRadius: '6px',
-                            flexShrink: 0
-                          }}
+                          className={styles.pickImg}
                         />
 
                         {/* Product Info */}
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ 
-                            fontSize: '14px', 
-                            fontWeight: 600, 
-                            color: '#fff',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}>
+                          <div className={styles.pickName}>
                             {product.name}
                           </div>
-                          <div style={{ 
-                            fontSize: '12px', 
-                            color: 'rgba(255,255,255,0.6)',
-                            marginTop: '2px'
-                          }}>
-                            ${product.price} • {product.category} • {product.batch}
+                          <div className={styles.pickMeta}>
+                            ${product.price} · {product.category} · {product.batch}
                           </div>
                         </div>
                       </div>
@@ -347,6 +305,7 @@ export default function SettingsPage() {
                 type="button"
                 onClick={handleAddProduct}
                 disabled={saving || !selectedProductId}
+                className={styles.btnPrimary}
               >
                 {saving ? 'Dodawanie...' : 'Dodaj zaznaczony'}
               </button>

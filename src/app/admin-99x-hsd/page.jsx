@@ -4,6 +4,8 @@ import styles from "@/styles/Admin.module.css";
 import { ProductDB, supabaseAdmin } from "@/lib/supabase";
 import Link from "next/link";
 import { parseUA } from "@/utils/uaParser";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBoxOpen, faEye, faArrowPointer } from "@fortawesome/free-solid-svg-icons";
 
 export default async function AdminDashboard() {
   const session = await auth();
@@ -114,39 +116,39 @@ export default async function AdminDashboard() {
     <div className={styles.adminContainer}>
       <header className={styles.adminHeader}>
         <div>
-          <h1>Witaj, {session?.user?.name || 'Admin'} 👋</h1>
-          <p className={styles.headerSubtitle}>Przegląd zarządzania produktami RepFinder</p>
+          <h1>Witaj, {session?.user?.name || 'Admin'}</h1>
+          <p className={styles.headerSubtitle}>Przegląd ruchu i produktów RepFinder z ostatnich 30 dni</p>
         </div>
         <div className={styles.adminNav}>
-          <Link href="/admin-99x-hsd/products" className={styles.navLink}>Zarządzaj Produktami</Link>
+          <Link href="/admin-99x-hsd/products" className={styles.navLink}>Zarządzaj produktami</Link>
         </div>
       </header>
 
       <div className={styles.statsGrid}>
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>📦</div>
+          <div className={styles.statIcon}><FontAwesomeIcon icon={faBoxOpen} fixedWidth /></div>
           <div className={styles.statContent}>
-            <h3>Wszystkie Produkty</h3>
-            <p className={styles.statValue}>{productCount || 0}</p>
+            <h3>Wszystkie produkty</h3>
+            <p className={styles.statValue}>{(productCount || 0).toLocaleString('pl-PL')}</p>
             <span className={styles.statLabel}>Aktywnych w bazie</span>
           </div>
         </div>
 
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>👁️</div>
+          <div className={styles.statIcon}><FontAwesomeIcon icon={faEye} fixedWidth /></div>
           <div className={styles.statContent}>
             <h3>Wizyty na stronie</h3>
-            <p className={styles.statValue}>{totalVisits || 0}</p>
-            <span className={styles.statLabel}>Całkowita liczba wejść</span>
+            <p className={styles.statValue}>{(totalVisits || 0).toLocaleString('pl-PL')}</p>
+            <span className={styles.statLabel}>Ostatnie 30 dni</span>
           </div>
         </div>
 
         <div className={styles.statCard}>
-          <div className={styles.statIcon}>🖱️</div>
+          <div className={styles.statIcon}><FontAwesomeIcon icon={faArrowPointer} fixedWidth /></div>
           <div className={styles.statContent}>
-            <h3>Wszystkie Kliknięcia</h3>
-            <p className={styles.statValue}>{totalClicks || 0}</p>
-            <span className={styles.statLabel}>Zainteresowanie produktami</span>
+            <h3>Kliknięcia produktów</h3>
+            <p className={styles.statValue}>{(totalClicks || 0).toLocaleString('pl-PL')}</p>
+            <span className={styles.statLabel}>Ostatnie 30 dni</span>
           </div>
         </div>
       </div>
@@ -155,7 +157,7 @@ export default async function AdminDashboard() {
         {/* Top Products */}
         <div className={styles.dashboardCard}>
           <div className={styles.cardHeader}>
-            <h2>🔥 Top 5 Produktów</h2>
+            <h2>Top 5 produktów</h2>
           </div>
           <div className={styles.cardContent}>
             {topProducts?.length > 0 ? topProducts.map((p, i) => (
@@ -177,12 +179,12 @@ export default async function AdminDashboard() {
         {/* Top Agents */}
         <div className={styles.dashboardCard}>
           <div className={styles.cardHeader}>
-            <h2>📦 Najczęściej wybierany Agent</h2>
+            <h2>Najczęściej wybierani agenci</h2>
           </div>
           <div className={styles.cardContent}>
             {topAgents?.length > 0 ? topAgents.map((a, i) => (
               <div key={i} className={styles.listItem}>
-                <span className={styles.itemName} style={{ textTransform: 'capitalize', fontWeight: 600 }}>{a._id || 'Auto'}</span>
+                <span className={`${styles.itemName} ${styles.itemNameCaps}`}>{a._id || 'Auto'}</span>
                 <span className={styles.itemBadge}>{a.count} razy</span>
               </div>
             )) : <p className={styles.emptyText}>Brak danych o agentach.</p>}
@@ -190,25 +192,28 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Recent Activity Log */}
-        <div className={styles.dashboardCard} style={{ gridColumn: 'span 2' }}>
+        <div className={`${styles.dashboardCard} ${styles.dashboardCardWide}`}>
           <div className={styles.cardHeader}>
-            <h2>🕒 Ostatnia Aktywność</h2>
+            <h2>Ostatnia aktywność</h2>
           </div>
           <div className={styles.cardContent}>
             {recentActivity?.length > 0 ? recentActivity.map((act, i) => (
               <div key={i} className={styles.activityRow}>
-                <div>
-                  <span className={styles.activityType}>
-                    {act.type === 'page_view' ? '👀 Wizyta na stronie' : '🖱️ Kliknięcie produktu'}
-                  </span>
-                  <div className={styles.activityDetails}>
-                    {act.path || '/'} • {parseUA(act.userAgent)}
-                  </div>
-                  {act.productId && (
-                    <div className={styles.activityProduct}>
-                      Produkt: {act.productId.name}
+                <div className={styles.activityMain}>
+                  <span className={`${styles.activityDot} ${act.type === 'page_view' ? '' : styles.activityDotClick}`} />
+                  <div>
+                    <span className={styles.activityType}>
+                      {act.type === 'page_view' ? 'Wizyta na stronie' : 'Kliknięcie produktu'}
+                    </span>
+                    <div className={styles.activityDetails}>
+                      {act.path || '/'} · {parseUA(act.userAgent)}
                     </div>
-                  )}
+                    {act.productId && (
+                      <div className={styles.activityProduct}>
+                        Produkt: {act.productId.name}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <span className={styles.activityTime}>
                   {new Date(act.timestamp).toLocaleString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}

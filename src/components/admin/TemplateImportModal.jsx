@@ -105,17 +105,17 @@ export default function TemplateImportModal({
     try {
       const parsed = await fetchGoogleSheetsData(templateUrl);
       setParsedUrlData(parsed);
-      if (showToast) showToast(`✅ Załadowano ${parsed.length} produktów z Google Sheets!`, 'success');
+      if (showToast) showToast(`Załadowano ${parsed.length} produktów z Google Sheets.`, 'success');
     } catch (error) {
       console.error('Google Sheets error:', error);
       const errorMessage = error.message || 'Failed to load Google Sheets data';
       if (showToast) {
         if (errorMessage.includes('access denied') || errorMessage.includes('403')) {
-          showToast('❌ Brak dostępu do arkusza. Ustaw udostępnianie na "Każdy, kto ma link, może przeglądać".', 'error');
+          showToast('Brak dostępu do arkusza. Ustaw udostępnianie na "Każdy, kto ma link, może przeglądać".', 'error');
         } else if (errorMessage.includes('empty')) {
-          showToast('❌ Arkusz Google Sheets jest pusty lub nie ma danych.', 'error');
+          showToast('Arkusz Google Sheets jest pusty lub nie ma danych.', 'error');
         } else {
-          showToast(`❌ Błąd: ${errorMessage}`, 'error');
+          showToast(`Błąd: ${errorMessage}`, 'error');
         }
       }
       setParsedUrlData([]);
@@ -335,7 +335,7 @@ export default function TemplateImportModal({
                   disabled={bulkLoading}
                   style={{ display: 'none' }}
                 />
-                <span>📝 {t('Paste Text')}</span>
+                <span>{t('Paste Text')}</span>
               </label>
               <label style={{
                 flex: 1,
@@ -361,7 +361,7 @@ export default function TemplateImportModal({
                   disabled={bulkLoading}
                   style={{ display: 'none' }}
                 />
-                <span>📁 {t('Upload File')}</span>
+                <span>{t('Upload File')}</span>
               </label>
               <label style={{
                 flex: 1,
@@ -387,7 +387,7 @@ export default function TemplateImportModal({
                   disabled={bulkLoading}
                   style={{ display: 'none' }}
                 />
-                <span>🔗 {t('Google Sheets URL')}</span>
+                <span>{t('Google Sheets URL')}</span>
               </label>
             </div>
           </div>
@@ -452,7 +452,7 @@ export default function TemplateImportModal({
                   disabled={bulkLoading || loadingSheets || !templateUrl.trim()}
                   style={{ padding: '8px 16px', background: '#fff', color: '#000', border: 'none', borderRadius: '4px', cursor: loadingSheets ? 'not-allowed' : 'pointer', opacity: (loadingSheets || !templateUrl.trim()) ? 0.5 : 1 }}
                 >
-                  {loadingSheets ? '⏳' : '🔄'}
+                  {loadingSheets ? '…' : '↻'}
                 </button>
               </div>
               <span style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.6)', fontStyle: 'italic' }}>
@@ -555,7 +555,7 @@ export default function TemplateImportModal({
               <option value="best" style={{ background: '#0a0a0a', color: 'white' }}>{t('Best')}</option>
               <option value="budget" style={{ background: '#0a0a0a', color: 'white' }}>{t('Budget')}</option>
               <option value="random" style={{ background: '#0a0a0a', color: 'white' }}>{t('Random')}</option>
-              <option value="popular" style={{ background: '#0a0a0a', color: 'white' }}>{t('Popular')} 🔥</option>
+              <option value="popular" style={{ background: '#0a0a0a', color: 'white' }}>{t('Popular')}</option>
             </select>
           </div>
 
@@ -577,20 +577,20 @@ export default function TemplateImportModal({
                 cursor: 'pointer'
               }}
             >
-              <option value="auto" style={{ background: '#0a0a0a', color: 'white' }}>🤖 {t('Auto-detect (AI)')}</option>
-              <option value="shoes" style={{ background: '#0a0a0a', color: 'white' }}>👟 Shoes</option>
-              <option value="hoodies" style={{ background: '#0a0a0a', color: 'white' }}>🧥 Hoodies</option>
-              <option value="t-shirts" style={{ background: '#0a0a0a', color: 'white' }}>👕 T-Shirts</option>
-              <option value="longsleeve" style={{ background: '#0a0a0a', color: 'white' }}>👔 Longsleeve</option>
-              <option value="pants" style={{ background: '#0a0a0a', color: 'white' }}>👖 Pants</option>
-              <option value="shorts" style={{ background: '#0a0a0a', color: 'white' }}>🩳 Shorts</option>
-              <option value="jackets" style={{ background: '#0a0a0a', color: 'white' }}>🧥 Jackets</option>
-              <option value="sets" style={{ background: '#0a0a0a', color: 'white' }}>👔 Sets</option>
-              <option value="bags" style={{ background: '#0a0a0a', color: 'white' }}>🎒 Bags & backpacks</option>
+              <option value="auto" style={{ background: '#0a0a0a', color: 'white' }}>{t('Auto-detect (AI)')}</option>
+              <option value="shoes" style={{ background: '#0a0a0a', color: 'white' }}>Shoes</option>
+              <option value="hoodies" style={{ background: '#0a0a0a', color: 'white' }}>Hoodies</option>
+              <option value="t-shirts" style={{ background: '#0a0a0a', color: 'white' }}>T-Shirts</option>
+              <option value="longsleeve" style={{ background: '#0a0a0a', color: 'white' }}>Longsleeve</option>
+              <option value="pants" style={{ background: '#0a0a0a', color: 'white' }}>Pants</option>
+              <option value="shorts" style={{ background: '#0a0a0a', color: 'white' }}>Shorts</option>
+              <option value="jackets" style={{ background: '#0a0a0a', color: 'white' }}>Jackets</option>
+              <option value="sets" style={{ background: '#0a0a0a', color: 'white' }}>Sets</option>
+              <option value="bags" style={{ background: '#0a0a0a', color: 'white' }}>Bags & backpacks</option>
               <option value="accessories" style={{ background: '#0a0a0a', color: 'white' }}>⌚ Accessories</option>
-              <option value="headwear" style={{ background: '#0a0a0a', color: 'white' }}>🧢 Headwear</option>
-              <option value="belts" style={{ background: '#0a0a0a', color: 'white' }}>👖 Belts</option>
-              <option value="electronics" style={{ background: '#0a0a0a', color: 'white' }}>📱 Electronics</option>
+              <option value="headwear" style={{ background: '#0a0a0a', color: 'white' }}>Headwear</option>
+              <option value="belts" style={{ background: '#0a0a0a', color: 'white' }}>Belts</option>
+              <option value="electronics" style={{ background: '#0a0a0a', color: 'white' }}>Electronics</option>
             </select>
             {bulkCategory !== 'auto' && (
               <div style={{ fontSize: '11px', color: '#60a5fa', fontStyle: 'italic' }}>
@@ -614,7 +614,7 @@ export default function TemplateImportModal({
             <div style={{ marginBottom: '20px', padding: '20px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.08)', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', fontSize: '15px', fontWeight: 'bold' }}>
                 <span style={{ color: '#ffffff', fontSize: '16px' }}>
-                  📦 {t('Processing:')} {bulkProgress.current} / {bulkProgress.total}
+                  {t('Processing:')} {bulkProgress.current} / {bulkProgress.total}
                 </span>
                 <div style={{ display: 'flex', gap: '16px' }}>
                   <span style={{ color: '#34d399', fontSize: '15px' }}>✓ {bulkProgress.successes}</span>
@@ -629,7 +629,7 @@ export default function TemplateImportModal({
                   {bulkProgress.logs.slice(0, 8).map((log, index) => (
                     <div key={`${log.itemId || index}-${index}`} style={{ display: 'grid', gridTemplateColumns: '82px minmax(0, 1fr)', gap: '8px', fontSize: '13px', color: '#ffffff', padding: '4px 0' }}>
                       <span style={{ color: log.status === 'success' ? '#34d399' : log.status === 'error' ? '#ef4444' : log.status === 'warning' ? '#fbbf24' : log.status === 'processing' ? '#60a5fa' : '#fbbf24', fontWeight: 700 }}>
-                        {log.status === 'success' ? (log.action || 'ok') : log.status === 'warning' ? '⚠️' : log.status === 'processing' ? '⏳' : log.status}
+                        {log.status === 'success' ? (log.action || 'ok') : log.status === 'warning' ? 'warning' : log.status === 'processing' ? '…' : log.status}
                       </span>
                       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'rgba(255, 255, 255, 0.9)' }}>
                         {log.name || log.message || log.url}
