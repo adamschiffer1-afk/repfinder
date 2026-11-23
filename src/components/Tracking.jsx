@@ -26,6 +26,13 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import TrackingGlobe from './TrackingGlobe';
 
+// "PL" -> "Polska" for display (the API keeps the code, the delivery estimate needs it)
+const countryDisplayName = (value) => {
+  const v = (value || 'PL').trim();
+  const name = COUNTRY_MAP[v.toUpperCase()];
+  return name ? name.charAt(0) + name.slice(1).toLowerCase() : v;
+};
+
 const COUNTRY_MAP = {
   'PL': 'POLSKA',
   'DE': 'NIEMCY',
@@ -133,6 +140,10 @@ export default function Tracking() {
     if (!trackingData?.Szczegóły_przesyłki) return [];
 
     const getCountryInfo = (item) => {
+      // The API assigns each event's country by following the parcel's route.
+      if (item.Kraj) {
+        return { code: item.Kraj, name: (item.KrajNazwa || COUNTRY_MAP[item.Kraj] || item.Kraj).toUpperCase() };
+      }
       const location = (item.Lokalizacja || '').toLowerCase();
       const originalLocation = (item.OriginalLocation || '').toLowerCase();
       const originalStatus = (item.OriginalStatus || '').toLowerCase();
@@ -560,7 +571,7 @@ export default function Tracking() {
                   </div>
                   <div className={styles.infoItem}>
                     <FontAwesomeIcon icon={faGlobe} />
-                    <span><strong>{t('tracking.country')}:</strong> {translateLocationFe(trackingData.Informacje_główne.Kraj || 'Polska', language)}</span>
+                    <span><strong>{t('tracking.country')}:</strong> {translateLocationFe(countryDisplayName(trackingData.Informacje_główne.Kraj), language)}</span>
                   </div>
                   <div className={styles.infoItem}>
                     <FontAwesomeIcon icon={faCalendarAlt} />
@@ -656,7 +667,7 @@ export default function Tracking() {
 
             <div className={styles.locationSection}>
               <p className={styles.statusLabel}>{t('tracking.location')}:</p>
-              <p className={styles.locationLabel}>{translateLocationFe(trackingData.Informacje_główne.Kraj || 'Polska', language)}</p>
+              <p className={styles.locationLabel}>{translateLocationFe(countryDisplayName(trackingData.Informacje_główne.Kraj), language)}</p>
             </div>
 
             {/* ── ESTIMATED DELIVERY IN GLOBE PANEL ── */}

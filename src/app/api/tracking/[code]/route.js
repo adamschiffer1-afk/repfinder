@@ -65,7 +65,7 @@ function translateStatus(record, date = '') {
         'Leave the scan': 'Skanowanie wyjścia',
         'Receiving Scan': 'Skanowanie odbioru',
         'Export customs clearance completed': 'Eksportowa odprawa celna zakończona',
-        'Dismantling the board': 'Demontaż z pokładu',
+        'Dismantling the board': 'Rozładunek palet po przylocie',
         'The flight has arrived': 'Lot dotarł',
         'Flight has arrived': 'Lot dotarł',
         '已交仓，等待扫描提取': 'Dostarczone do magazynu, oczekuje na skanowanie i odbiór',
@@ -86,20 +86,19 @@ function translateStatus(record, date = '') {
         '清关完成': 'Odprawa celna zakończona',
         '航班排航中': 'Loty są w trakcie planowania',
         '货物移交航司': 'Przekazanie ładunku przewoźnikowi',
-        '货物已出货': 'Wysłane towary',
+        '货物已出货': 'Przesyłka została wysłana',
         '航班已抵达': 'Lot dotarł',
-        '货物已收货': 'Otrzymane towary',
+        '货物已收货': 'Przesyłka została przyjęta',
         'Flight has departed': 'Lot odleciał',
-        'Dismantling the board': 'Demontaż z pokładu',
         'Expected flight on July 9st': 'Przewidywany lot 9 lipca',
-        '到达【AMS】': 'Przyjazd do [AMS]',
-        '出发【上海】': 'Wylot [Szanghaj]',
+        '到达【AMS】': 'Przylot do: Amsterdam',
+        '出发【上海】': 'Wylot z: Szanghaj',
         '出口清关完毕': 'Zakończono odprawę celną eksportową',
         '包裹到达始发地海关【上海】，等待清关': 'Przesyłka dociera do urzędu celnego w miejscu nadania [Szanghaj] i oczekuje na odprawę celną',
-        '快件到达机场': 'Ekspres przyjeżdża na lotnisko',
+        '快件到达机场': 'Przesyłka dotarła na lotnisko',
         '包裹发出仓库': 'Przesyłka została wysłana z magazynu',
-        '货物离开操作中心': 'Towar opuszcza centrum operacyjne',
-        '到达操作中心': 'Dotarłem do centrum operacyjnego',
+        '货物离开操作中心': 'Przesyłka opuściła centrum operacyjne',
+        '到达操作中心': 'Przesyłka dotarła do centrum operacyjnego',
         '已收到发货信息': 'Otrzymano informację o wysyłce',
         '目的国清关完成': 'Odprawa celna w miejscu przeznaczenia zakończona',
         '预计7-9号航班起飞': 'Przewidywany lot 9 lipca',
@@ -111,14 +110,90 @@ function translateStatus(record, date = '') {
         .replace(/transit$/, '')
         .replace(/pickup$/, '')
         .replace(/\(Homepage.*?\)/, '')
+        .replace(/\s+/g, ' ')
         .trim();
 
     // Zachowaj prefiks 签收 dla statusu dostarczenia
     let prefix = cleanRecord.startsWith('签收') ? '签收' : '';
     cleanRecord = cleanRecord.replace(/^签收/, '').trim();
 
-    // Zwróć przetłumaczony status z prefiksem lub oryginalny jeśli brak tłumaczenia
-    return statusTranslations[cleanRecord] ? `${prefix}${statusTranslations[cleanRecord]}` : `${prefix}${cleanRecord}`;
+    const translated = statusTranslations[cleanRecord] || translateByRules(cleanRecord, statusTranslations);
+    return `${prefix}${translated}`;
+}
+
+// Kody lotnisk i chińskie nazwy miast, które pojawiają się w statusach i lokalizacjach.
+const AIRPORTS = {
+    AMS: 'Amsterdam', WAW: 'Warszawa', LGG: 'Liège', LEJ: 'Lipsk', FRA: 'Frankfurt', CGN: 'Kolonia',
+    BUD: 'Budapeszt', PRG: 'Praga', LHR: 'Londyn', CDG: 'Paryż', PVG: 'Szanghaj', SHA: 'Szanghaj',
+    HKG: 'Hongkong', CAN: 'Kanton', SZX: 'Shenzhen', PEK: 'Pekin', NGB: 'Ningbo', HGH: 'Hangzhou',
+};
+const CN_CITIES = {
+    上海: 'Szanghaj', 北京: 'Pekin', 广州: 'Kanton', 深圳: 'Shenzhen', 杭州: 'Hangzhou', 义乌: 'Yiwu',
+    东莞: 'Dongguan', 莆田: 'Putian', 泉州: 'Quanzhou', 厦门: 'Xiamen', 福州: 'Fuzhou', 宁波: 'Ningbo',
+    苏州: 'Suzhou', 南京: 'Nankin', 天津: 'Tianjin', 青岛: 'Qingdao', 郑州: 'Zhengzhou', 成都: 'Chengdu',
+    重庆: 'Chongqing', 武汉: 'Wuhan', 长沙: 'Changsha', 佛山: 'Foshan', 温州: 'Wenzhou', 香港: 'Hongkong',
+};
+const MONTHS = { january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8, september: 9, october: 10, november: 11, december: 12 };
+
+function placeName(raw) {
+    const p = String(raw || '').trim();
+    if (AIRPORTS[p.toUpperCase()]) return AIRPORTS[p.toUpperCase()];
+    const city = p.replace(/(市|省|区)$/u, '');
+    return CN_CITIES[city] || p;
+}
+
+const hasChinese = (s) => /[一-鿿]/.test(s);
+
+// Reguły dla statusów, które zawierają zmienne fragmenty (miasto, lotnisko, data)
+// albo mieszają chiński z angielskim.
+function translateByRules(s, dict) {
+    let m;
+    if ((m = s.match(/^(?:抵达|到达)【(.+?)】/))) return `Przylot do: ${placeName(m[1])}`;
+    if ((m = s.match(/^(?:启运|出发)【(.+?)】/))) return `Wylot z: ${placeName(m[1])}`;
+    if ((m = s.match(/(?:快件|包裹)到达始发地海关【(.+?)】/))) return `Przesyłka dotarła do urzędu celnego w miejscu nadania (${placeName(m[1])}), oczekuje na odprawę`;
+    if ((m = s.match(/预计(\d{1,2})-(\d{1,2})号?的?航班/))) return `Przewidywany lot: ${m[2]}.${m[1].padStart(2, '0')}`;
+    if ((m = s.match(/Expected flight on (\w+) (\d{1,2})(?:st|nd|rd|th)?/i)) && MONTHS[m[1].toLowerCase()]) {
+        return `Przewidywany lot: ${m[2]}.${String(MONTHS[m[1].toLowerCase()]).padStart(2, '0')}`;
+    }
+
+    const zh = [
+        [/目的(?:地|国)清关完成/, 'Odprawa celna w kraju docelowym zakończona'],
+        [/出口清关完(?:成|毕)/, 'Eksportowa odprawa celna zakończona'],
+        [/清关完成.*(?:等待提取|等待扫描)/, 'Odprawa celna zakończona, oczekuje na skanowanie i odbiór'],
+        [/快件已出库|包裹发出仓库/, 'Przesyłka wydana z magazynu'],
+        [/到达收货点/, 'Przesyłka dotarła do punktu przyjęć'],
+        [/拆板/, 'Rozładunek palet po przylocie'],
+        [/货物移交航司/, 'Przekazanie przesyłki liniom lotniczym'],
+        [/快件到达机场/, 'Przesyłka dotarła na lotnisko'],
+        [/货物离开操作中心/, 'Przesyłka opuściła centrum operacyjne'],
+        [/到达操作中心/, 'Przesyłka dotarła do centrum operacyjnego'],
+        [/航班已起飞/, 'Lot odleciał'],
+        [/航班已抵达/, 'Lot dotarł'],
+        [/货物电子信息已经收到|已收到发货信息/, 'Otrzymano elektroniczne informacje o przesyłce'],
+    ];
+    for (const [re, pl] of zh) if (re.test(s)) return pl;
+
+    const en = [
+        [/processed in the parcel cent(?:er|re) of origin/i, 'Przesyłka została przetworzona w centrum nadawczym'],
+        [/processed in the destination parcel cent(?:er|re)/i, 'Przesyłka została przetworzona w docelowym centrum obsługi paczek'],
+        [/processed in the export parcel cent(?:er|re)/i, 'Przesyłka została przetworzona w centrum eksportowym'],
+        [/processed in the parcel cent(?:er|re)/i, 'Przesyłka została przetworzona w centrum dystrybucyjnym'],
+        [/successfully delivered/i, 'Przesyłka została pomyślnie dostarczona'],
+        [/out for delivery|loaded onto the delivery vehicle/i, 'Przesyłka w doręczeniu'],
+        [/customs clearance completed/i, 'Odprawa celna zakończona'],
+        [/handover to airline/i, 'Przekazanie przesyłki liniom lotniczym'],
+        [/flight has departed/i, 'Lot odleciał'],
+        [/flight has arrived/i, 'Lot dotarł'],
+        [/dismantling the board/i, 'Rozładunek palet po przylocie'],
+    ];
+    for (const [re, pl] of en) if (re.test(s)) return pl;
+
+    // Chiński z angielskim dopiskiem: spróbuj przetłumaczyć część angielską, a jak się nie da, pokaż ją.
+    if (hasChinese(s)) {
+        const latin = s.replace(/[一-鿿【】，、：（）]+/g, ' ').replace(/\s+/g, ' ').trim();
+        if (latin && /[a-z]{3}/i.test(latin)) return dict[latin] || latin;
+    }
+    return s;
 }
 
 // ─── Funkcja obliczania przewidywanego czasu dostawy ──────────────────────────
@@ -369,7 +444,18 @@ function formatLocation(location) {
     }
     
     const cleanLocation = location.trim();
-    
+
+    // Chinese place names -> "Szanghaj, Chiny"
+    if (/[一-鿿]/.test(cleanLocation)) {
+        return `${placeName(cleanLocation)}, Chiny`;
+    }
+    // "Rudnik Nad Sanem,PL" -> "Rudnik Nad Sanem, Polska"
+    const cityCc = cleanLocation.match(/^(.+?)\s*,\s*([A-Z]{2})$/);
+    if (cityCc && locationMappings[cityCc[2]]) {
+        return `${cityCc[1].trim()}, ${locationMappings[cityCc[2]]}`;
+    }
+    if (/^poznan$/i.test(cleanLocation)) return 'Poznań';
+
     // Jeśli zawiera nazwę miasta polskiego
     if (cleanLocation.includes('STALOWA WOLA') || cleanLocation.includes('WARSZAWA') || 
         cleanLocation.includes('KRAKÓW') || cleanLocation.includes('GDAŃSK') ||
@@ -415,6 +501,71 @@ function formatLocation(location) {
     
     // Zwróć oryginalną lokalizację jeśli nie ma mapowania
     return cleanLocation;
+}
+
+// ─── Kraj każdego zdarzenia (trasa przesyłki) ────────────────────────────────
+// The location column is unreliable: on the DHL leg it often just repeats the
+// destination country ("PL") for events that happen in Germany, and some China
+// events carry "NL". A parcel never goes back along its route, so we walk the
+// events oldest -> newest, change country only on solid evidence (a real city or
+// airport, or an unambiguous status) and never move backwards.
+const COUNTRY_NAMES = { CN: 'Chiny', HK: 'Hongkong', NL: 'Holandia', BE: 'Belgia', DE: 'Niemcy', HU: 'Węgry', CZ: 'Czechy', PL: 'Polska', GB: 'Wielka Brytania', FR: 'Francja' };
+const AIRPORT_COUNTRY = { AMS: 'NL', LGG: 'BE', BRU: 'BE', LEJ: 'DE', FRA: 'DE', CGN: 'DE', MUC: 'DE', BUD: 'HU', PRG: 'CZ', WAW: 'PL', LHR: 'GB', CDG: 'FR', HKG: 'HK', PVG: 'CN', SHA: 'CN', CAN: 'CN', SZX: 'CN', PEK: 'CN', NGB: 'CN', HGH: 'CN' };
+const CITY_COUNTRY = [
+    [/poznan|poznań|stryk[oó]w|stalowa wola|rudnik|warszawa|wroc[lł]aw|krak[oó]w|gda[nń]sk|[lł][oó]d[zź]|katowice|piotrk[oó]w|t[oó]ru[nń]|bia[lł]ystok|lublin|rzesz[oó]w|szczecin|bydgoszcz/i, 'PL'],
+    [/r[uü]dersdorf|bremen|hamburg|leipzig|lipsk|berlin|frankfurt|k[oö]ln|cologne|hannover|n[uü]rnberg|staufenberg|aschheim|krefeld|dortmund|kassel|magdeburg|saulheim/i, 'DE'],
+    [/amsterdam|schiphol|rotterdam|eindhoven|oirschot|vijfhuizen|veenendaal|hoofddorp/i, 'NL'],
+    [/li[eè]ge|brussels|bruksela|antwerp/i, 'BE'],
+];
+// Route stage of each country: origin (0) -> arrival hub (1) -> transit hub (2) -> destination (3).
+function stageOf(code, dest) {
+    if (code === dest) return 3;
+    if (code === 'CN' || code === 'HK') return 0;
+    if (code === 'DE' || code === 'CZ') return 2;
+    return 1;
+}
+
+function evidenceFor(ev, dest) {
+    const loc = ev.OriginalLocation || '';
+    const st = ev.OriginalStatus || '';
+    // 1) a real place in the location column
+    if (/[一-鿿]/.test(loc)) return 'CN';
+    for (const [re, cc] of CITY_COUNTRY) if (re.test(loc)) return cc;
+    const withCc = loc.match(/,\s*([A-Z]{2})\s*$/);          // "Rudnik Nad Sanem,PL"
+    if (withCc && loc.length > 4) return withCc[1];
+    // 2) unambiguous statuses
+    if (/签收|successfully delivered|delivered successfully/i.test(st)) return dest;
+    let m;
+    if ((m = st.match(/(?:抵达|到达)【([A-Z]{3})】/)) && AIRPORT_COUNTRY[m[1]]) return AIRPORT_COUNTRY[m[1]];
+    if (/启运|出发|始发地海关|出口清关|快件到达机场|快件已出库|到达收货点|操作中心|货物移交航司|航班已起飞|flight has departed|handover to airline|export customs|预计.*航班|expected flight/i.test(st)) return 'CN';
+    if (/delivery vehicle|out for delivery|prepared for delivery|arrived in the destination country/i.test(st)) return dest;
+    return null; // bare country codes, generic DHL steps, info-only events: no evidence
+}
+
+function assignCountries(events, dest) {
+    const chrono = [...events].sort((a, b) => new Date(a.OriginalDate) - new Date(b.OriginalDate));
+    let current = 'CN';
+    let arrived = false; // after the flight landed, generic DHL hub steps happen in the transit hub
+    for (const ev of chrono) {
+        let cc = evidenceFor(ev, dest);
+        const st = ev.OriginalStatus || '';
+        if (/航班已抵达|flight has arrived|拆板|dismantling|目的地清关|目的国清关|customs clearance completed pending/i.test(st)) {
+            arrived = true;
+            if (!cc && stageOf(current, dest) === 0) {
+                const label = (ev.OriginalLocation || '').trim().toUpperCase();
+                cc = label && label !== dest && COUNTRY_NAMES[label] && stageOf(label, dest) === 1 ? label : 'NL';
+            }
+        }
+        // Generic DHL steps (pick-up, origin parcel center, line-haul) after landing but
+        // before any evidence of the destination country: the German DHL hub.
+        if (!cc && arrived && stageOf(current, dest) < 2 &&
+            /pick-up was successful|parcel center of origin|loaded to movement|movement \/ tour vehicle arrived|instruction data/i.test(st)) {
+            cc = 'DE';
+        }
+        if (cc && stageOf(cc, dest) >= stageOf(current, dest)) current = cc;
+        ev.Kraj = current;
+        ev.KrajNazwa = COUNTRY_NAMES[current] || current;
+    }
 }
 
 // ─── Pobieranie z serwera IP (skraper) ────────────────────────────────────────
@@ -468,15 +619,25 @@ async function fetchFromApi(apiUrl, trackingCode) {
             return dateB - dateA; // Sortowanie malejące (najnowsze pierwsze)
         });
 
+        // Header: read fields by their column label, not by position (the server
+        // added a "渠道转单号" column once and every field shifted by one).
         const mainInfo = {};
-        $('.menu_ ul:nth-child(2) li').each((index, element) => {
-            const text = $(element).text().trim();
-            if (index === 0) mainInfo['Numer referencyjny'] = text;
-            if (index === 1) mainInfo['Numer śledzenia'] = text;
-            if (index === 2) mainInfo['Kraj'] = text;
-            if (index === 3) mainInfo['Data'] = text;
-            if (index === 4) mainInfo['Ostatni status'] = translateStatus(text.split('/')[0].trim());
-        });
+        const labels = $('.menu_ ul').eq(0).find('li').map((i, el) => $(el).text().trim()).get();
+        const values = $('.menu_ ul').eq(1).find('li').map((i, el) => $(el).text().trim()).get();
+        const field = (...names) => {
+            const i = labels.findIndex(l => names.some(n => l.includes(n)));
+            return i >= 0 ? (values[i] || '') : '';
+        };
+        mainInfo['Numer referencyjny'] = field('参考号', 'Reference');
+        mainInfo['Numer śledzenia'] = field('跟踪号码', 'Tracking');
+        const carrierNo = field('渠道转单号', 'Transfer');
+        if (carrierNo) mainInfo['Numer przewoźnika'] = carrierNo;
+        mainInfo['Kraj'] = field('目的地', 'Destination');
+        mainInfo['Data'] = field('当地时间', 'Local time', 'Time');
+        mainInfo['Ostatni status'] = translateStatus(field('最新状态', 'Status').split('/')[0].trim());
+
+        // Country of every event, following the parcel's route (see assignCountries).
+        assignCountries(trackingInfo, (mainInfo['Kraj'] || 'PL').toUpperCase());
 
         // Dodaj informację o przewidywanym czasie dostawy
         const deliveryEstimate = calculateEstimatedDelivery(trackingInfo); // Używaj oryginalnych danych
